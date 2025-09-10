@@ -3,6 +3,7 @@ package api
 import (
 	"database/sql"
 	"net/http"
+	"social-network/internal/api/handler"
 )
 
 func Routes(db *sql.DB) http.Handler {
@@ -13,9 +14,9 @@ func Routes(db *sql.DB) http.Handler {
 		w.WriteHeader(http.StatusNotFound)
 	})
 
-	mux.HandleFunc("/api/register", RegisterHandler)
-	mux.HandleFunc("/api/login", LoginHandler)
-	// mux.HandleFunc("/logout", LogoutHandler(db))
+	mux.HandleFunc("/api/register", handlers.RegisterHandler)
+	mux.HandleFunc("/api/login", handlers.LoginHandler)
+	 //mux.HandleFunc("/logout", handlers.LogoutHandler)
 
 	return mux
 }
