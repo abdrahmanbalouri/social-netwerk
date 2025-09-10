@@ -16,6 +16,8 @@ export default function Login() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(form),
     });
+    console.log(res);
+    
     if (!res.ok) return setErr(await res.text());
     router.push("/");
   }
