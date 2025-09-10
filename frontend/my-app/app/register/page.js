@@ -24,8 +24,9 @@ export default function SignupPage() {
     setForm({
       ...form,
       [e.target.name]: e.target.name === "dob"
-        ? (new Date(e.target.value)).getTime()
+        ? Math.floor(new Date(e.target.value).getTime() / 1000)
         : e.target.value
+
     })
   }
 
@@ -36,21 +37,25 @@ export default function SignupPage() {
   const handleSignup = async e => {
     e.preventDefault()
     try {
-      const response = await fetch('/api/register', {
+      const response = await fetch('http://localhost:8080/api/register ', {
         method: "POST",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),
       })
 
-      if (response.status === 200) {
+      if (response.ok) {
         router.push('/login')
+        
       } else {
+        console.log(1);
         const data = await response.json()
         seterror(data)
       }
     } catch (error) {
-      seterror("Network error!")
+      console.log(error);
+
+      seterror("Network error!", error)
     }
   }
 
@@ -62,20 +67,20 @@ export default function SignupPage() {
 
       <form onSubmit={handleSignup} className={styles.form}>
         <div className={styles.row}>
-          <input type="text" name="firstName" placeholder="First Name" required onChange={handleChange}/>
-          <input type="text" name="lastName" placeholder="Last Name" required onChange={handleChange}/>
+          <input type="text" name="firstName" placeholder="First Name" required onChange={handleChange} />
+          <input type="text" name="lastName" placeholder="Last Name" required onChange={handleChange} />
         </div>
 
-        <input type="email" name="email" placeholder="Email" required onChange={handleChange}/>
-        <input type="password" name="password" placeholder="Password" required onChange={handleChange}/>
-        <input type="date" name="dob" required onChange={handleChange}/>
+        <input type="email" name="email" placeholder="Email" required onChange={handleChange} />
+        <input type="password" name="password" placeholder="Password" required onChange={handleChange} />
+        <input type="date" name="dob" required onChange={handleChange} />
 
-        <input type="text" name="nickname" placeholder="Nickname (optional)" onChange={handleChange}/>
-        <input type="file" name="avatar" accept="image/*" onChange={handleFileChange}/>
+        <input type="text" name="nickname" placeholder="Nickname (optional)" onChange={handleChange} />
+        <input type="file" name="avatar" accept="image/*" onChange={handleFileChange} />
         <textarea name="aboutMe" placeholder="About me (optional)" onChange={handleChange}></textarea>
 
         <label className={styles.checkbox}>
-          <input type="checkbox" required/>
+          <input type="checkbox" required />
           I agree to the Terms & Privacy Policy
         </label>
 
