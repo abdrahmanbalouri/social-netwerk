@@ -20,7 +20,7 @@ func OpenDb() (*sql.DB, error) {
 	if err != nil {
 		return db, err
 	}
-	//db.SetMaxOpenConns(10)
+	db.SetMaxOpenConns(10)
 	return db, nil
 }
 
