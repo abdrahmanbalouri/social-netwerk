@@ -10,6 +10,22 @@ import (
 	// "social-network/pkg/ratelimiter"
 )
 
+func enableCORS(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
+		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
+		w.Header().Set("Access-Control-Allow-Credentials", "true") 
+
+		if r.Method == http.MethodOptions {
+			w.WriteHeader(http.StatusNoContent)
+			return
+		}
+
+		next.ServeHTTP(w, r)
+	})
+}
+
 func main() {
 	db, err := repository.OpenDb()
 	if err != nil {
@@ -29,10 +45,11 @@ func main() {
 	}
 
 	baseHandler := api.Routes(db)
+	hand := enableCORS(baseHandler)
 
 	server := &http.Server{
 		Addr:    ":8080",
-		Handler: baseHandler,
+		Handler: hand,
 	}
 	log.Println("http://localhost:8080/")
 	err = server.ListenAndServe()

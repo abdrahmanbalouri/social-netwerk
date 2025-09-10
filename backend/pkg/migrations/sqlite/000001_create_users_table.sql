@@ -1,12 +1,17 @@
 -- +migrate Up
-CREATE TABLE IF NOT EXISTS posts (
+CREATE TABLE users (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    user_id INTEGER NOT NULL,
-    title TEXT NOT NULL,
-    content TEXT NOT NULL,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+    nickname TEXT DEFAULT "",
+    date_birth INTEGER NOT NULL,
+    first_name TEXT NOT NULL,
+    last_name TEXT NOT NULL,
+    email TEXT NOT NULL UNIQUE,
+    password TEXT NOT NULL,
+    image TEXT NOT null ,
+    about TEXT NOT NULL ,
+    privacy TEXT NOT NULL ,
+    created_at INTEGER NOT NULL
 );
 
 -- +migrate Down
-DROP TABLE IF EXISTS posts;
+DROP TABLE IF EXISTS users;
