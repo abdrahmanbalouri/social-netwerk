@@ -4,10 +4,33 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
 
+
 export default function Profile() {
-//  const [loading, setLoading] = useState(true);
   const router = useRouter();
 
+  useEffect(() => {
+    async function fetchUser() {
+      try {
+        const response = await fetch("http://localhost:8080/api/me", {
+          credentials: "include",
+        });
+
+        if (!response.ok) {
+          router.replace("/login"); // redirect if not authenticated
+          return null;
+        } else if (response.ok) {
+
+          router.replace("/home");
+        }
+      } catch (error) {
+        router.replace("/login");
+        return null;
+
+      }
+    }
+    fetchUser()
+
+  });
 
   async function logout(e) {
     e.preventDefault();
@@ -16,18 +39,15 @@ export default function Profile() {
       credentials: "include",
     });
     if (!res.ok) {
-     // alert(await res.text());
       return;
     }
-    router.replace("/login"); 
+    router.replace("/login"); // redirect to login page
   }
 
- // if (loading) return <p>Loading...</p>;
-  //if (!user) return null;
 
   return (
     <div>
-     
+
       <form onSubmit={logout}>
         <button type="submit">Logout</button>
       </form>
