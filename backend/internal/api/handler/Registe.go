@@ -34,15 +34,10 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	fmt.Println(userInformation)
 
-	db, err := repository.OpenDb()
-	if err != nil {
-		http.Error(w, "DB connection failed", http.StatusInternalServerError)
-		return
-	}
-	defer db.Close()
+	
 
 	var exists int
-	err = db.QueryRow(
+	err := repository.Db.QueryRow(
 		"SELECT COUNT(*) FROM users WHERE email = ? OR nickname = ?",
 		html.EscapeString(userInformation.Email),
 		html.EscapeString(userInformation.Nickname),
@@ -84,7 +79,7 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	res, err := db.Exec(`
+	res, err := repository.Db.Exec(`
 	INSERT INTO users 
 	(nickname, date_birth, first_name, last_name, email, password, image, about, privacy, created_at)
 	VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,

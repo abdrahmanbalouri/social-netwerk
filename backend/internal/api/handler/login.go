@@ -9,17 +9,14 @@ import (
 	"social-network/internal/repository"
 	"social-network/internal/repository/logindata"
 	"social-network/internal/utils"
+	 
 )
 
 func LoginHandler(w http.ResponseWriter, r *http.Request) {
-	db, err := repository.OpenDb()
-	if err != nil {
-		http.Error(w, "DB connection failed", http.StatusInternalServerError)
-		return
-	}
-	defer db.Close()
+	
+	
 	var loginInformations utils.LoginInformation
-	err = json.NewDecoder(r.Body).Decode(&loginInformations)
+	err := json.NewDecoder(r.Body).Decode(&loginInformations)
 	fmt.Println(loginInformations)
 	if err != nil {
 	}
@@ -27,13 +24,13 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	var dbPassword string
 	var userID int
 
-	err1 := logindata.Checklogindata(loginInformations.Nickname, db, w, &dbPassword, &userID, loginInformations.Password)
+	err1 := logindata.Checklogindata(loginInformations.Nickname, repository.Db, w, &dbPassword, &userID, loginInformations.Password)
 	if err1 == "0" {
 		fmt.Println("error")
 		return
 	}
 	sessionID := helper.GenerateSessionID()
-	_, err = db.Exec(`
+	_, err = repository.Db.Exec(`
 		INSERT INTO sessions (user_id, token, expires_at)
 		VALUES (?, ?, DATETIME('now', '+1 hour'))
 	`, userID, sessionID)

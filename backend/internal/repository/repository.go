@@ -10,17 +10,19 @@ import (
 )
 
 
-	var Db *sql.DB
-
+	
+var Db *sql.DB
 const dbPath = "internal/repository/forum.db"
 
 func OpenDb() (*sql.DB, error) {
-	Db, err := sql.Open("sqlite3", dbPath+"?_foreign_keys=1")
+	db, err := sql.Open("sqlite3", dbPath+"?_foreign_keys=1")
 	if err != nil {
-		return Db, err
+		return db, err
 	}
-	Db.SetMaxOpenConns(10)
-	return Db, nil
+   db.SetMaxOpenConns(10)
+		Db = db
+
+	return db, nil
 }
 
 func ApplyMigrations(db *sql.DB) error {
