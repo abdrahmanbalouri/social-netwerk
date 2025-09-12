@@ -1,7 +1,6 @@
 "use client"
 import { useState } from "react";
 import { useRouter } from "next/navigation"; // ← hna
-import styles from "./Login.module.css";
 
 export default function Login() {
   const router = useRouter();
@@ -23,35 +22,35 @@ export default function Login() {
   }
 
   return (
-    <div className={styles.container}>
-      <div className={styles.loginCard}>
-        <h1 className={styles.title}>Login</h1>
-        <form className={styles.form} onSubmit={submit}>
+    <div className="container">
+      <div className="loginCard">
+        <h1 className="title">Login</h1>
+        <form className="form" onSubmit={submit}>
           <input
-            className={styles.input}
+            className="input"
             placeholder="email"
             value={form.email}
             onChange={(e) => setForm({ ...form, email: e.target.value })}
           />
           <input
-            className={styles.input}
+            className="input"
             type="password"
             placeholder="password"
             value={form.password}
             onChange={(e) => setForm({ ...form, password: e.target.value })}
           />
-          <div className={styles.buttonGroup}>
-            <button className={styles.loginButton} type="submit">Login</button>
+          <div className="buttonGroup">
+            <button className="loginButton" type="submit">Login</button>
             <button
               type="button"
-              className={styles.registerButton}
+              className="registerButton"
               onClick={() => router.push("/register")}
             >
               Register
             </button>
           </div>
         </form>
-        {err && <p className={styles.error}>{err}</p>}
+        {err && <p className="error">{err}</p>}
       </div>
     </div>
   );

@@ -1,33 +1,24 @@
-/* Login.module.css */
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(-20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+/* Global body styles */
+body {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  min-height: 100vh;
 }
 
-@keyframes shake {
-  0%, 100% { transform: translateX(0); }
-  10%, 30%, 50%, 70%, 90% { transform: translateX(-10px); }
-  20%, 40%, 60%, 80% { transform: translateX(10px); }
-}
-
+/* Shared container styles for login and register */
 .container {
   min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 20px;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
-.loginCard {
+/* Card styles for login and register */
+.card {
   background: white;
   border-radius: 20px;
   padding: 48px 40px;
@@ -39,7 +30,7 @@
   overflow: hidden;
 }
 
-.loginCard::before {
+.card::before {
   content: '';
   position: absolute;
   top: 0;
@@ -110,12 +101,9 @@
   margin-top: 8px;
 }
 
-.loginButton {
+.loginButton, .registerButton {
   width: 100%;
   padding: 16px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  border: none;
   border-radius: 12px;
   font-size: 16px;
   font-weight: 600;
@@ -123,6 +111,12 @@
   transition: all 0.3s ease;
   position: relative;
   overflow: hidden;
+  border: none;
+}
+
+.loginButton {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
 }
 
 .loginButton:hover {
@@ -130,36 +124,10 @@
   box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
 }
 
-.loginButton:active {
-  transform: translateY(0);
-}
-
-.loginButton::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-  transition: left 0.5s;
-}
-
-.loginButton:hover::before {
-  left: 100%;
-}
-
 .registerButton {
-  width: 100%;
-  padding: 16px;
   background: transparent;
   color: #667eea;
   border: 2px solid #667eea;
-  border-radius: 12px;
-  font-size: 16px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
 }
 
 .registerButton:hover {
@@ -167,34 +135,6 @@
   color: white;
   transform: translateY(-2px);
   box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
-}
-
-.registerButton:active {
-  transform: translateY(0);
-}
-
-.divider {
-  display: flex;
-  align-items: center;
-  margin: 24px 0;
-  color: #a0aec0;
-  font-size: 14px;
-}
-
-.divider::before,
-.divider::after {
-  content: '';
-  flex: 1;
-  height: 1px;
-  background: #e2e8f0;
-}
-
-.divider::before {
-  margin-right: 16px;
-}
-
-.divider::after {
-  margin-left: 16px;
 }
 
 .error {
@@ -207,15 +147,24 @@
   margin-top: 16px;
   border-left: 4px solid #e53e3e;
   animation: shake 0.5s ease-in-out;
+  text-align: center;
 }
 
-.footer {
-  text-align: center;
-  margin-top: 32px;
-  padding-top: 24px;
-  border-top: 1px solid #e2e8f0;
-  color: #718096;
-  font-size: 14px;
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  10%, 30%, 50%, 70%, 90% { transform: translateX(-10px); }
+  20%, 40%, 60%, 80% { transform: translateX(10px); }
 }
 
 /* Responsive Design */
@@ -223,21 +172,17 @@
   .container {
     padding: 16px;
   }
-  
-  .loginCard {
+  .card {
     padding: 32px 24px;
     border-radius: 16px;
   }
-  
   .title {
     font-size: 28px;
   }
-  
   .input {
     padding: 14px 16px;
     font-size: 15px;
   }
-  
   .loginButton,
   .registerButton {
     padding: 14px;
@@ -245,28 +190,3 @@
   }
 }
 
-/* Dark mode support */
-@media (prefers-color-scheme: dark) {
-  .container {
-    background: linear-gradient(135deg, #1a202c 0%, #2d3748 100%);
-  }
-  
-  .loginCard {
-    background: #2d3748;
-    color: #f7fafc;
-  }
-  
-  .title {
-    color: #f7fafc;
-  }
-  
-  .input {
-    background-color: #4a5568;
-    border-color: #4a5568;
-    color: #f7fafc;
-  }
-  
-  .input:focus {
-    background-color: #2d3748;
-  }
-}
