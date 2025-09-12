@@ -9,19 +9,18 @@ import (
 	migrate "github.com/rubenv/sql-migrate"
 )
 
-type Database struct {
-	Db *sql.DB
-}
+
+	var Db *sql.DB
 
 const dbPath = "internal/repository/forum.db"
 
 func OpenDb() (*sql.DB, error) {
-	db, err := sql.Open("sqlite3", dbPath+"?_foreign_keys=1")
+	Db, err := sql.Open("sqlite3", dbPath+"?_foreign_keys=1")
 	if err != nil {
-		return db, err
+		return Db, err
 	}
-	db.SetMaxOpenConns(10)
-	return db, nil
+	Db.SetMaxOpenConns(10)
+	return Db, nil
 }
 
 func ApplyMigrations(db *sql.DB) error {
