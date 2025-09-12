@@ -3,7 +3,6 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import styles from "./register.module.css"
 
 export default function SignupPage() {
   const [form, setForm] = useState({
@@ -60,13 +59,13 @@ export default function SignupPage() {
   }
 
   return (
-    <div className={styles.container}>
-      <h1 className={styles.title}>Create Account</h1>
+    <div className="container">
+      <h1 className="titleregister">Create Account</h1>
 
-      {error && <p className={styles.error}>{error}</p>}
+      {error && <p className="error">{error}</p>}
 
-      <form onSubmit={handleSignup} className={styles.form}>
-        <div className={styles.row}>
+      <form onSubmit={handleSignup} className="form">
+        <div className="row">
           <input type="text" name="firstName" placeholder="First Name" required onChange={handleChange} />
           <input type="text" name="lastName" placeholder="Last Name" required onChange={handleChange} />
         </div>
@@ -79,15 +78,15 @@ export default function SignupPage() {
         <input type="file" name="avatar" accept="image/*" onChange={handleFileChange} />
         <textarea name="aboutMe" placeholder="About me (optional)" onChange={handleChange}></textarea>
 
-        <label className={styles.checkbox}>
+        <label className="checkbox">
           <input type="checkbox" required />
           I agree to the Terms & Privacy Policy
         </label>
 
-        <button type="submit" className={styles.button}>Sign Up</button>
+        <button type="submit" className="button">Sign Up</button>
       </form>
 
-      <p className={styles.footer}>
+      <p className="footer">
         Already have an account? <Link href="/login">Login</Link>
       </p>
     </div>
