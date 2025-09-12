@@ -32,25 +32,11 @@ export default function Profile() {
 
   });
 
-  async function logout(e) {
-    e.preventDefault();
-    const res = await fetch("http://localhost:8080/api/logout", {
-      method: "POST",
-      credentials: "include",
-    });
-    if (!res.ok) {
-      return;
-    }
-    router.replace("/login"); // redirect to login page
-  }
 
 
   return (
     <div>
-
-      <form onSubmit={logout}>
-        <button type="submit">Logout</button>
-      </form>
-    </div>
+      <h1>Loading...</h1>
+     </div>
   );
 }

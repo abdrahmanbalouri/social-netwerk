@@ -15,6 +15,8 @@ export default function home() {
       method: "POST",
       credentials: "include",
     });
+    console.log(res);
+    
     if (!res.ok) {
       return;
     }
