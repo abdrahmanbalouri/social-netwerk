@@ -24,12 +24,19 @@ export default function home() {
   }
 
 
-  return (
-    <div>
-
+return (
+  <div>
+    <nav className="navbar">
       <form onSubmit={logout}>
-        <button type="submit">Logout</button>
+        <button type="submit" className="logout-btn">Logout</button>
       </form>
-    </div>
-  );
+    </nav>
+
+    <main className="content">
+      <h1>Welcome to Home Page</h1>
+      <p>This is the main content of your app.</p>
+    </main>
+  </div>
+);
+
 }
