@@ -16,13 +16,14 @@ export default function Login() {
       body: JSON.stringify(form),
     });
     console.log(res);
-    
+
     if (!res.ok) return setErr(await res.text());
     router.push("/home");
   }
 
   return (
     <div className="container">
+      <div className="bg"></div>
       <div className="loginCard">
         <h1 className="title">Login</h1>
         <form className="form" onSubmit={submit}>
