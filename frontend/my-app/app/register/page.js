@@ -59,12 +59,13 @@ export default function SignupPage() {
   }
 
   return (
-    <div className="container">
+    <div className="containerregister">
+      <div className="bg"></div>
       <h1 className="titleregister">Create Account</h1>
 
       {error && <p className="error">{error}</p>}
 
-      <form onSubmit={handleSignup} className="form">
+      <form onSubmit={handleSignup} className="formregister">
         <div className="row">
           <input type="text" name="firstName" placeholder="First Name" required onChange={handleChange} />
           <input type="text" name="lastName" placeholder="Last Name" required onChange={handleChange} />
