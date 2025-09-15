@@ -47,11 +47,10 @@ func GetAllPosts() ([]map[string]interface{}, error) {
 			"user_id":    userID,
 			"title":      title,
 			"content":    content,
-			"path_image": image_path,
+			"image_path": image_path,
 			"created_at": createdAt,
-			"author":   nickname, // Add nickname here
+			"author":   nickname, 
 		}
-		fmt.Println("post", post)
 		posts = append(posts, post)
 	}
 
