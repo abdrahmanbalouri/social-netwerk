@@ -1,7 +1,7 @@
 "use client";
 import './Home.css';
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function Home() {
   const router = useRouter();
@@ -28,6 +28,27 @@ export default function Home() {
   function handleImageChange(e) {
     setImage(e.target.files[0]);
   }
+   useEffect(() => {
+    async function fetchInitialPosts() {
+      try {
+        const res = await fetch("http://localhost:8080/api/Getallpost", {
+          method: "GET",
+          credentials: "include",
+        });
+        if (!res.ok) {
+          throw new Error("Failed to fetch posts");
+        }
+        const data = await res.json();
+        console.log(data);
+        
+        setPosts(data);
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    fetchInitialPosts();
+  },[]);
 
   async function handleCreatePost(e) {
     e.preventDefault();
@@ -47,33 +68,26 @@ export default function Home() {
       if (!response.ok) {
         throw new Error("Failed to create post");
       } else {
-         let data = await fetchPosts()
-         console.log(data);
+          let res = await response.json()
+          
+         let data = await fetchPosts(res.post_id)
          
-        setPosts([data, ...posts])
-       
+          setPosts([data, ...posts])
+          
+          
       }
 
     }catch(err){
-
-   //   console.log(err);
-      
-
-
-
     }
-
-  
-
-    // Reset form
     setTitle("");
     setImage(null);
     setContent("");
     setShowModal(false);
   }
-  async function fetchPosts() {
+
+  async function fetchPosts(postID) {
     try {
-      const res = await fetch("http://localhost:8080/api/Getpost", {
+      const res = await fetch(`http://localhost:8080/api/Getpost/${postID}`, {
         method: "GET",
         credentials: "include",
       });
@@ -121,28 +135,35 @@ export default function Home() {
           </ul>
         </aside>
 
-        <section className="feed">
-          {/* Sample Posts */}
-          <div className="post">
+         <section className="feed">
+      {posts.length === 0 ? (
+        <p>No posts available</p>
+      ) : (
+        posts.map((post) => (
+          <div key={post.id} className="post">
             <div className="post-header">
               <div className="profile-picture">
-                <img src="/avatar.png" alt="User" />
+                <img src={post.profile_picture || '/avatar.png'} alt="User" />
               </div>
               <div>
-                <span className="text-bold">azraji</span>
-                <div className="text-muted" style={{ fontSize: '0.85rem' }}>2 hrs ago</div>
+                <span className="text-bold">{post.author}</span>
+                <div className="text-muted" style={{ fontSize: '0.85rem' }}>
+                  {new Date(post.created_at).toLocaleString()}
+                </div>
               </div>
             </div>
             <div className="post-content">
-              Hello, this is my first post! 👋
+              {post.content}
             </div>
-            <div className="post-actions">
+            {/* <div className="post-actions">
               <span>Like</span>
               <span>Comment</span>
               <span>Share</span>
-            </div>
+            </div> */}
           </div>
-        </section>
+        ))
+      )}
+    </section>
 
         <aside className="right-panel">
           <h3>Contacts</h3>

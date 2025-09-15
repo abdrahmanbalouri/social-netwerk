@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"database/sql"
+	"fmt"
 	"net/http"
 	"strings"
 	"time"
@@ -22,14 +23,15 @@ func GetPostsHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	postID := parts[3]
+	fmt.Println(postID)
 
 	var post struct {
-		ID        string    `json:"id"`
-		Title     string    `json:"title"`
-		Content   string    `json:"content"`
-		Image_path  string    `json:"image_path"`
-		CreatedAt time.Time `json:"created_at"`
-		Author    string    `json:"author"`
+		ID         string    `json:"id"`
+		Title      string    `json:"title"`
+		Content    string    `json:"content"`
+		Image_path string    `json:"image_path"`
+		CreatedAt  time.Time `json:"created_at"`
+		Author     string    `json:"author"`
 	}
 	err := repository.Db.QueryRow(`
         SELECT p.id, p.title, p.content, p.image_path, p.created_at, u.nickname
