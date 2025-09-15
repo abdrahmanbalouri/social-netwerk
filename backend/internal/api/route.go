@@ -20,7 +20,8 @@ func Routes(db *sql.DB) http.Handler {
 	mux.HandleFunc("/api/logout", handlers.LogoutHandler)
 	mux.HandleFunc("/api/me", handlers.MeHandler)
 	mux.HandleFunc("/api/createpost", handlers.Createpost)
-	mux.HandleFunc("/api/Getpost", handlers.GetPostsHandler)
+	mux.HandleFunc("/api/Getpost/{id}", handlers.GetPostsHandler)
+	mux.HandleFunc("/api/Getallpost", handlers.AllpostsHandler)
 
 	return mux
 }
