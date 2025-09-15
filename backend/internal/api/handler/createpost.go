@@ -1,0 +1,81 @@
+package handlers
+
+import (
+	"fmt"
+	"io"
+	"net/http"
+	"os"
+	"strings"
+
+	"social-network/internal/helper"
+	"social-network/internal/repository"
+
+	"social-network/internal/repository/midlweare"
+
+	"github.com/google/uuid"
+)
+
+func Createpost(w http.ResponseWriter, r *http.Request) {
+	if r.Method != "POST" {
+		helper.RespondWithError(w, http.StatusMethodNotAllowed, "Method Not Allowed")
+		return
+	}
+	userID, err := midlweare.AuthenticateUser(r)
+	if err != nil {
+		helper.RespondWithError(w, http.StatusUnauthorized, "Authentication required")
+		return
+	}
+
+	err = r.ParseMultipartForm(10 << 20) // 10MB
+	if err != nil {
+		helper.RespondWithError(w, http.StatusBadRequest, "Unable to parse form")
+		return
+	}
+
+	title := strings.TrimSpace(r.FormValue("title"))
+	content := strings.TrimSpace(r.FormValue("content"))
+
+	// if len(title) < 5 || len(title) > 50 || len(content) < 5 || len(content) > 500 {
+	// 	helper.RespondWithError(w, http.StatusBadRequest, "Title and content must be between 5 and 50 characters")
+	// 	return
+	// }
+
+	var imagePath string
+	imageFile, _, err := r.FormFile("image")
+	if err == nil {
+		defer imageFile.Close()
+		imagePath = fmt.Sprintf("uploads/%s.jpg", uuid.New().String())
+		out, err := os.Create(imagePath)
+		if err != nil {
+			helper.RespondWithError(w, http.StatusInternalServerError, "Failed to save image")
+			return
+		}
+		defer out.Close()
+		_, err = io.Copy(out, imageFile)
+		if err != nil {
+			helper.RespondWithError(w, http.StatusInternalServerError, "Failed to save image")
+			return
+		}
+	} else {
+		imagePath = ""
+	}
+
+	fmt.Println(imagePath)
+
+	_, err = repository.Db.Exec(`
+        INSERT INTO posts ( user_id, title, content, image_path)
+        VALUES (?, ?, ?, ?)`,
+		userID, title, content, imagePath,
+	)
+	if err != nil {
+		helper.RespondWithError(w, http.StatusInternalServerError, "Failed to create post")
+		fmt.Println("22222", err)
+		return
+	}
+
+	helper.RespondWithJSON(w, http.StatusCreated, map[string]string{
+		"message": "Post created successfully",
+		
+	})
+	
+}

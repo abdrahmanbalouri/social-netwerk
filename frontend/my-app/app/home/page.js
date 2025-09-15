@@ -7,6 +7,7 @@ export default function Home() {
   const router = useRouter();
 
   const [showModal, setShowModal] = useState(false);
+  const [posts, setPosts] = useState([]);
   const [title, setTitle] = useState("");
   const [image, setImage] = useState(null);
   const [content, setContent] = useState("");
@@ -28,19 +29,63 @@ export default function Home() {
     setImage(e.target.files[0]);
   }
 
-  function handleCreatePost(e) {
+  async function handleCreatePost(e) {
     e.preventDefault();
 
-    // Can be replaced with API call
-    console.log("Title:", title);
-    console.log("Image:", image);
-    console.log("Content:", content);
+    try{
+      const response = await fetch("http://localhost:8080/api/createpost", {
+        method: "POST",
+        credentials: "include",
+        body: (() => {
+          const formData = new FormData();
+          formData.append("title", title);
+          formData.append("image", image);
+          formData.append("content", content);
+          return formData;
+        })(),
+      });
+      if (!response.ok) {
+        throw new Error("Failed to create post");
+      } else {
+         let data = await fetchPosts()
+         console.log(data);
+         
+        setPosts([data, ...posts])
+       
+      }
+
+    }catch(err){
+
+   //   console.log(err);
+      
+
+
+
+    }
+
+  
 
     // Reset form
     setTitle("");
     setImage(null);
     setContent("");
     setShowModal(false);
+  }
+  async function fetchPosts() {
+    try {
+      const res = await fetch("http://localhost:8080/api/Getpost", {
+        method: "GET",
+        credentials: "include",
+      });
+      if (!res.ok) {
+        throw new Error("Failed to fetch posts");
+      }
+      const data = await res.json();
+      return data;
+      
+    } catch (err) {
+      console.error(err);
+    }
   }
 
   return (
