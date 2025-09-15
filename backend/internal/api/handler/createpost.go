@@ -22,12 +22,11 @@ func Createpost(w http.ResponseWriter, r *http.Request) {
 	}
 	userID, err := midlweare.AuthenticateUser(r)
 	if err != nil {
-		
+
 		helper.RespondWithError(w, http.StatusUnauthorized, "Authentication required")
 		return
 	}
 
-	
 	err = r.ParseMultipartForm(10 << 20) // 10MB
 	if err != nil {
 		helper.RespondWithError(w, http.StatusBadRequest, "Unable to parse form")
@@ -43,26 +42,37 @@ func Createpost(w http.ResponseWriter, r *http.Request) {
 	// }
 
 	var imagePath string
+
 	imageFile, _, err := r.FormFile("image")
 	if err == nil {
 		defer imageFile.Close()
+
+		err = os.MkdirAll("uploads", os.ModePerm)
+		if err != nil {
+			helper.RespondWithError(w, http.StatusInternalServerError, "Failed to create upload directory")
+			return
+		}
+
 		imagePath = fmt.Sprintf("uploads/%s.jpg", uuid.New().String())
+
 		out, err := os.Create(imagePath)
 		if err != nil {
 			helper.RespondWithError(w, http.StatusInternalServerError, "Failed to save image")
 			return
 		}
 		defer out.Close()
+
 		_, err = io.Copy(out, imageFile)
 		if err != nil {
 			helper.RespondWithError(w, http.StatusInternalServerError, "Failed to save image")
 			return
 		}
-	}else {
+
+	} else {
 		imagePath = ""
 	}
 
-	fmt.Println(imagePath)
+	fmt.Println(imagePath, "------")
 
 	postID := uuid.New().String()
 	_, err = repository.Db.Exec(`
@@ -71,6 +81,7 @@ func Createpost(w http.ResponseWriter, r *http.Request) {
 		postID, userID, title, content, imagePath,
 	)
 	if err != nil {
+		fmt.Println("2222")
 		helper.RespondWithError(w, http.StatusInternalServerError, "Failed to create post")
 		return
 	}
