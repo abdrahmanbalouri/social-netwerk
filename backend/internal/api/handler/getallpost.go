@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"fmt"
 	"net/http"
 
 	"social-network/internal/helper"
@@ -15,7 +14,6 @@ func AllpostsHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	posts, err := post.GetAllPosts()
-	fmt.Println(posts,"-------------")
 	if err != nil {
 		helper.RespondWithError(w, http.StatusInternalServerError, "Failed to retrieve posts")
 		return

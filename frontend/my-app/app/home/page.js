@@ -2,6 +2,7 @@
 import './Home.css';
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+//import { vdd } from '../../../../../uploads/1686064761.jpg';
 
 export default function Home() {
   const router = useRouter();
@@ -28,7 +29,7 @@ export default function Home() {
   function handleImageChange(e) {
     setImage(e.target.files[0]);
   }
-   useEffect(() => {
+  useEffect(() => {
     async function fetchInitialPosts() {
       try {
         const res = await fetch("http://localhost:8080/api/Getallpost", {
@@ -39,8 +40,8 @@ export default function Home() {
           throw new Error("Failed to fetch posts");
         }
         const data = await res.json();
-        console.log(data);
-        
+        console.log(data, '-------------------++++++++++++++++++++++++++++++++++');
+
         setPosts(data);
       } catch (err) {
         console.error(err);
@@ -48,12 +49,12 @@ export default function Home() {
     }
 
     fetchInitialPosts();
-  },[]);
+  }, []);
 
   async function handleCreatePost(e) {
     e.preventDefault();
 
-    try{
+    try {
       const response = await fetch("http://localhost:8080/api/createpost", {
         method: "POST",
         credentials: "include",
@@ -68,16 +69,18 @@ export default function Home() {
       if (!response.ok) {
         throw new Error("Failed to create post");
       } else {
-          let res = await response.json()
+        let res = await response.json()
+
+        let data = await fetchPosts(res.post_id)
+          console.log(data,'-+565554+6');
           
-         let data = await fetchPosts(res.post_id)
-         
-          setPosts([data, ...posts])
-          
-          
+
+        setPosts([data, ...posts])
+
+
       }
 
-    }catch(err){
+    } catch (err) {
     }
     setTitle("");
     setImage(null);
@@ -96,7 +99,7 @@ export default function Home() {
       }
       const data = await res.json();
       return data;
-      
+
     } catch (err) {
       console.error(err);
     }
@@ -135,35 +138,42 @@ export default function Home() {
           </ul>
         </aside>
 
-         <section className="feed">
-      {posts.length === 0 ? (
-        <p>No posts available</p>
-      ) : (
-        posts.map((post) => (
-          <div key={post.id} className="post">
-            <div className="post-header">
-              <div className="profile-picture">
-                <img src={post.profile_picture || '/avatar.png'} alt="User" />
-              </div>
-              <div>
-                <span className="text-bold">{post.author}</span>
-                <div className="text-muted" style={{ fontSize: '0.85rem' }}>
-                  {new Date(post.created_at).toLocaleString()}
+        <section className="feed">
+          {!posts ? (
+            <p>No posts available</p>
+          ) : (
+            posts.map((post) => (
+              <div key={post.id} className="post">
+                <div className="post-header">
+                  <div className="profile-picture">
+                    <img src={post.profile_picture || '/avatar.png'} alt="User" />
+                  </div>
+                  <div className="postimage">
+                    <img src={`../../../../../backend/${post.image_path}`}  />
+                  </div>
+                  <div>
+                    <span className="text-bold">{post.author}</span>
+                    <div className="post-title">
+                      {post.title}
+                    </div>
+
+                    <div className="text-muted" style={{ fontSize: '0.85rem' }}>
+                      {new Date(post.created_at).toLocaleString()}
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </div>
-            <div className="post-content">
-              {post.content}
-            </div>
-            {/* <div className="post-actions">
+                <div className="post-content">
+                  {post.content}
+                </div>
+                {/* <div className="post-actions">
               <span>Like</span>
               <span>Comment</span>
               <span>Share</span>
             </div> */}
-          </div>
-        ))
-      )}
-    </section>
+              </div>
+            ))
+          )}
+        </section>
 
         <aside className="right-panel">
           <h3>Contacts</h3>
