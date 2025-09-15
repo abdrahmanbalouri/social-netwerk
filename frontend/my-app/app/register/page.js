@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import './register.css'
 
 export default function SignupPage() {
   const [form, setForm] = useState({
