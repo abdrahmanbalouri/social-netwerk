@@ -1,6 +1,5 @@
 "use client";
-
-import { useEffect, useState } from "react";
+import './Home.css';
 import { useRouter } from "next/navigation";
 
 
@@ -27,14 +26,25 @@ export default function home() {
 return (
   <div>
     <nav className="navbar">
-      <form onSubmit={logout}>
-        <button type="submit" className="logout-btn">Logout</button>
-      </form>
+      <div class="Container">
+        <h2 class="log">social</h2>
+      </div>
+      <div class="search-bar">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input type="search" placeholder="search for some one"></input>
+      </div>
+      <div class="create">
+          <label class="btn btn-primary" for="create-post">
+            <i class="fa-solid fa-plus"></i>
+          </label>
+          <div class="profile-picture">
+              <img src="/avatar.png" alt="Profile" />
+          </div>
+      </div>
     </nav>
 
     <main className="content">
-      <h1>Welcome to Home Page</h1>
-      <p>This is the main content of your app.</p>
+     
     </main>
   </div>
 );

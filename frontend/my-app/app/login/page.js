@@ -1,6 +1,8 @@
 "use client"
 import { useState } from "react";
 import { useRouter } from "next/navigation"; // ← hna
+import './login.css';
+
 
 export default function Login() {
   const router = useRouter();

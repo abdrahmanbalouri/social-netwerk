@@ -34,9 +34,9 @@ export default function Profile() {
 
 
 
- return (
-  <div className="loading-container">
-    <div className="spinner"></div>
-  </div>
-);
+  return (
+    <div>
+      <h1>Loading...</h1>
+     </div>
+  );
 }
