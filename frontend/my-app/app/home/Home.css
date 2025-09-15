@@ -31,6 +31,114 @@ body {
     overflow-x: hidden;
 }
 
+.content {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 2rem;
+    width: 100vw;
+    margin-top: 5.5rem;
+    min-height: 100vh;
+}
+
+.sidebar {
+    width: 18vw;
+    min-width: 220px;
+    background: var(--color-white);
+    border-radius: 1rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    padding: 1.5rem 1rem;
+    height: 70vh;
+    position: sticky;
+    top: 6rem;
+}
+
+.sidebar ul {
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+}
+
+.sidebar li {
+    font-size: 1.1rem;
+    color: var(--color-dark);
+    cursor: pointer;
+    padding: 0.5rem 1rem;
+    border-radius: 0.7rem;
+    transition: background 0.2s;
+}
+.sidebar li:hover {
+    background: var(--color-light);
+}
+
+.feed {
+    flex: 1 1 0;
+    max-width: 600px;
+    min-width: 350px;
+}
+
+.post {
+    background: var(--color-white);
+    border-radius: 1rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    margin-bottom: 2rem;
+    padding: 1.5rem;
+}
+
+.post-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.post-content {
+    font-size: 1.1rem;
+    margin-bottom: 1rem;
+}
+
+.post-actions {
+    display: flex;
+    gap: 2rem;
+    color: var(--color-gray);
+    font-size: 1rem;
+}
+
+.right-panel {
+    width: 20vw;
+    min-width: 220px;
+    background: var(--color-white);
+    border-radius: 1rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    padding: 1.5rem 1rem;
+    height: 70vh;
+    position: sticky;
+    top: 6rem;
+}
+
+.right-panel h3 {
+    font-size: 1.1rem;
+    margin-bottom: 1rem;
+}
+
+.right-panel ul {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.right-panel li {
+    font-size: 1rem;
+    color: var(--color-dark);
+    cursor: pointer;
+    padding: 0.4rem 0.7rem;
+    border-radius: 0.5rem;
+    transition: background 0.2s;
+}
+.right-panel li:hover {
+    background: var(--color-light);
+}
+
 .Container {
     width: 80%;
     margin: 0 auto;
@@ -70,7 +178,7 @@ img{
 nav {
    width: 100%;
    background: var(--color-white);
-   padding: 0.7rem 0;
+   padding: 0.7rem 1rem;
    position: fixed;
    top: 0;
    z-index: 10;
@@ -85,6 +193,7 @@ nav .Container, nav .search-bar, nav .create {
    gap: 1.5rem;
 }
 nav .Container {
+    width: auto;
    margin: 0;
 }
 nav .search-bar {
