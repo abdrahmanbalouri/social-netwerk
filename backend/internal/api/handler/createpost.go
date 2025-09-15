@@ -22,10 +22,12 @@ func Createpost(w http.ResponseWriter, r *http.Request) {
 	}
 	userID, err := midlweare.AuthenticateUser(r)
 	if err != nil {
+		
 		helper.RespondWithError(w, http.StatusUnauthorized, "Authentication required")
 		return
 	}
 
+	
 	err = r.ParseMultipartForm(10 << 20) // 10MB
 	if err != nil {
 		helper.RespondWithError(w, http.StatusBadRequest, "Unable to parse form")
@@ -56,26 +58,25 @@ func Createpost(w http.ResponseWriter, r *http.Request) {
 			helper.RespondWithError(w, http.StatusInternalServerError, "Failed to save image")
 			return
 		}
-	} else {
+	}else {
 		imagePath = ""
 	}
 
 	fmt.Println(imagePath)
 
+	postID := uuid.New().String()
 	_, err = repository.Db.Exec(`
-        INSERT INTO posts ( user_id, title, content, image_path)
-        VALUES (?, ?, ?, ?)`,
-		userID, title, content, imagePath,
+        INSERT INTO posts (id, user_id, title, content, image_path)
+        VALUES (?, ?, ?, ?, ?)`,
+		postID, userID, title, content, imagePath,
 	)
 	if err != nil {
 		helper.RespondWithError(w, http.StatusInternalServerError, "Failed to create post")
-		fmt.Println("22222", err)
 		return
 	}
 
 	helper.RespondWithJSON(w, http.StatusCreated, map[string]string{
 		"message": "Post created successfully",
-		
+		"post_id": postID,
 	})
-	
 }
