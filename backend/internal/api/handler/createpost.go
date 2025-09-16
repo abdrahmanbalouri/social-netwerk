@@ -5,6 +5,7 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"path/filepath"
 	"strings"
 
 	"social-network/internal/helper"
@@ -47,15 +48,16 @@ func Createpost(w http.ResponseWriter, r *http.Request) {
 	if err == nil {
 		defer imageFile.Close()
 
-		err = os.MkdirAll("uploads", os.ModePerm)
+		uploadDir := "../frontend/my-app/public/uploads"
+		err = os.MkdirAll(uploadDir, os.ModePerm)
 		if err != nil {
 			helper.RespondWithError(w, http.StatusInternalServerError, "Failed to create upload directory")
 			return
 		}
 
-		imagePath = fmt.Sprintf("uploads/%s.jpg", uuid.New().String())
+		imagePath = fmt.Sprintf("uploads/%s.jpg", uuid.New().String()) // Keep the path relative for database storage
 
-		out, err := os.Create(imagePath)
+		out, err := os.Create(filepath.Join("../../frontend/my-app/public", imagePath))
 		if err != nil {
 			helper.RespondWithError(w, http.StatusInternalServerError, "Failed to save image")
 			return
