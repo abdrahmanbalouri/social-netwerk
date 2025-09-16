@@ -48,11 +48,13 @@ func main() {
 	}
 
 	baseHandler := api.Routes(db)
-	hand := enableCORS(baseHandler)
+
+	// Wrap the API routes with CORS
+	handler := enableCORS(baseHandler)
 
 	server := &http.Server{
 		Addr:    ":8080",
-		Handler: hand,
+		Handler: handler,
 	}
 	log.Println("http://localhost:8080/")
 	err = server.ListenAndServe()
