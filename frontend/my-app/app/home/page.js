@@ -148,28 +148,29 @@ export default function Home() {
                   <div className="profile-picture">
                     <img src={post.profile_picture || '/avatar.png'} alt="User" />
                   </div>
-                  <div className="postimage">
-                    <img src={`../../../../../backend/${post.image_path}`}  />
-                  </div>
                   <div>
                     <span className="text-bold">{post.author}</span>
-                    <div className="post-title">
-                      {post.title}
-                    </div>
-
                     <div className="text-muted" style={{ fontSize: '0.85rem' }}>
                       {new Date(post.created_at).toLocaleString()}
                     </div>
                   </div>
                 </div>
-                <div className="post-content">
-                  {post.content}
+                
+                <div className="post-title">{post.title}</div>
+                
+                <div className="post-content">{post.content}</div>
+                
+                {post.image_path && (
+                  <div className="postimage">
+                    <img src={post.image_path} alt="Post content" />
+                  </div>
+                )}
+                
+                <div className="post-actions">
+                  <span>Like</span>
+                  <span>Comment</span>
+                  <span>Share</span>
                 </div>
-                {/* <div className="post-actions">
-              <span>Like</span>
-              <span>Comment</span>
-              <span>Share</span>
-            </div> */}
               </div>
             ))
           )}
