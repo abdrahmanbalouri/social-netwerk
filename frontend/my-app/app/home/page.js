@@ -72,8 +72,8 @@ export default function Home() {
         let res = await response.json()
 
         let data = await fetchPosts(res.post_id)
-          console.log(data,'-+565554+6');
-          
+        console.log(data, '-+565554+6');
+
 
         setPosts([data, ...posts])
 
@@ -121,7 +121,9 @@ export default function Home() {
             <i className="fa-solid fa-plus"></i>
           </button>
           <div className="profile-picture">
-            <img src="/avatar.png" alt="Profile" />
+            <a href="/profile">
+              <img src="/avatar.png" alt="Profile" />
+            </a>
           </div>
         </div>
       </nav>
@@ -129,12 +131,12 @@ export default function Home() {
       <main className="content">
         <aside className="sidebar">
           <ul>
-            <li>Home</li>
-            <li>Friends</li>
-            <li>Groups</li>
-            <li>Marketplace</li>
-            <li>Watch</li>
-            <li>Memories</li>
+            <li><a><i class="fa-solid fa-house"></i>Home</a></li>
+            <li><a><i class="fa-solid fa-user-group"></i>Friends</a></li>
+            <li><a><i class="fa-solid fa-users"></i>Groups</a></li>
+            <li><a><i class="fa-solid fa-gamepad"></i>games</a></li>
+            <li><a><i class="fa-solid fa-video"></i>reel</a></li>
+            <li><a><i class="fa-solid fa-clock"></i>Memories</a></li>
           </ul>
         </aside>
 
@@ -155,17 +157,17 @@ export default function Home() {
                     </div>
                   </div>
                 </div>
-                
+
                 <div className="post-title">{post.title}</div>
-                
+
                 <div className="post-content">{post.content}</div>
-                
+
                 {post.image_path && (
                   <div className="postimage">
                     <img src={post.image_path} alt="Post content" />
                   </div>
                 )}
-                
+
                 <div className="post-actions">
                   <span>Like</span>
                   <span>Comment</span>
