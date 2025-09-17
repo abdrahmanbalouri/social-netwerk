@@ -1,0 +1,50 @@
+package handlers
+
+import (
+	"fmt"
+	"net/http"
+
+	"social-network/internal/helper"
+	"social-network/internal/repository"
+	"social-network/internal/utils"
+)
+
+func GetUsersHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method != "GET" {
+		helper.RespondWithError(w, http.StatusMethodNotAllowed, "Method Not Allowed")
+		return
+	}
+	fmt.Println("3333")
+	userID, err := helper.AuthenticateUser(r)
+	if err != nil {
+		helper.RespondWithError(w, http.StatusUnauthorized, "Authentication required")
+		return
+	}
+	fmt.Println(userID)
+	rows, err := repository.Db.Query("SELECT id, nickname  FROM users")
+	if err != nil {
+		helper.RespondWithError(w, http.StatusInternalServerError, "Failed to fetch users")
+		return
+	}
+	defer rows.Close()
+
+	var users []struct {
+		utils.User // Embed models.User
+	}
+	for rows.Next() {
+		var user struct {
+			utils.User
+		}
+		if err := rows.Scan(&user.ID, &user.Nickname); err != nil {
+			helper.RespondWithError(w, http.StatusInternalServerError, "Failed to process users")
+			return
+		}
+		fmt.Println(userID, user.ID)
+		if  user.ID == userID {
+			continue
+		}
+		users = append(users, user)
+	}
+
+	helper.RespondWithJSON(w, http.StatusOK, users)
+}

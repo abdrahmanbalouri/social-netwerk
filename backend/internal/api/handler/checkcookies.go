@@ -18,7 +18,6 @@ func MeHandler(w http.ResponseWriter, r *http.Request) {
 	_, err = repository.Db.Query("SELECT user_id FROM sessions WHERE token=?", c.Value)
 
 	if err != nil {
-		fmt.Println("111111")
 		w.WriteHeader(http.StatusUnauthorized)
 		w.Write([]byte(`{"message":"unauthorized"}`))
 		return

@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"runtime"
 	"strings"
 
 	"social-network/internal/helper"
@@ -43,6 +44,7 @@ func Createpost(w http.ResponseWriter, r *http.Request) {
 	// }
 
 	var imagePath string
+	fmt.Println("Running on:", runtime.GOOS)
 
 	imageFile, _, err := r.FormFile("image")
 	if err == nil {
@@ -51,15 +53,18 @@ func Createpost(w http.ResponseWriter, r *http.Request) {
 		uploadDir := "../frontend/my-app/public/uploads"
 		err = os.MkdirAll(uploadDir, os.ModePerm)
 		if err != nil {
+
 			helper.RespondWithError(w, http.StatusInternalServerError, "Failed to create upload directory")
 			return
 		}
 
 		imagePath = fmt.Sprintf("uploads/%s.jpg", uuid.New().String()) // Keep the path relative for database storage
 
-		out, err := os.Create(filepath.Join("../../frontend/my-app/public", imagePath))
+		out, err := os.Create(filepath.Join("../frontend/my-app/public", imagePath))
+		fmt.Println(out)
 		if err != nil {
 			helper.RespondWithError(w, http.StatusInternalServerError, "Failed to save image")
+			fmt.Println(err)
 			return
 		}
 		defer out.Close()
@@ -74,8 +79,6 @@ func Createpost(w http.ResponseWriter, r *http.Request) {
 		imagePath = ""
 	}
 
-	fmt.Println(imagePath, "------")
-
 	postID := uuid.New().String()
 	_, err = repository.Db.Exec(`
         INSERT INTO posts (id, user_id, title, content, image_path)
@@ -83,7 +86,6 @@ func Createpost(w http.ResponseWriter, r *http.Request) {
 		postID, userID, title, content, imagePath,
 	)
 	if err != nil {
-		fmt.Println("2222")
 		helper.RespondWithError(w, http.StatusInternalServerError, "Failed to create post")
 		return
 	}

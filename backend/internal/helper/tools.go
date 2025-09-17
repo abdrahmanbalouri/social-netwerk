@@ -6,6 +6,8 @@ import (
 	"encoding/json"
 	"html"
 	"net/http"
+
+	"social-network/internal/repository"
 )
 
 func GenerateSessionID() string {
@@ -29,4 +31,25 @@ func RespondWithJSON(w http.ResponseWriter, code int, payload interface{}) {
 
 func Skip(str string) string {
 	return html.EscapeString(str)
+}
+
+func AuthenticateUser(r *http.Request) (int, error) {
+	cookie, err := r.Cookie("session")
+	if err != nil {
+		return 0, err
+	}
+
+	var userID int
+
+	err = repository.Db.QueryRow(`
+    SELECT u.id
+    FROM sessions s
+    JOIN users u ON s.user_id = u.id
+    WHERE s.token = ?
+`, cookie.Value).Scan(&userID)
+	if err != nil {
+		return 0, err
+	}
+
+	return userID, nil
 }
