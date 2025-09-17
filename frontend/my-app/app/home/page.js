@@ -2,11 +2,14 @@
 import './Home.css';
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-//import { vdd } from '../../../../../uploads/1686064761.jpg';
+import Navbar from '../../components/navbar';
+import LeftBar from '../../components/leftBar';
+import RightBar from '../../components/rightBar';
 
 export default function Home() {
   const router = useRouter();
 
+  const [showSidebar, setShowSidebar] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [posts, setPosts] = useState([]);
   const [title, setTitle] = useState("");
@@ -107,38 +110,14 @@ export default function Home() {
 
   return (
     <div>
-      <nav className="navbar">
-        <div className="Container">
-          <h2 className="log">social</h2>
-        </div>
-        <div className="search-bar">
-          <i className="fa-solid fa-magnifying-glass"></i>
-          <input type="search" placeholder="Search for someone" />
-        </div>
-        <div className="create">
-          <button className='btn' onClick={logout}>Logout</button>
-          <button className="btn btn-primary" onClick={() => setShowModal(true)}>
-            <i className="fa-solid fa-plus"></i>
-          </button>
-          <div className="profile-picture">
-            <a href="/profile">
-              <img src="/avatar.png" alt="Profile" />
-            </a>
-          </div>
-        </div>
-      </nav>
-
+      <Navbar 
+        onLogout={logout} 
+        onCreatePost={() => setShowModal(true)}
+        showSidebar={showSidebar}
+        onToggleSidebar={() => setShowSidebar(!showSidebar)}
+      />
       <main className="content">
-        <aside className="sidebar">
-          <ul>
-            <li><a><i class="fa-solid fa-house"></i>Home</a></li>
-            <li><a><i class="fa-solid fa-user-group"></i>Friends</a></li>
-            <li><a><i class="fa-solid fa-users"></i>Groups</a></li>
-            <li><a><i class="fa-solid fa-gamepad"></i>games</a></li>
-            <li><a><i class="fa-solid fa-video"></i>reel</a></li>
-            <li><a><i class="fa-solid fa-clock"></i>Memories</a></li>
-          </ul>
-        </aside>
+        <LeftBar showSidebar={showSidebar} />
 
         <section className="feed">
           {!posts ? (
@@ -178,16 +157,7 @@ export default function Home() {
           )}
         </section>
 
-        <aside className="right-panel">
-          <h3>Contacts</h3>
-          <ul>
-            <li>balouri</li>
-            <li>usra</li>
-            <li>ahmad</li>
-            <li>merwane</li>
-            <li>reda</li>
-          </ul>
-        </aside>
+        <RightBar />
       </main>
 
       {/* Modal */}
