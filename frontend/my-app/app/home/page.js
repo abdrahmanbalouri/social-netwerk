@@ -9,6 +9,7 @@ export default function Home() {
 
   const [showModal, setShowModal] = useState(false);
   const [posts, setPosts] = useState([]);
+  const [users, setusers] = useState([])
   const [title, setTitle] = useState("");
   const [image, setImage] = useState(null);
   const [content, setContent] = useState("");
@@ -40,7 +41,7 @@ export default function Home() {
           throw new Error("Failed to fetch posts");
         }
         const data = await res.json();
-        console.log(data, '-------------------++++++++++++++++++++++++++++++++++');
+
 
         setPosts(data);
       } catch (err) {
@@ -49,6 +50,30 @@ export default function Home() {
     }
 
     fetchInitialPosts();
+  }, []);
+  useEffect(() => {
+    async function fetchusers() {
+      try {
+        const res = await fetch("http://localhost:8080/api/GetUsersHandler", {
+          method: "GET",
+          credentials: "include",
+        });
+        console.log(res);
+
+        if (!res.ok) {
+          throw new Error("Failed to fetch posts");
+        }
+        const data = await res.json();
+        console.log(data);
+
+
+        setusers(data);
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    fetchusers();
   }, []);
 
   async function handleCreatePost(e) {
@@ -67,13 +92,15 @@ export default function Home() {
         })(),
       });
       if (!response.ok) {
-        throw new Error("Failed to create post");
+        console.log(response);
+
+        throw new Error('failed create post ');
       } else {
         let res = await response.json()
 
         let data = await fetchPosts(res.post_id)
-          console.log(data,'-+565554+6');
-          
+
+
 
         setPosts([data, ...posts])
 
@@ -81,6 +108,8 @@ export default function Home() {
       }
 
     } catch (err) {
+      //console.log(err);
+
     }
     setTitle("");
     setImage(null);
@@ -155,17 +184,17 @@ export default function Home() {
                     </div>
                   </div>
                 </div>
-                
+
                 <div className="post-title">{post.title}</div>
-                
+
                 <div className="post-content">{post.content}</div>
-                
+
                 {post.image_path && (
                   <div className="postimage">
                     <img src={post.image_path} alt="Post content" />
                   </div>
                 )}
-                
+
                 <div className="post-actions">
                   <span>Like</span>
                   <span>Comment</span>
@@ -175,17 +204,15 @@ export default function Home() {
             ))
           )}
         </section>
-
         <aside className="right-panel">
           <h3>Contacts</h3>
           <ul>
-            <li>balouri</li>
-            <li>usra</li>
-            <li>ahmad</li>
-            <li>merwane</li>
-            <li>reda</li>
+            {users.map((user) => (
+              <li key={user.id}>{user.nickname}</li>
+            ))}
           </ul>
         </aside>
+
       </main>
 
       {/* Modal */}

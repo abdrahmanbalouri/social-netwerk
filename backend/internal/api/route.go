@@ -23,6 +23,7 @@ func Routes(db *sql.DB) http.Handler {
 	mux.HandleFunc("/api/createpost", handlers.Createpost)
 	mux.HandleFunc("/api/Getpost/{id}", handlers.GetPostsHandler)
 	mux.HandleFunc("/api/Getallpost", handlers.AllpostsHandler)
+	mux.HandleFunc("/api/GetUsersHandler",handlers.GetUsersHandler)
 
 	return mux
 }
