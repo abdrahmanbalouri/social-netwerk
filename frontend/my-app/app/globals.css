@@ -15,3 +15,76 @@ html::-webkit-scrollbar {
   display: none; /* WebKit browsers */
 }
 
+.leftBar {
+  flex: 2;
+  position: sticky;
+  top: 70px;
+  height: calc(100vh - 70px);
+  overflow: scroll;
+  background-color: #fff; /* themed("bg") */
+  color: #333; /* themed("textColor") */
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .leftBar {
+    display: none;
+  }
+}
+
+/* Scrollbar */
+.leftBar::-webkit-scrollbar {
+  display: none;
+}
+
+.leftBar .container {
+  padding: 20px;
+}
+
+.leftBar .container hr {
+  margin: 20px 0px;
+  border: none;
+  height: 0.5px;
+  background-color: #ccc; /* themed("border") */
+}
+
+.leftBar .container .menu {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.leftBar .container .menu span {
+  font-size: 12px;
+}
+
+.leftBar .container .menu .user {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.leftBar .container .menu .user img {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.leftBar .container .menu .user span {
+  font-size: 14px;
+}
+
+.leftBar .container .menu .item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.leftBar .container .menu .item img {
+  width: 30px;
+}
+
+.leftBar .container .menu .item span {
+  font-size: 14px;
+}
