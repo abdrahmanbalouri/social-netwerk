@@ -2,9 +2,9 @@
 import './Home.css';
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import Navbar from '../../components/navbar';
-import LeftBar from '../../components/leftBar';
-import RightBar from '../../components/rightBar';
+import Navbar from '../../components/Navbar.js';
+import LeftBar from '../../components/LeftBar.js';
+import RightBar from '../../components/RightBar.js';
 
 export default function Home() {
   const router = useRouter();
