@@ -1,12 +1,19 @@
 "use client";
 import './Home.css';
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
-//import { vdd } from '../../../../../uploads/1686064761.jpg';
+import { useContext, useEffect, useState } from "react";
+import Navbar from '../../components/Navbar.js';
+import LeftBar from '../../components/LeftBar.js';
+import RightBar from '../../components/RightBar.js';
+import { useDarkMode } from '../../context/darkMod';
+import Stories from '../../components/stories.js';
+import Link from 'next/link.js';
 
 export default function Home() {
   const router = useRouter();
+  const { darkMode } = useDarkMode();
 
+  const [showSidebar, setShowSidebar] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [posts, setPosts] = useState([]);
   const [users, setusers] = useState([])
@@ -99,7 +106,7 @@ export default function Home() {
         let res = await response.json()
 
         let data = await fetchPosts(res.post_id)
-
+        console.log(data, '-+565554+6');
 
 
         setPosts([data, ...posts])
@@ -133,88 +140,64 @@ export default function Home() {
       console.error(err);
     }
   }
-
+  console.log(darkMode, '-----------------');
   return (
-    <div>
-      <nav className="navbar">
-        <div className="Container">
-          <h2 className="log">social</h2>
-        </div>
-        <div className="search-bar">
-          <i className="fa-solid fa-magnifying-glass"></i>
-          <input type="search" placeholder="Search for someone" />
-        </div>
-        <div className="create">
-          <button className='btn' onClick={logout}>Logout</button>
-          <button className="btn btn-primary" onClick={() => setShowModal(true)}>
-            <i className="fa-solid fa-plus"></i>
-          </button>
-          <div className="profile-picture">
-            <img src="/avatar.png" alt="Profile" />
-          </div>
-        </div>
-      </nav>
-
+    <div className={darkMode ? 'theme-dark' : 'theme-light'}>
+      <Navbar
+        onLogout={logout}
+        onCreatePost={() => setShowModal(true)}
+        showSidebar={showSidebar}
+        onToggleSidebar={() => setShowSidebar(!showSidebar)}
+      />
       <main className="content">
-        <aside className="sidebar">
-          <ul>
-            <li>Home</li>
-            <li>Friends</li>
-            <li>Groups</li>
-            <li>Marketplace</li>
-            <li>Watch</li>
-            <li>Memories</li>
-          </ul>
-        </aside>
+        <LeftBar showSidebar={showSidebar} />
 
         <section className="feed">
+          <Stories />
           {!posts ? (
             <p>No posts available</p>
           ) : (
             posts.map((post) => (
+
               <div key={post.id} className="post">
-                <div className="post-header">
-                  <div className="profile-picture">
-                    <img src={post.profile_picture || '/avatar.png'} alt="User" />
-                  </div>
-                  <div>
-                    <span className="text-bold">{post.author}</span>
-                    <div className="text-muted" style={{ fontSize: '0.85rem' }}>
-                      {new Date(post.created_at).toLocaleString()}
+                <div className="container">
+                  <div className="user">
+                    <div className="userInfo">
+                      <img src={post.profile_picture || '/avatar.png'} alt="user" />
+                      <div className="details">
+                        <Link href={`/profile/${post.user_id}`} style={{ textDecoration: "none", color: "inherit" }} >
+                          <span className="name">{post.author}</span>
+                        </Link>
+                        <span className="date"> {new Date(post.created_at).toLocaleString()}</span>
+                      </div>
                     </div>
                   </div>
-                </div>
-
-                <div className="post-title">{post.title}</div>
-
-                <div className="post-content">{post.content}</div>
-
-                {post.image_path && (
-                  <div className="postimage">
-                    <img src={post.image_path} alt="Post content" />
+                  <div className="content">
+                    <h3>{post.title}</h3>
+                    <p>{post.content}</p>
+                    {post.image_path && (
+                      <img src={post.image_path} alt="Post content" />
+                    )}
                   </div>
-                )}
+                  <div className="info">
+                    <div className="item">
+                      <i className="fa-regular fa-heart"></i>
+                      12 Likes
+                    </div>
+                    <div className="item">
+                      <i className="fa-solid fa-comment"></i>
+                      12 Comments
+                    </div>
 
-                <div className="post-actions">
-                  <span>Like</span>
-                  <span>Comment</span>
-                  <span>Share</span>
+                  </div>
                 </div>
               </div>
             ))
           )}
         </section>
-        <aside className="right-panel">
-          <h3>Contacts</h3>
-          <ul>
-            {users.map((user) => (
-              <li key={user.id}>{user.nickname}</li>
-            ))}
-          </ul>
-        </aside>
 
+        <RightBar />
       </main>
-
       {/* Modal */}
       {showModal && (
         <div className="modal-overlay">

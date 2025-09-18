@@ -1,17 +1,466 @@
-
 /* Global Reset and Base Styles */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
+
 /* Hide scrollbar for all browsers */
 html {
-  scrollbar-width: none; /* Firefox */
-  -ms-overflow-style: none; /* Internet Explorer 10+ */
+  scrollbar-width: none;
+  /* Firefox */
+  -ms-overflow-style: none;
+  /* Internet Explorer 10+ */
 }
 
 html::-webkit-scrollbar {
-  display: none; /* WebKit browsers */
+  display: none;
+  /* WebKit browsers */
 }
 
+/*nav bar*/
+
+.navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 20px;
+  height: 50px;
+  border-bottom: 1px solid #ccc;
+  position: sticky;
+  top: 0;
+  background-color: #fff;
+  color: #333;
+  z-index: 999;
+}
+
+.navbar .left {
+  display: flex;
+  align-items: center;
+  gap: 30px;
+}
+
+.navbar .left span {
+  font-weight: bold;
+  font-size: 20px;
+  color: #0070f3;
+}
+
+.navbar .left .search {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 5px;
+}
+
+.navbar .left .search input {
+  border: none;
+  width: 500px;
+  background-color: transparent;
+  color: #333;
+}
+
+/* Tablet */
+@media (max-width: 1024px) {
+  .navbar .left .search input {
+    width: 200px;
+  }
+
+  .navbar .right .user {
+    display: none;
+  }
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .navbar .left .search input {
+    display: none;
+  }
+
+  .navbar .right {
+    display: none;
+  }
+}
+
+.navbar .right {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.navbar .right .user {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 500;
+}
+
+.navbar .right .user img {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+
+/*left bar*/
+
+
+.leftBar {
+  flex: 2;
+  position: sticky;
+  top: 50px;
+  height: calc(100vh - 90px);
+  overflow: scroll;
+  background-color: #fff;
+  color: #333;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .leftBar {
+    display: none;
+  }
+}
+
+/* Scrollbar */
+.leftBar::-webkit-scrollbar {
+  display: none;
+}
+
+.leftBar .container {
+  padding: 20px;
+}
+
+.leftBar .container hr {
+  margin: 20px 0px;
+  border: none;
+  height: 0.5px;
+  background-color: #ccc;
+  /* themed("border") */
+}
+
+.leftBar .container .menu {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.leftBar .container .menu span {
+  font-size: 12px;
+}
+
+.leftBar .container .menu .user {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.leftBar .container .menu .user img {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.leftBar .container .menu .user span {
+  font-size: 14px;
+}
+
+.leftBar .container .menu .item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.leftBar .container .menu .item img {
+  width: 30px;
+}
+
+.leftBar .container .menu .item span {
+  font-size: 14px;
+}
+
+
+/*rightBar*/
+.rightBar {
+  flex: 3;
+  position: sticky;
+  top: 70px;
+  height: calc(100vh - 70px);
+  overflow: scroll;
+  background-color: var(--bgSoft);
+}
+
+.rightBar::-webkit-scrollbar {
+  display: none;
+}
+
+.rightBar .container {
+  padding: 20px;
+}
+
+.rightBar .container .item {
+  -webkit-box-shadow: 0px 0px 15px 1px rgba(0, 0, 0, 0.09);
+  -moz-box-shadow: 0px 0px 15px 1px rgba(0, 0, 0, 0.09);
+  box-shadow: 0px 0px 15px 1px rgba(0, 0, 0, 0.09);
+  padding: 20px;
+  margin-bottom: 20px;
+  background-color: var(--bg);
+}
+
+.rightBar .container .item span {
+  color: gray;
+}
+
+.rightBar .container .item .user {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 20px 0px;
+}
+
+.rightBar .container .item .user .userInfo {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  position: relative;
+}
+
+.rightBar .container .item .user .userInfo img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.rightBar .container .item .user .userInfo .online {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background-color: limegreen;
+  position: absolute;
+  top: 0;
+  left: 30px;
+}
+
+.rightBar .container .item .user .userInfo p {
+  color: var(--textColorSoft);
+}
+
+.rightBar .container .item .user .userInfo span {
+  font-weight: 500;
+  color: var(--textColor);
+}
+
+.rightBar .container .item .user .buttons {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.rightBar .container .item .user .buttons button {
+  border: none;
+  padding: 5px;
+  color: white;
+  cursor: pointer;
+}
+
+.rightBar .container .item .user .buttons button:first-child {
+  background-color: #5271ff;
+}
+
+.rightBar .container .item .user .buttons button:last-child {
+  background-color: #f0544f;
+}
+
+@media (max-width: 768px) {
+  .rightBar {
+    display: none;
+  }
+}
+
+/* 🎨 Themes */
+.theme-light .rightBar {
+  --textColor: #000;
+  --bg: white;
+  --logo: darkblue;
+  --bgSoft: #f6f3f3;
+  --textColorSoft: #555;
+  --border: lightgray;
+}
+
+.theme-dark .rightBar {
+  --textColor: whitesmoke;
+  --bg: #222;
+  --logo: white;
+  --bgSoft: #333;
+  --textColorSoft: lightgray;
+  --border: #444;
+}
+
+/* 📌 RightBar Base */
+.rightBar {
+  flex: 3;
+  position: sticky;
+  top: 70px;
+  height: calc(100vh - 70px);
+  overflow: scroll;
+  background-color: var(--bgSoft);
+}
+
+.rightBar::-webkit-scrollbar {
+  display: none;
+}
+
+/* 📦 Container */
+.rightBar .container {
+  padding: 20px;
+}
+
+.rightBar .container .item {
+  -webkit-box-shadow: 0px 0px 15px 1px rgba(0, 0, 0, 0.09);
+  -moz-box-shadow: 0px 0px 15px 1px rgba(0, 0, 0, 0.09);
+  box-shadow: 0px 0px 15px 1px rgba(0, 0, 0, 0.09);
+  padding: 20px;
+  margin-bottom: 20px;
+  background-color: var(--bg);
+}
+
+.rightBar .container .item span {
+  color: gray;
+}
+
+/* 👤 User */
+.rightBar .container .item .user {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 20px 0px;
+}
+
+.rightBar .container .item .user .userInfo {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  position: relative;
+}
+
+.rightBar .container .item .user .userInfo img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.rightBar .container .item .user .userInfo .online {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background-color: limegreen;
+  position: absolute;
+  top: 0;
+  left: 30px;
+}
+
+.rightBar .container .item .user .userInfo p {
+  color: var(--textColorSoft);
+}
+
+.rightBar .container .item .user .userInfo span {
+  font-weight: 500;
+  color: var(--textColor);
+}
+
+/* 🔘 Buttons */
+.rightBar .container .item .user .buttons {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.rightBar .container .item .user .buttons button {
+  border: none;
+  padding: 5px;
+  color: white;
+  cursor: pointer;
+}
+
+.rightBar .container .item .user .buttons button:first-child {
+  background-color: #5271ff;
+}
+
+.rightBar .container .item .user .buttons button:last-child {
+  background-color: #f0544f;
+}
+
+/* 📱 Responsive */
+@media (max-width: 480px) {
+  .rightBar {
+    display: none;
+  }
+}
+
+@media (max-width: 960px) {
+  .rightBar {
+    display: none;
+  }
+}
+
+/* Theme variables */
+:root {
+  --bg-light: #fff;
+  --text-light: #333;
+  --border-light: #ccc;
+  --bg-soft-light: #f6f3f3;
+  --logo-light: #0070f3;
+
+  --bg-dark: #222;
+  --text-dark: #fff;
+  --border-dark: #444;
+  --bg-soft-dark: #333;
+  --logo-dark: #fff;
+}
+
+/* Theme Styles */
+.theme-light .navbar {
+  background-color: var(--bg-light);
+  color: var(--text-light);
+  border-bottom: 1px solid var(--border-light);
+}
+
+.theme-dark .navbar {
+  background-color: var(--bg-dark);
+  color: var(--text-dark);
+  border-bottom: 1px solid var(--border-dark);
+}
+
+.theme-light .navbar .left span {
+  color: var(--logo-light);
+}
+
+.theme-dark .navbar .left span {
+  color: var(--logo-dark);
+}
+
+.theme-light{
+  background-color: var(--bg-soft-light);
+}
+.theme-light .leftBar,
+.theme-light .rightBar {
+  background-color: var(--bg-light);
+  color: var(--text-light);
+}
+
+.theme-dark,
+.theme-dark .rightBar {
+  background-color: var(--border-dark);
+  color: var(--text-dark);
+}
+
+.theme-dark .leftBar {
+  background-color: var(--bg-dark);
+  color: var(--text-dark);
+}
