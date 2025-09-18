@@ -1,13 +1,15 @@
 "use client";
 import './Home.css';
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import Navbar from '../../components/Navbar.js';
 import LeftBar from '../../components/LeftBar.js';
 import RightBar from '../../components/RightBar.js';
+import { useDarkMode } from '../../context/darkMod';
 
 export default function Home() {
   const router = useRouter();
+  const { darkMode } = useDarkMode();
 
   const [showSidebar, setShowSidebar] = useState(true);
   const [showModal, setShowModal] = useState(false);
@@ -107,9 +109,9 @@ export default function Home() {
       console.error(err);
     }
   }
-
+  console.log(darkMode, '-----------------');
   return (
-    <div>
+    <div className={darkMode ? 'theme-dark' : 'theme-light'}>
       <Navbar 
         onLogout={logout} 
         onCreatePost={() => setShowModal(true)}
@@ -120,41 +122,41 @@ export default function Home() {
         <LeftBar showSidebar={showSidebar} />
 
         <section className="feed">
-          {!posts ? (
+          {/* {!posts ? (
             <p>No posts available</p>
-          ) : (
-            posts.map((post) => (
-              <div key={post.id} className="post">
-                <div className="post-header">
-                  <div className="profile-picture">
-                    <img src={post.profile_picture || '/avatar.png'} alt="User" />
-                  </div>
-                  <div>
-                    <span className="text-bold">{post.author}</span>
-                    <div className="text-muted" style={{ fontSize: '0.85rem' }}>
-                      {new Date(post.created_at).toLocaleString()}
-                    </div>
-                  </div>
-                </div>
+          // ) : (
+          //   // posts.map((post) => (
+          //   //   <div key={post.id} className="post">
+          //   //     <div className="post-header">
+          //   //       <div className="profile-picture">
+          //   //         <img src={post.profile_picture || '/avatar.png'} alt="User" />
+          //   //       </div>
+          //   //       <div>
+          //   //         <span className="text-bold">{post.author}</span>
+          //   //         <div className="text-muted" style={{ fontSize: '0.85rem' }}>
+          //   //           {new Date(post.created_at).toLocaleString()}
+          //   //         </div>
+          //   //       </div>
+          //   //     </div>
 
-                <div className="post-title">{post.title}</div>
+          //   //     <div className="post-title">{post.title}</div>
 
-                <div className="post-content">{post.content}</div>
+          //   //     <div className="post-content">{post.content}</div>
 
-                {post.image_path && (
-                  <div className="postimage">
-                    <img src={post.image_path} alt="Post content" />
-                  </div>
-                )}
+          //   //     {post.image_path && (
+          //   //       <div className="postimage">
+          //   //         <img src={post.image_path} alt="Post content" />
+          //   //       </div>
+          //   //     )}
 
-                <div className="post-actions">
-                  <span>Like</span>
-                  <span>Comment</span>
-                  <span>Share</span>
-                </div>
-              </div>
-            ))
-          )}
+          //   //     <div className="post-actions">
+          //   //       <span>Like</span>
+          //   //       <span>Comment</span>
+          //   //       <span>Share</span>
+          //   //     </div>
+          //   //   </div>
+          //   // ))
+          // )} */}
         </section>
 
         <RightBar />
