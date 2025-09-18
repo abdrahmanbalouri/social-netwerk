@@ -1,6 +1,6 @@
 "use client";
 import Providers from "./providers";
-import "../app/home/Home.css"; // ...existing global imports if needed
+import "../app/home/Home.css"; 
 
 export const metadata = {
   title: "Social Network",
