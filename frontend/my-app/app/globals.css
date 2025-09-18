@@ -445,12 +445,22 @@ html::-webkit-scrollbar {
   color: var(--logo-dark);
 }
 
-.theme-light .leftBar, .theme-light .rightBar {
+.theme-light{
+  background-color: var(--bg-soft-light);
+}
+.theme-light .leftBar,
+.theme-light .rightBar {
   background-color: var(--bg-light);
   color: var(--text-light);
 }
 
-.theme-dark .leftBar, .theme-dark .rightBar {
+.theme-dark,
+.theme-dark .rightBar {
+  background-color: var(--border-dark);
+  color: var(--text-dark);
+}
+
+.theme-dark .leftBar {
   background-color: var(--bg-dark);
   color: var(--text-dark);
 }

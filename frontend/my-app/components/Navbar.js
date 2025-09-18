@@ -23,9 +23,9 @@ export default function Navbar({ onLogout, onCreatePost, showSidebar, onToggleSi
       </div>
       <div className="right">
         <i className="fa-solid fa-bell"></i>
+        <i className="fa-solid fa-plus" onClick={onCreatePost}></i>
         <div className="user" onClick={() => router.push("/profile")}>
           <img src="/avatar.png" alt="Profile" />
-          <span>John Doe</span>
         </div>
       </div>
     </div>
