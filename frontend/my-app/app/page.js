@@ -37,6 +37,6 @@ export default function Profile() {
   return (
     <div>
       <h1>Loading...</h1>
-     </div>
+    </div>
   );
 }
