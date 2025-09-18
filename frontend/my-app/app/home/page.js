@@ -6,6 +6,8 @@ import Navbar from '../../components/Navbar.js';
 import LeftBar from '../../components/LeftBar.js';
 import RightBar from '../../components/RightBar.js';
 import { useDarkMode } from '../../context/darkMod';
+import Stories from '../../components/stories.js';
+import Link from 'next/link.js';
 
 export default function Home() {
   const router = useRouter();
@@ -112,8 +114,8 @@ export default function Home() {
   console.log(darkMode, '-----------------');
   return (
     <div className={darkMode ? 'theme-dark' : 'theme-light'}>
-      <Navbar 
-        onLogout={logout} 
+      <Navbar
+        onLogout={logout}
         onCreatePost={() => setShowModal(true)}
         showSidebar={showSidebar}
         onToggleSidebar={() => setShowSidebar(!showSidebar)}
@@ -122,41 +124,47 @@ export default function Home() {
         <LeftBar showSidebar={showSidebar} />
 
         <section className="feed">
-          {/* {!posts ? (
+          <Stories />
+          {!posts ? (
             <p>No posts available</p>
-          // ) : (
-          //   // posts.map((post) => (
-          //   //   <div key={post.id} className="post">
-          //   //     <div className="post-header">
-          //   //       <div className="profile-picture">
-          //   //         <img src={post.profile_picture || '/avatar.png'} alt="User" />
-          //   //       </div>
-          //   //       <div>
-          //   //         <span className="text-bold">{post.author}</span>
-          //   //         <div className="text-muted" style={{ fontSize: '0.85rem' }}>
-          //   //           {new Date(post.created_at).toLocaleString()}
-          //   //         </div>
-          //   //       </div>
-          //   //     </div>
-
-          //   //     <div className="post-title">{post.title}</div>
-
-          //   //     <div className="post-content">{post.content}</div>
-
-          //   //     {post.image_path && (
-          //   //       <div className="postimage">
-          //   //         <img src={post.image_path} alt="Post content" />
-          //   //       </div>
-          //   //     )}
-
-          //   //     <div className="post-actions">
-          //   //       <span>Like</span>
-          //   //       <span>Comment</span>
-          //   //       <span>Share</span>
-          //   //     </div>
-          //   //   </div>
-          //   // ))
-          // )} */}
+          ) : (
+            posts.map((post) => (
+             
+              <div key={post.id} className="post">
+                <div className="container">
+                  <div className="user">
+                    <div className="userInfo">
+                      <img src={post.profile_picture || '/avatar.png'} alt="user" />
+                      <div className="details">
+                        <Link href={`/profile/${post.user_id}`} style={{ textDecoration: "none", color: "inherit" }} >
+                          <span className="name">{post.author}</span>
+                        </Link>
+                        <span className="date"> {new Date(post.created_at).toLocaleString()}</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="content">
+                    <h3>{post.title}</h3>
+                    <p>{post.content}</p>
+                    {post.image_path && (
+                      <img src={post.image_path} alt="Post content" />
+                    )}
+                  </div>
+                  <div className="info">
+                    <div className="item">
+                    <i className="fa-regular fa-heart"></i>
+                      12 Likes
+                    </div>
+                    <div className="item">
+                      <i className="fa-solid fa-comment"></i>
+                      12 Comments
+                    </div>
+                    
+                  </div>
+                </div>
+              </div>
+            ))
+          )}
         </section>
 
         <RightBar />
