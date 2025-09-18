@@ -1,7 +1,7 @@
 "use client";
 import './Home.css';
 import { useRouter } from "next/navigation";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState, useRef } from "react";
 import Navbar from '../../components/Navbar.js';
 import LeftBar from '../../components/LeftBar.js';
 import RightBar from '../../components/RightBar.js';
@@ -20,6 +20,8 @@ export default function Home() {
   const [title, setTitle] = useState("");
   const [image, setImage] = useState(null);
   const [content, setContent] = useState("");
+  const modalRef = useRef(null);
+  const previousActiveElementRef = useRef(null);
 
   async function logout(e) {
     e.preventDefault();
@@ -82,6 +84,57 @@ export default function Home() {
 
     fetchusers();
   }, []);
+
+  // trap focus and handle ESC when modal is open
+  useEffect(() => {
+    if (!showModal) {
+      // restore body scrolling and focus
+      document.body.style.overflow = '';
+      if (previousActiveElementRef.current) previousActiveElementRef.current.focus();
+      return;
+    }
+
+    previousActiveElementRef.current = document.activeElement;
+    document.body.style.overflow = 'hidden';
+
+    const modal = modalRef.current;
+    if (modal) {
+      // focus first focusable element
+      const focusable = modal.querySelectorAll('a, button, input, textarea, select, [tabindex]:not([tabindex="-1"])');
+      if (focusable.length) focusable[0].focus();
+    }
+
+    function onKeyDown(e) {
+      if (e.key === 'Escape') {
+        setShowModal(false);
+      }
+      if (e.key === 'Tab') {
+        // simple focus trap
+        const focusable = modal ? Array.from(modal.querySelectorAll('a, button, input, textarea, select, [tabindex]:not([tabindex="-1"])')).filter(el => !el.hasAttribute('disabled')) : [];
+        if (focusable.length === 0) return;
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+        if (e.shiftKey) {
+          if (document.activeElement === first) {
+            e.preventDefault();
+            last.focus();
+          }
+        } else {
+          if (document.activeElement === last) {
+            e.preventDefault();
+            first.focus();
+          }
+        }
+      }
+    }
+
+    window.addEventListener('keydown', onKeyDown);
+    return () => {
+      window.removeEventListener('keydown', onKeyDown);
+      document.body.style.overflow = '';
+      if (previousActiveElementRef.current) previousActiveElementRef.current.focus();
+    };
+  }, [showModal]);
 
   async function handleCreatePost(e) {
     e.preventDefault();
@@ -200,9 +253,10 @@ export default function Home() {
       </main>
       {/* Modal */}
       {showModal && (
-        <div className="modal-overlay">
-          <div className="modal-content">
-            <h3>Create a Post</h3>
+        <div className={`modal-overlay ${showModal ? 'is-open' : ''}`} onMouseDown={(e) => { if (e.target === e.currentTarget) setShowModal(false); }}>
+          <div ref={modalRef} role="dialog" aria-modal="true" aria-labelledby="create-post-title" className="modal-content" onMouseDown={(e) => e.stopPropagation()}>
+            <button className="modal-close" aria-label="Close modal" onClick={() => setShowModal(false)}>✕</button>
+            <h3 id="create-post-title">Create a Post</h3>
             <form onSubmit={handleCreatePost}>
               <input
                 type="text"
