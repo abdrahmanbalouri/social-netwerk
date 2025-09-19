@@ -1,4 +1,3 @@
--- +migrate Up
 CREATE TABLE IF NOT EXISTS posts (
     id TEXT PRIMARY KEY,
     user_id INTEGER NOT NULL,
@@ -7,8 +6,4 @@ CREATE TABLE IF NOT EXISTS posts (
     image_path TEXT,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
-
 );
-
--- +migrate Down
-DROP TABLE IF EXISTS posts;
