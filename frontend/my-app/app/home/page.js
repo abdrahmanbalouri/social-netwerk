@@ -14,6 +14,7 @@ export default function Home() {
   const { darkMode } = useDarkMode();
 
   const [showSidebar, setShowSidebar] = useState(true);
+  const [showComments, setShowComments] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [posts, setPosts] = useState([]);
   const [users, setusers] = useState([])
@@ -21,7 +22,8 @@ export default function Home() {
   const [image, setImage] = useState(null);
   const [content, setContent] = useState("");
   const modalRef = useRef(null);
-  const previousActiveElementRef = useRef(null);
+  // const previousActiveElementRef = useRef(null);
+
 
   async function logout(e) {
     e.preventDefault();
@@ -172,7 +174,31 @@ export default function Home() {
     setContent("");
     setShowModal(false);
   }
+  async function Getcommnets(postid) {
 
+    try {
+      const res = await fetch(`http://localhost:8080/api/Getcomments/${postid}`, {
+        method: "GET",
+        credentials: "include",
+      });
+      if (!res.ok) {
+        throw new Error("Failed to fetch posts");
+      }
+
+      const data = await res.json();
+      console.log(data);
+      setShowComments(true)
+      console.log(data);
+
+      return data;
+
+    } catch (err) {
+
+
+
+    }
+
+  }
   async function fetchPosts(postID) {
     try {
       const res = await fetch(`http://localhost:8080/api/Getpost/${postID}`, {
@@ -233,7 +259,7 @@ export default function Home() {
                       12 Likes
                     </div>
 
-                    <div className="item" onClick={handleCcomments(post.id)}>
+                    <div className="item" onClick={() => Getcommnets(post.id)}>
                       <i className="fa-solid fa-comment"></i>
                       12 Comments
                     </div>
@@ -247,7 +273,6 @@ export default function Home() {
 
         <RightBar />
       </main>
-      {/* Modal */}
       {showModal && (
         <div className={`modal-overlay ${showModal ? 'is-open' : ''}`} onMouseDown={(e) => { if (e.target === e.currentTarget) setShowModal(false); }}>
           <div ref={modalRef} role="dialog" aria-modal="true" aria-labelledby="create-post-title" className="modal-content" onMouseDown={(e) => e.stopPropagation()}>
@@ -283,6 +308,27 @@ export default function Home() {
           </div>
         </div>
       )}
-    </div>
+      {showComments && (
+        <div className={`modal-overlay ${showComments ? 'is-open' : ''}`} onMouseDown={(e) => { if (e.target === e.currentTarget) setShowComments(false); }}>
+          <div ref={modalRef} role="dialog" aria-modal="true" aria-labelledby="create-post-title" className="modal-content" onMouseDown={(e) => e.stopPropagation()}>
+            <button className="modal-close" aria-label="Close modal" onClick={() => setShowComments(false)}>✕</button>
+            <h3 id="create-post-title">Comments</h3>
+            <div className="comments-section">
+              <div id="comment-error" class="error2"></div>
+              <span id="popup-close" class="popup-close">&times;</span>
+              <h2 id="popup-post-title" class="text-xl font-bold mb-4">Post Title</h2>
+              <div id="popup-comments-container" class="comments-container mb-4"></div>
+              <form id="popup-comment-form">
+                <div class="form-group">
+                  <textarea id="popup-comment-content" class="w-full p-2 border rounded mb-2" placeholder="Write a comment..." required></textarea>
+                </div>
+                <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Post Comment</button>
+              </form>
+          </div>
+        </div>
+        </div>
+  )
+}
+    </div >
   );
 }
