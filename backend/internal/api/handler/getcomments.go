@@ -1,0 +1,55 @@
+package handlers
+
+import (
+	"net/http"
+	"time"
+
+	//"social-network/internal/database"
+	"social-network/internal/helper"
+	"social-network/internal/repository"
+)
+
+func GetCommentsHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method != "GET" {
+		helper.RespondWithError(w, http.StatusMethodNotAllowed, "Method Not Allowed")
+		return
+	}
+
+	postID := r.URL.Query().Get("post_id")
+	if postID == "" {
+		helper.RespondWithError(w, http.StatusBadRequest, "Post ID required")
+		return
+	}
+
+	rows, err := repository.Db.Query(`
+        SELECT c.id, c.content, c.created_at, u.nickname
+        FROM comments c
+        JOIN users u ON c.user_id = u.id
+        WHERE c.post_id = ?
+        ORDER BY c.created_at ASC`, postID)
+	if err != nil {
+		helper.RespondWithError(w, http.StatusInternalServerError, "Failed to fetch comments")
+		return
+	}
+	defer rows.Close()
+
+	type Comment struct {
+		ID        string    `json:"id"`
+		Content   string    `json:"content"`
+		CreatedAt time.Time `json:"created_at"`
+		Author    string    `json:"author"`
+	}
+
+	var comments []Comment
+	for rows.Next() {
+		var comment Comment
+		err := rows.Scan(&comment.ID, &comment.Content, &comment.CreatedAt, &comment.Author)
+		if err != nil {
+			helper.RespondWithError(w, http.StatusInternalServerError, "Failed to process comments")
+			return
+		}
+		comments = append(comments, comment)
+	}
+
+	helper.RespondWithJSON(w, http.StatusOK, comments)
+}

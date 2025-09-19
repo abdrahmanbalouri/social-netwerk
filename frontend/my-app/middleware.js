@@ -5,7 +5,7 @@ export function middleware(req) {
 
   const hasSession = req.cookies.get("session")?.value;
 
-  const protectedPaths = ["/dashboard", "/profile", "/home"];
+  const protectedPaths = ["/profile", "/home"];
 
   if (!hasSession && protectedPaths.some(path => url.pathname.startsWith(path))) {
     url.pathname = "/login";
@@ -17,5 +17,5 @@ export function middleware(req) {
 
 // Matcher li ghadi tapply middleware 3la had paths
 export const config = {
-  matcher: ["/dashboard/:path*", "/profile/:path*", "/home/:path*"],
+  matcher: ["/profile/:path*", "/home/:path*"],
 };

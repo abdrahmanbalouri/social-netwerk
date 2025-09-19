@@ -86,57 +86,59 @@ export default function Home() {
   }, []);
 
   // trap focus and handle ESC when modal is open
-  useEffect(() => {
-    if (!showModal) {
-      // restore body scrolling and focus
-      document.body.style.overflow = '';
-      if (previousActiveElementRef.current) previousActiveElementRef.current.focus();
-      return;
-    }
+  // useEffect(() => {
+  //   if (!showModal) {
+  //     // restore body scrolling and focus
+  //     document.body.style.overflow = '';
+  //     if (previousActiveElementRef.current) previousActiveElementRef.current.focus();
+  //     return;
+  //   }
 
-    previousActiveElementRef.current = document.activeElement;
-    document.body.style.overflow = 'hidden';
+  //   previousActiveElementRef.current = document.activeElement;
+  //   document.body.style.overflow = 'hidden';
 
-    const modal = modalRef.current;
-    if (modal) {
-      // focus first focusable element
-      const focusable = modal.querySelectorAll('a, button, input, textarea, select, [tabindex]:not([tabindex="-1"])');
-      if (focusable.length) focusable[0].focus();
-    }
+  //   const modal = modalRef.current;
+  //   if (modal) {
+  //     // focus first focusable element
+  //     const focusable = modal.querySelectorAll('a, button, input, textarea, select, [tabindex]:not([tabindex="-1"])');
+  //     if (focusable.length) focusable[0].focus();
+  //   }
 
-    function onKeyDown(e) {
-      if (e.key === 'Escape') {
-        setShowModal(false);
-      }
-      if (e.key === 'Tab') {
-        // simple focus trap
-        const focusable = modal ? Array.from(modal.querySelectorAll('a, button, input, textarea, select, [tabindex]:not([tabindex="-1"])')).filter(el => !el.hasAttribute('disabled')) : [];
-        if (focusable.length === 0) return;
-        const first = focusable[0];
-        const last = focusable[focusable.length - 1];
-        if (e.shiftKey) {
-          if (document.activeElement === first) {
-            e.preventDefault();
-            last.focus();
-          }
-        } else {
-          if (document.activeElement === last) {
-            e.preventDefault();
-            first.focus();
-          }
-        }
-      }
-    }
+  //   function onKeyDown(e) {
+  //     if (e.key === 'Escape') {
+  //       setShowModal(false);
+  //     }
+  //     if (e.key === 'Tab') {
+  //       // simple focus trap
+  //       const focusable = modal ? Array.from(modal.querySelectorAll('a, button, input, textarea, select, [tabindex]:not([tabindex="-1"])')).filter(el => !el.hasAttribute('disabled')) : [];
+  //       if (focusable.length === 0) return;
+  //       const first = focusable[0];
+  //       const last = focusable[focusable.length - 1];
+  //       if (e.shiftKey) {
+  //         if (document.activeElement === first) {
+  //           e.preventDefault();
+  //           last.focus();
+  //         }
+  //       } else {
+  //         if (document.activeElement === last) {
+  //           e.preventDefault();
+  //           first.focus();
+  //         }
+  //       }
+  //     }
+  //   }
 
-    window.addEventListener('keydown', onKeyDown);
-    return () => {
-      window.removeEventListener('keydown', onKeyDown);
-      document.body.style.overflow = '';
-      if (previousActiveElementRef.current) previousActiveElementRef.current.focus();
-    };
-  }, [showModal]);
+  //   window.addEventListener('keydown', onKeyDown);
+  //   return () => {
+  //     window.removeEventListener('keydown', onKeyDown);
+  //     document.body.style.overflow = '';
+  //     if (previousActiveElementRef.current) previousActiveElementRef.current.focus();
+  //   };
+  // }, [showModal]);
 
   async function handleCreatePost(e) {
+    console.log(222222);
+
     e.preventDefault();
 
     try {
@@ -157,14 +159,8 @@ export default function Home() {
         throw new Error('failed create post ');
       } else {
         let res = await response.json()
-
         let data = await fetchPosts(res.post_id)
-        console.log(data, '-+565554+6');
-
-
         setPosts([data, ...posts])
-
-
       }
 
     } catch (err) {
@@ -193,7 +189,6 @@ export default function Home() {
       console.error(err);
     }
   }
-  console.log(darkMode, '-----------------');
   return (
     <div className={darkMode ? 'theme-dark' : 'theme-light'}>
       <Navbar
@@ -226,7 +221,7 @@ export default function Home() {
                     </div>
                   </div>
                   <div className="content">
-                    <h3><p style={{color:"#5271ff"}}> {post.title}</p>{post.content}</h3>
+                    <h3><p style={{ color: "#5271ff" }}> {post.title}</p>{post.content}</h3>
 
                     {post.image_path && (
                       <img src={post.image_path} alt="Post content" />
@@ -237,7 +232,8 @@ export default function Home() {
                       <i className="fa-regular fa-heart"></i>
                       12 Likes
                     </div>
-                    <div className="item">
+
+                    <div className="item" onClick={handleCcomments(post.id)}>
                       <i className="fa-solid fa-comment"></i>
                       12 Comments
                     </div>
