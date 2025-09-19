@@ -44,7 +44,7 @@ export default function Profile() {
               className="cover"
             />
             <img
-              src="https://images.pexels.com/photos/14028501/pexels-photo-14028501.jpeg?auto=compress&cs=tinysrgb&w=1600&lazy=load"
+              src="avatar.png"
               alt=""
               className="profilePic"
             />
@@ -53,7 +53,7 @@ export default function Profile() {
           <div className="profileContainer">
             <div className="uInfo">
               <div className="center">
-                <span>Jane Doe</span>
+                <span>user name</span>
                 <div className="info">
                   <div className="item">
                     <span>about</span>

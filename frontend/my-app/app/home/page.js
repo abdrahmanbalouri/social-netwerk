@@ -226,8 +226,8 @@ export default function Home() {
                     </div>
                   </div>
                   <div className="content">
-                    <h3>{post.title}</h3>
-                    <p>{post.content}</p>
+                    <h3><p style={{color:"#5271ff"}}> {post.title}</p>{post.content}</h3>
+
                     {post.image_path && (
                       <img src={post.image_path} alt="Post content" />
                     )}
