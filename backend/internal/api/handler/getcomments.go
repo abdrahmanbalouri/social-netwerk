@@ -1,7 +1,9 @@
 package handlers
 
 import (
+	"fmt"
 	"net/http"
+	"strings"
 	"time"
 
 	//"social-network/internal/database"
@@ -15,11 +17,14 @@ func GetCommentsHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	postID := r.URL.Query().Get("post_id")
-	if postID == "" {
-		helper.RespondWithError(w, http.StatusBadRequest, "Post ID required")
+	parts := strings.Split(r.URL.Path, "/")
+	if len(parts) < 4 {
+		helper.RespondWithError(w, http.StatusNotFound, "Post not found")
 		return
 	}
+
+	postID := parts[3]
+	fmt.Println(postID)
 
 	rows, err := repository.Db.Query(`
         SELECT c.id, c.content, c.created_at, u.nickname
