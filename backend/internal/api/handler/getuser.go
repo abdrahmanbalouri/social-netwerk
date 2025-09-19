@@ -28,7 +28,7 @@ func GetUsersHandler(w http.ResponseWriter, r *http.Request) {
 	defer rows.Close()
 
 	var users []struct {
-		utils.User // Embed models.User
+		utils.User 
 	}
 	for rows.Next() {
 		var user struct {
