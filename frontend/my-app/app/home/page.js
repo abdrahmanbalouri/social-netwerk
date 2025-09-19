@@ -30,6 +30,8 @@ export default function Home() {
 
 
   async function logout(e) {
+    console.log(222);
+    
     e.preventDefault();
     const res = await fetch("http://localhost:8080/api/logout", {
       method: "POST",
