@@ -13,6 +13,7 @@ export default function RightBar() {
         });
         console.log(res);
 
+
         if (!res.ok) {
           throw new Error("Failed to fetch posts");
         }
@@ -64,19 +65,23 @@ export default function RightBar() {
 
         <div className="item">
           <span>Online Friends</span>
-          {users.map((user) => (
-            <div key={user.id} className="user">
-              <div className="userInfo">
-                <img
-                  src="https://images.pexels.com/photos/4881619/pexels-photo-4881619.jpeg?auto=compress&cs=tinysrgb&w=1600"
-                  alt=""
-                />
-                <div className="online" />
-                <span>{user.nickname}</span>
+          {!users || users.length === 0 ? (
+            <h1>no users for now</h1>
+          ) : (
+            users.map((user) => (
+              <div key={user.id} className="user">
+                <div className="userInfo">
+                  <img
+                    src="https://images.pexels.com/photos/4881619/pexels-photo-4881619.jpeg?auto=compress&cs=tinysrgb&w=1600"
+                    alt="profile"
+                  />
+                  <div className="online" />
+                  <span>{user.nickname}</span>
+                </div>
               </div>
-            </div>
+            ))
+          )}
 
-          ))}
 
 
         </div>

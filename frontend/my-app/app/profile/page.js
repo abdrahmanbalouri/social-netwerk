@@ -1,53 +1,25 @@
 "use client";
 import { useState } from 'react';
 import Navbar from '../../components/Navbar.js';
-import { useDarkMode } from '../../context/darkMod';
+import { useDarkMode } from '../../context/darkMod.js';
 import './profile.css';
 import LeftBar from '../../components/LeftBar.js';
 import RightBar from '../../components/RightBar.js';
-import { get } from 'http';
+import { useProfile } from '../../context/profile.js';
 
 export default function Profile() {
 
   const { darkMode } = useDarkMode();
 
   const [showSidebar, setShowSidebar] = useState(true);
-  const [data, setData] = useState('');
+  const { profile } = useProfile();
+  const data = profile || {};
 
-  async function logout(e) {
-    e?.preventDefault?.();
-    try {
-      const res = await fetch('http://localhost:8080/api/logout', {
-        method: 'POST',
-        credentials: 'include',
-      });
-      if (res.ok) router.replace('/login');
-    } catch (err) {
-      console.error(err);
-    }
-  }
-  async function getProfile() {
-    try {
-      const res = await fetch('http://localhost:8080/api/profile', {
-        method: 'GET',
-        credentials: 'include',
-      });
-      if (res.ok) {
-        const data = await res.json();
-        console.log(data);
-        setData(data);
-      }
-    } catch (err) {
-      console.error(err);
-    }
-  }
-  getProfile();
+
   return (
     <div className={darkMode ? 'theme-dark' : 'theme-light'}>
       <Navbar
-        onLogout={logout}
         onCreatePost={() => setShowModal(true)}
-        showSidebar={showSidebar}
         onToggleSidebar={() => setShowSidebar(!showSidebar)}
       />
       <main className="content">

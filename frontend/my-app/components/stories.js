@@ -1,8 +1,11 @@
 "use client";
 import { use, useContext } from "react";
+import { useProfile } from '../context/profile';
+
 
 const Stories = () => {
-
+  const { profile } = useProfile();
+  // profile may be null while loading; use optional chaining below
 
   //TEMPORARY
   const stories = [
@@ -31,11 +34,13 @@ const Stories = () => {
   return (
     <div className="stories">
       <div className="story">
-          <img src="avatar.png"alt="" />
-          <span>user Name</span>
-          <button>+</button>
-        </div>
-      {stories.map(story=>(
+        <img src={profile?.image ? `/uploads/${profile.image}` : '/avatar.png'}
+          alt="user avatar"
+        />
+        <span>{profile?.nickname ?? 'user name'}</span>
+        <button>+</button>
+      </div>
+      {stories.map(story => (
         <div className="story" key={story.id}>
           <img src={story.img} alt="" />
           <span>{story.name}</span>
