@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"fmt"
 	"html"
 	"net/http"
 	"regexp"
@@ -31,6 +32,7 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Invalid request body", http.StatusBadRequest)
 		return
 	}
+	fmt.Println("222213212")
 	var exists int
 	err := repository.Db.QueryRow(
 		"SELECT COUNT(*) FROM users WHERE email = ? OR nickname = ?",
