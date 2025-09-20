@@ -2,12 +2,13 @@
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useDarkMode } from '../context/darkMod';
+import { useProfile } from '../context/profile';
 
 
-export default function Navbar({ onLogout, onCreatePost, showSidebar, onToggleSidebar }) {
+export default function Navbar({ onCreatePost, onToggleSidebar }) {
   const router = useRouter();
   const { darkMode, toggle } = useDarkMode();
-
+  const { profile } = useProfile();
   return (
     <div className="navbar">
       <div className="left">
@@ -25,7 +26,7 @@ export default function Navbar({ onLogout, onCreatePost, showSidebar, onToggleSi
         <i className="fa-solid fa-bell"></i>
         <i className="fa-solid fa-plus" onClick={onCreatePost}></i>
         <div className="user" onClick={() => router.push("/profile")}>
-          <img src="/avatar.png" alt="Profile" />
+          <img src={profile?.image ? `/uploads/${profile.image}` : "/avatar.png"} alt="user avatar" />
         </div>
       </div>
     </div>

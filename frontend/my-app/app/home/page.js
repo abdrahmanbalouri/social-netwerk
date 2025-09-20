@@ -14,16 +14,24 @@ export default function Home() {
   const { darkMode } = useDarkMode();
 
   const [showSidebar, setShowSidebar] = useState(true);
+  const [showComments, setShowComments] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [posts, setPosts] = useState([]);
   const [users, setusers] = useState([])
   const [title, setTitle] = useState("");
   const [image, setImage] = useState(null);
   const [content, setContent] = useState("");
+  const [commentContent, setCommentContent] = useState("");
+  const [comment ,  setComment] = useState([])
+  const [dataofonepost , setdataofonepost] = useState()
   const modalRef = useRef(null);
-  const previousActiveElementRef = useRef(null);
+  const commentsModalRef = useRef(null);
+  // const previousActiveElementRef = useRef(null);
+
 
   async function logout(e) {
+    console.log(222);
+    
     e.preventDefault();
     const res = await fetch("http://localhost:8080/api/logout", {
       method: "POST",
@@ -84,59 +92,9 @@ export default function Home() {
 
     fetchusers();
   }, []);
-
-  // trap focus and handle ESC when modal is open
-  useEffect(() => {
-    if (!showModal) {
-      // restore body scrolling and focus
-      document.body.style.overflow = '';
-      if (previousActiveElementRef.current) previousActiveElementRef.current.focus();
-      return;
-    }
-
-    previousActiveElementRef.current = document.activeElement;
-    document.body.style.overflow = 'hidden';
-
-    const modal = modalRef.current;
-    if (modal) {
-      // focus first focusable element
-      const focusable = modal.querySelectorAll('a, button, input, textarea, select, [tabindex]:not([tabindex="-1"])');
-      if (focusable.length) focusable[0].focus();
-    }
-
-    function onKeyDown(e) {
-      if (e.key === 'Escape') {
-        setShowModal(false);
-      }
-      if (e.key === 'Tab') {
-        // simple focus trap
-        const focusable = modal ? Array.from(modal.querySelectorAll('a, button, input, textarea, select, [tabindex]:not([tabindex="-1"])')).filter(el => !el.hasAttribute('disabled')) : [];
-        if (focusable.length === 0) return;
-        const first = focusable[0];
-        const last = focusable[focusable.length - 1];
-        if (e.shiftKey) {
-          if (document.activeElement === first) {
-            e.preventDefault();
-            last.focus();
-          }
-        } else {
-          if (document.activeElement === last) {
-            e.preventDefault();
-            first.focus();
-          }
-        }
-      }
-    }
-
-    window.addEventListener('keydown', onKeyDown);
-    return () => {
-      window.removeEventListener('keydown', onKeyDown);
-      document.body.style.overflow = '';
-      if (previousActiveElementRef.current) previousActiveElementRef.current.focus();
-    };
-  }, [showModal]);
-
   async function handleCreatePost(e) {
+    console.log(222222);
+
     e.preventDefault();
 
     try {
@@ -157,14 +115,14 @@ export default function Home() {
         throw new Error('failed create post ');
       } else {
         let res = await response.json()
-
         let data = await fetchPosts(res.post_id)
-        console.log(data, '-+565554+6');
-
-
-        setPosts([data, ...posts])
-
-
+        
+      
+        if(!posts){          
+          setPosts([data])
+        }else{
+          setPosts([data, ...posts])
+         }
       }
 
     } catch (err) {
@@ -176,7 +134,36 @@ export default function Home() {
     setContent("");
     setShowModal(false);
   }
+  async function Getcommnets(postid) {
 
+    try {
+      const res = await fetch(`http://localhost:8080/api/Getcomments/${postid}`, {
+        method: "GET",
+        credentials: "include",
+      });
+      if (!res.ok) {
+        throw new Error("Failed to fetch posts");
+      }
+
+      const data = await res.json();
+      console.log(data);
+      setShowComments(true)
+
+      if(!comment){
+        setComment(data)
+
+      }else{
+        setComment([data,...comment])
+      }
+      return data;
+
+    } catch (err) {
+
+
+
+    }
+
+  }
   async function fetchPosts(postID) {
     try {
       const res = await fetch(`http://localhost:8080/api/Getpost/${postID}`, {
@@ -193,7 +180,6 @@ export default function Home() {
       console.error(err);
     }
   }
-  console.log(darkMode, '-----------------');
   return (
     <div className={darkMode ? 'theme-dark' : 'theme-light'}>
       <Navbar
@@ -226,7 +212,7 @@ export default function Home() {
                     </div>
                   </div>
                   <div className="content">
-                    <h3><p style={{color:"#5271ff"}}> {post.title}</p>{post.content}</h3>
+                    <h3><p style={{ color: "#5271ff" }}> {post.title}</p>{post.content}</h3>
 
                     {post.image_path && (
                       <img src={post.image_path} alt="Post content" />
@@ -237,7 +223,8 @@ export default function Home() {
                       <i className="fa-regular fa-heart"></i>
                       12 Likes
                     </div>
-                    <div className="item">
+
+                    <div className="item" onClick={() => Getcommnets(post.id)}>
                       <i className="fa-solid fa-comment"></i>
                       12 Comments
                     </div>
@@ -251,7 +238,6 @@ export default function Home() {
 
         <RightBar />
       </main>
-      {/* Modal */}
       {showModal && (
         <div className={`modal-overlay ${showModal ? 'is-open' : ''}`} onMouseDown={(e) => { if (e.target === e.currentTarget) setShowModal(false); }}>
           <div ref={modalRef} role="dialog" aria-modal="true" aria-labelledby="create-post-title" className="modal-content" onMouseDown={(e) => e.stopPropagation()}>
@@ -287,6 +273,74 @@ export default function Home() {
           </div>
         </div>
       )}
-    </div>
+ {showComments && (
+        <div
+          className={`modal-overlay ${showComments ? "is-open" : ""}`}
+          onMouseDown={(e) => {
+            if (e.target === e.currentTarget) setShowComments(false);
+          }}
+        >
+          <div
+            ref={commentsModalRef}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="create-post-title"
+            className="modal-content"
+          >
+            <button
+              className="modal-close"
+              aria-label="Close modal"
+              onClick={() => setShowComments(false)}
+            >
+              ✕
+            </button>
+            <h3 id="create-post-title">Comments</h3>
+
+            <div className="comments-section">
+             {/* // {error && <div className="error2">{error}</div>} */}
+              <h2 id="popup-post-title" className="text-xl font-bold mb-4">
+                {/* {postTitle} */}
+              </h2>
+
+              <div id="popup-comments-container" className="comments-container mb-4">
+                {/* {comments.length === 0 ? (
+                  <p className="text-gray-500">No comments yet.</p>
+                ) : (
+                  // comments.map((comment) => (
+                  //   <div key={comment.id} className="comment p-2 mb-2 border rounded">
+                  //     <p className="font-semibold">{comment.author}</p>
+                  //     <p>{comment.content}</p>
+                  //     <span className="text-sm text-gray-400">{comment.createdAt}</span>
+                  //   </div>
+                  // ))
+                )} */}
+              </div>
+
+              {/* <form id="popup-comment-form" onSubmit={CreateComment}> */}
+                <div className="form-group">
+                  <textarea
+                    id="popup-comment-content"
+                    className="w-full p-2 border rounded mb-2"
+                    placeholder="Write a comment..."
+                    // value={commentContent}
+                    onChange={(e) => setCommentContent(e.target.value)}
+                    required
+                  ></textarea>
+                </div>
+                <button
+                  type="submit"
+                  className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+                >
+                  Post Comment
+                </button>
+              {/* </form> */}
+            </div>
+          </div>
+        </div>
+      )}
+    
+  
+
+    </div >
   );
 }
