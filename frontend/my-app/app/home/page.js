@@ -1,73 +1,95 @@
 "use client";
 import './Home.css';
 import { useRouter } from "next/navigation";
-import { useContext, useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef } from "react";
 import Navbar from '../../components/Navbar.js';
 import LeftBar from '../../components/LeftBar.js';
 import RightBar from '../../components/RightBar.js';
 import { useDarkMode } from '../../context/darkMod';
 import Stories from '../../components/stories.js';
 import Link from 'next/link.js';
+import Comment from '../../components/coment.js';
 
 export default function Home() {
   const router = useRouter();
   const { darkMode } = useDarkMode();
 
+  // State management
   const [showSidebar, setShowSidebar] = useState(true);
   const [showComments, setShowComments] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [posts, setPosts] = useState([]);
-  const [users, setusers] = useState([])
+  const [users, setusers] = useState([]);
   const [title, setTitle] = useState("");
   const [image, setImage] = useState(null);
   const [content, setContent] = useState("");
-  const [commentContent, setCommentContent] = useState("");
-  const [comment ,  setComment] = useState([])
-  const [dataofonepost , setdataofonepost] = useState()
+  const [comment, setComment] = useState([]);
+  const [selectedPost, setSelectedPost] = useState(null);
+  const [dataofonepost, setdataofonepost] = useState();
+  const [loading, setLoading] = useState(false);
+  
   const modalRef = useRef(null);
   const commentsModalRef = useRef(null);
-  // const previousActiveElementRef = useRef(null);
+  useEffect(() => {
+  console.log(showModal);
+  
+  }, [showModal])
 
-
+  // Logout function
   async function logout(e) {
-    console.log(222);
-    
+    console.log("Logging out...");
     e.preventDefault();
-    const res = await fetch("http://localhost:8080/api/logout", {
-      method: "POST",
-      credentials: "include",
-    });
+    
+    try {
+      const res = await fetch("http://localhost:8080/api/logout", {
+        method: "POST",
+        credentials: "include",
+      });
 
-    if (!res.ok) {
-      return;
+      if (!res.ok) {
+        console.error("Logout failed");
+        return;
+      }
+      
+      router.replace("/login");
+    } catch (err) {
+      console.error("Logout error:", err);
     }
-    router.replace("/login");
   }
 
+  // Handle image change for post creation
   function handleImageChange(e) {
     setImage(e.target.files[0]);
   }
+
+  // Fetch initial posts on component mount
   useEffect(() => {
     async function fetchInitialPosts() {
       try {
+        setLoading(true);
         const res = await fetch("http://localhost:8080/api/Getallpost", {
           method: "GET",
           credentials: "include",
         });
+        
         if (!res.ok) {
           throw new Error("Failed to fetch posts");
         }
+        
         const data = await res.json();
-
-
-        setPosts(data);
+        console.log("Posts fetched:", data);
+        setPosts(Array.isArray(data) ? data : []);
       } catch (err) {
-        console.error(err);
+        console.error("Error fetching posts:", err);
+      } finally {
+        setLoading(false);
       }
     }
 
     fetchInitialPosts();
   }, []);
+
+  // Fetch users on component mount
   useEffect(() => {
     async function fetchusers() {
       try {
@@ -75,123 +97,227 @@ export default function Home() {
           method: "GET",
           credentials: "include",
         });
-        console.log(res);
 
         if (!res.ok) {
-          throw new Error("Failed to fetch posts");
+          throw new Error("Failed to fetch users");
         }
+        
         const data = await res.json();
-        console.log(data);
-
-
-        setusers(data);
+        console.log("Users fetched:", data);
+        setusers(Array.isArray(data) ? data : []);
       } catch (err) {
-        console.error(err);
+        console.error("Error fetching users:", err);
       }
     }
 
     fetchusers();
   }, []);
-  async function handleCreatePost(e) {
-    console.log(222222);
 
+  // Handle post creation
+  async function handleCreatePost(e) {
     e.preventDefault();
+    console.log("Creating post...");
 
     try {
+      setLoading(true);
+      const formData = new FormData();
+      formData.append("title", title);
+      if (image) formData.append("image", image);
+      formData.append("content", content);
+
       const response = await fetch("http://localhost:8080/api/createpost", {
         method: "POST",
         credentials: "include",
-        body: (() => {
-          const formData = new FormData();
-          formData.append("title", title);
-          formData.append("image", image);
-          formData.append("content", content);
-          return formData;
-        })(),
+        body: formData,
       });
+
       if (!response.ok) {
-        console.log(response);
-
-        throw new Error('failed create post ');
-      } else {
-        let res = await response.json()
-        let data = await fetchPosts(res.post_id)
-        
+        const errorText = await response.text();
+        console.error("Create post error:", errorText);
+        throw new Error('Failed to create post');
+      }
       
-        if(!posts){          
-          setPosts([data])
-        }else{
-          setPosts([data, ...posts])
-         }
+      const res = await response.json();
+      console.log("Post created:", res);
+      
+      // Fetch the newly created post
+      if (res.post_id) {
+        const newPost = await fetchPosts(res.post_id);
+        if (newPost) {
+          setPosts(prevPosts => [newPost, ...prevPosts]);
+        }
       }
 
     } catch (err) {
-      //console.log(err);
-
+      console.error("Error creating post:", err);
+      alert("Failed to create post. Please try again.");
+    } finally {
+      setLoading(false);
+      // Reset form
+      setTitle("");
+      setImage(null);
+      setContent("");
+      setShowModal(false);
     }
-    setTitle("");
-    setImage(null);
-    setContent("");
-    setShowModal(false);
   }
-  async function Getcommnets(postid) {
 
-    try {
-      const res = await fetch(`http://localhost:8080/api/Getcomments/${postid}`, {
-        method: "GET",
-        credentials: "include",
-      });
-      if (!res.ok) {
-        throw new Error("Failed to fetch posts");
-      }
-
-      const data = await res.json();
-      console.log(data);
-      setShowComments(true)
-
-      if(!comment){
-        setComment(data)
-
-      }else{
-        setComment([data,...comment])
-      }
-      return data;
-
-    } catch (err) {
-
-
-
-    }
-
-  }
+  // Fetch single post by ID
   async function fetchPosts(postID) {
     try {
       const res = await fetch(`http://localhost:8080/api/Getpost/${postID}`, {
         method: "GET",
         credentials: "include",
       });
+      
       if (!res.ok) {
-        throw new Error("Failed to fetch posts");
+        throw new Error("Failed to fetch post");
       }
+      
       const data = await res.json();
       return data;
-
     } catch (err) {
-      console.error(err);
+      console.error("Error fetching post:", err);
+      return null;
     }
   }
+
+  // Fetch comments for a specific post - IMPROVED VERSION
+  async function Getcommnets(post) {
+    console.log("Fetching comments for post:", post.id);
+    
+    try {
+      // Set selected post immediately using post data we already have
+      setSelectedPost({ 
+        id: post.id, 
+        title: post.title || post.post_title || "Post"
+      });
+
+      // Fetch comments
+      const res = await fetch(`http://localhost:8080/api/Getcomments/${post.id}`, {
+        method: "GET",
+        credentials: "include",
+      });
+      
+      if (!res.ok) {
+        console.error("Comments fetch failed:", res.status);
+        throw new Error("Failed to fetch comments");
+      }
+
+      const data = await res.json();
+      console.log("Comments response:", data);
+      
+      // Handle different response structures
+      let comments = [];
+      if (Array.isArray(data)) {
+        comments = data;
+      } else if (data && typeof data === 'object' && data.comments && Array.isArray(data.comments)) {
+        comments = data.comments;
+      } else if (data && typeof data === 'object') {
+        // Single comment object
+        comments = [data];
+      }
+      
+      // Ensure each comment has required properties
+      comments = comments.map(comment => ({
+        id: comment.id || Math.random(),
+        author: comment.author || comment.username || "Anonymous",
+        content: comment.content || comment.text || "",
+        created_at: comment.created_at || comment.createdAt || new Date().toISOString()
+      }));
+      
+      setComment(comments);
+      setShowComments(true);
+      
+    } catch (err) {
+      console.error("Error fetching comments:", err);
+      // Set empty comments array on error
+      setComment([]);
+      setSelectedPost({ id: post.id, title: post.title || "Post" });
+      setShowComments(true);
+    }
+  }
+
+  // Refresh comments after posting a new comment
+  async function refreshComments() {
+    if (!selectedPost?.id) return;
+    
+    try {
+      const res = await fetch(`http://localhost:8080/api/Getcomments/${selectedPost.id}`, {
+        method: "GET",
+        credentials: "include",
+      });
+      
+      if (res.ok) {
+        const data = await res.json();
+        let comments = [];
+        
+        if (Array.isArray(data)) {
+          comments = data;
+        } else if (data && data.comments && Array.isArray(data.comments)) {
+          comments = data.comments;
+        } else if (data) {
+          comments = [data];
+        }
+        
+        setComment(comments);
+      }
+    } catch (err) {
+      console.error("Error refreshing comments:", err);
+    }
+  }
+  
+
+  // Close comments modal and reset state
+  function closeComments() {
+    setShowComments(false);
+    setSelectedPost(null);
+    setComment([]);
+  }
+
+  // Refresh all posts (useful after liking, commenting, etc.)
+  async function refreshPosts() {
+    try {
+      const res = await fetch("http://localhost:8080/api/Getallpost", {
+        method: "GET",
+        credentials: "include",
+      });
+      
+      if (res.ok) {
+        const data = await res.json();
+        setPosts(Array.isArray(data) ? data : []);
+      }
+    } catch (err) {
+      console.error("Error refreshing posts:", err);
+    }
+  }
+
+  // Loading state
+  if (loading && posts.length === 0) {
+    return (
+      <div className={`loading-container ${darkMode ? 'theme-dark' : 'theme-light'}`}>
+        <div className="loading-spinner"></div>
+        <p>Loading posts...</p>
+      </div>
+    );
+  }
+
   return (
     <div className={darkMode ? 'theme-dark' : 'theme-light'}>
+      {/* Navbar */}
       <Navbar
+
         onLogout={logout}
         onCreatePost={() => setShowModal(true)}
         showSidebar={showSidebar}
         onToggleSidebar={() => setShowSidebar(!showSidebar)}
       />
+
+      {/* Main Content */}
       <main className="content">
         <LeftBar showSidebar={showSidebar} />
 
-        <section className="feed">
+        {/* Feed Section */}
+           <section className="feed">
           <Stories />
           {!posts ? (
             <p>No posts available</p>
@@ -224,7 +350,7 @@ export default function Home() {
                       12 Likes
                     </div>
 
-                    <div className="item" onClick={() => Getcommnets(post.id)}>
+                    <div className="item" onClick={() => Getcommnets(post)}>
                       <i className="fa-solid fa-comment"></i>
                       12 Comments
                     </div>
@@ -236,9 +362,11 @@ export default function Home() {
           )}
         </section>
 
-        <RightBar />
+        <RightBar users={users} />
       </main>
-      {showModal && (
+
+      {/* Create Post Modal */}
+       {showModal && (
         <div className={`modal-overlay ${showModal ? 'is-open' : ''}`} onMouseDown={(e) => { if (e.target === e.currentTarget) setShowModal(false); }}>
           <div ref={modalRef} role="dialog" aria-modal="true" aria-labelledby="create-post-title" className="modal-content" onMouseDown={(e) => e.stopPropagation()}>
             <button className="modal-close" aria-label="Close modal" onClick={() => setShowModal(false)}>✕</button>
@@ -273,74 +401,18 @@ export default function Home() {
           </div>
         </div>
       )}
- {showComments && (
-        <div
-          className={`modal-overlay ${showComments ? "is-open" : ""}`}
-          onMouseDown={(e) => {
-            if (e.target === e.currentTarget) setShowComments(false);
-          }}
-        >
-          <div
-            ref={commentsModalRef}
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="create-post-title"
-            className="modal-content"
-          >
-            <button
-              className="modal-close"
-              aria-label="Close modal"
-              onClick={() => setShowComments(false)}
-            >
-              ✕
-            </button>
-            <h3 id="create-post-title">Comments</h3>
 
-            <div className="comments-section">
-             {/* // {error && <div className="error2">{error}</div>} */}
-              <h2 id="popup-post-title" className="text-xl font-bold mb-4">
-                {/* {postTitle} */}
-              </h2>
-
-              <div id="popup-comments-container" className="comments-container mb-4">
-                {/* {comments.length === 0 ? (
-                  <p className="text-gray-500">No comments yet.</p>
-                ) : (
-                  // comments.map((comment) => (
-                  //   <div key={comment.id} className="comment p-2 mb-2 border rounded">
-                  //     <p className="font-semibold">{comment.author}</p>
-                  //     <p>{comment.content}</p>
-                  //     <span className="text-sm text-gray-400">{comment.createdAt}</span>
-                  //   </div>
-                  // ))
-                )} */}
-              </div>
-
-              {/* <form id="popup-comment-form" onSubmit={CreateComment}> */}
-                <div className="form-group">
-                  <textarea
-                    id="popup-comment-content"
-                    className="w-full p-2 border rounded mb-2"
-                    placeholder="Write a comment..."
-                    // value={commentContent}
-                    onChange={(e) => setCommentContent(e.target.value)}
-                    required
-                  ></textarea>
-                </div>
-                <button
-                  type="submit"
-                  className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-                >
-                  Post Comment
-                </button>
-              {/* </form> */}
-            </div>
-          </div>
-        </div>
+      {/* Comments Modal */}
+      {showComments && (
+        <Comment
+          comments={comment}
+          isOpen={showComments}
+          onClose={closeComments}
+          postId={selectedPost?.id}
+          postTitle={selectedPost?.title}
+          onCommentChange={refreshComments}
+        />
       )}
-    
-  
-
-    </div >
+    </div>
   );
 }
