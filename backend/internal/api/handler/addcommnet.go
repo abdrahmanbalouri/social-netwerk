@@ -3,6 +3,7 @@ package handlers
 import (
 	"database/sql"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"social-network/internal/helper"
 	"social-network/internal/repository"
@@ -12,19 +13,20 @@ import (
 )
 
 func CreateCommentHandler(w http.ResponseWriter, r *http.Request) {
-	
+
 	if r.Method != "POST" {
 		helper.RespondWithError(w, http.StatusMethodNotAllowed, "Method Not Allowed")
 		return
 	}
 	userID, err := helper.AuthenticateUser(r)
 	if err != nil {
-		helper.RespondWithError(w, http.StatusUnauthorized, "Authentication required")
+		fmt.Println(err)
+ 		helper.RespondWithError(w, http.StatusUnauthorized, "Authentication required")
 		return
 	}
 
 	type CommentRequest struct {
-		PostID  string `json:"post_id"`
+		PostID  string `json:"postId"`
 		Content string `json:"content"`
 	}
 
@@ -34,6 +36,7 @@ func CreateCommentHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	fmt.Println(req.PostID)
 	if req.PostID == "" || strings.TrimSpace(req.Content) == "" {
 		helper.RespondWithError(w, http.StatusBadRequest, "Missing required fields")
 		return
@@ -64,8 +67,7 @@ func CreateCommentHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	
-    helper.RespondWithJSON(w, http.StatusCreated, map[string]string{
+	helper.RespondWithJSON(w, http.StatusCreated, map[string]string{
 		"message":    "Comment created successfully",
 		"comment_id": commentID,
 	})
