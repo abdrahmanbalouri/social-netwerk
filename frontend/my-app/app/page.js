@@ -16,7 +16,7 @@ export default function Profile() {
         });
 
         if (!response.ok) {
-          router.replace("/login"); // redirect if not authenticated
+          router.replace("/login"); 
           return null;
         } else if (response.ok) {
 
