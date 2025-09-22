@@ -1,5 +1,5 @@
 "use client";
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Navbar from '../../../components/Navbar.js';
 import { useDarkMode } from '../../../context/darkMod.js';
 import './profile.css';
@@ -12,7 +12,7 @@ export default function Profile() {
   const { darkMode } = useDarkMode();
 
   const [showSidebar, setShowSidebar] = useState(true);
-  const data = profile || {};
+  const [showModal, setShowModal] = useState(false);
   const params = useParams();
   const router = useRouter();
   const userId = Number(params.id);
@@ -21,12 +21,14 @@ export default function Profile() {
 
   async function loadProfile() {
     try {
-      const res = await fetch(`http://localhost:8080/api/profile?userId=${userId}`, {
+      const res = await fetch(`http://localhost:8080/api/profile?userId=${params.id}`, {
         method: "GET",
         credentials: "include",
       });
       if (res.ok) {
         const json = await res.json();
+        console.log('11',json);
+        
         setProfile(json);
       }
     } catch (err) {
@@ -37,7 +39,35 @@ export default function Profile() {
   useEffect(() => {
     loadProfile();
   }, []);
-
+  
+  if (!profile) {
+    return (
+      <div className={darkMode ? 'theme-dark' : 'theme-light'}>
+        <Navbar
+          onCreatePost={() => setShowModal(true)}
+          onToggleSidebar={() => setShowSidebar(!showSidebar)}
+        />
+        <main className="content">
+          <LeftBar showSidebar={showSidebar} />
+          <div className="profile">
+            <div className="images">
+              <div className="cover" style={{width: '100%', height: 300, background: '#eee'}} />
+              <div className="profilePic" style={{width: 200, height: 200, background: '#ccc', borderRadius: '50%', margin: '0 auto', marginTop: -100}} />
+            </div>
+            <div className="profileContainer">
+              <div className="uInfo">
+                <div className="center">
+                  <span>Loading...</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <RightBar />
+        </main>
+      </div>
+    );
+  }
+  const data = profile;
   return (
     <div className={darkMode ? 'theme-dark' : 'theme-light'}>
       <Navbar
@@ -55,7 +85,7 @@ export default function Profile() {
               className="cover"
             />
             <img
-              src={data.image ? `uploads/${data.image}` : "avatar.png"}
+              src={data.image ? `/uploads/${data.image}` : "avatar.png"}
               alt="profile picture"
               className="profilePic"
             />
