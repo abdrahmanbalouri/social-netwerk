@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"fmt"
 	"net/http"
 
 	"social-network/internal/helper"
@@ -12,12 +13,9 @@ func ProfileHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
 		return
 	}
-	userID, err := helper.AuthenticateUser(r)
-	if err != nil {
-		http.Error(w, "Authentication required", http.StatusUnauthorized)
-		return
-	}
 
+	userID := r.URL.Query().Get("userId")
+	fmt.Println("UserID:", userID) // Debugging line to check the userID value
 	q := `SELECT nickname, email, about, privacy, image FROM users WHERE id = ?`
 	row := repository.Db.QueryRow(q, userID)
 
