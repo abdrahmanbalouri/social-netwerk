@@ -55,11 +55,11 @@ export default function Comment({
       if (!response.ok) {
         throw new Error("Failed to post comment");
       }
-   console.log(postId);
    
       // Reset form and refresh comments
       setCommentContent("");
       if (onCommentChange) {
+        
         onCommentChange();
       }
     } catch (err) {
