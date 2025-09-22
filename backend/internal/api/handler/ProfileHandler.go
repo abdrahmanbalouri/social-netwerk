@@ -3,6 +3,7 @@ package handlers
 import (
 	"fmt"
 	"net/http"
+	"strconv"
 
 	"social-network/internal/helper"
 	"social-network/internal/repository"
@@ -15,6 +16,15 @@ func ProfileHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	userID := r.URL.Query().Get("userId")
+	if userID == "0" {
+		userid, err := helper.AuthenticateUser(r)
+		if err != nil {
+			http.Error(w, "Authentication required", http.StatusUnauthorized)
+			return
+		}
+		userID = strconv.Itoa(userid)
+
+	}
 	fmt.Println("UserID:", userID) // Debugging line to check the userID value
 	q := `SELECT nickname, email, about, privacy, image FROM users WHERE id = ?`
 	row := repository.Db.QueryRow(q, userID)

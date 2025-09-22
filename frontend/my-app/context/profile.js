@@ -8,7 +8,7 @@ export function ProfileProvider({ children }) {
 
   async function loadProfile() {
     try {
-      const res = await fetch("http://localhost:8080/api/profile", {
+      const res = await fetch("http://localhost:8080/api/profile?userId=0", {
         method: "GET",
         credentials: "include",
       });
