@@ -1,3 +1,4 @@
+// Home.js
 "use client";
 import './Home.css';
 import { useRouter } from "next/navigation";
@@ -10,6 +11,7 @@ import Stories from '../../components/stories.js';
 import Link from 'next/link.js';
 import Comment from '../../components/coment.js';
 import { useProfile } from '../../context/profile.js';
+import Post from '../../components/Post.js';
 
 export default function Home() {
   const router = useRouter();
@@ -27,21 +29,20 @@ export default function Home() {
   const [content, setContent] = useState("");
   const [comment, setComment] = useState([]);
   const [selectedPost, setSelectedPost] = useState(null);
-  const [dataofonepost, setdataofonepost] = useState();
   const [loading, setLoading] = useState(false);
-  
+
   const modalRef = useRef(null);
   const commentsModalRef = useRef(null);
+
   useEffect(() => {
-  console.log(showModal);
-  
-  }, [showModal])
+    console.log(showModal);
+  }, [showModal]);
 
   // Logout function
   async function logout(e) {
     console.log("Logging out...");
     e.preventDefault();
-    
+
     try {
       const res = await fetch("http://localhost:8080/api/logout", {
         method: "POST",
@@ -52,7 +53,7 @@ export default function Home() {
         console.error("Logout failed");
         return;
       }
-      
+
       router.replace("/login");
     } catch (err) {
       console.error("Logout error:", err);
@@ -73,11 +74,11 @@ export default function Home() {
           method: "GET",
           credentials: "include",
         });
-        
+
         if (!res.ok) {
           throw new Error("Failed to fetch posts");
         }
-        
+
         const data = await res.json();
         console.log("Posts fetched:", data);
         setPosts(Array.isArray(data) ? data : []);
@@ -103,7 +104,7 @@ export default function Home() {
         if (!res.ok) {
           throw new Error("Failed to fetch users");
         }
-        
+
         const data = await res.json();
         console.log("Users fetched:", data);
         setusers(Array.isArray(data) ? data : []);
@@ -138,10 +139,10 @@ export default function Home() {
         console.error("Create post error:", errorText);
         throw new Error('Failed to create post');
       }
-      
+
       const res = await response.json();
       console.log("Post created:", res);
-      
+
       // Fetch the newly created post
       if (res.post_id) {
         const newPost = await fetchPosts(res.post_id);
@@ -170,11 +171,11 @@ export default function Home() {
         method: "GET",
         credentials: "include",
       });
-      
+
       if (!res.ok) {
         throw new Error("Failed to fetch post");
       }
-      
+
       const data = await res.json();
       return data;
     } catch (err) {
@@ -183,14 +184,14 @@ export default function Home() {
     }
   }
 
-  // Fetch comments for a specific post - IMPROVED VERSION
-  async function Getcommnets(post) {
+  // Fetch comments for a specific post
+  async function GetComments(post) {
     console.log("Fetching comments for post:", post.id);
-    
+
     try {
       // Set selected post immediately using post data we already have
-      setSelectedPost({ 
-        id: post.id, 
+      setSelectedPost({
+        id: post.id,
         title: post.title || post.post_title || "Post"
       });
 
@@ -199,7 +200,7 @@ export default function Home() {
         method: "GET",
         credentials: "include",
       });
-      
+
       if (!res.ok) {
         console.error("Comments fetch failed:", res.status);
         throw new Error("Failed to fetch comments");
@@ -207,7 +208,7 @@ export default function Home() {
 
       const data = await res.json();
       console.log("Comments response:", data);
-      
+
       // Handle different response structures
       let comments = [];
       if (Array.isArray(data)) {
@@ -218,7 +219,7 @@ export default function Home() {
         // Single comment object
         comments = [data];
       }
-      
+
       // Ensure each comment has required properties
       comments = comments.map(comment => ({
         id: comment.id || Math.random(),
@@ -226,10 +227,10 @@ export default function Home() {
         content: comment.content || comment.text || "",
         created_at: comment.created_at || comment.createdAt || new Date().toISOString()
       }));
-      
+
       setComment(comments);
       setShowComments(true);
-      
+
     } catch (err) {
       console.error("Error fetching comments:", err);
       // Set empty comments array on error
@@ -242,17 +243,17 @@ export default function Home() {
   // Refresh comments after posting a new comment
   async function refreshComments() {
     if (!selectedPost?.id) return;
-    
+
     try {
       const res = await fetch(`http://localhost:8080/api/Getcomments/${selectedPost.id}`, {
         method: "GET",
         credentials: "include",
       });
-      
+
       if (res.ok) {
         const data = await res.json();
         let comments = [];
-        
+
         if (Array.isArray(data)) {
           comments = data;
         } else if (data && data.comments && Array.isArray(data.comments)) {
@@ -260,37 +261,19 @@ export default function Home() {
         } else if (data) {
           comments = [data];
         }
-        
+
         setComment(comments);
       }
     } catch (err) {
       console.error("Error refreshing comments:", err);
     }
   }
-  
 
   // Close comments modal and reset state
   function closeComments() {
     setShowComments(false);
     setSelectedPost(null);
     setComment([]);
-  }
-
-  // Refresh all posts (useful after liking, commenting, etc.)
-  async function refreshPosts() {
-    try {
-      const res = await fetch("http://localhost:8080/api/Getallpost", {
-        method: "GET",
-        credentials: "include",
-      });
-      
-      if (res.ok) {
-        const data = await res.json();
-        setPosts(Array.isArray(data) ? data : []);
-      }
-    } catch (err) {
-      console.error("Error refreshing posts:", err);
-    }
   }
 
   // Loading state
@@ -307,7 +290,6 @@ export default function Home() {
     <div className={darkMode ? 'theme-dark' : 'theme-light'}>
       {/* Navbar */}
       <Navbar
-
         onLogout={logout}
         onCreatePost={() => setShowModal(true)}
         showSidebar={showSidebar}
@@ -319,47 +301,17 @@ export default function Home() {
         <LeftBar showSidebar={showSidebar} />
 
         {/* Feed Section */}
-           <section className="feed">
+        <section className="feed">
           <Stories />
           {!posts ? (
             <p>No posts available</p>
           ) : (
             posts.map((post) => (
-
-              <div key={post.id} className="post">
-                <div className="container">
-                  <div className="user">
-                    <div className="userInfo">
-                      <img src={`/uploads/${post.profile}` || '/avatar.png'} alt="user" />
-                      <div className="details">
-                        <Link href={`/profile/${post.user_id}`} style={{ textDecoration: "none", color: "inherit" }} >
-                          <span className="name">{post.author}</span>
-                        </Link>
-                        <span className="date"> {new Date(post.created_at).toLocaleString()}</span>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="content">
-                    <h3><p style={{ color: "#5271ff" }}> {post.title}</p>{post.content}</h3>
-
-                    {post.image_path && (
-                      <img src={post.image_path} alt="Post content" />
-                    )}
-                  </div>
-                  <div className="info">
-                    <div className="item">
-                      <i className="fa-regular fa-heart"></i>
-                      12 Likes
-                    </div>
-
-                    <div className="item" onClick={() => Getcommnets(post)}>
-                      <i className="fa-solid fa-comment"></i>
-                      12 Comments
-                    </div>
-
-                  </div>
-                </div>
-              </div>
+              <Post
+                key={post.id}
+                post={post}
+                onGetComments={GetComments} // Pass GetComments as a prop
+              />
             ))
           )}
         </section>
@@ -368,7 +320,7 @@ export default function Home() {
       </main>
 
       {/* Create Post Modal */}
-       {showModal && (
+      {showModal && (
         <div className={`modal-overlay ${showModal ? 'is-open' : ''}`} onMouseDown={(e) => { if (e.target === e.currentTarget) setShowModal(false); }}>
           <div ref={modalRef} role="dialog" aria-modal="true" aria-labelledby="create-post-title" className="modal-content" onMouseDown={(e) => e.stopPropagation()}>
             <button className="modal-close" aria-label="Close modal" onClick={() => setShowModal(false)}>✕</button>
