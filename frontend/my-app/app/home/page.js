@@ -9,10 +9,12 @@ import { useDarkMode } from '../../context/darkMod';
 import Stories from '../../components/stories.js';
 import Link from 'next/link.js';
 import Comment from '../../components/coment.js';
+import { useProfile } from '../../context/profile.js';
 
 export default function Home() {
   const router = useRouter();
   const { darkMode } = useDarkMode();
+  const { profile } = useProfile();
 
   // State management
   const [showSidebar, setShowSidebar] = useState(true);
@@ -328,7 +330,7 @@ export default function Home() {
                 <div className="container">
                   <div className="user">
                     <div className="userInfo">
-                      <img src={post.profile_picture || '/avatar.png'} alt="user" />
+                      <img src={`/uploads/${post.profile}` || '/avatar.png'} alt="user" />
                       <div className="details">
                         <Link href={`/profile/${post.user_id}`} style={{ textDecoration: "none", color: "inherit" }} >
                           <span className="name">{post.author}</span>
