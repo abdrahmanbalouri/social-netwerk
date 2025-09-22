@@ -1,20 +1,42 @@
 "use client";
 import { useState } from 'react';
-import Navbar from '../../components/Navbar.js';
-import { useDarkMode } from '../../context/darkMod.js';
+import Navbar from '../../../components/Navbar.js';
+import { useDarkMode } from '../../../context/darkMod.js';
 import './profile.css';
-import LeftBar from '../../components/LeftBar.js';
-import RightBar from '../../components/RightBar.js';
-import { useProfile } from '../../context/profile.js';
+import LeftBar from '../../../components/LeftBar.js';
+import RightBar from '../../../components/RightBar.js';
+import { useParams, useRouter } from 'next/navigation.js';
 
 export default function Profile() {
 
   const { darkMode } = useDarkMode();
 
   const [showSidebar, setShowSidebar] = useState(true);
-  const { profile } = useProfile();
   const data = profile || {};
+  const params = useParams();
+  const router = useRouter();
+  const userId = Number(params.id);
 
+  const [profile, setProfile] = useState(null);
+
+  async function loadProfile() {
+    try {
+      const res = await fetch(`http://localhost:8080/api/profile?userId=${userId}`, {
+        method: "GET",
+        credentials: "include",
+      });
+      if (res.ok) {
+        const json = await res.json();
+        setProfile(json);
+      }
+    } catch (err) {
+      console.error("loadProfile", err);
+    }
+  }
+
+  useEffect(() => {
+    loadProfile();
+  }, []);
 
   return (
     <div className={darkMode ? 'theme-dark' : 'theme-light'}>
