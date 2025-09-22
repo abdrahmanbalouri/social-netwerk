@@ -25,7 +25,7 @@ export default function Post({ post, onGetComments }) {
         </div>
         <div className="info">
           <div className="item">
-            <i className="fa-regular fa-heart"></i> {post.likes || 0} Likes
+            <i className="fa-regular fa-heart"></i> {post.like || 0} Likes
           </div>
           <div className="item" onClick={() => onGetComments(post)}>
             <i className="fa-solid fa-comment"></i> {post.comments_count || 0} Comments
