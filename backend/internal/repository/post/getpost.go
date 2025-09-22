@@ -53,6 +53,8 @@ func GetAllPosts() ([]map[string]interface{}, error) {
 			"author":     nickname,
 			"profile":    profile,
 		}
+	  
+
 		posts = append(posts, post)
 	}
 
