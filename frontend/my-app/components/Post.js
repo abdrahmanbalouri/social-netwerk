@@ -7,7 +7,7 @@ export default function Post({ post, onGetComments }) {
       <div className="container">
         <div className="user">
           <div className="userInfo">
-            <img src={post.profile ? `/Uploads/${post.profile}` : '/avatar.png'} alt="user" />
+             <img src={`/uploads/${post.profile}` || '/avatar.png'} alt="user" />
             <div className="details">
               <Link href={`/profile/${post.user_id}`} style={{ textDecoration: "none", color: "inherit" }}>
                 <span className="name">{post.author}</span>
