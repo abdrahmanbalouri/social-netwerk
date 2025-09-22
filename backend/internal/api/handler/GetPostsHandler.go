@@ -32,13 +32,14 @@ func GetPostsHandler(w http.ResponseWriter, r *http.Request) {
 		Image_path string    `json:"image_path"`
 		CreatedAt  time.Time `json:"created_at"`
 		Author     string    `json:"author"`
+		Profile     string    `json:"profile"`
 	}
 	err := repository.Db.QueryRow(`
-        SELECT p.id, p.title, p.content, p.image_path, p.created_at, u.nickname
+        SELECT p.id, p.title, p.content, p.image_path, p.created_at, u.nickname,u.image
         FROM posts p
         JOIN users u ON p.user_id = u.id
         WHERE p.id = ?`, postID).Scan(
-		&post.ID, &post.Title, &post.Content, &post.Image_path, &post.CreatedAt, &post.Author)
+		&post.ID, &post.Title, &post.Content, &post.Image_path, &post.CreatedAt, &post.Author ,&post.Profile)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			helper.RespondWithError(w, http.StatusNotFound, "Post not found")
