@@ -10,16 +10,17 @@ func GetAllPosts() ([]map[string]interface{}, error) {
 	// Modified SQL query with JOIN to get nickname from the users table
 	rows, err := repository.Db.Query(`
 		SELECT 
-			p.id, 
-			p.user_id, 
-			p.title, 
-			p.content, 
-			p.image_path, 
-			p.created_at, 
-			u.nickname 
-		FROM posts p
-		JOIN users u ON p.user_id = u.id
-		ORDER BY p.created_at DESC
+    p.id, 
+    p.user_id, 
+    p.title, 
+    p.content, 
+    p.image_path, 
+    p.created_at, 
+    u.nickname,
+    u.image
+	FROM posts p
+	JOIN users u ON p.user_id = u.id
+	ORDER BY p.created_at DESC;
 	`)
 	if err != nil {
 		fmt.Println(err)
@@ -31,11 +32,11 @@ func GetAllPosts() ([]map[string]interface{}, error) {
 	for rows.Next() {
 		var id string
 		var userID int
-		var title, content, image_path, nickname string
+		var title, content, image_path, nickname ,profile string
 		var createdAt string
 
 		// Scan the result into variables
-		err := rows.Scan(&id, &userID, &title, &content, &image_path, &createdAt, &nickname)
+		err := rows.Scan(&id, &userID, &title, &content, &image_path, &createdAt, &nickname,&profile)
 		if err != nil {
 			fmt.Println("Error scanning row:", err)
 			return nil, err
@@ -49,7 +50,8 @@ func GetAllPosts() ([]map[string]interface{}, error) {
 			"content":    content,
 			"image_path": image_path,
 			"created_at": createdAt,
-			"author":   nickname, 
+			"author":     nickname,
+			"profile":    profile,
 		}
 		posts = append(posts, post)
 	}
