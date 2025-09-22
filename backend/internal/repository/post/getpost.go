@@ -42,7 +42,7 @@ func GetAllPosts() ([]map[string]interface{}, error) {
 			return nil, err
 		}
 
-		// Create a map for each post, including the nickname
+		
 		post := map[string]interface{}{
 			"id":         id,
 			"user_id":    userID,
