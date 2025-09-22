@@ -262,6 +262,22 @@ export default function Home() {
         }
 
         setComment(comments);
+        const potsreplace = await fetchPosts(selectedPost.id)
+
+
+
+        for (let i = 0; i < posts.length; i++) {
+          if (posts[i].id == selectedPost.id) {
+
+            setPosts([
+              ...posts.slice(0, i),
+              potsreplace,
+              ...posts.slice(i + 1)
+            ]);
+            break
+          }
+        }
+
       }
     } catch (err) {
       console.error("Error refreshing comments:", err);
