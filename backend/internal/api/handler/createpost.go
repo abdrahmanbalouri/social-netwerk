@@ -6,7 +6,6 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
-	"runtime"
 	"strings"
 
 	"social-network/internal/helper"
@@ -44,7 +43,6 @@ func Createpost(w http.ResponseWriter, r *http.Request) {
 	// }
 
 	var imagePath string
-	fmt.Println("Running on:", runtime.GOOS)
 
 	imageFile, _, err := r.FormFile("image")
 	if err == nil {
@@ -61,7 +59,6 @@ func Createpost(w http.ResponseWriter, r *http.Request) {
 		imagePath = fmt.Sprintf("uploads/%s.jpg", uuid.New().String()) // Keep the path relative for database storage
 
 		out, err := os.Create(filepath.Join("../frontend/my-app/public", imagePath))
-		fmt.Println(out)
 		if err != nil {
 			helper.RespondWithError(w, http.StatusInternalServerError, "Failed to save image")
 			fmt.Println(err)

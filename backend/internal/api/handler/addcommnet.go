@@ -36,7 +36,6 @@ func CreateCommentHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fmt.Println(req.PostID)
 	if req.PostID == "" || strings.TrimSpace(req.Content) == "" {
 		helper.RespondWithError(w, http.StatusBadRequest, "Missing required fields")
 		return
