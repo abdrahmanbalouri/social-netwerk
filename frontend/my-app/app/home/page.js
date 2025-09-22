@@ -8,7 +8,6 @@ import LeftBar from '../../components/LeftBar.js';
 import RightBar from '../../components/RightBar.js';
 import { useDarkMode } from '../../context/darkMod';
 import Stories from '../../components/stories.js';
-import Link from 'next/link.js';
 import Comment from '../../components/coment.js';
 import { useProfile } from '../../context/profile.js';
 import Post from '../../components/Post.js';
