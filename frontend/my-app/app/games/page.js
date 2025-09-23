@@ -35,6 +35,36 @@ export default function Game() {
                 <img src="/Arkanoid.png" alt="Arkanoid" />
               </Link>
             </div>
+            <div className="game-card">
+              <h3>super-mario</h3>
+              <Link href="https://raji383.github.io/super-mario/">
+                <img src="/super-mario.png" alt="Arkanoid" />
+              </Link>
+            </div>
+            <div className="game-card">
+              <h3>Raven</h3>
+              <Link href="https://raji383.github.io/Raven-game/">
+                <img src="/Raven.png" alt="Arkanoid" />
+              </Link>
+            </div>
+            <div className="game-card">
+              <h3>shadow</h3>
+              <Link href="https://raji383.github.io/shadow-game/">
+                <img src="/shadow.png" alt="Arkanoid" />
+              </Link>
+            </div>
+            <div className="game-card">
+              <h3>War-machine</h3>
+              <Link href="https://raji383.github.io/War-machine/">
+                <img src="/war.png" alt="Arkanoid" />
+              </Link>
+            </div>
+            <div className="game-card">
+              <h3>toad</h3>
+              <Link href="https://raji383.github.io/War-machine/">
+                <img src="/toad.png" alt="Arkanoid" />
+              </Link>
+            </div>
           </div>
         </div>
 
