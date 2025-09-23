@@ -1,0 +1,7 @@
+development:
+  dialect: sqlite3
+  datasource: ./backend/internal/repository/forum.db 
+  dir: ./backend/pkg/migrations/sqlite 
+  table: gorp_migrations
+
+# command to create
