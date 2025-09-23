@@ -190,73 +190,7 @@ body {
     margin: auto;
   }
 }
-
-.posts {
-  display: flex;
-  flex-direction: column;
-  gap: 50px;
-}
-
-
-
-/* 🎨 Themes */
-.theme-light .post {
-  --textColor: #000;
-  --bg: white;
-  --logo: darkblue;
-  --bgSoft: #f6f3f3;
-  --textColorSoft: #555;
-  --border: lightgray;
-}
-
-.theme-dark .post {
-  --textColor: whitesmoke;
-  --bg: #222;
-  --logo: white;
-  --bgSoft: #333;
-  --textColorSoft: lightgray;
-  --border: #444;
-}
-
-/* 📝 Post */
-.post {
-  -webkit-box-shadow: 0px 0px 25px -10px rgba(0, 0, 0, 0.38);
-  -moz-box-shadow: 0px 0px 25px -10px rgba(0, 0, 0, 0.38);
-  box-shadow: 0px 0px 25px -10px rgba(0, 0, 0, 0.38);
-  border-radius: 20px;
-  background-color: var(--bg);
-  color: var(--textColor);
-}
-
-.post .container {
-  padding: 20px;
-}
-
-/* 👤 User */
-.post .container .user {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.post .container .user .userInfo {
-  display: flex;
-  gap: 20px;
-}
-
-.post .container .user .userInfo img {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  object-fit: cover;
-}
-
-.post .container .user .userInfo .details {
-  display: flex;
-  flex-direction: column;
-}
-
-.post .container .user .userInfo .details .name {
+tainer .user .userInfo .details .name {
   font-weight: 500;
 }
 
@@ -332,6 +266,72 @@ body {
   transform: translateY(0) scale(1);
 }
 
+.posts {
+  display: flex;
+  flex-direction: column;
+  gap: 50px;
+}
+
+
+
+/* 🎨 Themes */
+.theme-light .post {
+  --textColor: #000;
+  --bg: white;
+  --logo: darkblue;
+  --bgSoft: #f6f3f3;
+  --textColorSoft: #555;
+  --border: lightgray;
+}
+
+.theme-dark .post {
+  --textColor: whitesmoke;
+  --bg: #222;
+  --logo: white;
+  --bgSoft: #333;
+  --textColorSoft: lightgray;
+  --border: #444;
+}
+
+/* 📝 Post */
+.post {
+  -webkit-box-shadow: 0px 0px 25px -10px rgba(0, 0, 0, 0.38);
+  -moz-box-shadow: 0px 0px 25px -10px rgba(0, 0, 0, 0.38);
+  box-shadow: 0px 0px 25px -10px rgba(0, 0, 0, 0.38);
+  border-radius: 20px;
+  background-color: var(--bg);
+  color: var(--textColor);
+}
+
+.post .container {
+  padding: 20px;
+}
+
+/* 👤 User */
+.post .container .user {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.post .container .user .userInfo {
+  display: flex;
+  gap: 20px;
+}
+
+.post .container .user .userInfo img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.post .container .user .userInfo .details {
+  display: flex;
+  flex-direction: column;
+}
+
+.post .con
 .modal-content .input {
   width: 100%;
   padding: 10px 12px;

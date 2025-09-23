@@ -21,7 +21,7 @@ export default function Post({ post, onGetComments }) {
             <p style={{ color: "#5271ff" }}>{post.title}</p>
             {post.content}
           </h3>
-          {post.image_path && <img src={post.image_path} alt="Post content" />}
+          {post.image_path && <img src={`/${post.image_path}`} alt="Post content" />}
         </div>
         <div className="info">
           <div className="item">
