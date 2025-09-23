@@ -2,6 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import { useProfile } from '../context/profile';
+import Link from 'next/link';
 
 
 export default function LeftBar({ showSidebar }) {
@@ -72,8 +73,10 @@ export default function LeftBar({ showSidebar }) {
             <span>Events</span>
           </div>
           <div className="item">
-            <img src="/icone/7.png" alt="" />
-            <span>Gaming</span>
+            <Link href={'/games'}>
+              <img src="/icone/7.png" alt="" />
+            </Link>
+              <span>Gaming</span>
           </div>
           <div className="item">
             <img src="/icone/8.png" alt="" />
