@@ -1,14 +1,37 @@
 package post
 
 import (
+	"database/sql"
 	"fmt"
 
 	"social-network/internal/repository"
 )
 
-func GetAllPosts() ([]map[string]interface{}, error) {
+func GetAllPosts(id string) ([]map[string]interface{}, error) {
+	var rows *sql.Rows
 	// Modified SQL query with JOIN to get nickname from users table and comment count from comments table
-	rows, err := repository.Db.Query(`
+	if id != "" {
+		rows, _ = repository.Db.Query(`
+		SELECT 
+			p.id, 
+			p.user_id, 
+			p.title, 
+			p.content, 
+			p.image_path, 
+			p.created_at, 
+			u.nickname,
+			u.image AS profile,
+			COUNT(c.id) AS comments_count
+		FROM posts p
+		JOIN users u ON p.user_id = u.id
+		LEFT JOIN comments c ON p.id = c.post_id
+		WHERE p.user_id = ?
+		GROUP BY p.id, p.user_id, p.title, p.content, p.image_path, p.created_at, u.nickname, u.image
+		ORDER BY p.created_at DESC;
+	`, id)
+		
+	} else {
+		rows, _ = repository.Db.Query(`
 		SELECT 
 			p.id, 
 			p.user_id, 
@@ -25,9 +48,7 @@ func GetAllPosts() ([]map[string]interface{}, error) {
 		GROUP BY p.id, p.user_id, p.title, p.content, p.image_path, p.created_at, u.nickname, u.image
 		ORDER BY p.created_at DESC;
 	`)
-	if err != nil {
-		fmt.Println("Error executing query:", err)
-		return nil, err
+		
 	}
 	defer rows.Close()
 
@@ -60,7 +81,7 @@ func GetAllPosts() ([]map[string]interface{}, error) {
 		posts = append(posts, post)
 	}
 
-	if err = rows.Err(); err != nil {
+	if err := rows.Err(); err != nil {
 		fmt.Println("Error iterating rows:", err)
 		return nil, err
 	}
