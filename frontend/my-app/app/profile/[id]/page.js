@@ -1,11 +1,13 @@
 "use client";
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import Navbar from '../../../components/Navbar.js';
 import { useDarkMode } from '../../../context/darkMod.js';
 import './profile.css';
 import LeftBar from '../../../components/LeftBar.js';
 import RightBar from '../../../components/RightBar.js';
 import { useParams, useRouter } from 'next/navigation.js';
+import Post from '../../../components/Post.js';
+import Comment from '../../../components/coment.js';
 
 export default function Profile() {
 
@@ -16,6 +18,12 @@ export default function Profile() {
   const params = useParams();
   const router = useRouter();
   const userId = Number(params.id);
+  const [posts, setPosts] = useState([]);
+  const [showComments, setShowComments] = useState(false);
+  const [selectedPost, setSelectedPost] = useState(null);
+  const [comment, setComment] = useState([]);
+  const commentsModalRef = useRef(null);
+
 
   const [profile, setProfile] = useState(null);
 
@@ -27,8 +35,8 @@ export default function Profile() {
       });
       if (res.ok) {
         const json = await res.json();
-        console.log('11',json);
-        
+        console.log('11', json);
+
         setProfile(json);
       }
     } catch (err) {
@@ -39,7 +47,99 @@ export default function Profile() {
   useEffect(() => {
     loadProfile();
   }, []);
-  
+  // Fetch posts for this profile user
+  useEffect(() => {
+    async function fetchUserPosts() {
+      try {
+        const res = await fetch(`http://localhost:8080/api/Getallpost?userId=${params.id}`, {
+          method: "GET",
+          credentials: "include",
+        });
+        if (!res.ok) {
+          throw new Error("Failed to fetch user posts");
+        }
+        const data = await res.json();
+        setPosts(Array.isArray(data) ? data : []);
+        
+      } catch (err) {
+        console.error("Error fetching user posts:", err);
+      }
+    }
+    if (params.id) {
+      fetchUserPosts();
+    }
+  }, [params.id]);
+
+  // Fetch comments for a specific post (like home page)
+  async function GetComments(post) {
+    try {
+      setSelectedPost({
+        id: post.id,
+        title: post.title || post.post_title || "Post"
+      });
+      const res = await fetch(`http://localhost:8080/api/Getcomments/${post.id}`, {
+        method: "GET",
+        credentials: "include",
+      });
+      if (!res.ok) {
+        throw new Error("Failed to fetch comments");
+      }
+      const data = await res.json();
+      let comments = [];
+      if (Array.isArray(data)) {
+        comments = data;
+      } else if (data && typeof data === 'object' && data.comments && Array.isArray(data.comments)) {
+        comments = data.comments;
+      } else if (data && typeof data === 'object') {
+        comments = [data];
+      }
+      comments = comments.map(comment => ({
+        id: comment.id || Math.random(),
+        author: comment.author || comment.username || "Anonymous",
+        content: comment.content || comment.text || "",
+        created_at: comment.created_at || comment.createdAt || new Date().toISOString()
+      }));
+      setComment(comments);
+      setShowComments(true);
+    } catch (err) {
+      setComment([]);
+      setSelectedPost({ id: post.id, title: post.title || "Post" });
+      setShowComments(true);
+    }
+  }
+
+  // Refresh comments after posting a new comment
+  async function refreshComments() {
+    if (!selectedPost?.id) return;
+    try {
+      const res = await fetch(`http://localhost:8080/api/Getcomments/${selectedPost.id}`, {
+        method: "GET",
+        credentials: "include",
+      });
+      if (res.ok) {
+        const data = await res.json();
+        let comments = [];
+        if (Array.isArray(data)) {
+          comments = data;
+        } else if (data && data.comments && Array.isArray(data.comments)) {
+          comments = data.comments;
+        } else if (data) {
+          comments = [data];
+        }
+        setComment(comments);
+      }
+    } catch (err) {
+      // ignore
+    }
+  }
+
+  // Close comments modal and reset state
+  function closeComments() {
+    setShowComments(false);
+    setSelectedPost(null);
+    setComment([]);
+  }
+
   if (!profile) {
     return (
       <div className={darkMode ? 'theme-dark' : 'theme-light'}>
@@ -51,8 +151,8 @@ export default function Profile() {
           <LeftBar showSidebar={showSidebar} />
           <div className="profile">
             <div className="images">
-              <div className="cover" style={{width: '100%', height: 300, background: '#eee'}} />
-              <div className="profilePic" style={{width: 200, height: 200, background: '#ccc', borderRadius: '50%', margin: '0 auto', marginTop: -100}} />
+              <div className="cover" style={{ width: '100%', height: 300, background: '#eee' }} />
+              <div className="profilePic" style={{ width: 200, height: 200, background: '#ccc', borderRadius: '50%', margin: '0 auto', marginTop: -100 }} />
             </div>
             <div className="profileContainer">
               <div className="uInfo">
@@ -60,6 +160,19 @@ export default function Profile() {
                   <span>Loading...</span>
                 </div>
               </div>
+            </div>
+            <div className="posts" style={{ marginTop: 20 }}>
+              {posts.length === 0 ? (
+                <p>No posts available</p>
+              ) : (
+                posts.map((post) => (
+                  <Post
+                    key={post.id}
+                    post={post}
+                    onGetComments={() => GetComments(post)}
+                  />
+                ))
+              )}
             </div>
           </div>
           <RightBar />
@@ -76,7 +189,6 @@ export default function Profile() {
       />
       <main className="content">
         <LeftBar showSidebar={showSidebar} />
-
         <div className="profile">
           <div className="images">
             <img
@@ -89,9 +201,7 @@ export default function Profile() {
               alt="profile picture"
               className="profilePic"
             />
-
           </div>
-
           <div className="profileContainer">
             <div className="uInfo">
               <div className="center">
@@ -100,16 +210,39 @@ export default function Profile() {
                   <div className="item">
                     <span>{data.about}</span>
                   </div>
-
                 </div>
                 <button>follow</button>
               </div>
               <div className="right"></div>
             </div>
           </div>
+          <div className="posts" style={{ marginTop: 20 }}>
+            {posts.length === 0 ? (
+              <p>No posts available</p>
+            ) : (
+              posts.map((post) => (
+                <Post
+                  key={post.id}
+                  post={post}
+                  onGetComments={() => GetComments(post)}
+                />
+              ))
+            )}
+          </div>
         </div>
         <RightBar />
       </main>
+      {/* Comments Modal */}
+      {showComments && (
+        <Comment
+          comments={comment}
+          isOpen={showComments}
+          onClose={closeComments}
+          postId={selectedPost?.id}
+          postTitle={selectedPost?.title}
+          onCommentChange={refreshComments}
+        />
+      )}
     </div>
   );
 }
