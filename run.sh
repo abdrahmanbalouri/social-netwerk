@@ -8,3 +8,13 @@ cd ../frontend/my-app
 npm install
 # ensure npm uses the same node binary (helps with snap-installed node mismatch)
 npm run dev --scripts-prepend-node-path=true
+
+
+
+
+
+# COMMAND CREATE NEW MIGRATION IS :::
+# sql-migrate new create_user_table
+
+# BUT BEFORE INSTALL THIS :
+# go install github.com/rubenv/sql-migrate/sql-migrate@latest

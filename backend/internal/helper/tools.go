@@ -33,13 +33,13 @@ func Skip(str string) string {
 	return html.EscapeString(str)
 }
 
-func AuthenticateUser(r *http.Request) (int, error) {
+func AuthenticateUser(r *http.Request) (string, error) {
 	cookie, err := r.Cookie("session")
 	if err != nil {
-		return 0, err
+		return "", err
 	}
 
-	var userID int
+	var userID string
 
 	err = repository.Db.QueryRow(`
     SELECT u.id
@@ -48,7 +48,7 @@ func AuthenticateUser(r *http.Request) (int, error) {
     WHERE s.token = ?
 `, cookie.Value).Scan(&userID)
 	if err != nil {
-		return 0, err
+		return "", err
 	}
 
 	return userID, nil

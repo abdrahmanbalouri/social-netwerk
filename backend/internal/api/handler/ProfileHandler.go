@@ -3,7 +3,6 @@ package handlers
 import (
 	"fmt"
 	"net/http"
-	"strconv"
 
 	"social-network/internal/helper"
 	"social-network/internal/repository"
@@ -22,7 +21,7 @@ func ProfileHandler(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, "Authentication required", http.StatusUnauthorized)
 			return
 		}
-		userID = strconv.Itoa(userid)
+		userID = userid
 
 	}
 	fmt.Println("UserID:", userID) // Debugging line to check the userID value

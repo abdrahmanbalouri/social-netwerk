@@ -12,6 +12,6 @@ type PostRequest struct {
 }
 type User struct{
 	Nickname string  `json:"nickname"`
-	ID  int     `json:"id"`
+	ID  string     `json:"id"`
       
 }

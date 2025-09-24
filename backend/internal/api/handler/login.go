@@ -22,7 +22,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var dbPassword string
-	var userID int
+	var userID string
 
 	err1 := logindata.Checklogindata(loginInformations.Nickname, repository.Db, w, &dbPassword, &userID, loginInformations.Password)
 	if err1 == "0" {
