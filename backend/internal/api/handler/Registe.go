@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"encoding/json"
-	"fmt"
 	"html"
 	"net/http"
 	"regexp"
@@ -11,6 +10,7 @@ import (
 
 	"social-network/internal/repository"
 
+	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -32,7 +32,6 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Invalid request body", http.StatusBadRequest)
 		return
 	}
-	fmt.Println("222213212")
 	var exists int
 	err := repository.Db.QueryRow(
 		"SELECT COUNT(*) FROM users WHERE email = ? OR nickname = ?",
@@ -75,11 +74,12 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Invalid age", http.StatusBadRequest)
 		return
 	}
-
+	id := uuid.New()
 	res, err := repository.Db.Exec(`
 	INSERT INTO users 
-	(nickname, date_birth, first_name, last_name, email, password, image, about, privacy, created_at)
-	VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+	(id, nickname, date_birth, first_name, last_name, email, password, image, about, privacy, created_at)
+	VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+		id,
 		html.EscapeString(userInformation.Nickname),
 		userInformation.DateBirth,
 		html.EscapeString(userInformation.FirstName),

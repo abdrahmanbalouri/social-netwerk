@@ -10,6 +10,7 @@ import (
 func GetAllPosts(id string) ([]map[string]interface{}, error) {
 	var rows *sql.Rows
 	// Modified SQL query with JOIN to get nickname from users table and comment count from comments table
+	fmt.Println(id)
 	if id != "" {
 		rows, _ = repository.Db.Query(`
 		SELECT 
@@ -29,7 +30,6 @@ func GetAllPosts(id string) ([]map[string]interface{}, error) {
 		GROUP BY p.id, p.user_id, p.title, p.content, p.image_path, p.created_at, u.nickname, u.image
 		ORDER BY p.created_at DESC;
 	`, id)
-		
 	} else {
 		rows, _ = repository.Db.Query(`
 		SELECT 
@@ -48,14 +48,13 @@ func GetAllPosts(id string) ([]map[string]interface{}, error) {
 		GROUP BY p.id, p.user_id, p.title, p.content, p.image_path, p.created_at, u.nickname, u.image
 		ORDER BY p.created_at DESC;
 	`)
-		
 	}
 	defer rows.Close()
 
 	var posts []map[string]interface{}
 	for rows.Next() {
 		var id string
-		var userID int
+		var userID string
 		var title, content, imagePath, nickname, profile, createdAt string
 		var commentsCount int
 

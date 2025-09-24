@@ -12,7 +12,7 @@ export default function SignupPage() {
     firstName: '',
     lastName: '',
     dob: '',
-    avatar: null,
+    avatar: '',
     nickname: '',
     aboutMe: ''
   })
