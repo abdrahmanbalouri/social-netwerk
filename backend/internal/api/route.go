@@ -27,6 +27,7 @@ func Routes(db *sql.DB) http.Handler {
 	mux.HandleFunc("/api/GetUsersHandler",handlers.GetUsersHandler)
 	mux.HandleFunc("/api/Getcomments/{id}",handlers.GetCommentsHandler)
 	mux.HandleFunc("/api/createcomment",handlers.CreateCommentHandler)
+	mux.HandleFunc("/api/groups",handlers.AddGroupHandler)
 
 	return mux
 }
