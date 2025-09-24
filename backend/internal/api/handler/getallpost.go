@@ -1,9 +1,7 @@
 package handlers
 
 import (
-	"fmt"
 	"net/http"
-	"strconv"
 
 	"social-network/internal/helper"
 	"social-network/internal/repository/post"
@@ -17,9 +15,8 @@ func AllpostsHandler(w http.ResponseWriter, r *http.Request) {
 	id := r.URL.Query().Get("userId")
 	if id == "0" {
 		userID, _ := helper.AuthenticateUser(r)
-		id = strconv.Itoa(userID)
+		id = userID
 	}
-	fmt.Println("User ID:", id)
 
 	posts, err := post.GetAllPosts(id)
 	if err != nil {
