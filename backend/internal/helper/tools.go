@@ -6,8 +6,10 @@ import (
 	"encoding/json"
 	"html"
 	"net/http"
+	"log"
 
 	"social-network/internal/repository"
+	"github.com/gofrs/uuid/v5"
 )
 
 func GenerateSessionID() string {
@@ -52,4 +54,13 @@ func AuthenticateUser(r *http.Request) (string, error) {
 	}
 
 	return userID, nil
+}
+
+func GenerateUUID() uuid.UUID{
+	// Create a Version 4 UUID
+	u2, err := uuid.NewV4()
+	if err != nil {
+		log.Fatalf("failed to generate UUID: %v", err)
+	}
+	return u2
 }
