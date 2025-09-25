@@ -3,25 +3,23 @@ package handlers
 import (
 	"database/sql"
 	"encoding/json"
-	"fmt"
 	"net/http"
+	"strings"
+
 	"social-network/internal/helper"
 	"social-network/internal/repository"
-	"strings"
 
 	"github.com/google/uuid"
 )
 
 func CreateCommentHandler(w http.ResponseWriter, r *http.Request) {
-
 	if r.Method != "POST" {
 		helper.RespondWithError(w, http.StatusMethodNotAllowed, "Method Not Allowed")
 		return
 	}
 	userID, err := helper.AuthenticateUser(r)
 	if err != nil {
-		fmt.Println(err)
- 		helper.RespondWithError(w, http.StatusUnauthorized, "Authentication required")
+		helper.RespondWithError(w, http.StatusUnauthorized, "Authentication required")
 		return
 	}
 

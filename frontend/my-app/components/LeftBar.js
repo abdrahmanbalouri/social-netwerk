@@ -76,10 +76,12 @@ export default function LeftBar({ showSidebar }) {
             <Link href={'/games'}>
               <img src="/icone/7.png" alt="" />
             </Link>
-              <span>Gaming</span>
+            <span>Gaming</span>
           </div>
           <div className="item">
-            <img src="/icone/8.png" alt="" />
+            <Link href={'/Gallery'}>
+              <img src="/icone/8.png" alt="" />
+            </Link>
             <span>Gallery</span>
           </div>
           <div className="item">
