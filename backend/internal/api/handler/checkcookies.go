@@ -13,7 +13,6 @@ func MeHandler(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusUnauthorized)
 		w.Write([]byte(`{"message":"unauthorized"}`))
 		return
-
 	}
 	_, err = repository.Db.Query("SELECT user_id FROM sessions WHERE token=?", c.Value)
 
