@@ -35,8 +35,8 @@ export default function Gallery() {
     let items = slideRef.current.querySelectorAll(".item");
     slideRef.current.appendChild(items[0]);
 
-    const bg = window.getComputedStyle(items[0]).backgroundImage;
-    setImgIndex(bg); 
+    const bg = window.getComputedStyle(items[items.length - 1]).backgroundImage;
+    setImgIndex(bg);
   }
 
   function prev() {
@@ -44,7 +44,7 @@ export default function Gallery() {
     slideRef.current.prepend(items[items.length - 1]);
 
     const bg = window.getComputedStyle(items[items.length - 1]).backgroundImage;
-    setImgIndex(bg); 
+    setImgIndex(bg);
   }
 
   return (
@@ -53,12 +53,12 @@ export default function Gallery() {
       <div className="con" >
         <LeftBar showSidebar={true} />
         <main className="gallery">
-          <div className="container" style={{ backgroundImage: imgIndex }}>
+          <div className="container1" style={{ backgroundImage: imgIndex }}>
             <div className="slide" ref={slideRef}>
               {images.map((img, index) => (
                 <div
                   className="item"
-                  key={index}
+                  key={index + 1}
                   style={{ backgroundImage: `url(/${img.imagePath})` }}
                 >
                   <div className="content">
@@ -84,6 +84,7 @@ export default function Gallery() {
           </div>
         </main>
         <RightBar showSidebar={true} />
+
       </div>
     </div>
   );
