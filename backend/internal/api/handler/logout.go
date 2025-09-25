@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"fmt"
 	"net/http"
 	"time"
 
@@ -13,7 +12,6 @@ func LogoutHandler(w http.ResponseWriter, r *http.Request) {
 	if err == nil {
 		_, dbErr := repository.Db.Exec("DELETE FROM sessions WHERE token=?", c.Value)
 		if dbErr != nil {
-			fmt.Println(dbErr)
 			w.WriteHeader(http.StatusInternalServerError)
 			w.Write([]byte("Database error during logout"))
 			return

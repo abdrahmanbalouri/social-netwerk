@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"fmt"
 	"net/http"
 
 	"social-network/internal/helper"
@@ -24,7 +23,6 @@ func ProfileHandler(w http.ResponseWriter, r *http.Request) {
 		userID = userid
 
 	}
-	fmt.Println("UserID:", userID) // Debugging line to check the userID value
 	q := `SELECT id, nickname, email, about, privacy, image FROM users WHERE id = ?`
 	row := repository.Db.QueryRow(q, userID)
 

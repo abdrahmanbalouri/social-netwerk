@@ -2,7 +2,6 @@ package post
 
 import (
 	"database/sql"
-	"fmt"
 
 	"social-network/internal/repository"
 )
@@ -10,7 +9,6 @@ import (
 func GetAllPosts(id string) ([]map[string]interface{}, error) {
 	var rows *sql.Rows
 	// Modified SQL query with JOIN to get nickname from users table and comment count from comments table
-	fmt.Println(id)
 	if id != "" {
 		rows, _ = repository.Db.Query(`
 		SELECT 
@@ -61,7 +59,6 @@ func GetAllPosts(id string) ([]map[string]interface{}, error) {
 		// Scan the result into variables
 		err := rows.Scan(&id, &userID, &title, &content, &imagePath, &createdAt, &nickname, &profile, &commentsCount)
 		if err != nil {
-			fmt.Println("Error scanning row:", err)
 			return nil, err
 		}
 
@@ -81,7 +78,6 @@ func GetAllPosts(id string) ([]map[string]interface{}, error) {
 	}
 
 	if err := rows.Err(); err != nil {
-		fmt.Println("Error iterating rows:", err)
 		return nil, err
 	}
 

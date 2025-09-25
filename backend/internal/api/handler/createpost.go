@@ -61,7 +61,6 @@ func Createpost(w http.ResponseWriter, r *http.Request) {
 		out, err := os.Create(filepath.Join("../frontend/my-app/public", imagePath))
 		if err != nil {
 			helper.RespondWithError(w, http.StatusInternalServerError, "Failed to save image")
-			fmt.Println(err)
 			return
 		}
 		defer out.Close()
