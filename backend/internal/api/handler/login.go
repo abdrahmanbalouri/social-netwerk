@@ -13,8 +13,6 @@ import (
 )
 
 func LoginHandler(w http.ResponseWriter, r *http.Request) {
-	
-	
 	var loginInformations utils.LoginInformation
 	err := json.NewDecoder(r.Body).Decode(&loginInformations)
 	fmt.Println(loginInformations)
@@ -42,6 +40,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	fmt.Println("session id in login page is :", sessionID)
 	http.SetCookie(w, &http.Cookie{
 		Name:     "session",
 		Value:    sessionID,
