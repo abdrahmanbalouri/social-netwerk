@@ -1,4 +1,8 @@
 "use client";
+import FacebookTwoToneIcon from '@mui/icons-material/FacebookTwoTone';
+import InstagramIcon from '@mui/icons-material/Instagram';
+import TwitterIcon from '@mui/icons-material/Twitter';
+import LinkedInIcon from '@mui/icons-material/LinkedIn';
 import { useEffect, useState, useRef } from 'react';
 import Navbar from '../../../components/Navbar.js';
 import { useDarkMode } from '../../../context/darkMod.js';
@@ -8,8 +12,14 @@ import RightBar from '../../../components/RightBar.js';
 import { useParams, useRouter } from 'next/navigation.js';
 import Post from '../../../components/Post.js';
 import Comment from '../../../components/coment.js';
+import { useProfile } from '../../../context/profile.js';
+import PlaceIcon from "@mui/icons-material/Place";
+import LanguageIcon from "@mui/icons-material/Language";
+import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
+import MoreVertIcon from "@mui/icons-material/MoreVert";
 
 export default function Profile() {
+  const {Profile } = useProfile();
 
   const { darkMode } = useDarkMode();
 
@@ -60,7 +70,7 @@ export default function Profile() {
         }
         const data = await res.json();
         setPosts(Array.isArray(data) ? data : []);
-        
+
       } catch (err) {
         console.error("Error fetching user posts:", err);
       }
@@ -181,6 +191,8 @@ export default function Profile() {
     );
   }
   const data = profile;
+  console.log(Profile);
+
   return (
     <div className={darkMode ? 'theme-dark' : 'theme-light'}>
       <Navbar
@@ -204,30 +216,52 @@ export default function Profile() {
           </div>
           <div className="profileContainer">
             <div className="uInfo">
+              <div className="left">
+                <a href="http://facebook.com">
+                  <FacebookTwoToneIcon fontSize="large" />
+                </a>
+                <a href="http://instagram.com">
+                  <InstagramIcon fontSize="large" />
+                </a>
+                <a href="http://x.com">
+                  <TwitterIcon fontSize="large" />
+                </a>
+                <a href="http://linkedin.com">
+                  <LinkedInIcon fontSize="large" />
+                </a>
+              </div>
               <div className="center">
                 <span>{data.nickname}</span>
                 <div className="info">
+
                   <div className="item">
+                    <LanguageIcon />
                     <span>{data.about}</span>
                   </div>
                 </div>
-                <button>follow</button>
+                {Profile && Profile.id !== data.id && (
+                  <button>follow</button>
+                )}
+
               </div>
-              <div className="right"></div>
+              <div className="right">
+                <EmailOutlinedIcon />
+                <MoreVertIcon />
+              </div>
             </div>
-          </div>
-          <div className="posts" style={{ marginTop: 20 }}>
-            {posts.length === 0 ? (
-              <p>No posts available</p>
-            ) : (
-              posts.map((post) => (
-                <Post
-                  key={post.id}
-                  post={post}
-                  onGetComments={() => GetComments(post)}
-                />
-              ))
-            )}
+            <div className="posts" style={{ marginTop: 20 }}>
+              {posts.length === 0 ? (
+                <p>No posts available</p>
+              ) : (
+                posts.map((post) => (
+                  <Post
+                    key={post.id}
+                    post={post}
+                    onGetComments={() => GetComments(post)}
+                  />
+                ))
+              )}
+            </div>
           </div>
         </div>
         <RightBar />
