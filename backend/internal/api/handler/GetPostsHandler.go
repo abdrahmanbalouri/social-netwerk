@@ -24,7 +24,6 @@ func GetPostsHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	postID := parts[3]
-	fmt.Println("Fetching post with ID:", postID)
 
 	var post struct {
 		ID            string    `json:"id"`

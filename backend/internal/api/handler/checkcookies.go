@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"fmt"
 	"net/http"
 
 	"social-network/internal/repository"
@@ -22,7 +21,6 @@ func MeHandler(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte(`{"message":"unauthorized"}`))
 		return
 	} else {
-		fmt.Println("authorized")
 		w.WriteHeader(http.StatusOK)
 		w.Write([]byte(`{"message":"authorized"}`))
 		return
