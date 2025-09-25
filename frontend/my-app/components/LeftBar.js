@@ -7,7 +7,7 @@ import Link from 'next/link';
 
 export default function LeftBar({ showSidebar }) {
   const router = useRouter();
-  const { profile } = useProfile();
+  const { Profile } = useProfile();
 
   async function handleLogout(e) {
     e?.preventDefault?.();
@@ -42,10 +42,10 @@ export default function LeftBar({ showSidebar }) {
         <div className="menu">
           <div className="user">
             <img
-              src={profile?.image ? `/uploads/${profile.image}` : '/avatar.png'}
+              src={Profile?.image ? `/uploads/${Profile.image}` : '/avatar.png'}
               alt="user avatar"
             />
-            <span>{profile?.nickname ?? 'user name'}</span>
+            <span>{Profile?.nickname ?? 'user name'}</span>
           </div>
           <div className="item">
             <img src="/icone/1.png" alt="" />
