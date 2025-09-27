@@ -5,9 +5,8 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"html"
-	"net/http"
 	"log"
-
+	"net/http"
 	"social-network/internal/repository"
 	"github.com/gofrs/uuid/v5"
 )
@@ -56,7 +55,7 @@ func AuthenticateUser(r *http.Request) (string, error) {
 	return userID, nil
 }
 
-func GenerateUUID() uuid.UUID{
+func GenerateUUID() uuid.UUID {
 	// Create a Version 4 UUID
 	u2, err := uuid.NewV4()
 	if err != nil {

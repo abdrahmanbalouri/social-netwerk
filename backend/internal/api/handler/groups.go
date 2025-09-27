@@ -1,30 +1,24 @@
 package handlers
 
 import (
+	"database/sql"
 	"encoding/json"
 	"fmt"
 	"net/http"
 	"strings"
+	"time"
 
 	"social-network/internal/helper"
 	"social-network/internal/repository"
 )
 
-func AddGroupHandler(w http.ResponseWriter, r *http.Request) {
-	// session, err := r.Cookie("session")
-	sessionID, err := r.Cookie("session_id")
-	fmt.Println("session iD in groups handler is :", sessionID)
-	if err != nil {
-		w.WriteHeader(http.StatusUnauthorized)
-		w.Write([]byte(`{"message":"unauthorized"}`))
-		return
-	}
+type GroupRequest struct {
+	Title        string   `json:"title"`
+	Description  string   `json:"description"`
+	InvitedUsers []string `json:"invitedUsers"`
+}
 
-	type GroupRequest struct {
-		AdminID     string `json:"adminID"`
-		Title       string `json:"title"`
-		Description string `json:"description"`
-	}
+func AddGroupHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		helper.RespondWithError(w, http.StatusMethodNotAllowed, "Method not allowed")
 		return
@@ -36,25 +30,105 @@ func AddGroupHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if len(strings.TrimSpace(newGroup.AdminID)) == 0 || len(strings.TrimSpace(newGroup.Title)) == 0 || len(strings.TrimSpace(newGroup.Description)) == 0 {
-		helper.RespondWithError(w, http.StatusBadRequest, "Invalid request format")
+	if len(strings.TrimSpace(newGroup.Title)) == 0 || len(strings.TrimSpace(newGroup.Description)) == 0 {
+		helper.RespondWithError(w, http.StatusBadRequest, "Title and description are required")
 		return
 	}
 
-	// create new groups
+	//Get session cookie value.
+	c, err := r.Cookie("session")
+	if err != nil {
+		helper.RespondWithError(w, http.StatusUnauthorized, "No valid session found")
+		return
+	}
+
+	// Get the user's ID
+	var adminID string
+	if err := repository.Db.QueryRow("SELECT user_id FROM sessions WHERE token = ?", c.Value).Scan(&adminID); err != nil {
+		if err == sql.ErrNoRows {
+			helper.RespondWithError(w, http.StatusUnauthorized, "Invalid or expired session")
+			return
+		}
+		helper.RespondWithError(w, http.StatusInternalServerError, "Failed to retrieve user session")
+		return
+	}
+
+	//Begin a transaction
+	tx, err := repository.Db.Begin()
+	if err != nil {
+		helper.RespondWithError(w, http.StatusInternalServerError, "Failed to start database transaction")
+		return
+	}
+	defer tx.Rollback()
+
 	grpID := helper.GenerateUUID()
+
+	// Insert new group
 	query1 := `INSERT INTO groups (id, title, description, admin_id) VALUES (?, ?, ?, ?)`
-	_, err1 := repository.Db.Exec(query1, grpID, newGroup.Title, newGroup.Description, newGroup.AdminID)
-	if err1 != nil {
+	if _, err := tx.Exec(query1, grpID, newGroup.Title, newGroup.Description, adminID); err != nil {
 		helper.RespondWithError(w, http.StatusInternalServerError, "Failed to create new group")
 		return
 	}
 
-	// insert the admin in the grp_members table
+	// Insert the admin as a member of the group with is_admin set to true
 	query2 := `INSERT INTO group_members (user_id, group_id) VALUES (?, ?)`
-	_, err2 := repository.Db.Exec(query2, newGroup.AdminID, grpID)
-	if err2 != nil {
-		helper.RespondWithError(w, http.StatusInternalServerError, "Failed to insert the admin in the group_members table")
+	if _, err := tx.Exec(query2, adminID, grpID); err != nil {
+		fmt.Println("the error is : ", err)
+		helper.RespondWithError(w, http.StatusInternalServerError, "Failed to insert admin into group members table")
 		return
 	}
+
+	// Process all invited users
+	for _, nickname := range newGroup.InvitedUsers {
+		var userID string
+
+		err := tx.QueryRow(`SELECT id FROM users WHERE nickname = ?`, nickname).Scan(&userID)
+		if err != nil {
+			if err == sql.ErrNoRows {
+				continue
+			}
+			helper.RespondWithError(w, http.StatusInternalServerError, "Failed to retrieve invited user's ID")
+			return
+		}
+
+		query3 := `INSERT INTO group_invitations (id, group_id, user_id, invited_by_user_id, status, created_at) VALUES (?, ?, ?, ?, ?, ?)`
+		rowId := helper.GenerateUUID()
+		createdAt := time.Now().UTC()
+		if _, err := tx.Exec(query3, rowId, grpID, userID, adminID, "pending", createdAt); err != nil {
+			helper.RespondWithError(w, http.StatusInternalServerError, "Failed to insert invited user into group_invitation table")
+			return
+		}
+	}
+
+	for _, nickname := range newGroup.InvitedUsers {
+		var userID string
+		err = tx.QueryRow(`SELECT id FROM users WHERE nickname = ?`, nickname).Scan(&userID)
+		if err != nil {
+			if err == sql.ErrNoRows {
+				continue //ignore ila kan chi user makaynch
+			}
+			helper.RespondWithError(w, http.StatusInternalServerError, "Failed to get invitedUser's id")
+			return
+		}
+		query1 = `INSERT INTO group_invitations (id, group_id, user_id, invited_by_user_id, status, created_at) VALUES (?,?,?,?,?,?)`
+		rowId := helper.GenerateUUID()
+		createdAt := time.Now().UTC()
+		_, err = tx.Exec(query1, rowId, grpID, userID, adminID, "pending", createdAt)
+		if err != nil {
+			helper.RespondWithError(w, http.StatusInternalServerError, "Failed to insert invitedUser's into group_invitation tbale")
+			return
+		}
+	}
+
+	//Commit the transaction
+	if err := tx.Commit(); err != nil {
+		helper.RespondWithError(w, http.StatusInternalServerError, "Failed to commit transaction")
+		return
+	}
+
+	response := map[string]string{
+		"message":  "Group and invitations created successfully",
+		"group_id": grpID.String(),
+	}
+	helper.RespondWithJSON(w, http.StatusCreated, response)
 }
