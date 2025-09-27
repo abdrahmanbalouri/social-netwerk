@@ -12,13 +12,9 @@ func AllpostsHandler(w http.ResponseWriter, r *http.Request) {
 		helper.RespondWithError(w, http.StatusMethodNotAllowed, "Method Not Allowed")
 		return
 	}
-	id := r.URL.Query().Get("userId")
-	if id == "0" {
-		userID, _ := helper.AuthenticateUser(r)
-		id = userID
-	}
 
-	posts, err := post.GetAllPosts(id)
+
+	posts, err := post.GetAllPosts("", r)
 	if err != nil {
 		helper.RespondWithError(w, http.StatusInternalServerError, "Failed to retrieve posts")
 		return

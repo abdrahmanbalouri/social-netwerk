@@ -87,18 +87,39 @@ export default function Home() {
     setImage(e.target.files[0]);
   }
 
-   async function Handlelik(postId) {
-    console.log(postId,'*------------*/**');
-    
+  async function Handlelik(postId) {
+
     try {
       const res = await fetch(`http://localhost:8080/api/like/${postId}`, {
         method: "POST",
         credentials: "include",
       });
-  const  response = await res.json();
-  console.log(response);
-                
-    
+      const response = await res.json();
+      console.log(response);
+      
+      if(res.ok){
+
+        const newpost = await fetchPosts(postId)
+        
+        console.log(newpost,'*------------*/**');
+        
+  
+        for (let i = 0; i < posts.length; i++) {
+          if (posts[i].id == newpost.id) {
+  
+            setPosts([
+              ...posts.slice(0, i),
+              newpost,
+              ...posts.slice(i + 1)
+            ]);
+            break
+          }
+        }
+      }
+
+
+
+
 
     } catch (err) {
       console.error("Error liking post:", err);
@@ -365,8 +386,8 @@ export default function Home() {
               <Post
                 key={post.id}
                 post={post}
-                onGetComments={GetComments} 
-                ondolike= {Handlelik}
+                onGetComments={GetComments}
+                ondolike={Handlelik}
               />
             ))
           )}
