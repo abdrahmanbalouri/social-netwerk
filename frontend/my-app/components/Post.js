@@ -1,7 +1,7 @@
 // Post.js
 import Link from 'next/link';
 
-export default function Post({ post, onGetComments }) {
+export default function Post({ post, onGetComments , ondolike}) {
   return (
     <div className="post">
       <div className="container">
@@ -24,7 +24,7 @@ export default function Post({ post, onGetComments }) {
           {post.image_path && <img src={`/${post.image_path}`} alt="Post content" />}
         </div>
         <div className="info">
-          <div className="item">
+          <div className="item"onClick={()=>ondolike(post.id) } >
             <i className="fa-regular fa-heart"></i> {post.like || 0} Likes
           </div>
           <div className="item" onClick={() => onGetComments(post)}>

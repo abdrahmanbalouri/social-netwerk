@@ -87,6 +87,23 @@ export default function Home() {
     setImage(e.target.files[0]);
   }
 
+   async function Handlelik(postId) {
+    console.log(postId,'*------------*/**');
+    
+    try {
+      const res = await fetch(`http://localhost:8080/api/like/${postId}`, {
+        method: "POST",
+        credentials: "include",
+      });
+  const  response = await res.json();
+  console.log(response);
+                
+    
+
+    } catch (err) {
+      console.error("Error liking post:", err);
+    }
+  }
   // Fetch initial posts on component mount
   useEffect(() => {
     async function fetchInitialPosts() {
@@ -348,7 +365,8 @@ export default function Home() {
               <Post
                 key={post.id}
                 post={post}
-                onGetComments={GetComments} // Pass GetComments as a prop
+                onGetComments={GetComments} 
+                ondolike= {Handlelik}
               />
             ))
           )}
