@@ -26,7 +26,7 @@ export default function Navbar({ onCreatePost, onToggleSidebar }) {
         <i className="fa-solid fa-bell"></i>
         <i className="fa-solid fa-plus" onClick={onCreatePost}></i>
         <div className="user" onClick={() => router.push("/profile/0")}>
-          <img src={Profile?.image ? `/uploads/${Profile.image}` : "/avatar.png"} alt="user avatar" />
+          <img src={Profile?.image ? `/uploads/${Profile.image}` : "/uploads/default.png"} alt="user avatar" />
         </div>
       </div>
     </div>
