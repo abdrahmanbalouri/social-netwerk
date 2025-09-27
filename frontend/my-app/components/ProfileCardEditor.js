@@ -155,9 +155,7 @@ export default function ProfileCardEditor({
                         </select>
                     </label>
 
-                    <label className="checkbox">
-                        <input type="checkbox" /> Show email on profile
-                    </label>
+                    
 
                     <div className="actions">
                         <button
