@@ -42,13 +42,7 @@ html::-webkit-scrollbar {
   gap: 20px;
 }
 
-.post .container .info .item {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  cursor: pointer;
-  font-size: 14px;
-}
+
 
 /* ==================== Modal styles ==================== */
 .modal-overlay {
@@ -213,23 +207,7 @@ html::-webkit-scrollbar {
   border-top: 1px solid #e5e5e5; /* Light separator */
 }
 
-.item {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 14px;
-  color: #606770;
-  cursor: pointer;
-  transition: color 0.2s ease;
-}
 
-.item:hover {
-  color: #1b74e4; /* Blue on hover for interactivity */
-}
-
-.item i {
-  font-size: 16px;
-}
 
 /* Font Awesome Icons (Assuming Font Awesome is included) */
 .fa-heart,
