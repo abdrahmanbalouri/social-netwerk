@@ -2,7 +2,7 @@
 "use client";
 import './Home.css';
 import { useRouter } from "next/navigation";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, use } from "react";
 import Navbar from '../../components/Navbar.js';
 import LeftBar from '../../components/LeftBar.js';
 import RightBar from '../../components/RightBar.js';
@@ -11,6 +11,7 @@ import Stories from '../../components/stories.js';
 import Comment from '../../components/coment.js';
 import { useProfile } from '../../context/profile.js';
 import Post from '../../components/Post.js';
+import { middleware } from '../../midlwere/midle.js';
 
 export default function Home() {
   const router = useRouter();
@@ -32,11 +33,31 @@ export default function Home() {
 
   const modalRef = useRef(null);
   const commentsModalRef = useRef(null);
+  useEffect(()=>{
 
-  useEffect(() => {
-    console.log(showModal);
-  }, [showModal]);
+    async function midle() {
+      try {
+        const response = await fetch("http://localhost:8080/api/me", {
+          credentials: "include",
+          method: "GET",
+        });
+        
+        console.log(response.ok);
+        if (!response.ok) {
+          router.replace("/login"); 
+          return null;
+        }
+      } catch (error) {
+        router.replace("/login");
+        return null;
 
+      }
+    }
+    midle()
+
+
+
+  },[])
   // Logout function
   async function logout(e) {
     console.log("Logging out...");
