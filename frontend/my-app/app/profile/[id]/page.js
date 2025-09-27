@@ -17,9 +17,10 @@ import PlaceIcon from "@mui/icons-material/Place";
 import LanguageIcon from "@mui/icons-material/Language";
 import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
+import ProfileCardEditor from '../../../components/ProfileCardEditor.js';
 
 export default function Profile() {
-  const {Profile } = useProfile();
+  const { Profile } = useProfile();
 
   const { darkMode } = useDarkMode();
 
@@ -149,7 +150,11 @@ export default function Profile() {
     setSelectedPost(null);
     setComment([]);
   }
+  const [showPrivacy, setShowPrivacy] = useState(false);
 
+  function handleShowPrivacy() {
+    setShowPrivacy(!showPrivacy);
+  }
   if (!profile) {
     return (
       <div className={darkMode ? 'theme-dark' : 'theme-light'}>
@@ -204,12 +209,13 @@ export default function Profile() {
         <div className="profile">
           <div className="images">
             <img
-              src="https://images.pexels.com/photos/13440765/pexels-photo-13440765.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
+
+              src={data.cover ? `/uploads/${data.cover}` : "https://images.pexels.com/photos/13440765/pexels-photo-13440765.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"}
               alt=""
               className="cover"
             />
             <img
-              src={data.image ? `/uploads/${data.image}` : "avatar.png"}
+              src={data.image ? `/uploads/${data.image}` : "/uploads/default.png"}
               alt="profile picture"
               className="profilePic"
             />
@@ -244,10 +250,14 @@ export default function Profile() {
                 )}
 
               </div>
-              <div className="right">
-                <EmailOutlinedIcon />
-                <MoreVertIcon />
+              <div className="right" onClick={handleShowPrivacy}>
+                {Profile && Profile.id !== data.id ? (
+                  <EmailOutlinedIcon />
+                ) : (<MoreVertIcon />)}
+
+
               </div>
+              {showPrivacy && (<ProfileCardEditor showPrivacy={showPrivacy} />)}
             </div>
             <div className="posts" style={{ marginTop: 20 }}>
               {posts.length === 0 ? (

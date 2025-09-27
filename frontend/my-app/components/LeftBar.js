@@ -42,7 +42,7 @@ export default function LeftBar({ showSidebar }) {
         <div className="menu">
           <div className="user">
             <img
-              src={Profile?.image ? `/uploads/${Profile.image}` : '/avatar.png'}
+              src={Profile?.image ? `/uploads/${Profile.image}` : '/uploads/default.png'}
               alt="user avatar"
             />
             <span>{Profile?.nickname ?? 'user name'}</span>
