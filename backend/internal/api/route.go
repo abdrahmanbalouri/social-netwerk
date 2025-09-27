@@ -29,6 +29,7 @@ func Routes(db *sql.DB) http.Handler {
 	mux.HandleFunc("/api/gallery",handlers.GalleryHandler)
 	mux.HandleFunc("/api/createcomment",handlers.CreateCommentHandler)
 	mux.HandleFunc("/api/editor",handlers.Editor)
+	mux.HandleFunc("/api/like/{id}",handlers.LikeHandler)
 
 	return mux
 }

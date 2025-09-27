@@ -18,6 +18,8 @@ html::-webkit-scrollbar {
   /* WebKit browsers */
 }
 
+
+
 .post .container .user .userInfo .details .date {
   font-size: 12px;
 }
@@ -118,54 +120,153 @@ html::-webkit-scrollbar {
 }
 
 /* 📝 Post */
+/* Post Container */
 .post {
-  -webkit-box-shadow: 0px 0px 25px -10px rgba(0, 0, 0, 0.38);
-  -moz-box-shadow: 0px 0px 25px -10px rgba(0, 0, 0, 0.38);
-  box-shadow: 0px 0px 25px -10px rgba(0, 0, 0, 0.38);
-  border-radius: 20px;
-  background-color: var(--bg);
-  color: var(--textColor);
-  margin: 10px;
+  background: #fff;
+  /* White background for post card */
+  border-radius: 8px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  margin: 16px auto;
+  max-width: 600px;
+  /* Matches typical social media post width */
+  padding: 12px;
 }
 
-.post .container {
-  padding: 20px;
+/* Inner Container */
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
-/* 👤 User */
-.post .container .user {
+/* User Section */
+.user {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  padding: 8px 12px;
 }
 
-.post .container .user .userInfo {
+.userInfo {
   display: flex;
-  gap: 20px;
+  align-items: center;
+  gap: 12px;
 }
 
-.post .container .user .userInfo img {
+.userInfo img {
   width: 40px;
   height: 40px;
   border-radius: 50%;
   object-fit: cover;
+  border: 1px solid #e5e5e5;
+  /* Subtle border around avatar */
 }
 
-.post .container .user .userInfo .details {
+.details {
   display: flex;
   flex-direction: column;
 }
 
-.post .con
-.modal-content .input {
+.name {
+  font-size: 15px;
+  font-weight: 600;
+  color: #1c1e21;
+  /* FB's dark text color */
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.name:hover {
+  color: #1b74e4;
+  /* FB's blue on hover */
+  text-decoration: none;
+}
+
+.date {
+  font-size: 12px;
+  color: #606770;
+  /* FB's gray text for secondary info */
+}
+
+/* Content Section */
+.content {
+  padding: 0 12px;
+}
+
+.content h3 {
+  margin: 0 0 8px;
+  font-size: 16px;
+  font-weight: 400;
+  color: #1c1e21;
+  line-height: 1.4;
+}
+
+.content h3 p {
+  margin: 0;
+  font-weight: 600;
+  /* Bold title */
+}
+
+.content img {
   width: 100%;
-  padding: 10px 12px;
+  max-height: 400px;
+  object-fit: cover;
   border-radius: 8px;
-  border: 1px solid var(--border, #ddd);
-  margin-top: 12px;
-  background: var(--bg, #fff);
-  color: var(--text, #111);
-  font-size: 14px;
+  margin-top: 8px;
+}
+
+/* Info Section (Likes and Comments) */
+.info {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 12px;
+  border-top: 1px solid #e5e5e5;
+  /* Light separator */
+}
+
+
+
+/* Font Awesome Icons (Assuming Font Awesome is included) */
+.fa-heart,
+.fa-comment {
+  color: #606770;
+}
+
+.item:hover .fa-heart,
+.item:hover .fa-comment {
+  color: #1b74e4;
+}
+
+/* Responsive Design */
+@media (max-width: 600px) {
+  .post {
+    margin: 8px;
+    padding: 8px;
+  }
+
+  .userInfo img {
+    width: 36px;
+    height: 36px;
+  }
+
+  .name {
+    font-size: 14px;
+  }
+
+  .date {
+    font-size: 11px;
+  }
+
+  .content h3 {
+    font-size: 15px;
+  }
+
+  .item {
+    font-size: 13px;
+  }
+
+  .item i {
+    font-size: 14px;
+  }
 }
 
 /*nav bar*/
@@ -411,12 +512,12 @@ html::-webkit-scrollbar {
   gap: 10px;
 }
 
-.rightBar .container .item .user .buttons button {
+/* .rightBar .container .item .user .buttons button {
   border: none;
   padding: 5px;
   color: white;
   cursor: pointer;
-}
+} */
 
 .rightBar .container .item .user .buttons button:first-child {
   background-color: #5271ff;
@@ -595,9 +696,10 @@ html::-webkit-scrollbar {
   color: var(--logo-dark);
 }
 
-.theme-light{
+.theme-light {
   background-color: var(--bg-soft-light);
 }
+
 .theme-light .leftBar,
 .theme-light .rightBar {
   background-color: var(--bg-light);
