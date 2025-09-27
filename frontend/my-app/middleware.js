@@ -10,8 +10,10 @@ export function middleware(req) {
   if (!hasSession && protectedPaths.some(path => url.pathname.startsWith(path))) {
     url.pathname = "/login";
     return NextResponse.redirect(url);
+    
   }
-
+  
+  console.log(644);
   return NextResponse.next();
 }
 
