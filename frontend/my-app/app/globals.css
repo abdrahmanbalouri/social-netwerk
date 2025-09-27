@@ -495,12 +495,12 @@ html::-webkit-scrollbar {
   gap: 10px;
 }
 
-.rightBar .container .item .user .buttons button {
+/* .rightBar .container .item .user .buttons button {
   border: none;
   padding: 5px;
   color: white;
   cursor: pointer;
-}
+} */
 
 .rightBar .container .item .user .buttons button:first-child {
   background-color: #5271ff;

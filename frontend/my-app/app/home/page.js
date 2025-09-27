@@ -12,6 +12,7 @@ import Comment from '../../components/coment.js';
 import { useProfile } from '../../context/profile.js';
 import Post from '../../components/Post.js';
 import { middleware } from '../../midlwere/midle.js';
+import './Home.css';
 
 export default function Home() {
   const router = useRouter();
@@ -33,7 +34,7 @@ export default function Home() {
 
   const modalRef = useRef(null);
   const commentsModalRef = useRef(null);
-  useEffect(()=>{
+  useEffect(() => {
 
     async function midle() {
       try {
@@ -41,10 +42,10 @@ export default function Home() {
           credentials: "include",
           method: "GET",
         });
-        
+
         console.log(response.ok);
         if (!response.ok) {
-          router.replace("/login"); 
+          router.replace("/login");
           return null;
         }
       } catch (error) {
@@ -57,7 +58,7 @@ export default function Home() {
 
 
 
-  },[])
+  }, [])
   // Logout function
   async function logout(e) {
     console.log("Logging out...");
@@ -74,7 +75,8 @@ export default function Home() {
         return;
       }
 
-      router.replace("/login");
+      // Instead of router.push("/home")
+      window.location.href = "/login";
     } catch (err) {
       console.error("Logout error:", err);
     }
@@ -405,4 +407,4 @@ export default function Home() {
       )}
     </div>
   );
-}Comment
+} Comment
