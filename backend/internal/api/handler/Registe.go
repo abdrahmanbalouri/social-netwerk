@@ -8,6 +8,7 @@ import (
 	"strings"
 	"time"
 
+	"social-network/internal/helper"
 	"social-network/internal/repository"
 
 	"github.com/google/uuid"
@@ -106,7 +107,11 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 		}(),
 		time.Now().Unix(),
 	)
+	if err != nil {
+		helper.RespondWithError(w, http.StatusInternalServerError, "Error executing query")
 
+		return
+	}
 	_, err = res.LastInsertId()
 	if err != nil {
 

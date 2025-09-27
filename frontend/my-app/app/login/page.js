@@ -20,7 +20,7 @@ export default function Login() {
     console.log(res);
 
     if (!res.ok) return setErr(await res.text());
-    router.push("/home");
+    window.location.href = "/home";
   }
 
   return (
