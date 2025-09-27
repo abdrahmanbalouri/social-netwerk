@@ -28,6 +28,7 @@ func Routes(db *sql.DB) http.Handler {
 	mux.HandleFunc("/api/Getcomments/{id}",handlers.GetCommentsHandler)
 	mux.HandleFunc("/api/gallery",handlers.GalleryHandler)
 	mux.HandleFunc("/api/createcomment",handlers.CreateCommentHandler)
+	mux.HandleFunc("/api/like/{id}",handlers.LikeHandler)
 
 	return mux
 }
