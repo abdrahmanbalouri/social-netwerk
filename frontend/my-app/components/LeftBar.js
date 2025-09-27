@@ -17,7 +17,8 @@ export default function LeftBar({ showSidebar }) {
       // ignore network errors here; still redirect
       console.error('Logout failed', err);
     }
-    router.replace('/login');
+    // Instead of router.push("/home")
+    window.location.href = "/login";
   }
 
   const logoutStyle = {
@@ -60,8 +61,10 @@ export default function LeftBar({ showSidebar }) {
             <span>Groups</span>
           </div>
           <div className="item">
-            <img src="/icone/4.png" alt="" />
-            <span>Watch</span>
+            <Link href={'/watch'}>
+              <img src="/icone/4.png" alt="" />
+            </Link>
+              <span>Watch</span>
           </div>
 
         </div>
