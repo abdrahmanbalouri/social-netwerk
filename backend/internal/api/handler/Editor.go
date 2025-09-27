@@ -39,36 +39,43 @@ func Editor(w http.ResponseWriter, r *http.Request) {
 	privacy := r.FormValue("privacy")
 
 	coverFile, coverHeader, err := r.FormFile("cover")
-	var coverPath string
+	var coverFilename string
 	if err == nil {
 		defer coverFile.Close()
-		coverPath = "../frontend/my-app/public/uploads/" + coverHeader.Filename
+		coverPath := "../frontend/my-app/public/uploads/" + coverHeader.Filename
 		out, _ := os.Create(coverPath)
 		defer out.Close()
 		io.Copy(out, coverFile)
+		coverFilename = coverHeader.Filename
+	} else {
+		coverFilename = "" // أو خليه بنفس القيمة القديمة فالـ DB
 	}
 
 	avatarFile, avatarHeader, err := r.FormFile("avatar")
-	var avatarPath string
+	var avatarFilename string
 	if err == nil {
 		defer avatarFile.Close()
-		avatarPath = "../frontend/my-app/public/" + avatarHeader.Filename
+		avatarPath := "../frontend/my-app/public/" + avatarHeader.Filename
 		out, _ := os.Create(avatarPath)
 		defer out.Close()
 		io.Copy(out, avatarFile)
+		avatarFilename = avatarHeader.Filename
+	} else {
+		avatarFilename = "default.png"
 	}
 
 	// Update DB
 	_, err = repository.Db.Exec(`
-		UPDATE users
-		SET about = ?, privacy = ?, cover = ?, image = ?
-		WHERE id = ?`,
+	UPDATE users
+	SET about = ?, privacy = ?, cover = ?, image = ?
+	WHERE id = ?`,
 		displayName,
 		privacy,
-		coverHeader.Filename,
-		avatarPath,
+		coverFilename,
+		avatarFilename,
 		userid,
 	)
+
 	if err != nil {
 		http.Error(w, "DB error: "+err.Error(), http.StatusInternalServerError)
 		return
@@ -78,7 +85,7 @@ func Editor(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(map[string]any{
 		"status":  "ok",
 		"message": "Profile updated successfully",
-		"cover":   coverPath,
-		"avatar":  avatarPath,
+		"cover":   coverFilename,
+		"avatar":  avatarFilename,
 	})
 }
