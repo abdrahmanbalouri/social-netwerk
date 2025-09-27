@@ -3,13 +3,13 @@
 import { useState, useEffect, useRef } from "react";
 import { useDarkMode } from '../context/darkMod';
 
-export default function Comment({ 
-  comments, 
-  isOpen, 
-  onClose, 
-  postId, 
+export default function Comment({
+  comments,
+  isOpen,
+  onClose,
+  postId,
   postTitle = "",
-  onCommentChange 
+  onCommentChange
 }) {
   const { darkMode } = useDarkMode();
   const [commentContent, setCommentContent] = useState("");
@@ -17,23 +17,16 @@ export default function Comment({
   const modalRef = useRef(null);
 
   // Handle click outside to close modal
+
+  // Post new 
   useEffect(() => {
-    function handleClickOutside(event) {
-      if (modalRef.current && !modalRef.current.contains(event.target)) {
-        onClose();
-      }
+    if (modalRef.current) {
+      modalRef.current.scrollTop = modalRef.current.scrollHeight;
     }
-
-    if (isOpen) {
-      document.addEventListener("mousedown", handleClickOutside);
-      return () => document.removeEventListener("mousedown", handleClickOutside);
-    }
-  }, [isOpen, onClose]);
-
-  // Post new comment
+  }, [comments]);
   async function handlePostComment(e) {
     e.preventDefault();
-    
+
     if (!commentContent.trim()) return;
 
     try {
@@ -49,17 +42,16 @@ export default function Comment({
           content: commentContent,
         }),
       });
-      console.log(response);
-      
+
 
       if (!response.ok) {
         throw new Error("Failed to post comment");
       }
-   
+
       // Reset form and refresh comments
       setCommentContent("");
       if (onCommentChange) {
-        
+
         onCommentChange();
       }
     } catch (err) {
@@ -73,21 +65,20 @@ export default function Comment({
   if (!isOpen) return null;
 
   return (
-    <div 
-      className={`modal-overlay ${isOpen ? "is-open" : ""}`} 
+    <div
+      className={`modal-overlay ${isOpen ? "is-open" : ""}`}
       onClick={onClose}
     >
-      <div 
-        ref={modalRef}
-        className="modal-content" 
+      <div
+        className="modal-content"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Modal Header */}
         <div className="modal-header">
           <h3 className="modal-title">Comments</h3>
-          <button 
-            className="modal-close" 
-            aria-label="Close modal" 
+          <button
+            className="modal-close"
+            aria-label="Close modal"
             onClick={onClose}
           >
             ✕
@@ -100,7 +91,10 @@ export default function Comment({
           <h2 className="post-title">{postTitle}</h2>
 
           {/* Comments List */}
-          <div className="comments-container">
+          <div 
+          className="comments-container"
+          ref={modalRef}>
+            
             {comments && comments.length > 0 ? (
               comments.map((comment) => (
                 <div key={comment.id} className="comment-item">
@@ -129,8 +123,8 @@ export default function Comment({
               required
               disabled={loading}
             />
-            <button 
-              type="submit" 
+            <button
+              type="submit"
               className="post-comment-btn"
               disabled={loading || !commentContent.trim()}
             >
