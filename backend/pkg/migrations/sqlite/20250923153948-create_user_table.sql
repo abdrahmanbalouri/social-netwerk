@@ -8,7 +8,8 @@ CREATE TABLE IF NOT EXISTS users (
     last_name TEXT NOT NULL,
     email TEXT NOT NULL UNIQUE,
     password TEXT NOT NULL,
-    image TEXT NOT NULL,
+    image TEXT DEFAULT "default.png",
+    cover TEXT DEFAULT "",
     about TEXT NOT NULL,
     privacy TEXT NOT NULL,
     created_at INTEGER NOT NULL DEFAULT (strftime('%s', 'now'))

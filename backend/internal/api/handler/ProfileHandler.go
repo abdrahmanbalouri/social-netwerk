@@ -23,7 +23,7 @@ func ProfileHandler(w http.ResponseWriter, r *http.Request) {
 		userID = userid
 
 	}
-	q := `SELECT id, nickname, email, about, privacy, image FROM users WHERE id = ?`
+	q := `SELECT id, nickname, email, about, privacy, image, cover FROM users WHERE id = ?`
 	row := repository.Db.QueryRow(q, userID)
 
 	var user struct {
@@ -33,9 +33,10 @@ func ProfileHandler(w http.ResponseWriter, r *http.Request) {
 		About    string
 		Privacy  string
 		Image    string
+		Cover    string
 	}
 
-	if err := row.Scan(&user.id, &user.Nickname, &user.Email, &user.About, &user.Privacy, &user.Image); err != nil {
+	if err := row.Scan(&user.id, &user.Nickname, &user.Email, &user.About, &user.Privacy, &user.Image, &user.Cover); err != nil {
 		http.Error(w, "Failed to fetch user profile", http.StatusInternalServerError)
 		return
 	}
@@ -47,6 +48,7 @@ func ProfileHandler(w http.ResponseWriter, r *http.Request) {
 		"about":    user.About,
 		"privacy":  user.Privacy,
 		"image":    user.Image,
+		"cover":    user.Cover,
 	}
 
 	helper.RespondWithJSON(w, http.StatusOK, profileData)
