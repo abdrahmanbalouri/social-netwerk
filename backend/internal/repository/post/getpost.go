@@ -12,12 +12,14 @@ import (
 func GetAllPosts(authUserID string, r *http.Request) ([]map[string]interface{}, error) {
 	var rows *sql.Rows
 	var err error
-
+        
 	userId, err := helper.AuthenticateUser(r)
 	if err != nil {
 		 return  nil, fmt.Errorf("authentication error: %v", err)
 	}
-
+     if authUserID == "0"{
+		authUserID = userId
+	 }
 	if authUserID != "" {
 		fmt.Println("Fetching posts for user:", authUserID)
 		rows, err = repository.Db.Query(`

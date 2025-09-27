@@ -18,7 +18,7 @@ export default function LeftBar({ showSidebar }) {
       console.error('Logout failed', err);
     }
     // Instead of router.push("/home")
-window.location.href = "/login";
+    window.location.href = "/login";
   }
 
   const logoutStyle = {
@@ -61,8 +61,10 @@ window.location.href = "/login";
             <span>Groups</span>
           </div>
           <div className="item">
-            <img src="/icone/4.png" alt="" />
-            <span>Watch</span>
+            <Link href={'/watch'}>
+              <img src="/icone/4.png" alt="" />
+            </Link>
+              <span>Watch</span>
           </div>
 
         </div>
