@@ -155,6 +155,24 @@ export default function Profile() {
   function handleShowPrivacy() {
     setShowPrivacy(!showPrivacy);
   }
+
+  function followUser() {
+    fetch(`http://localhost:8080/api/follow?id=${params.id}`, {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ userId: userId }),
+    })
+      .then((res) => {
+        
+      })
+      .catch((err) => {
+        console.error('Error following user:', err);
+      });
+  }
+
   if (!profile) {
     return (
       <div className={darkMode ? 'theme-dark' : 'theme-light'}>
@@ -246,7 +264,7 @@ export default function Profile() {
                   </div>
                 </div>
                 {Profile && Profile.id !== data.id && (
-                  <button>follow</button>
+                  <button onClick={followUser}>follow</button>
                 )}
 
               </div>
