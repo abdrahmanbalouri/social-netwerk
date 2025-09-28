@@ -43,7 +43,6 @@ func Createpost(w http.ResponseWriter, r *http.Request) {
 	// }
 
 	var imagePath string
-
 	imageFile, _, err := r.FormFile("image")
 	if err == nil {
 		defer imageFile.Close()
@@ -51,7 +50,6 @@ func Createpost(w http.ResponseWriter, r *http.Request) {
 		uploadDir := "../frontend/my-app/public/uploads"
 		err = os.MkdirAll(uploadDir, os.ModePerm)
 		if err != nil {
-
 			helper.RespondWithError(w, http.StatusInternalServerError, "Failed to create upload directory")
 			return
 		}
