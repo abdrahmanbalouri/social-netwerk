@@ -39,7 +39,7 @@ func GroupInvitationResponse(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// find the user id
-	userID, IDerr := helper.GetTheUserID(r)
+	userID, IDerr := helper.AuthenticateUser(r)
 	if IDerr != nil {
 		return
 	}
@@ -107,7 +107,7 @@ func GroupInvitationRequest(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// find the user id
-	userID, IDerr := helper.GetTheUserID(r)
+	userID, IDerr := helper.AuthenticateUser(r)
 	if IDerr != nil {
 		return
 	}
