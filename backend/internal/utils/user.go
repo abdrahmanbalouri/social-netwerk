@@ -10,8 +10,8 @@ type PostRequest struct {
 	Content   string `json:"content"`
 	PathImage string `json:"path"`
 }
-type User struct{
-	Nickname string  `json:"nickname"`
-	ID  string     `json:"id"`
-      
+type User struct {
+	Nickname string `json:"nickname"`
+	ID       string `json:"id"`
+	Image    string `json:"image"`
 }
