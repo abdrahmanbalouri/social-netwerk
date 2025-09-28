@@ -67,23 +67,3 @@ func GenerateUUID() uuid.UUID {
 	}
 	return u2
 }
-
-func GetTheUserID(r *http.Request) (string, error) {
-	// get the session cookie
-	c, err := r.Cookie("session")
-	if err != nil {
-		return "", fmt.Errorf("no valid session found: %w", err)
-	}
-
-	var userID string
-	query := `SELECT user_id FROM sessions WHERE token = ?`
-	err = repository.Db.QueryRow(query, c.Value).Scan(&userID)
-	if err != nil {
-		if err == sql.ErrNoRows {
-			return "", fmt.Errorf("invalid or expired session")
-		}
-		return "", fmt.Errorf("failed to retrieve user session: %w", err)
-	}
-
-	return userID, nil
-}
