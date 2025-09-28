@@ -100,26 +100,6 @@ func AddGroupHandler(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	for _, nickname := range newGroup.InvitedUsers {
-		var userID string
-		err = tx.QueryRow(`SELECT id FROM users WHERE nickname = ?`, nickname).Scan(&userID)
-		if err != nil {
-			if err == sql.ErrNoRows {
-				continue //ignore ila kan chi user makaynch
-			}
-			helper.RespondWithError(w, http.StatusInternalServerError, "Failed to get invitedUser's id")
-			return
-		}
-		query1 = `INSERT INTO group_invitations (id, group_id, user_id, invited_by_user_id, status, created_at) VALUES (?,?,?,?,?,?)`
-		rowId := helper.GenerateUUID()
-		createdAt := time.Now().UTC()
-		_, err = tx.Exec(query1, rowId, grpID, userID, adminID, "pending", createdAt)
-		if err != nil {
-			helper.RespondWithError(w, http.StatusInternalServerError, "Failed to insert invitedUser's into group_invitation tbale")
-			return
-		}
-	}
-
 	//Commit the transaction
 	if err := tx.Commit(); err != nil {
 		helper.RespondWithError(w, http.StatusInternalServerError, "Failed to commit transaction")
@@ -132,3 +112,14 @@ func AddGroupHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	helper.RespondWithJSON(w, http.StatusCreated, response)
 }
+
+// {
+//     "title": "group1",
+//     "description": "description for group 1",
+//     "invitedUsers": ["aya"]
+// }
+
+// {
+//     "groupID": "group1",
+//     "invitedUsers": "descritption for group 1"
+// }
