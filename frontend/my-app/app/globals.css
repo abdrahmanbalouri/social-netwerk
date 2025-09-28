@@ -716,3 +716,15 @@ html::-webkit-scrollbar {
   background-color: var(--bg-dark);
   color: var(--text-dark);
 }
+
+.theme-dark .content h3 {
+  color: var(--text-dark);
+}
+
+.theme-dark span {
+  color: var(--text-dark);
+}
+
+.theme-dark .navbar .left .search input {
+  color: var(--text-dark);
+}

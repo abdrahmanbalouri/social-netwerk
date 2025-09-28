@@ -250,10 +250,10 @@ export default function Profile() {
                 )}
 
               </div>
-              <div className="right" onClick={handleShowPrivacy}>
+              <div className="right" >
                 {Profile && Profile.id !== data.id ? (
                   <EmailOutlinedIcon />
-                ) : (<MoreVertIcon />)}
+                ) : (<MoreVertIcon onClick={handleShowPrivacy} />)}
 
 
               </div>
