@@ -2,10 +2,8 @@ package helper
 
 import (
 	"crypto/rand"
-	"database/sql"
 	"encoding/hex"
 	"encoding/json"
-	"fmt"
 	"html"
 	"log"
 	"net/http"
