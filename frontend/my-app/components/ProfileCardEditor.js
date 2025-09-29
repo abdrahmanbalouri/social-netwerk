@@ -73,7 +73,7 @@ export default function ProfileCardEditor({
     function handleShowPrivacy() {
         
         showPrivacy = false
-        console.log('showPrivacy', showPrivacy);
+
     }
 
     return (

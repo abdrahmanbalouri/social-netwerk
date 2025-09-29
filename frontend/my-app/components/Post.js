@@ -2,7 +2,7 @@
 import Link from 'next/link';
 
 export default function Post({ post, onGetComments, ondolike }) {
-  console.log(post, 'postttttttttttttttttttttttttttttttttttt');
+
 
   return (
     <div className="post">

@@ -9,6 +9,8 @@ import (
 )
 
 func FollowHandler(w http.ResponseWriter, r *http.Request) {
+	isFollowed := true
+
 	w.Header().Set("Content-Type", "application/json")
 
 	UserID, err := helper.AuthenticateUser(r)
@@ -21,6 +23,7 @@ func FollowHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Missing user ID", http.StatusBadRequest)
 		return
 	}
+
 	qCheck := `SELECT COUNT(*) FROM followers WHERE user_id = ? AND follower_id = ?`
 	var count int
 	err = repository.Db.QueryRow(qCheck, UserID, id).Scan(&count)
@@ -29,16 +32,46 @@ func FollowHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if count > 0 {
-		http.Error(w, "Already following this user", http.StatusBadRequest)
+		isFollowed = false
+		_, err := repository.Db.Exec(`DELETE FROM followers WHERE  user_id = ? AND follower_id = ?`, UserID, id)
+		if err != nil {
+			fmt.Println("Error following user:", err)
+			http.Error(w, "Failed to follow user: "+err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+	} else {
+
+		q := `INSERT INTO followers (user_id, follower_id) VALUES (?, ?)`
+		_, err = repository.Db.Exec(q, UserID, id)
+		if err != nil {
+			fmt.Println("Error following user:", err)
+			http.Error(w, "Failed to follow user: "+err.Error(), http.StatusInternalServerError)
+			return
+		}
+	}
+
+	// w.WriteHeader(http.StatusOK)
+
+	var followers int
+
+	errr := repository.Db.QueryRow(`SELECT COUNT(*) FROM followers WHERE user_id = ?  `, id).Scan(&followers)
+	if errr != nil {
+		fmt.Println(errr)
 		return
 	}
 
-	q := `INSERT INTO followers (user_id, follower_id) VALUES (?, ?)`
-	_, err = repository.Db.Exec(q, UserID, id)
-	if err != nil {
-		fmt.Println("Error following user:", err)
-		http.Error(w, "Failed to follow user: "+err.Error(), http.StatusInternalServerError)
+	var following int
+
+	errr = repository.Db.QueryRow(`SELECT COUNT(*) FROM followers WHERE follower_id = ?  `, id).Scan(&following)
+	if errr != nil {
+		fmt.Println(errr)
 		return
 	}
-	w.WriteHeader(http.StatusOK)
+
+	helper.RespondWithJSON(w, http.StatusOK, map[string]interface{}{
+		"followers":  followers,
+		"following":  following,
+		"isFollowed": isFollowed,
+	})
 }
