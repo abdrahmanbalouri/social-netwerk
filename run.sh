@@ -13,7 +13,7 @@ npm run dev --scripts-prepend-node-path=true
 
 
 
-# COMMAND CREATE NEW MIGRATION IS :::
+# COMMAND CREATE NEW MIGRATION IS ::
 # sql-migrate new create_user_table
 
 # BUT BEFORE INSTALL THIS :
