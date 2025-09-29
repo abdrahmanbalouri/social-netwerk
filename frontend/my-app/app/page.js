@@ -17,7 +17,7 @@ export default function Profile() {
           method: "GET",
         });
         
-        console.log(response.ok);
+
         if (!response.ok) {
           router.replace("/login"); 
           return null;
