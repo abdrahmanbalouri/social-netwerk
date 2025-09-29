@@ -21,6 +21,19 @@ type PostData struct {
 	Content string `json:"content"`
 }
 
+type FetchPost struct {
+	GrpID string `json:"grpId"`
+}
+
+type Post struct {
+	ID        string    `json:"id"`
+	Title     string    `json:"title"`
+	Content   string    `json:"content"`
+	ImagePath string    `json:"image_path"`
+	CreatedAt time.Time `json:"created_at"`
+	AuthorID  string    `json:"author_id"`
+}
+
 func CreatePostGroup(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		helper.RespondWithError(w, http.StatusMethodNotAllowed, "Method not allowed")
@@ -118,3 +131,62 @@ func CreatePostGroup(w http.ResponseWriter, r *http.Request) {
 	}
 	helper.RespondWithJSON(w, http.StatusOK, response)
 }
+
+func GetPostGroup(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		helper.RespondWithError(w, http.StatusMethodNotAllowed, "Method not allowed")
+		return
+	}
+	var newPost FetchPost
+	if err := json.NewDecoder(r.Body).Decode(&newPost); err != nil {
+		helper.RespondWithError(w, http.StatusBadRequest, "Invalid request format")
+		return
+	}
+
+	// Get user ID
+	userID, err := helper.AuthenticateUser(r)
+	if err != nil {
+		helper.RespondWithError(w, http.StatusUnauthorized, "Authentication failed")
+		return
+	}
+
+	// Check for user's membership
+	var isMember bool
+	query := `SELECT EXISTS (SELECT 1 FROM group_members WHERE user_id = ? AND group_id = ?)`
+	if err := repository.Db.QueryRow(query, userID, newPost.GrpID).Scan(&isMember); err != nil {
+		helper.RespondWithError(w, http.StatusInternalServerError, "Failed to check group membership")
+		return
+	}
+	if !isMember {
+		helper.RespondWithError(w, http.StatusUnauthorized, "You are not a member of this group")
+		return
+	}
+
+	// Fetch all the posts of this group
+	query = `SELECT id, title, content, image_path, created_at, user_id FROM posts WHERE group_id = ?`
+	rows, err := repository.Db.Query(query, newPost.GrpID)
+	if err != nil {
+		helper.RespondWithError(w, http.StatusInternalServerError, "Failed to get posts")
+		return
+	}
+	defer rows.Close()
+
+	var postsJson []Post
+	for rows.Next() {
+		var p Post
+		err := rows.Scan(&p.ID, &p.Title, &p.Content, &p.ImagePath, &p.CreatedAt, &p.AuthorID);
+		if err != nil {
+			helper.RespondWithError(w, http.StatusInternalServerError, "Failed to scan posts")
+			return
+		}
+		postsJson = append(postsJson, p)
+	}
+
+	// Return the posts as a JSON response
+	helper.RespondWithJSON(w, http.StatusOK, postsJson)
+}
+
+
+// {
+//     "grpId": "b5212293-b4db-40d6-b0e0-7f68a143d2b8"
+// }
