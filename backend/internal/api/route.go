@@ -31,6 +31,7 @@ func Routes(db *sql.DB) http.Handler {
 	mux.HandleFunc("/invitations/respond", handlers.GroupInvitationResponse)
 	mux.HandleFunc("/group/invitation", handlers.GroupInvitationRequest)
 	mux.HandleFunc("/group/addPost", handlers.CreatePostGroup)
+	mux.HandleFunc("/group/fetchPosts", handlers.GetPostGroup)
 
 	return mux
 }
