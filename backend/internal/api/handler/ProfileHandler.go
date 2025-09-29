@@ -72,6 +72,22 @@ WHERE u.id = ?;
 		return
 	}
 	fmt.Println("user", user.IsFollowing)
+
+	var followers int
+
+	errr := repository.Db.QueryRow(`SELECT COUNT(*) FROM followers WHERE user_id = ?  `, targetUserID).Scan(&followers)
+	if errr != nil {
+		fmt.Println(errr)
+		return
+	}
+
+	var following int
+
+	errr = repository.Db.QueryRow(`SELECT COUNT(*) FROM followers WHERE follower_id = ?  `, targetUserID).Scan(&following)
+	if errr != nil {
+		fmt.Println(errr)
+		return
+	}
 	profileData := map[string]interface{}{
 		"id":          user.ID,
 		"nickname":    user.Nickname,
@@ -81,6 +97,8 @@ WHERE u.id = ?;
 		"image":       user.Image,
 		"cover":       user.Cover,
 		"isFollowing": user.IsFollowing,
+		"following":   following,
+		"followers":   followers,
 	}
 
 	helper.RespondWithJSON(w, http.StatusOK, profileData)

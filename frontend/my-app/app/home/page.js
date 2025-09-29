@@ -43,7 +43,6 @@ export default function Home() {
           method: "GET",
         });
 
-        console.log(response.ok);
         if (!response.ok) {
           router.replace("/login");
           return null;
@@ -61,7 +60,6 @@ export default function Home() {
   }, [])
   // Logout function
   async function logout(e) {
-    console.log("Logging out...");
     e.preventDefault();
 
     try {
@@ -95,13 +93,14 @@ export default function Home() {
         credentials: "include",
       });
       const response = await res.json();
-      console.log(response);
+
       
       if(res.ok){
 
         const newpost = await fetchPosts(postId)
         
-        console.log(newpost,'*------------*/**');
+
+
         
   
         for (let i = 0; i < posts.length; i++) {
@@ -140,7 +139,7 @@ export default function Home() {
         }
 
         const data = await res.json();
-        console.log("Posts fetched:", data);
+
         setPosts(Array.isArray(data) ? data : []);
       } catch (err) {
         console.error("Error fetching posts:", err);
@@ -166,7 +165,7 @@ export default function Home() {
         }
 
         const data = await res.json();
-        console.log("Users fetched:", data);
+
         setusers(Array.isArray(data) ? data : []);
       } catch (err) {
         console.error("Error fetching users:", err);
@@ -179,7 +178,7 @@ export default function Home() {
   // Handle post creation
   async function handleCreatePost(e) {
     e.preventDefault();
-    console.log("Creating post...");
+
 
     try {
       setLoading(true);
@@ -201,7 +200,7 @@ export default function Home() {
       }
 
       const res = await response.json();
-      console.log("Post created:", res);
+
 
       // Fetch the newly created post
       if (res.post_id) {
@@ -246,7 +245,7 @@ export default function Home() {
 
   // Fetch comments for a specific post
   async function GetComments(post) {
-    console.log("Fetching comments for post:", post.id);
+
 
     try {
       // Set selected post immediately using post data we already have
@@ -267,7 +266,7 @@ export default function Home() {
       }
 
       const data = await res.json();
-      console.log("Comments response:", data);
+
 
       // Handle different response structures
       let comments = [];

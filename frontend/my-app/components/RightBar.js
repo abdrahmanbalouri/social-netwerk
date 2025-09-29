@@ -13,14 +13,14 @@ export default function RightBar() {
           method: "GET",
           credentials: "include",
         });
-        console.log(res);
+
 
 
         if (!res.ok) {
           throw new Error("Failed to fetch posts");
         }
         const data = await res.json();
-        console.log(data);
+
 
 
         setusers(data);

@@ -46,7 +46,7 @@ export default function Profile() {
       });
       if (res.ok) {
         const json = await res.json();
-        console.log('11', json);
+
 
         setProfile(json);
       }
@@ -70,6 +70,9 @@ export default function Profile() {
           throw new Error("Failed to fetch user posts");
         }
         const data = await res.json();
+
+
+
         setPosts(Array.isArray(data) ? data : []);
 
       } catch (err) {
@@ -96,6 +99,7 @@ export default function Profile() {
         throw new Error("Failed to fetch comments");
       }
       const data = await res.json();
+
       let comments = [];
       if (Array.isArray(data)) {
         comments = data;
@@ -156,23 +160,40 @@ export default function Profile() {
     setShowPrivacy(!showPrivacy);
   }
 
-  function followUser() {
-    fetch(`http://localhost:8080/api/follow?id=${params.id}`, {
-      method: 'POST',
-      credentials: 'include',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ userId: userId }),
-    })
-      .then((res) => {
-
+  async function followUser() {
+    try {
+      let res = await fetch(`http://localhost:8080/api/follow?id=${params.id}`, {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ userId: userId }),
       })
-      .catch((err) => {
-        console.error('Error following user:', err);
-      });
-  }
+      if (res.ok) {
+        let followw = await res.json();
 
+        document.getElementById("followers").textContent = followw.followers
+        document.getElementById("following").textContent = followw.following
+
+
+        if (followw.isFollowed) {
+
+
+          document.getElementById("FollowBtn").textContent = "Unfollow"
+        } else {
+          document.getElementById("FollowBtn").textContent = "Follow"
+
+        }
+
+
+      };
+
+    } catch (error) {
+      console.error('Error following user:', error);
+
+    };
+  }
 
   if (!profile) {
     return (
@@ -215,7 +236,6 @@ export default function Profile() {
     );
   }
   const data = profile;
-  console.log(Profile);
 
   return (
     <div className={darkMode ? 'theme-dark' : 'theme-light'}>
@@ -241,8 +261,9 @@ export default function Profile() {
           </div>
           <div className="profileContainer">
             <div className="uInfo">
+
               <div className="left">
-                <a href="http://facebook.com">
+                {/*  <a href="http://facebook.com">
                   <FacebookTwoToneIcon fontSize="large" />
                 </a>
                 <a href="http://instagram.com">
@@ -253,7 +274,14 @@ export default function Profile() {
                 </a>
                 <a href="http://linkedin.com">
                   <LinkedInIcon fontSize="large" />
-                </a>
+                </a> */}
+
+               <button className='followingBtn'>          <p> following    <strong id='following'> {data.following} </strong> </p></button>
+               <button className='followersBtn'>          <p>followers    <strong id='followers'> {data.followers}</strong></p></button>
+              </div>
+
+              <div >
+                show folloing and followers 
               </div>
               <div className="center">
                 <span>{data.nickname}</span>
@@ -264,24 +292,16 @@ export default function Profile() {
                     <span>{data.about}</span>
                   </div>
                 </div>
-                {Profile && Profile.id !== data.id && (
-                  data.isFollowing ? (
-                    <button
-                      style={{
-                        backgroundColor: 'gray',
-                        color: 'white',
-                        border: 'none',
-                        padding: '8px 16px',
-                        borderRadius: '4px',
-                      }}
-                      disabled
-                    >
-                      unfollow
-                    </button>
-                  ) : (
-                    <button onClick={followUser}>follow</button>
-                  )
-                )}
+
+                <button id='FollowBtn'
+
+
+                  onClick={followUser}
+
+                >
+                  {Profile && Profile.id !== data.id && (data.isFollowing ? ("Unfollow") : ("Follow"))}
+                </button>
+
 
 
               </div>
