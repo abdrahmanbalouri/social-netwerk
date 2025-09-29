@@ -265,7 +265,7 @@ export default function Profile() {
                   </div>
                 </div>
                 {Profile && Profile.id !== data.id && (
-                  userId.isFollowing ? (
+                  data.isFollowing ? (
                     <button
                       style={{
                         backgroundColor: 'gray',
@@ -273,7 +273,6 @@ export default function Profile() {
                         border: 'none',
                         padding: '8px 16px',
                         borderRadius: '4px',
-                        cursor: 'not-allowed',
                       }}
                       disabled
                     >
