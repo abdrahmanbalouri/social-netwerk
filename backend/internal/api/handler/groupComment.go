@@ -33,11 +33,12 @@ func CreateCommentGroup(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	//get the grp's id
-	query := `SELECT group_id FROM posts WHERE post_id = ?`
+	query := `SELECT group_id FROM posts WHERE id = ?`
 	var grpID string
+	fmt.Println("Post id i s:", comment.PostID)
 	err = repository.Db.QueryRow(query, comment.PostID).Scan(&grpID)
 	if err != nil{
-		fmt.Println("Failed to get the group's id")
+		fmt.Println("Failed to get the group's id :", err)
 		helper.RespondWithError(w, http.StatusInternalServerError, "Failed to get the group's id")
 		return
 	}
