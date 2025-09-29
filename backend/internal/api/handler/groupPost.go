@@ -7,7 +7,6 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
-	"strings"
 	"time"
 
 	"social-network/internal/helper"
@@ -16,11 +15,10 @@ import (
 	"github.com/google/uuid"
 )
 
-type GroupPost struct {
+type PostData struct {
 	GrpID   string `json:"grpId"`
 	Title   string `json:"title"`
 	Content string `json:"content"`
-	ImgPath string `json:"imgPath"`
 }
 
 func CreatePostGroup(w http.ResponseWriter, r *http.Request) {
@@ -28,28 +26,8 @@ func CreatePostGroup(w http.ResponseWriter, r *http.Request) {
 		helper.RespondWithError(w, http.StatusMethodNotAllowed, "Method not allowed")
 		return
 	}
-	// check for inputs
-	var newPost GroupPost
-	if err := json.NewDecoder(r.Body).Decode(&newPost); err != nil {
-		helper.RespondWithError(w, http.StatusBadRequest, "Invalid request format")
-		return
-	}
-	if len(strings.TrimSpace(newPost.Title)) == 0 || len(strings.TrimSpace(newPost.Content)) == 0 {
-		helper.RespondWithError(w, http.StatusBadRequest, "Title and description are required")
-		return
-	}
 
-	// start transaction
-	tx, TransErr := repository.Db.Begin()
-	if TransErr != nil {
-		fmt.Println("Error starting the transaction")
-		helper.RespondWithError(w, http.StatusInternalServerError, "Error starting the transaction")
-		return
-	}
-
-	defer tx.Rollback()
-
-	// checl auth
+	// get user id
 	userID, IdErr := helper.AuthenticateUser(r)
 	if IdErr != nil {
 		fmt.Println("Error getting the user's id")
@@ -57,34 +35,45 @@ func CreatePostGroup(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// check for membership of the user
-	var isMember bool
-	query := `SELECT EXISTS (SELECT 1 FROM group_members WHERE user_id = ? AND group_id = ?)`
-	err := tx.QueryRow(query, userID, newPost.GrpID).Scan(&isMember)
+	// parse Data
+	err := r.ParseMultipartForm(10 << 20) // 10MB
 	if err != nil {
-		helper.RespondWithError(w, http.StatusInternalServerError, "Failed to check group membership")
+		fmt.Println("Unable to parse form")
+		helper.RespondWithError(w, http.StatusBadRequest, "Unable to parse form")
+		return
+	}
+	data := r.FormValue("postData")
+	if data == "" {
+		helper.RespondWithError(w, http.StatusBadRequest, "Missing JSON form field")
+		return
+	}
+	var postData PostData
+	err = json.Unmarshal([]byte(data), &postData)
+	if err != nil {
+		http.Error(w, "Invalid JSON data", http.StatusBadRequest)
 		return
 	}
 
+	// check for membership of the user
+	var isMember bool
+	query := `SELECT EXISTS (SELECT 1 FROM group_members WHERE user_id = ? AND group_id = ?)`
+	err = repository.Db.QueryRow(query, userID, postData.GrpID).Scan(&isMember)
+	if err != nil {
+		fmt.Println("Failed to check group membership")
+		helper.RespondWithError(w, http.StatusInternalServerError, "Failed to check group membership")
+		return
+	}
 	if !isMember {
 		fmt.Println("The user is not a member of the group")
 		helper.RespondWithError(w, http.StatusUnauthorized, "You are not a member of this group")
 		return
 	}
-	err = r.ParseMultipartForm(10 << 20) // 10MB
-	if err != nil {
-		helper.RespondWithError(w, http.StatusBadRequest, "Unable to parse form")
-		return
-	}
 
-	title := strings.TrimSpace(r.FormValue("title"))
-	content := strings.TrimSpace(r.FormValue("content"))
-
+	// image part
 	var imagePath string
 	imageFile, _, err := r.FormFile("image")
 	if err == nil {
 		defer imageFile.Close()
-
 		uploadDir := "../frontend/my-app/public/uploads"
 		err = os.MkdirAll(uploadDir, os.ModePerm)
 		if err != nil {
@@ -96,8 +85,8 @@ func CreatePostGroup(w http.ResponseWriter, r *http.Request) {
 		imagePath = fmt.Sprintf("uploads/%s.jpg", uuid.New().String()) // Keep the path relative for database storage
 		out, err := os.Create(filepath.Join("../frontend/my-app/public", imagePath))
 		if err != nil {
-			helper.RespondWithError(w, http.StatusInternalServerError, "Failed to save image")
 			fmt.Println("Failed to save image :", err)
+			helper.RespondWithError(w, http.StatusInternalServerError, "Failed to save image")
 			return
 		}
 		defer out.Close()
@@ -110,20 +99,17 @@ func CreatePostGroup(w http.ResponseWriter, r *http.Request) {
 		imagePath = ""
 	}
 
+	// insert new post into posts tbale
 	postID := helper.GenerateUUID()
 	createdAt := time.Now().UTC()
 	_, err = repository.Db.Exec(`
         INSERT INTO posts (id, user_id, group_id, title, content, image_path, created_at)
-        VALUES (?, ?, ?, ?, ?)`,
-		postID, userID, title, content, imagePath,
+        VALUES (?, ?, ?, ?, ?, ?, ?)`,
+		postID, userID, postData.GrpID, postData.Title, postData.Content, imagePath, createdAt,
 	)
 	if err != nil {
+		fmt.Println("Failed to create post (groups)")
 		helper.RespondWithError(w, http.StatusInternalServerError, "Failed to create post")
-		return
-	}
-
-	if err := tx.Commit(); err != nil {
-		helper.RespondWithError(w, http.StatusInternalServerError, "Failed to commit transaction")
 		return
 	}
 
