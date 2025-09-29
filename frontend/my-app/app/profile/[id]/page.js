@@ -166,12 +166,13 @@ export default function Profile() {
       body: JSON.stringify({ userId: userId }),
     })
       .then((res) => {
-        
+
       })
       .catch((err) => {
         console.error('Error following user:', err);
       });
   }
+
 
   if (!profile) {
     return (
@@ -264,8 +265,25 @@ export default function Profile() {
                   </div>
                 </div>
                 {Profile && Profile.id !== data.id && (
-                  <button onClick={followUser}>follow</button>
+                  userId.isFollowing ? (
+                    <button
+                      style={{
+                        backgroundColor: 'gray',
+                        color: 'white',
+                        border: 'none',
+                        padding: '8px 16px',
+                        borderRadius: '4px',
+                        cursor: 'not-allowed',
+                      }}
+                      disabled
+                    >
+                      unfollow
+                    </button>
+                  ) : (
+                    <button onClick={followUser}>follow</button>
+                  )
                 )}
+
 
               </div>
               <div className="right" >
