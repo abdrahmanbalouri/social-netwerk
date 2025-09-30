@@ -133,7 +133,6 @@ func CreatePostGroup(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetPostGroup(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("222222")
 	if r.Method != http.MethodGet {
 		helper.RespondWithError(w, http.StatusMethodNotAllowed, "Method not allowed")
 		return
