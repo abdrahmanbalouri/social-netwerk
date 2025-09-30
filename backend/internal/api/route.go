@@ -33,6 +33,7 @@ func Routes(db *sql.DB) http.Handler {
 	mux.HandleFunc("/group/addPost", handlers.CreatePostGroup)
 	mux.HandleFunc("/group/fetchPosts", handlers.GetPostGroup)
 	mux.HandleFunc("/group/addComment", handlers.CreateCommentGroup)
+	mux.HandleFunc("/group/fetchComments", handlers.GetCommentGroup)
 
 	return mux
 }
