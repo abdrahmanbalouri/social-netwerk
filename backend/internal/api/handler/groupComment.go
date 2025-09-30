@@ -82,7 +82,6 @@ func CreateCommentGroup(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetCommentGroup(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("1111111111111")
 	if r.Method != http.MethodGet {
 		helper.RespondWithError(w, http.StatusMethodNotAllowed, "Method not allowed")
 		return
