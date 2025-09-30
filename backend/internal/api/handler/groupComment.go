@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"database/sql"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -32,28 +31,19 @@ func CreateCommentGroup(w http.ResponseWriter, r *http.Request) {
 		helper.RespondWithError(w, http.StatusBadRequest, "Invalid request format")
 		return
 	}
-	//get the grp's id
-	query := `SELECT group_id FROM posts WHERE id = ?`
+	// get the grp's id
+	query := `SELECT p.group_id, EXISTS(SELECT 1 FROM group_members gm WHERE gm.user_id = ? AND gm.group_id = p.group_id) FROM posts p WHERE p.id = ?;`
 	var grpID string
-	fmt.Println("Post id i s:", comment.PostID)
-	err = repository.Db.QueryRow(query, comment.PostID).Scan(&grpID)
-	if err != nil{
-		fmt.Println("Failed to get the group's id :", err)
-		helper.RespondWithError(w, http.StatusInternalServerError, "Failed to get the group's id")
-		return
-	}
-	// check if the user is a member of the group
 	var isMember bool
-	query = `SELECT EXISTS (SELECT 1 FROM group_members WHERE user_id = ? AND group_id = ?)`
-	err = repository.Db.QueryRow(query, userID, grpID).Scan(&isMember)
+	err = repository.Db.QueryRow(query,userID, comment.PostID).Scan(&grpID, &isMember)
 	if err != nil {
-		fmt.Println("Failed to check group membership")
-		helper.RespondWithError(w, http.StatusInternalServerError, "Failed to check group membership")
+		fmt.Println("Failed to get the group's id or post not exist :", err)
+		helper.RespondWithError(w, http.StatusInternalServerError, "Failed to get the group's id or post not exist")
 		return
 	}
-	if !isMember {
-		fmt.Println("The user is not a member of the group")
-		helper.RespondWithError(w, http.StatusUnauthorized, "You are not a member of this group")
+	if !isMember{
+		fmt.Println("User is not a member of the group")
+		helper.RespondWithError(w, http.StatusUnauthorized, "User is not a member of the group")
 		return
 	}
 
@@ -61,20 +51,11 @@ func CreateCommentGroup(w http.ResponseWriter, r *http.Request) {
 		helper.RespondWithError(w, http.StatusBadRequest, "PostID or commentComment is empty")
 		return
 	}
-	if len(comment.Content) < 3 || len(comment.Content) > 30 {
+	if len(comment.Content) < 2 || len(comment.Content) > 30 {
 		helper.RespondWithError(w, http.StatusBadRequest, "Comment's content is too short or too long")
 		return
 	}
 	sanitizedContent := helper.Skip(comment.Content)
-	var exists string
-	err1 := repository.Db.QueryRow(`SELECT content FROM posts WHERE id = ?`, comment.PostID).Scan(&exists)
-	if err1 == sql.ErrNoRows {
-		helper.RespondWithError(w, http.StatusNotFound, "Post not found")
-		return
-	} else if err1 != nil {
-		helper.RespondWithError(w, http.StatusInternalServerError, "Database error")
-		return
-	}
 
 	commentID := helper.GenerateUUID()
 	_, err = repository.Db.Exec(`
@@ -88,4 +69,7 @@ func CreateCommentGroup(w http.ResponseWriter, r *http.Request) {
 	helper.RespondWithJSON(w, http.StatusCreated, map[string]string{
 		"message": "Comment created successfully for groups",
 	})
+}
+
+func GetCommentGroup(w http.ResponseWriter, r *http.Request) {
 }
