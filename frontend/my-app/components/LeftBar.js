@@ -7,7 +7,7 @@ import Link from 'next/link';
 
 export default function LeftBar({ showSidebar }) {
   const router = useRouter();
-  const { profile } = useProfile();
+  const { Profile } = useProfile();
 
   async function handleLogout(e) {
     e?.preventDefault?.();
@@ -17,7 +17,8 @@ export default function LeftBar({ showSidebar }) {
       // ignore network errors here; still redirect
       console.error('Logout failed', err);
     }
-    router.replace('/login');
+    // Instead of router.push("/home")
+    window.location.href = "/login";
   }
 
   const logoutStyle = {
@@ -42,10 +43,10 @@ export default function LeftBar({ showSidebar }) {
         <div className="menu">
           <div className="user">
             <img
-              src={profile?.image ? `/uploads/${profile.image}` : '/avatar.png'}
+              src={Profile?.image ? `/uploads/${Profile.image}` : '/uploads/default.png'}
               alt="user avatar"
             />
-            <span>{profile?.nickname ?? 'user name'}</span>
+            <span>{Profile?.nickname ?? 'user name'}</span>
           </div>
           <div className="item">
             <img src="/icone/1.png" alt="" />
@@ -60,8 +61,10 @@ export default function LeftBar({ showSidebar }) {
             <span>Groups</span>
           </div>
           <div className="item">
-            <img src="/icone/4.png" alt="" />
-            <span>Watch</span>
+            <Link href={'/watch'}>
+              <img src="/icone/4.png" alt="" />
+            </Link>
+              <span>Watch</span>
           </div>
 
         </div>
@@ -76,10 +79,12 @@ export default function LeftBar({ showSidebar }) {
             <Link href={'/games'}>
               <img src="/icone/7.png" alt="" />
             </Link>
-              <span>Gaming</span>
+            <span>Gaming</span>
           </div>
           <div className="item">
-            <img src="/icone/8.png" alt="" />
+            <Link href={'/Gallery'}>
+              <img src="/icone/8.png" alt="" />
+            </Link>
             <span>Gallery</span>
           </div>
           <div className="item">

@@ -2,7 +2,7 @@
 "use client";
 import './Home.css';
 import { useRouter } from "next/navigation";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, use } from "react";
 import Navbar from '../../components/Navbar.js';
 import LeftBar from '../../components/LeftBar.js';
 import RightBar from '../../components/RightBar.js';
@@ -11,6 +11,8 @@ import Stories from '../../components/stories.js';
 import Comment from '../../components/coment.js';
 import { useProfile } from '../../context/profile.js';
 import Post from '../../components/Post.js';
+import { middleware } from '../../midlwere/midle.js';
+import './Home.css';
 
 export default function Home() {
   const router = useRouter();
@@ -32,14 +34,32 @@ export default function Home() {
 
   const modalRef = useRef(null);
   const commentsModalRef = useRef(null);
-
   useEffect(() => {
-    console.log(showModal);
-  }, [showModal]);
 
+    async function midle() {
+      try {
+        const response = await fetch("http://localhost:8080/api/me", {
+          credentials: "include",
+          method: "GET",
+        });
+
+        if (!response.ok) {
+          router.replace("/login");
+          return null;
+        }
+      } catch (error) {
+        router.replace("/login");
+        return null;
+
+      }
+    }
+    midle()
+
+
+
+  }, [])
   // Logout function
   async function logout(e) {
-    console.log("Logging out...");
     e.preventDefault();
 
     try {
@@ -53,7 +73,8 @@ export default function Home() {
         return;
       }
 
-      router.replace("/login");
+      // Instead of router.push("/home")
+      window.location.href = "/login";
     } catch (err) {
       console.error("Logout error:", err);
     }
@@ -64,6 +85,45 @@ export default function Home() {
     setImage(e.target.files[0]);
   }
 
+  async function Handlelik(postId) {
+
+    try {
+      const res = await fetch(`http://localhost:8080/api/like/${postId}`, {
+        method: "POST",
+        credentials: "include",
+      });
+      const response = await res.json();
+
+      
+      if(res.ok){
+
+        const newpost = await fetchPosts(postId)
+        
+
+
+        
+  
+        for (let i = 0; i < posts.length; i++) {
+          if (posts[i].id == newpost.id) {
+  
+            setPosts([
+              ...posts.slice(0, i),
+              newpost,
+              ...posts.slice(i + 1)
+            ]);
+            break
+          }
+        }
+      }
+
+
+
+
+
+    } catch (err) {
+      console.error("Error liking post:", err);
+    }
+  }
   // Fetch initial posts on component mount
   useEffect(() => {
     async function fetchInitialPosts() {
@@ -79,7 +139,7 @@ export default function Home() {
         }
 
         const data = await res.json();
-        console.log("Posts fetched:", data);
+
         setPosts(Array.isArray(data) ? data : []);
       } catch (err) {
         console.error("Error fetching posts:", err);
@@ -105,7 +165,7 @@ export default function Home() {
         }
 
         const data = await res.json();
-        console.log("Users fetched:", data);
+
         setusers(Array.isArray(data) ? data : []);
       } catch (err) {
         console.error("Error fetching users:", err);
@@ -118,7 +178,7 @@ export default function Home() {
   // Handle post creation
   async function handleCreatePost(e) {
     e.preventDefault();
-    console.log("Creating post...");
+
 
     try {
       setLoading(true);
@@ -140,7 +200,7 @@ export default function Home() {
       }
 
       const res = await response.json();
-      console.log("Post created:", res);
+
 
       // Fetch the newly created post
       if (res.post_id) {
@@ -185,7 +245,7 @@ export default function Home() {
 
   // Fetch comments for a specific post
   async function GetComments(post) {
-    console.log("Fetching comments for post:", post.id);
+
 
     try {
       // Set selected post immediately using post data we already have
@@ -206,7 +266,7 @@ export default function Home() {
       }
 
       const data = await res.json();
-      console.log("Comments response:", data);
+
 
       // Handle different response structures
       let comments = [];
@@ -325,7 +385,8 @@ export default function Home() {
               <Post
                 key={post.id}
                 post={post}
-                onGetComments={GetComments} // Pass GetComments as a prop
+                onGetComments={GetComments}
+                ondolike={Handlelik}
               />
             ))
           )}
@@ -384,4 +445,4 @@ export default function Home() {
       )}
     </div>
   );
-}
+} Comment

@@ -1,4 +1,8 @@
 "use client";
+import FacebookTwoToneIcon from '@mui/icons-material/FacebookTwoTone';
+import InstagramIcon from '@mui/icons-material/Instagram';
+import TwitterIcon from '@mui/icons-material/Twitter';
+import LinkedInIcon from '@mui/icons-material/LinkedIn';
 import { useEffect, useState, useRef } from 'react';
 import Navbar from '../../../components/Navbar.js';
 import { useDarkMode } from '../../../context/darkMod.js';
@@ -8,8 +12,15 @@ import RightBar from '../../../components/RightBar.js';
 import { useParams, useRouter } from 'next/navigation.js';
 import Post from '../../../components/Post.js';
 import Comment from '../../../components/coment.js';
+import { useProfile } from '../../../context/profile.js';
+import PlaceIcon from "@mui/icons-material/Place";
+import LanguageIcon from "@mui/icons-material/Language";
+import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
+import MoreVertIcon from "@mui/icons-material/MoreVert";
+import ProfileCardEditor from '../../../components/ProfileCardEditor.js';
 
 export default function Profile() {
+  const { Profile } = useProfile();
 
   const { darkMode } = useDarkMode();
 
@@ -35,7 +46,7 @@ export default function Profile() {
       });
       if (res.ok) {
         const json = await res.json();
-        console.log('11', json);
+
 
         setProfile(json);
       }
@@ -59,8 +70,11 @@ export default function Profile() {
           throw new Error("Failed to fetch user posts");
         }
         const data = await res.json();
+
+
+
         setPosts(Array.isArray(data) ? data : []);
-        
+
       } catch (err) {
         console.error("Error fetching user posts:", err);
       }
@@ -85,6 +99,7 @@ export default function Profile() {
         throw new Error("Failed to fetch comments");
       }
       const data = await res.json();
+
       let comments = [];
       if (Array.isArray(data)) {
         comments = data;
@@ -139,6 +154,46 @@ export default function Profile() {
     setSelectedPost(null);
     setComment([]);
   }
+  const [showPrivacy, setShowPrivacy] = useState(false);
+
+  function handleShowPrivacy() {
+    setShowPrivacy(!showPrivacy);
+  }
+
+  async function followUser() {
+    try {
+      let res = await fetch(`http://localhost:8080/api/follow?id=${params.id}`, {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ userId: userId }),
+      })
+      if (res.ok) {
+        let followw = await res.json();
+
+        document.getElementById("followers").textContent = followw.followers
+        document.getElementById("following").textContent = followw.following
+
+
+        if (followw.isFollowed) {
+
+
+          document.getElementById("FollowBtn").textContent = "Unfollow"
+        } else {
+          document.getElementById("FollowBtn").textContent = "Follow"
+
+        }
+
+
+      };
+
+    } catch (error) {
+      console.error('Error following user:', error);
+
+    };
+  }
 
   if (!profile) {
     return (
@@ -181,6 +236,7 @@ export default function Profile() {
     );
   }
   const data = profile;
+
   return (
     <div className={darkMode ? 'theme-dark' : 'theme-light'}>
       <Navbar
@@ -192,42 +248,85 @@ export default function Profile() {
         <div className="profile">
           <div className="images">
             <img
-              src="https://images.pexels.com/photos/13440765/pexels-photo-13440765.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
+
+              src={data.cover ? `/uploads/${data.cover}` : "https://images.pexels.com/photos/13440765/pexels-photo-13440765.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"}
               alt=""
               className="cover"
             />
             <img
-              src={data.image ? `/uploads/${data.image}` : "avatar.png"}
+              src={data.image ? `/uploads/${data.image}` : "/uploads/default.png"}
               alt="profile picture"
               className="profilePic"
             />
           </div>
           <div className="profileContainer">
             <div className="uInfo">
+
+              <div className="left">
+                {/*  <a href="http://facebook.com">
+                  <FacebookTwoToneIcon fontSize="large" />
+                </a>
+                <a href="http://instagram.com">
+                  <InstagramIcon fontSize="large" />
+                </a>
+                <a href="http://x.com">
+                  <TwitterIcon fontSize="large" />
+                </a>
+                <a href="http://linkedin.com">
+                  <LinkedInIcon fontSize="large" />
+                </a> */}
+
+               <button className='followingBtn'>          <p> following    <strong id='following'> {data.following} </strong> </p></button>
+               <button className='followersBtn'>          <p>followers    <strong id='followers'> {data.followers}</strong></p></button>
+              </div>
+
+              <div >
+                show folloing and followers 
+              </div>
               <div className="center">
                 <span>{data.nickname}</span>
                 <div className="info">
+
                   <div className="item">
+                    <LanguageIcon />
                     <span>{data.about}</span>
                   </div>
                 </div>
-                <button>follow</button>
+
+                <button id='FollowBtn'
+
+
+                  onClick={followUser}
+
+                >
+                  {Profile && Profile.id !== data.id && (data.isFollowing ? ("Unfollow") : ("Follow"))}
+                </button>
+
+
+
               </div>
-              <div className="right"></div>
+              <div className="right" >
+                {Profile && Profile.id !== data.id ? (
+                  <EmailOutlinedIcon />
+                ) : (<MoreVertIcon onClick={handleShowPrivacy} />)}
+
+
+              </div>
+              {showPrivacy && (<ProfileCardEditor showPrivacy={showPrivacy} />)}
             </div>
-          </div>
-          <div className="posts" style={{ marginTop: 20 }}>
-            {posts.length === 0 ? (
-              <p>No posts available</p>
-            ) : (
-              posts.map((post) => (
-                <Post
-                  key={post.id}
-                  post={post}
-                  onGetComments={() => GetComments(post)}
-                />
-              ))
-            )}
+            <div className="posts" style={{ marginTop: 20 }}>
+              {posts.length === 0 ? (
+                <p>No posts available</p>
+              ) : (
+                posts.map((post) => (
+                  <Post
+                    key={post.id}
+                    post={post}
+                    onGetComments={() => GetComments(post)}
+                  />
+                ))
+              )}
+            </div>
           </div>
         </div>
         <RightBar />
