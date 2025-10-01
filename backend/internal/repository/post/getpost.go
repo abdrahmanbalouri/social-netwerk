@@ -3,77 +3,109 @@ package post
 import (
 	"database/sql"
 	"fmt"
+	"net/http"
 
+	"social-network/internal/helper"
 	"social-network/internal/repository"
 )
 
-func GetAllPosts(id string) ([]map[string]interface{}, error) {
+func GetAllPosts(authUserID string, r *http.Request) ([]map[string]interface{}, error) {
 	var rows *sql.Rows
-	// Modified SQL query with JOIN to get nickname from users table and comment count from comments table
-	fmt.Println(id)
-	if id != "" {
-		rows, _ = repository.Db.Query(`
-		SELECT 
-			p.id, 
-			p.user_id, 
-			p.title, 
-			p.content, 
-			p.image_path, 
-			p.created_at, 
-			u.nickname,
-			u.image AS profile,
-			COUNT(c.id) AS comments_count
-		FROM posts p
-		JOIN users u ON p.user_id = u.id
-		LEFT JOIN comments c ON p.id = c.post_id
-		WHERE p.user_id = ?
-		GROUP BY p.id, p.user_id, p.title, p.content, p.image_path, p.created_at, u.nickname, u.image
-		ORDER BY p.created_at DESC;
-	`, id)
+	var err error
+        
+	userId, err := helper.AuthenticateUser(r)
+	if err != nil {
+		 return  nil, fmt.Errorf("authentication error: %v", err)
+	}
+     if authUserID == "0"{
+		authUserID = userId
+	 }
+	if authUserID != "" {
+		fmt.Println("Fetching posts for user:", authUserID)
+		rows, err = repository.Db.Query(`
+			SELECT 
+				p.id, 
+				p.user_id, 
+				p.title, 
+				p.content, 
+				p.image_path, 
+				p.created_at, 
+				u.nickname,
+				u.image AS profile,
+				COUNT(DISTINCT l.id) AS like_count,
+				COUNT(DISTINCT CASE WHEN l.user_id = ? THEN l.id END) AS liked_by_user,
+				COUNT(DISTINCT c.id) AS comments_count
+			FROM posts p
+			JOIN users u ON p.user_id = u.id
+			LEFT JOIN likes l ON p.id = l.liked_item_id AND l.liked_item_type = 'post'
+			LEFT JOIN comments c ON p.id = c.post_id
+			WHERE p.user_id = ?
+			GROUP BY p.id, p.user_id, p.title, p.content, p.image_path, p.created_at, u.nickname, u.image
+			ORDER BY p.created_at DESC;
+		`, authUserID, authUserID)
 	} else {
-		rows, _ = repository.Db.Query(`
-		SELECT 
-			p.id, 
-			p.user_id, 
-			p.title, 
-			p.content, 
-			p.image_path, 
-			p.created_at, 
-			u.nickname,
-			u.image AS profile,
-			COUNT(c.id) AS comments_count
-		FROM posts p
-		JOIN users u ON p.user_id = u.id
-		LEFT JOIN comments c ON p.id = c.post_id
-		GROUP BY p.id, p.user_id, p.title, p.content, p.image_path, p.created_at, u.nickname, u.image
-		ORDER BY p.created_at DESC;
-	`)
+		fmt.Println("Fetching all posts")
+		rows, err = repository.Db.Query(`
+			SELECT 
+				p.id, 
+				p.user_id, 
+				p.title, 
+				p.content, 
+				p.image_path, 
+				p.created_at, 
+				u.nickname,
+				u.image AS profile,
+				COUNT(DISTINCT l.id) AS like_count,
+				COUNT(DISTINCT CASE WHEN l.user_id = ? THEN l.id END) AS liked_by_user,
+				COUNT(DISTINCT c.id) AS comments_count
+			FROM posts p
+			JOIN users u ON p.user_id = u.id
+			LEFT JOIN likes l ON p.id = l.liked_item_id AND l.liked_item_type = 'post'
+			LEFT JOIN comments c ON p.id = c.post_id
+			GROUP BY p.id, p.user_id, p.title, p.content, p.image_path, p.created_at, u.nickname, u.image
+			ORDER BY p.created_at DESC;
+		`, userId)
+	}
+
+	if err != nil {
+		return nil, fmt.Errorf("query error: %v", err)
 	}
 	defer rows.Close()
 
 	var posts []map[string]interface{}
 	for rows.Next() {
-		var id string
-		var userID string
-		var title, content, imagePath, nickname, profile, createdAt string
-		var commentsCount int
+		var (
+			id            string
+			userID        string
+			title         string
+			content       string
+			imagePath     sql.NullString
+			createdAt     string
+			nickname      string
+			profile       sql.NullString
+			likeCount     int
+			likedByUser   int
+			commentsCount int
+		)
 
-		// Scan the result into variables
-		err := rows.Scan(&id, &userID, &title, &content, &imagePath, &createdAt, &nickname, &profile, &commentsCount)
+		err := rows.Scan(&id, &userID, &title, &content, &imagePath, &createdAt, &nickname, &profile, &likeCount, &likedByUser, &commentsCount)
 		if err != nil {
-			fmt.Println("Error scanning row:", err)
-			return nil, err
+			return nil, fmt.Errorf("scan error: %v", err)
 		}
+
+		fmt.Println(id, "+++++++", userID) // Debug to see liked_by_user value
 
 		post := map[string]interface{}{
 			"id":             id,
 			"user_id":        userID,
 			"title":          title,
 			"content":        content,
-			"image_path":     imagePath,
+			"image_path":     nilIfEmpty(imagePath),
 			"created_at":     createdAt,
 			"author":         nickname,
-			"profile":        profile,
+			"profile":        nilIfEmpty(profile),
+			"like":           likeCount,
+			"liked_by_user":  likedByUser > 0,
 			"comments_count": commentsCount,
 		}
 
@@ -81,10 +113,16 @@ func GetAllPosts(id string) ([]map[string]interface{}, error) {
 	}
 
 	if err := rows.Err(); err != nil {
-		fmt.Println("Error iterating rows:", err)
-		return nil, err
+		return nil, fmt.Errorf("rows error: %v", err)
 	}
 
-	// Return the list of posts with nickname and comment count included
 	return posts, nil
+}
+
+// Helper to convert sql.NullString to interface{}
+func nilIfEmpty(ns sql.NullString) interface{} {
+	if ns.Valid {
+		return ns.String
+	}
+	return nil
 }

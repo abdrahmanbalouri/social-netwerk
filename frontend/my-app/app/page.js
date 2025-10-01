@@ -9,11 +9,14 @@ export default function Profile() {
   const router = useRouter();
 
   useEffect(() => {
+    
     async function fetchUser() {
       try {
         const response = await fetch("http://localhost:8080/api/me", {
           credentials: "include",
+          method: "GET",
         });
+        
 
         if (!response.ok) {
           router.replace("/login"); 
