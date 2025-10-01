@@ -15,7 +15,7 @@ type LikeRequest struct {
 	PostID string `json:"postId"`
 }
 
-func GetLikesGroup(w http.ResponseWriter, r *http.Request) {
+func LikesGroup(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		helper.RespondWithError(w, http.StatusMethodNotAllowed, "Method not allowed")
 		return
@@ -40,8 +40,11 @@ func GetLikesGroup(w http.ResponseWriter, r *http.Request) {
 	var isMember bool
 	err = repository.Db.QueryRow(query, userID, newLike.PostID).Scan(&grpID, &isMember)
 	if err != nil {
-		fmt.Println("Failed to get the group's id or post not exist :", err)
-		helper.RespondWithError(w, http.StatusInternalServerError, "Failed to get the group's id or post not exist")
+		if err == sql.ErrNoRows {
+			fmt.Println("Failed to get the group's id or post not exist :", err)
+			helper.RespondWithError(w, http.StatusNotFound, "Failed to get the group's id or post not exist")
+		}
+		helper.RespondWithError(w, http.StatusInternalServerError, "error finding the group/post")
 		return
 	}
 	if !isMember {
