@@ -51,7 +51,7 @@
   left: 0;
   right: 0;
   margin: auto;
-  top: 200px;
+  top: 150px;
 }
 
 /* 📦 Profile Container */
@@ -187,7 +187,8 @@
   max-height: 300px;
   overflow-y: auto;
   margin-bottom: 15px;
-  padding-right: 5px; /* for scrollbar spacing */
+  padding-right: 5px;
+  /* for scrollbar spacing */
 }
 
 /* Comment form */
@@ -202,13 +203,15 @@
 
 .form-group textarea:focus {
   outline: none;
-  border-color: #2563eb; /* blue */
+  border-color: #2563eb;
+  /* blue */
   box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
 }
 
 /* Submit button */
 button[type="submit"] {
-  background-color: #2563eb; /* blue-600 */
+  background-color: #2563eb;
+  /* blue-600 */
   color: white;
   padding: 10px 16px;
   border: none;
@@ -218,16 +221,52 @@ button[type="submit"] {
 }
 
 button[type="submit"]:hover {
-  background-color: #1d4ed8; /* blue-700 */
+  background-color: #1d4ed8;
+  /* blue-700 */
 }
 
 /* Animations */
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
 }
 
 @keyframes slideDown {
-  from { transform: translateY(-20px); opacity: 0; }
-  to { transform: translateY(0); opacity: 1; }
+  from {
+    transform: translateY(-20px);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.theme-dark .container {
+  background-color: var(--bg-dark);
+  color: var(--text-dark);
+}
+
+.theme-dark .post {
+  background-color: var(--bg-dark);
+  color: var(--text-dark);
+}
+
+.theme-dark span {
+  color: var(--text-dark);
+}
+
+.container .userInfo img {
+  object-fit: cover;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+
+
 }

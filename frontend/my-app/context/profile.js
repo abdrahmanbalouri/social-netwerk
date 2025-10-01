@@ -4,7 +4,7 @@ import { createContext, useContext, useEffect, useState } from "react";
 const ProfileContext = createContext(undefined);
 
 export function ProfileProvider({ children }) {
-  const [profile, setProfile] = useState(null);
+  const [Profile, setProfile] = useState(null);
 
   async function loadProfile() {
     try {
@@ -14,6 +14,7 @@ export function ProfileProvider({ children }) {
       });
       if (res.ok) {
         const json = await res.json();
+
         setProfile(json);
       }
     } catch (err) {
@@ -26,7 +27,7 @@ export function ProfileProvider({ children }) {
   }, []);
 
   return (
-    <ProfileContext.Provider value={{ profile, setProfile, reload: loadProfile }}>
+    <ProfileContext.Provider value={{ Profile, setProfile, reload: loadProfile }}>
       {children}
     </ProfileContext.Provider>
   );
