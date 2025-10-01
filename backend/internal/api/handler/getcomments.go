@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"fmt"
 	"net/http"
 	"strings"
 	"time"
@@ -24,7 +23,6 @@ func GetCommentsHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	postID := parts[3]
-	fmt.Println(postID)
 
 	rows, err := repository.Db.Query(`
         SELECT c.id, c.content, c.created_at, u.nickname

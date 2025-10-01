@@ -14,39 +14,91 @@ func ProfileHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	userID := r.URL.Query().Get("userId")
-	if userID == "0" {
-		userid, err := helper.AuthenticateUser(r)
-		if err != nil {
-			http.Error(w, "Authentication required", http.StatusUnauthorized)
-			return
-		}
-		userID = userid
-
+	targetUserID := r.URL.Query().Get("userId")
+	currentUserID, err := helper.AuthenticateUser(r)
+	if err != nil {
+		http.Error(w, "Authentication required", http.StatusUnauthorized)
+		return
 	}
-	fmt.Println("UserID:", userID) // Debugging line to check the userID value
-	q := `SELECT nickname, email, about, privacy, image FROM users WHERE id = ?`
-	row := repository.Db.QueryRow(q, userID)
+	if targetUserID == "0" || targetUserID == "" {
+		targetUserID = currentUserID
+	}
+
+	q := `
+SELECT 
+    u.id, 
+    u.nickname, 
+    u.email, 
+    u.about, 
+    u.privacy, 
+    u.image, 
+    u.cover,
+    CASE 
+        WHEN f.follower_id IS NOT NULL THEN 1 
+        ELSE 0 
+    END AS is_following
+FROM users u
+LEFT JOIN followers f 
+    ON f.user_id = ? AND f.follower_id = u.id
+WHERE u.id = ?;
+`
+
+	row := repository.Db.QueryRow(q, currentUserID, targetUserID)
 
 	var user struct {
-		Nickname string
-		Email    string
-		About    string
-		Privacy  string
-		Image    string
+		ID          string
+		Nickname    string
+		Email       string
+		About       string
+		Privacy     string
+		Image       string
+		Cover       string
+		IsFollowing bool
 	}
 
-	if err := row.Scan(&user.Nickname, &user.Email, &user.About, &user.Privacy, &user.Image); err != nil {
-		http.Error(w, "Failed to fetch user profile", http.StatusInternalServerError)
+	err = row.Scan(
+		&user.ID,
+		&user.Nickname,
+		&user.Email,
+		&user.About,
+		&user.Privacy,
+		&user.Image,
+		&user.Cover,
+		&user.IsFollowing,
+	)
+	if err != nil {
+		fmt.Println("err", err)
+		http.Error(w, "User not found", http.StatusNotFound)
+		return
+	}
+	fmt.Println("user", user.IsFollowing)
+
+	var followers int
+
+	errr := repository.Db.QueryRow(`SELECT COUNT(*) FROM followers WHERE user_id = ?  `, targetUserID).Scan(&followers)
+	if errr != nil {
+		fmt.Println(errr)
 		return
 	}
 
+	var following int
+
+	errr = repository.Db.QueryRow(`SELECT COUNT(*) FROM followers WHERE follower_id = ?  `, targetUserID).Scan(&following)
+	if errr != nil {
+		fmt.Println(errr)
+		return
+	}
 	profileData := map[string]interface{}{
-		"nickname": user.Nickname,
-		"email":    user.Email,
-		"about":    user.About,
-		"privacy":  user.Privacy,
-		"image":    user.Image,
+		"id":          user.ID,
+		"nickname":    user.Nickname,
+		"email":       user.Email,
+		"about":       user.About,
+		"privacy":     user.Privacy,
+		"image":       user.Image,
+		"cover":       user.Cover,
+		"isFollowing": user.IsFollowing,
+		"following":   following,
+		"followers":   followers,
 	}
 
 	helper.RespondWithJSON(w, http.StatusOK, profileData)
