@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from 'next/link';
+
 
 export default function RightBar() {
   const [users, setusers] = useState([])
@@ -11,14 +13,14 @@ export default function RightBar() {
           method: "GET",
           credentials: "include",
         });
-        console.log(res);
+
 
 
         if (!res.ok) {
           throw new Error("Failed to fetch posts");
         }
         const data = await res.json();
-        console.log(data);
+
 
 
         setusers(data);
@@ -71,12 +73,12 @@ export default function RightBar() {
             users.map((user) => (
               <div key={user.id} className="user">
                 <div className="userInfo">
-                  <img
-                    src="https://images.pexels.com/photos/4881619/pexels-photo-4881619.jpeg?auto=compress&cs=tinysrgb&w=1600"
-                    alt="profile"
-                  />
+                  <img src={user?.image ? `/uploads/${user.image}` : "/uploads/default.png"} alt="user avatar" />
+
                   <div className="online" />
-                  <span>{user.nickname}</span>
+                  <Link href={`/profile/${user.id}`} >
+                    <span>{user.nickname}</span>
+                  </Link>
                 </div>
               </div>
             ))

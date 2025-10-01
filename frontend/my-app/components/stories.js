@@ -4,7 +4,7 @@ import { useProfile } from '../context/profile';
 
 
 const Stories = () => {
-  const { profile } = useProfile();
+  const { Profile } = useProfile();
   // profile may be null while loading; use optional chaining below
 
   //TEMPORARY
@@ -34,10 +34,10 @@ const Stories = () => {
   return (
     <div className="stories">
       <div className="story">
-        <img src={profile?.image ? `/uploads/${profile.image}` : '/avatar.png'}
+        <img src={Profile?.image ? `/uploads/${Profile.image}` : '/avatar.png'}
           alt="user avatar"
         />
-        <span>{profile?.nickname ?? 'user name'}</span>
+        <span>{Profile?.nickname ?? 'user name'}</span>
         <button>+</button>
       </div>
       {stories.map(story => (

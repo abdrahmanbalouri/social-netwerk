@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"fmt"
 	"net/http"
 
 	"social-network/internal/helper"
@@ -19,7 +18,6 @@ func GetUsersHandler(w http.ResponseWriter, r *http.Request) {
 		helper.RespondWithError(w, http.StatusUnauthorized, "Authentication required")
 		return
 	}
-	fmt.Println(userID)
 	rows, err := repository.Db.Query("SELECT id, nickname  FROM users")
 	if err != nil {
 		helper.RespondWithError(w, http.StatusInternalServerError, "Failed to fetch users")
@@ -28,7 +26,7 @@ func GetUsersHandler(w http.ResponseWriter, r *http.Request) {
 	defer rows.Close()
 
 	var users []struct {
-		utils.User 
+		utils.User
 	}
 	for rows.Next() {
 		var user struct {
@@ -38,8 +36,7 @@ func GetUsersHandler(w http.ResponseWriter, r *http.Request) {
 			helper.RespondWithError(w, http.StatusInternalServerError, "Failed to process users")
 			return
 		}
-		fmt.Println(userID, user.ID)
-		if  user.ID == userID {
+		if user.ID == userID {
 			continue
 		}
 		users = append(users, user)

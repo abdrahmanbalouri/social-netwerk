@@ -48,12 +48,12 @@ export default function SignupPage() {
         router.push('/login')
         
       } else {
-        console.log(1);
+
         const data = await response.json()
         seterror(data)
       }
     } catch (error) {
-      console.log(error);
+
 
       seterror("Network error!", error)
     }
