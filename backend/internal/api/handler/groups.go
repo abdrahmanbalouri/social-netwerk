@@ -17,7 +17,11 @@ type GroupRequest struct {
 	Description  string   `json:"description"`
 	InvitedUsers []string `json:"invitedUsers"`
 }
-
+type Group struct {
+	ID string
+	Title string
+	Description  string
+}
 func AddGroupHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		helper.RespondWithError(w, http.StatusMethodNotAllowed, "Method not allowed")
@@ -35,7 +39,7 @@ func AddGroupHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	//Get session cookie value.
+	// Get session cookie value.
 	c, err := r.Cookie("session")
 	if err != nil {
 		helper.RespondWithError(w, http.StatusUnauthorized, "No valid session found")
@@ -53,7 +57,7 @@ func AddGroupHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	//Begin a transaction
+	// Begin a transaction
 	tx, err := repository.Db.Begin()
 	if err != nil {
 		helper.RespondWithError(w, http.StatusInternalServerError, "Failed to start database transaction")
@@ -100,7 +104,7 @@ func AddGroupHandler(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	//Commit the transaction
+	// Commit the transaction
 	if err := tx.Commit(); err != nil {
 		helper.RespondWithError(w, http.StatusInternalServerError, "Failed to commit transaction")
 		return
@@ -111,6 +115,59 @@ func AddGroupHandler(w http.ResponseWriter, r *http.Request) {
 		"group_id": grpID.String(),
 	}
 	helper.RespondWithJSON(w, http.StatusCreated, response)
+}
+
+func GetAllGroups(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		helper.RespondWithError(w, http.StatusMethodNotAllowed, "Method not allowed")
+		return
+	}
+
+	// Check for user's session
+	c, err := r.Cookie("session")
+	if err != nil {
+		helper.RespondWithError(w, http.StatusUnauthorized, "No valid session found")
+		return
+	}
+	fmt.Println("session is :::", c)
+	var userID string
+	if err := repository.Db.QueryRow("SELECT user_id FROM sessions WHERE token = ?", c.Value).Scan(&userID); err != nil {
+		if err == sql.ErrNoRows {
+			helper.RespondWithError(w, http.StatusUnauthorized, "Invalid or expired session")
+			return
+		}
+		helper.RespondWithError(w, http.StatusInternalServerError, "Failed to retrieve user session")
+		return
+	}
+
+	// get all groups
+	query := `SELECT 
+    g.id, 
+    g.name, 
+    g.description,
+    gm.user_id IS NOT NULL AS is_member -- This column will be true/false FROM groups g
+	LEFT JOIN group_members gm ON g.id = gm.group_id AND gm.user_id = ?
+	ORDER BY is_member DESC, g.name ASC; -- Sorts members first (DESC), then alphabetically`
+	rows, err := repository.Db.Query(query)
+	if err != nil{
+		helper.RespondWithError(w, http.StatusInternalServerError, "error getting all valid groups")
+		return
+	}
+
+	var GroupJson []Group
+	for rows.Next() {
+		var g Group
+		err := rows.Scan(&g.ID, &g.Title, &g.Description);
+		if err != nil {
+			fmt.Println("Failed to get group infos : ", err)
+			helper.RespondWithError(w, http.StatusInternalServerError, "Failed to get group infos")
+			return
+		}
+		GroupJson = append(GroupJson, g)
+	}
+
+	// Return the posts as a JSON response
+	helper.RespondWithJSON(w, http.StatusOK, GroupJson)
 }
 
 // {
