@@ -31,7 +31,7 @@ func Routes(db *sql.DB) http.Handler {
 	mux.HandleFunc("/api/editor",handlers.Editor)
 	mux.HandleFunc("/api/like/{id}",handlers.LikeHandler)
 	mux.HandleFunc("/api/follow",handlers.FollowHandler)
-	mux.HandleFunc("/api/groups", handlers.AddGroupHandler)
+	mux.HandleFunc("/api/groups/add", handlers.AddGroupHandler)
 	mux.HandleFunc("/invitations/respond", handlers.GroupInvitationResponse)
 	mux.HandleFunc("/group/invitation", handlers.GroupInvitationRequest)
 	mux.HandleFunc("/group/addPost", handlers.CreatePostGroup)
@@ -39,6 +39,8 @@ func Routes(db *sql.DB) http.Handler {
 	mux.HandleFunc("/group/addComment", handlers.CreateCommentGroup)
 	mux.HandleFunc("/group/fetchComments", handlers.GetCommentGroup)
 	mux.HandleFunc("/group/like", handlers.LikesGroup)
+	mux.HandleFunc("/group/like", handlers.LikesGroup)
+	mux.HandleFunc("/groups", handlers.GetAllGroups)
 
 	return mux
 }
