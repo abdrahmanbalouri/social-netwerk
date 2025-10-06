@@ -2,6 +2,7 @@
 import Link from 'next/link';
 
 export default function Post({ post, onGetComments, ondolike }) {
+  
 
 
   return (
