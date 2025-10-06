@@ -263,25 +263,8 @@ export default function Profile() {
             <div className="uInfo">
 
               <div className="left">
-                {/*  <a href="http://facebook.com">
-                  <FacebookTwoToneIcon fontSize="large" />
-                </a>
-                <a href="http://instagram.com">
-                  <InstagramIcon fontSize="large" />
-                </a>
-                <a href="http://x.com">
-                  <TwitterIcon fontSize="large" />
-                </a>
-                <a href="http://linkedin.com">
-                  <LinkedInIcon fontSize="large" />
-                </a> */}
-
-               <button className='followingBtn'>          <p> following    <strong id='following'> {data.following} </strong> </p></button>
-               <button className='followersBtn'>          <p>followers    <strong id='followers'> {data.followers}</strong></p></button>
-              </div>
-
-              <div >
-                show folloing and followers 
+                <button className='followingBtn'>          <p> following    <strong id='following'> {data.following} </strong> </p></button>
+                <button className='followersBtn'>          <p>followers    <strong id='followers'> {data.followers}</strong></p></button>
               </div>
               <div className="center">
                 <span>{data.nickname}</span>
@@ -292,15 +275,16 @@ export default function Profile() {
                     <span>{data.about}</span>
                   </div>
                 </div>
+                {Profile && Profile.id !== data.id && (
+                  <button id='FollowBtn'
 
-                <button id='FollowBtn'
 
+                    onClick={followUser}
 
-                  onClick={followUser}
-
-                >
-                  {Profile && Profile.id !== data.id && (data.isFollowing ? ("Unfollow") : ("Follow"))}
-                </button>
+                  >
+                    {Profile && (data.isFollowing ? ("Unfollow") : ("Follow"))}
+                  </button>)
+                  }
 
 
 
@@ -330,18 +314,20 @@ export default function Profile() {
           </div>
         </div>
         <RightBar />
-      </main>
+      </main >
       {/* Comments Modal */}
-      {showComments && (
-        <Comment
-          comments={comment}
-          isOpen={showComments}
-          onClose={closeComments}
-          postId={selectedPost?.id}
-          postTitle={selectedPost?.title}
-          onCommentChange={refreshComments}
-        />
-      )}
-    </div>
+      {
+        showComments && (
+          <Comment
+            comments={comment}
+            isOpen={showComments}
+            onClose={closeComments}
+            postId={selectedPost?.id}
+            postTitle={selectedPost?.title}
+            onCommentChange={refreshComments}
+          />
+        )
+      }
+    </div >
   );
 }
