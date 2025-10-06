@@ -403,9 +403,6 @@ tainer .user .userInfo .details .name {
   padding: 0;
   margin: -1px;
 }
-.comments-section {
-  margin-top: 20px;
-}
 
 /* Error message */
 .error2 {
@@ -421,13 +418,6 @@ tainer .user .userInfo .details .name {
   margin-bottom: 15px;
 }
 
-/* Comments container */
-.comments-container {
-  max-height: 300px;
-  overflow-y: auto;
-  margin-bottom: 15px;
-  padding-right: 5px; /* for scrollbar spacing */
-}
 
 /* Comment form */
 .form-group textarea {
@@ -510,24 +500,8 @@ button[type="submit"]:hover {
   margin: 0;
 }
 
-.modal-close {
-  background: none;
-  border: none;
-  font-size: 18px;
-  color: #606770; /* FB's gray icon/text color */
-  cursor: pointer;
-  padding: 8px;
-  transition: color 0.2s ease;
-}
-
-.modal-close:hover {
-  color: #1c1e21;
-}
 
 /* Comments Section */
-.comments-section {
-  padding: 16px;
-}
 
 .post-title {
   font-size: 16px;
@@ -536,121 +510,13 @@ button[type="submit"]:hover {
   margin: 0 0 16px;
 }
 
-/* Comments Container */
-.comments-container {
-  max-height: 300px;
-  overflow-y: auto;
-  margin-bottom: 16px;
-}
 
-/* Comment Item */
-.comment-item {
-  display: flex;
-  flex-direction: column;
-  margin-bottom: 12px;
-  background: #f0f2f5; /* Light gray background for comments like FB */
-  border-radius: 12px;
-  padding: 8px 12px;
-}
 
-.comment-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 4px;
-}
 
-.comment-author {
-  font-size: 14px;
-  font-weight: 600;
-  color: #1c1e21;
-}
 
-.comment-date {
-  font-size: 12px;
-  color: #606770;
-}
 
-.comment-content {
-  font-size: 14px;
-  color: #1c1e21;
-  margin: 0;
-  line-height: 1.4;
-}
 
-/* No Comments Message */
-.no-comments {
-  font-size: 14px;
-  color: #606770;
-  text-align: center;
-  margin: 16px 0;
-}
 
-/* Comment Form */
-.comment-form {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.comment-textarea {
-  width: 100%;
-  padding: 10px;
-  font-size: 14px;
-  color: #1c1e21;
-  background: #f0f2f5;
-  border: none;
-  border-radius: 12px;
-  resize: none;
-  outline: none;
-  transition: background 0.2s ease;
-}
-
-.comment-textarea:focus {
-  background: #e4e6eb; /* Slightly darker on focus */
-}
-
-.comment-textarea::placeholder {
-  color: #606770;
-}
-
-.post-comment-btn {
-  align-self: flex-end;
-  background: #1b74e4; /* FB's blue button color */
-  color: #fff;
-  border: none;
-  border-radius: 6px;
-  padding: 8px 16px;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background 0.2s ease;
-}
-
-.post-comment-btn:hover {
-  background: #165fc7; /* Darker blue on hover */
-}
-
-.post-comment-btn:disabled {
-  background: #e4e6eb;
-  color: #bcc0c4;
-  cursor: not-allowed;
-}
-
-/* Scrollbar Styling (for Webkit browsers like Chrome/Safari) */
-.comments-container::-webkit-scrollbar {
-  width: 8px;
-}
-
-.comments-container::-webkit-scrollbar-track {
-  background: #f0f2f5;
-  border-radius: 4px;
-}
-
-.comments-container::-webkit-scrollbar-thumb {
-  background: #dadce0;
-  border-radius: 4px;
-}
 
 .comments-container::-webkit-scrollbar-thumb:hover {
   background: #bcc0c4;

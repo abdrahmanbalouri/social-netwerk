@@ -164,9 +164,7 @@
 }
 
 
-.comments-section {
-  margin-top: 20px;
-}
+
 
 /* Error message */
 .error2 {
@@ -182,14 +180,7 @@
   margin-bottom: 15px;
 }
 
-/* Comments container */
-.comments-container {
-  max-height: 300px;
-  overflow-y: auto;
-  margin-bottom: 15px;
-  padding-right: 5px;
-  /* for scrollbar spacing */
-}
+
 
 /* Comment form */
 .form-group textarea {
