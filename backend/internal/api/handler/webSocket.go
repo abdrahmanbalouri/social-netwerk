@@ -44,6 +44,24 @@ func WebSocketHandler(w http.ResponseWriter, r *http.Request) {
 			log.Println("WebSocket read error:", err)
 			break
 		}
+		typeMsg, ok := msg["type"].(string)
+		if !ok {
+			log.Println("Invalid message format")
+			continue
+		}
+		switch typeMsg {
+		case "message":
+			// Handle chat message broadcasting
+			recipientID, ok := msg["to"].(string)
+			if !ok {
+				log.Println("Invalid recipient ID")
+				continue
+			}
+			sendToUser(recipientID, msg)
+			sendToUser(currentUserID, msg) // Echo back to sender
+		default:
+			log.Println("Unknown message type:", typeMsg)
+		}
 		log.Printf("Received message from user %s: %v", currentUserID, msg)
 	}
 	defer func() {
@@ -85,6 +103,23 @@ func BrodcastOnlineStatus(userID string, online bool) {
 				log.Println("WebSocket write error:", err)
 				conn.Close()
 			}
+		}
+	}
+}
+// sendToUser sends a message to all WebSocket connections of a specific user
+func sendToUser(userID string, message map[string]any) {
+	ClientsMutex.Lock()
+	defer ClientsMutex.Unlock()
+
+	conns, exists := Clients[userID]
+	if !exists {
+		return
+	}
+
+	for _, conn := range conns {
+		if err := conn.WriteJSON(message); err != nil {
+			log.Println("WebSocket write error:", err)
+			conn.Close()
 		}
 	}
 }
