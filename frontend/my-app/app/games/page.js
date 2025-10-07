@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useEffect } from "react";
 import Navbar from "../../components/Navbar.js";
 import LeftBar from "../../components/LeftBar.js";
 import RightBar from "../../components/RightBar.js";
@@ -8,9 +8,34 @@ import Link from "next/link.js";
 import "./games.css";
 
 export default function Game() {
+  useEffect(() => {
+
+    async function midle() {
+      try {
+        const response = await fetch("http://localhost:8080/api/me", {
+          credentials: "include",
+          method: "GET",
+        });
+
+        if (!response.ok) {
+          console.log(1111111111);
+          
+          router.replace("/login");
+          return null;
+        }
+      } catch (error) {
+        router.replace("/login");
+        return null;
+
+      }
+    }
+    midle()
+
+
+
+  }, [])
   const { darkMode } = useDarkMode();
   const [showSidebar, setShowSidebar] = React.useState(true);
-
   return (
     <div className={darkMode ? "theme-dark" : "theme-light"}>
       <Navbar

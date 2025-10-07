@@ -37,6 +37,30 @@ export default function Profile() {
 
 
   const [theprofile, setProfile] = useState(null);
+  useEffect(() => {
+
+    async function midle() {
+      try {
+        const response = await fetch("http://localhost:8080/api/me", {
+          credentials: "include",
+          method: "GET",
+        });
+
+        if (!response.ok) {
+          router.replace("/login");
+          return null;
+        }
+      } catch (error) {
+        router.replace("/login");
+        return null;
+
+      }
+    }
+    midle()
+
+
+
+  }, [])
 
   async function loadProfile() {
     try {
@@ -160,31 +184,31 @@ export default function Profile() {
     setShowPrivacy(!showPrivacy);
   }
 
- async function followUser() {
-  try {
-    let res = await fetch(`http://localhost:8080/api/follow?id=${params.id}`, {
-      method: 'POST',
-      credentials: 'include',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ userId: userId }),
-    });
-    if (res.ok) {
-      let followw = await res.json();
+  async function followUser() {
+    try {
+      let res = await fetch(`http://localhost:8080/api/follow?id=${params.id}`, {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ userId: userId }),
+      });
+      if (res.ok) {
+        let followw = await res.json();
 
-      // Update state directly, ma t3melsh direct DOM manipulation
-      setProfile(prevProfile => ({
-        ...prevProfile,
-        followers: followw.followers,
-        following: followw.following,
-        isFollowing: followw.isFollowed
-      }));
+        // Update state directly, ma t3melsh direct DOM manipulation
+        setProfile(prevProfile => ({
+          ...prevProfile,
+          followers: followw.followers,
+          following: followw.following,
+          isFollowing: followw.isFollowed
+        }));
+      }
+    } catch (error) {
+      console.error('Error following user:', error);
     }
-  } catch (error) {
-    console.error('Error following user:', error);
   }
-}
 
 
   if (!theprofile) {
