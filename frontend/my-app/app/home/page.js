@@ -67,9 +67,7 @@ export default function Home() {
 
 
   }, [])
-  const filteredFollowers = followers.filter((follower) =>
-    follower.name.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+
   // Logout function
   async function logout(e) {
     e.preventDefault();
@@ -98,16 +96,14 @@ export default function Home() {
     try {
       const response = await fetch('/api/users/followers', {
         method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          // Add authorization header if needed, e.g., 'Authorization': `Bearer ${token}`
-        },
+        credentials: 'include',
+       
       });
       if (!response.ok) {
         throw new Error('Failed to fetch followers');
       }
       const data = await response.json();
-      setFollowers(data); // Expecting array of { id, name } or similar
+      setFollowers(data);
     } catch (err) {
       setError(err.message);
     } finally {
@@ -128,17 +124,10 @@ export default function Home() {
         method: "POST",
         credentials: "include",
       });
-      const response = await res.json();
-
-
+     // const response = await res.json();
       if (res.ok) {
 
         const newpost = await fetchPosts(postId)
-
-
-
-
-
         for (let i = 0; i < posts.length; i++) {
           if (posts[i].id == newpost.id) {
 
@@ -151,11 +140,6 @@ export default function Home() {
           }
         }
       }
-
-
-
-
-
     } catch (err) {
       console.error("Error liking post:", err);
     }
@@ -403,7 +387,12 @@ export default function Home() {
     // Clear selected users when changing from private
     if (visibility === 'private' && newVisibility !== 'private') {
       setSelectedUsers([]);
+      return;
     }
+    
+     if(newVisibility==='private'){
+      fetchFollowers();
+     }
   };
 
 
@@ -500,39 +489,31 @@ export default function Home() {
                   <option value="private">Private (Selected followers)</option>
                 </select>
               </div>
-              {/* User Picker with Search for Private Option */}
-              <div className={`user-picker ${visibility !== 'private' ? 'hidden' : ''}`}>
-                {loadingFollowers ? (
-                  <p>Loading followers...</p>
-                ) : error ? (
-                  <p className="error">Error: {error}</p>
-                ) : (
-                  <>
-                    <input
-                      type="text"
-                      placeholder="Search followers..."
-                      className="input search-input"
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
-                    />
-                    <p>Select followers who can see this post:</p>
-                    {filteredFollowers.length > 0 ? (
-                      filteredFollowers.map((follower) => (
-                        <label key={follower.id} className="user-picker-item">
-                          <input
-                            type="checkbox"
-                            checked={selectedUsers.includes(follower.id)}
-                            onChange={() => handleUserSelect(follower.id)}
-                          />
-                          {follower.name}
-                        </label>
-                      ))
-                    ) : (
-                      <p>No followers found.</p>
-                    )}
-                  </>
-                )}
-              </div>
+            
+              {visibility === 'private' && (
+
+                
+                <div className="user-picker">
+                  {loadingFollowers ? (
+                    <p>Loading followers...</p>
+                  ) : error ? (
+                    <p className="error">Error: {error}</p>
+                  ) : followers.length > 0 ? (
+                    followers.map((follower) => (
+                      <label key={follower.id} className="user-picker-item">
+                        <input
+                          type="checkbox"
+                          checked={selectedUsers.includes(follower.id)}
+                          onChange={() => handleUserSelect(follower.id)}
+                        />
+                        {follower.name}
+                      </label>
+                    ))
+                  ) : (
+                    <p>No followers found.</p>
+                  )}
+                </div>
+              )}
               <div className="modal-actions">
                 <button type="button" className="btn cancel" onClick={() => setShowModal(false)}>
                   Cancel
