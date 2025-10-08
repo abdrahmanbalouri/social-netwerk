@@ -58,7 +58,8 @@ export default function LeftBar({ showSidebar }) {
           </div>
           <div className="item">
             <img src="/icone/2.png" alt="" />
-            <span>Groups</span>
+            <Link href={"/groups"}> Groups</Link>
+            {/* <span>Groups</span> */}
           </div>
           <div className="item">
             <Link href={'/watch'}>
