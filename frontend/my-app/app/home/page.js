@@ -31,6 +31,15 @@ export default function Home() {
   const [comment, setComment] = useState([]);
   const [selectedPost, setSelectedPost] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [visibility, setVisibility] = useState('public');
+  const [selectedUsers, setSelectedUsers] = useState([]); // Selected users for private posts
+  const [loadingFollowers, setLoadingFollowers] = useState(false); // Loading state for fetching followers
+  const [error, setError] = useState(''); // Error state for fetching
+  const [searchQuery, setSearchQuery] = useState(''); // Search query for filtering followers
+  const [followers, setFollowers] = useState([]); // Followers list
+
+
+
 
   const modalRef = useRef(null);
   const commentsModalRef = useRef(null);
@@ -58,6 +67,9 @@ export default function Home() {
 
 
   }, [])
+  const filteredFollowers = followers.filter((follower) =>
+    follower.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
   // Logout function
   async function logout(e) {
     e.preventDefault();
@@ -79,6 +91,30 @@ export default function Home() {
       console.error("Logout error:", err);
     }
   }
+  // Function to fetch followers from backend
+  const fetchFollowers = async () => {
+    setLoadingFollowers(true);
+    setError('');
+    try {
+      const response = await fetch('/api/users/followers', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          // Add authorization header if needed, e.g., 'Authorization': `Bearer ${token}`
+        },
+      });
+      if (!response.ok) {
+        throw new Error('Failed to fetch followers');
+      }
+      const data = await response.json();
+      setFollowers(data); // Expecting array of { id, name } or similar
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoadingFollowers(false);
+    }
+  };
+
 
   // Handle image change for post creation
   function handleImageChange(e) {
@@ -94,18 +130,18 @@ export default function Home() {
       });
       const response = await res.json();
 
-      
-      if(res.ok){
+
+      if (res.ok) {
 
         const newpost = await fetchPosts(postId)
-        
 
 
-        
-  
+
+
+
         for (let i = 0; i < posts.length; i++) {
           if (posts[i].id == newpost.id) {
-  
+
             setPosts([
               ...posts.slice(0, i),
               newpost,
@@ -361,6 +397,16 @@ export default function Home() {
     );
   }
 
+  const handleVisibilityChange = (e) => {
+    const newVisibility = e.target.value;
+    setVisibility(newVisibility);
+    // Clear selected users when changing from private
+    if (visibility === 'private' && newVisibility !== 'private') {
+      setSelectedUsers([]);
+    }
+  };
+
+
   return (
     <div className={darkMode ? 'theme-dark' : 'theme-light'}>
       {/* Navbar */}
@@ -397,9 +443,27 @@ export default function Home() {
 
       {/* Create Post Modal */}
       {showModal && (
-        <div className={`modal-overlay ${showModal ? 'is-open' : ''}`} onMouseDown={(e) => { if (e.target === e.currentTarget) setShowModal(false); }}>
-          <div ref={modalRef} role="dialog" aria-modal="true" aria-labelledby="create-post-title" className="modal-content" onMouseDown={(e) => e.stopPropagation()}>
-            <button className="modal-close" aria-label="Close modal" onClick={() => setShowModal(false)}>✕</button>
+        <div
+          className={`modal-overlay ${showModal ? 'is-open' : ''}`}
+          onMouseDown={(e) => {
+            if (e.target === e.currentTarget) setShowModal(false);
+          }}
+        >
+          <div
+            ref={modalRef}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="create-post-title"
+            className="modal-content"
+            onMouseDown={(e) => e.stopPropagation()}
+          >
+            <button
+              className="modal-close"
+              aria-label="Close modal"
+              onClick={() => setShowModal(false)}
+            >
+              ✕
+            </button>
             <h3 id="create-post-title">Create a Post</h3>
             <form onSubmit={handleCreatePost}>
               <input
@@ -423,9 +487,59 @@ export default function Home() {
                 onChange={(e) => setContent(e.target.value)}
                 required
               />
+              {/* Visibility Selection */}
+              <div className="visibility-select">
+                <label htmlFor="visibility">Visibility</label>
+                <select
+                  id="visibility"
+                  value={visibility}
+                  onChange={handleVisibilityChange}
+                >
+                  <option value="public">Public (All users)</option>
+                  <option value="almost_private">Almost Private (Followers only)</option>
+                  <option value="private">Private (Selected followers)</option>
+                </select>
+              </div>
+              {/* User Picker with Search for Private Option */}
+              <div className={`user-picker ${visibility !== 'private' ? 'hidden' : ''}`}>
+                {loadingFollowers ? (
+                  <p>Loading followers...</p>
+                ) : error ? (
+                  <p className="error">Error: {error}</p>
+                ) : (
+                  <>
+                    <input
+                      type="text"
+                      placeholder="Search followers..."
+                      className="input search-input"
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                    />
+                    <p>Select followers who can see this post:</p>
+                    {filteredFollowers.length > 0 ? (
+                      filteredFollowers.map((follower) => (
+                        <label key={follower.id} className="user-picker-item">
+                          <input
+                            type="checkbox"
+                            checked={selectedUsers.includes(follower.id)}
+                            onChange={() => handleUserSelect(follower.id)}
+                          />
+                          {follower.name}
+                        </label>
+                      ))
+                    ) : (
+                      <p>No followers found.</p>
+                    )}
+                  </>
+                )}
+              </div>
               <div className="modal-actions">
-                <button type="button" className="btn cancel" onClick={() => setShowModal(false)}>Cancel</button>
-                <button type="submit" className="btn submit">Post</button>
+                <button type="button" className="btn cancel" onClick={() => setShowModal(false)}>
+                  Cancel
+                </button>
+                <button type="submit" className="btn submit" disabled={loadingFollowers}>
+                  Post
+                </button>
               </div>
             </form>
           </div>
@@ -433,16 +547,18 @@ export default function Home() {
       )}
 
       {/* Comments Modal */}
-      {showComments && (
-        <Comment
-          comments={comment}
-          isOpen={showComments}
-          onClose={closeComments}
-          postId={selectedPost?.id}
-          postTitle={selectedPost?.title}
-          onCommentChange={refreshComments}
-        />
-      )}
-    </div>
+      {
+        showComments && (
+          <Comment
+            comments={comment}
+            isOpen={showComments}
+            onClose={closeComments}
+            postId={selectedPost?.id}
+            postTitle={selectedPost?.title}
+            onCommentChange={refreshComments}
+          />
+        )
+      }
+    </div >
   );
 } Comment
