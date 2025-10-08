@@ -39,8 +39,16 @@ func Routes(db *sql.DB) http.Handler {
 	mux.HandleFunc("/group/addComment", handlers.CreateCommentGroup)
 	mux.HandleFunc("/group/fetchComments", handlers.GetCommentGroup)
 	mux.HandleFunc("/group/like", handlers.LikesGroup)
-	mux.HandleFunc("/group/like", handlers.LikesGroup)
 	mux.HandleFunc("/groups", handlers.GetAllGroups)
 
 	return mux
 }
+
+
+
+
+// {
+//     "title": "Group 1",
+//     "description": "group for developpers",
+//     "invitedUsers": []
+// }

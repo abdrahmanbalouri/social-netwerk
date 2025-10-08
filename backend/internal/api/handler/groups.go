@@ -142,14 +142,12 @@ func GetAllGroups(w http.ResponseWriter, r *http.Request) {
 
 	// get all groups
 	query := `SELECT 
-    g.id, 
-    g.name, 
-    g.description,
-    gm.user_id IS NOT NULL AS is_member -- This column will be true/false FROM groups g
-	LEFT JOIN group_members gm ON g.id = gm.group_id AND gm.user_id = ?
-	ORDER BY is_member DESC, g.name ASC; -- Sorts members first (DESC), then alphabetically`
+    id, 
+    title, 
+    description  FROM groups`
 	rows, err := repository.Db.Query(query)
 	if err != nil{
+		fmt.Println("error is :", err)
 		helper.RespondWithError(w, http.StatusInternalServerError, "error getting all valid groups")
 		return
 	}
