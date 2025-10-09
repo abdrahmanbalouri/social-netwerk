@@ -17,6 +17,7 @@ import (
 )
 
 func Createpost(w http.ResponseWriter, r *http.Request) {
+
 	if r.Method != "POST" {
 		helper.RespondWithError(w, http.StatusMethodNotAllowed, "Method Not Allowed")
 		return
@@ -27,6 +28,7 @@ func Createpost(w http.ResponseWriter, r *http.Request) {
 		helper.RespondWithError(w, http.StatusUnauthorized, "Authentication required")
 		return
 	}
+	allowedUsers:= ""
 
 	err = r.ParseMultipartForm(10 << 20) // 10MB
 	if err != nil {
@@ -36,12 +38,29 @@ func Createpost(w http.ResponseWriter, r *http.Request) {
 
 	title := strings.TrimSpace(r.FormValue("title"))
 	content := strings.TrimSpace(r.FormValue("content"))
+	visability := strings.TrimSpace(r.FormValue("visibility"))
+	 if visability == "private" {
+		 allowedUsers := r.FormValue("allowed_users")
+		 if allowedUsers == "" {
+			 helper.RespondWithError(w, http.StatusBadRequest, "Allowed users must be provided for private posts")
+			 return
+		 }
+	 }
 
 	// if len(title) < 5 || len(title) > 50 || len(content) < 5 || len(content) > 500 {
 	// 	helper.RespondWithError(w, http.StatusBadRequest, "Title and content must be between 5 and 50 characters")
 	// 	return
 	// }
+   if visability == "private" {
+		 allowedUsers = r.FormValue("allowed_users")
+		 if allowedUsers == "" {
+			 helper.RespondWithError(w, http.StatusBadRequest, "Allowed users must be provided for private posts")
+			 return
+		 }
+	 }
 
+
+	// if len(title) < 
 	var imagePath string
 
 	imageFile, _, err := r.FormFile("image")
@@ -77,11 +96,12 @@ func Createpost(w http.ResponseWriter, r *http.Request) {
 
 	postID := uuid.New().String()
 	_, err = repository.Db.Exec(`
-        INSERT INTO posts (id, user_id, title, content, image_path)
-        VALUES (?, ?, ?, ?, ?)`,
-		postID, userID, title, content, imagePath,
+        INSERT INTO posts (id, user_id, title, content, visibility, image_path, canseperivite)
+        VALUES (?, ?, ?, ?, ?, ?, ?)`,
+		postID, userID, title, content, visability, imagePath, allowedUsers,
 	)
 	if err != nil {
+		fmt.Println(err)
 		helper.RespondWithError(w, http.StatusInternalServerError, "Failed to create post")
 		return
 	}
