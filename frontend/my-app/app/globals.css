@@ -730,3 +730,243 @@ html::-webkit-scrollbar {
 .theme-dark .navbar .left .search input {
   color: var(--text-dark);
 }
+
+
+
+
+
+
+
+
+
+/* Container */
+.pageContainer {
+  padding: 20px;
+  flex: 6;
+  background-color: var(--bg-color);
+  min-height: 100vh;
+}
+
+/* Tab Buttons Container */
+.tabButtons {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 30px;
+  border-bottom: 2px solid var(--border-color);
+  padding-bottom: 5px;
+}
+
+/* Tab Button */
+.tabButton {
+  padding: 12px 28px;
+  font-size: 16px;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px 8px 0 0;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.tabButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Tab Content */
+.tabContent {
+  margin-top: 20px;
+}
+
+/* Lists */
+.followersList,
+.followingList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* List Items */
+.followersList li,
+.followingList li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 26px;
+  background: linear-gradient(135deg, var(--card-bg) 0%, var(--card-bg-secondary) 100%);
+  border: 1px solid var(--border-color);
+  border-radius: 14px;
+  font-size: 17px;
+  font-weight: 500;
+  color: var(--text-color);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Hover effect with gradient */
+.followersList li::before,
+.followingList li::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(87, 115, 255, 0.1), transparent);
+  transition: left 0.5s ease;
+}
+
+.followersList li:hover::before,
+.followingList li:hover::before {
+  left: 100%;
+}
+
+.followersList li:hover,
+.followingList li:hover {
+  transform: translateX(8px) scale(1.02);
+  box-shadow: 0 8px 20px rgba(87, 115, 255, 0.2);
+  border-color: rgba(87, 115, 255, 0.4);
+}
+
+/* Add icon before text */
+.followersList li::after,
+.followingList li::after {
+  content: '→';
+  font-size: 24px;
+  color: #5773ff;
+  opacity: 0;
+  transition: all 0.3s ease;
+  margin-left: auto;
+  font-weight: bold;
+}
+
+.followersList li:hover::after,
+.followingList li:hover::after {
+  opacity: 1;
+  transform: translateX(5px);
+}
+
+/* Different style for following list */
+.followingList li {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+}
+
+.followingList li:hover {
+  box-shadow: 0 8px 20px rgba(118, 75, 162, 0.4);
+  transform: translateX(8px) scale(1.02);
+}
+
+.followingList li::before {
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+}
+
+.followingList li::after {
+  color: white;
+}
+
+/* Empty state */
+.followersList:empty::after,
+.followingList:empty::after {
+  content: 'No users found';
+  display: block;
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--text-secondary);
+  font-size: 18px;
+  font-style: italic;
+}
+
+/* Dark mode variables */
+.theme-dark {
+  --bg-color: #18191a;
+  --card-bg: #242526;
+  --card-bg-secondary: #2a2b2c;
+  --text-color: #e4e6eb;
+  --text-secondary: #b0b3b8;
+  --border-color: #3a3b3c;
+  --hover-bg: rgba(255, 255, 255, 0.05);
+}
+
+/* Light mode variables */
+.theme-light {
+  --bg-color: #f0f2f5;
+  --card-bg: #ffffff;
+  --card-bg-secondary: #f8f9fa;
+  --text-color: #050505;
+  --text-secondary: #65676b;
+  --border-color: #e4e6eb;
+  --hover-bg: rgba(0, 0, 0, 0.05);
+}
+
+/* Animations */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.followersList li,
+.followingList li {
+  animation: slideIn 0.5s ease forwards;
+}
+
+.followersList li:nth-child(1),
+.followingList li:nth-child(1) {
+  animation-delay: 0.1s;
+}
+
+.followersList li:nth-child(2),
+.followingList li:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.followersList li:nth-child(3),
+.followingList li:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+.followersList li:nth-child(4),
+.followingList li:nth-child(4) {
+  animation-delay: 0.4s;
+}
+
+.followersList li:nth-child(5),
+.followingList li:nth-child(5) {
+  animation-delay: 0.5s;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .pageContainer {
+    padding: 15px;
+  }
+
+  .tabButton {
+    padding: 10px 20px;
+    font-size: 14px;
+  }
+
+  .followersList li,
+  .followingList li {
+    padding: 16px 20px;
+    font-size: 15px;
+  }
+  
+  .followersList li:hover,
+  .followingList li:hover {
+    transform: scale(1.02);
+  }
+}
