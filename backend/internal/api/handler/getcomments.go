@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"fmt"
 	"net/http"
 	"strings"
 	"time"
@@ -23,6 +24,21 @@ func GetCommentsHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	postID := parts[3]
+	Userid, err := helper.AuthenticateUser(r)
+	if err != nil {
+		helper.RespondWithError(w, http.StatusUnauthorized, "Authentication required")
+		return
+	}
+	can, err := helper.CanViewComments(Userid, postID)
+	fmt.Println(can,"--------------------")
+	if !can {
+		helper.RespondWithError(w, http.StatusForbidden, "You do not have permission to view comments on this post")
+		return
+	}
+	if err != nil {
+		helper.RespondWithError(w, http.StatusInternalServerError, "Error checking permissions")
+		return
+	}
 
 	rows, err := repository.Db.Query(`
         SELECT c.id, c.content, c.created_at, u.nickname
