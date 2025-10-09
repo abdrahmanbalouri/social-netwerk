@@ -15,6 +15,8 @@ func Routes(db *sql.DB) http.Handler {
 		w.WriteHeader(http.StatusNotFound)
 	})
    	mux.Handle("/uploads/", http.StripPrefix("/uploads/", http.FileServer(http.Dir("uploads"))))
+mux.HandleFunc("/api/followers/",handlers.FollowersHandler) 
+mux.HandleFunc("/api/following/",handlers.FollowingHandler) 
 
 	mux.HandleFunc("/api/register", handlers.RegisterHandler)
 	mux.HandleFunc("/api/login", handlers.LoginHandler)
