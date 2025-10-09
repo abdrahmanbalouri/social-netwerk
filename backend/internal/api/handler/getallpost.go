@@ -13,18 +13,13 @@ func AllpostsHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	
-
 	userId := r.URL.Query().Get("userId")
 
 	
-
-
 	posts, err := post.GetAllPosts(userId, r)
 	if err != nil {
 		helper.RespondWithError(w, http.StatusInternalServerError, "Failed to retrieve posts")
 		return
 	}
-
 	helper.RespondWithJSON(w, http.StatusOK, posts)
 }
