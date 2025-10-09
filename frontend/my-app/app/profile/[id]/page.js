@@ -1,8 +1,5 @@
 "use client";
-import FacebookTwoToneIcon from '@mui/icons-material/FacebookTwoTone';
-import InstagramIcon from '@mui/icons-material/Instagram';
-import TwitterIcon from '@mui/icons-material/Twitter';
-import LinkedInIcon from '@mui/icons-material/LinkedIn';
+
 import { useEffect, useState, useRef } from 'react';
 import Navbar from '../../../components/Navbar.js';
 import { useDarkMode } from '../../../context/darkMod.js';
@@ -13,12 +10,11 @@ import { useParams, useRouter } from 'next/navigation.js';
 import Post from '../../../components/Post.js';
 import Comment from '../../../components/coment.js';
 import { useProfile } from '../../../context/profile.js';
-import PlaceIcon from "@mui/icons-material/Place";
 import LanguageIcon from "@mui/icons-material/Language";
 import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import ProfileCardEditor from '../../../components/ProfileCardEditor.js';
-
+import { useWS } from "../../../context/wsContext.js";
 export default function Profile() {
   const { Profile } = useProfile();
 
@@ -34,6 +30,19 @@ export default function Profile() {
   const [selectedPost, setSelectedPost] = useState(null);
   const [comment, setComment] = useState([]);
   const commentsModalRef = useRef(null);
+  const { ws, connected } = useWS();
+
+  const sendMsg = () => {
+    const payload = {
+      receiverId: params.id,
+      messageContent: "",
+      type: "follow",
+    };
+
+    if (connected && ws) {
+      ws.send(JSON.stringify(payload));
+    }
+  };
 
 
   const [theprofile, setProfile] = useState(null);
@@ -293,9 +302,10 @@ export default function Profile() {
                 </div>
                 {Profile && Profile.id !== theprofile.id && (
                   <button id='FollowBtn'
-
-
-                    onClick={followUser}
+                    onClick={() => {
+                      followUser();
+                      sendMsg();
+                    }}
                     style={{
                       backgroundColor: theprofile.isFollowing ? "blue" : "white",
                       color: theprofile.isFollowing ? "white" : "black",
