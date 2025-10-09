@@ -9,7 +9,6 @@ import RightBar from '../../components/RightBar.js';
 import { useDarkMode } from '../../context/darkMod';
 import Stories from '../../components/stories.js';
 import Comment from '../../components/coment.js';
-import { useProfile } from '../../context/profile.js';
 import Post from '../../components/Post.js';
 import { middleware } from '../../midlwere/midle.js';
 import './Home.css';
@@ -17,7 +16,6 @@ import './Home.css';
 export default function Home() {
   const router = useRouter();
   const { darkMode } = useDarkMode();
-  const { profile } = useProfile();
 
   // State management
   const [showSidebar, setShowSidebar] = useState(true);
@@ -103,17 +101,16 @@ export default function Home() {
       const response = await fetch('http://localhost:8080/api/users/followers', {
         method: 'GET',
         credentials: 'include',
-
       });
-
       if (!response.ok) {
+        console.log(222);
+        
         throw new Error('Failed to fetch followers');
       }
-      const data = await response.json();
-      console.log(data);
-
-
-
+      let  data = await response.json();
+      if (!data){
+        data = []
+      }
       setFollowers(data);
     } catch (err) {
       setError(err.message);
@@ -127,9 +124,7 @@ export default function Home() {
   function handleImageChange(e) {
     setImage(e.target.files[0]);
   }
-
   async function Handlelik(postId) {
-
     try {
       const res = await fetch(`http://localhost:8080/api/like/${postId}`, {
         method: "POST",
@@ -182,41 +177,22 @@ export default function Home() {
     fetchInitialPosts();
   }, []);
 
-  // Fetch users on component mount
-  useEffect(() => {
-    async function fetchusers() {
-      try {
-        const res = await fetch("http://localhost:8080/api/GetUsersHandler", {
-          method: "GET",
-          credentials: "include",
-        });
-
-        if (!res.ok) {
-          throw new Error("Failed to fetch users");
-        }
-
-        const data = await res.json();
-
-        setusers(Array.isArray(data) ? data : []);
-      } catch (err) {
-        console.error("Error fetching users:", err);
-      }
-    }
-
-    fetchusers();
-  }, []);
 
   // Handle post creation
   async function handleCreatePost(e) {
     e.preventDefault();
-
-
     try {
       setLoading(true);
       const formData = new FormData();
       formData.append("title", title);
       if (image) formData.append("image", image);
       formData.append("content", content);
+      formData.append("visibility", visibility);
+      
+      
+      if (visibility === 'private') {
+        formData.append("allowed_users", JSON.stringify(selectedUsers.join(',')));
+      }
 
       const response = await fetch("http://localhost:8080/api/createpost", {
         method: "POST",
@@ -438,7 +414,7 @@ export default function Home() {
           )}
         </section>
 
-        <RightBar users={users} />
+        <RightBar/>
       </main>
 
       {/* Create Post Modal */}
@@ -515,7 +491,7 @@ export default function Home() {
                           src={`/uploads/${follower.image}` || "/default-avatar.png"}
                           alt={follower.nickname}
                           className="image-avatar"
-                        />
+                        />              
                         <span>{follower.nickname}</span>
                         <input
                           type="checkbox"
