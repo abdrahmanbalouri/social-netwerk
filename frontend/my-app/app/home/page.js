@@ -32,10 +32,9 @@ export default function Home() {
   const [selectedPost, setSelectedPost] = useState(null);
   const [loading, setLoading] = useState(false);
   const [visibility, setVisibility] = useState('public');
-  const [selectedUsers, setSelectedUsers] = useState([]); // Selected users for private posts
+  const [selectedUsers, setSelectedUsers] = useState([]);
   const [loadingFollowers, setLoadingFollowers] = useState(false); // Loading state for fetching followers
   const [error, setError] = useState(''); // Error state for fetching
-  const [searchQuery, setSearchQuery] = useState(''); // Search query for filtering followers
   const [followers, setFollowers] = useState([]); // Followers list
 
 
@@ -67,6 +66,13 @@ export default function Home() {
 
 
   }, [])
+  function handleUserSelect(userId) {
+    setSelectedUsers((prevSelected) =>
+      prevSelected.includes(userId)
+        ? prevSelected.filter((id) => id !== userId)
+        : [...prevSelected, userId]
+    );
+  }
 
   // Logout function
   async function logout(e) {
@@ -94,15 +100,20 @@ export default function Home() {
     setLoadingFollowers(true);
     setError('');
     try {
-      const response = await fetch('/api/users/followers', {
+      const response = await fetch('http://localhost:8080/api/users/followers', {
         method: 'GET',
         credentials: 'include',
-       
+
       });
+
       if (!response.ok) {
         throw new Error('Failed to fetch followers');
       }
       const data = await response.json();
+      console.log(data);
+
+
+
       setFollowers(data);
     } catch (err) {
       setError(err.message);
@@ -124,7 +135,7 @@ export default function Home() {
         method: "POST",
         credentials: "include",
       });
-     // const response = await res.json();
+      // const response = await res.json();
       if (res.ok) {
 
         const newpost = await fetchPosts(postId)
@@ -389,10 +400,10 @@ export default function Home() {
       setSelectedUsers([]);
       return;
     }
-    
-     if(newVisibility==='private'){
+
+    if (newVisibility === 'private') {
       fetchFollowers();
-     }
+    }
   };
 
 
@@ -489,10 +500,9 @@ export default function Home() {
                   <option value="private">Private (Selected followers)</option>
                 </select>
               </div>
-            
+
               {visibility === 'private' && (
 
-                
                 <div className="user-picker">
                   {loadingFollowers ? (
                     <p>Loading followers...</p>
@@ -501,12 +511,17 @@ export default function Home() {
                   ) : followers.length > 0 ? (
                     followers.map((follower) => (
                       <label key={follower.id} className="user-picker-item">
+                        <img
+                          src={`/uploads/${follower.image}` || "/default-avatar.png"}
+                          alt={follower.nickname}
+                          className="image-avatar"
+                        />
+                        <span>{follower.nickname}</span>
                         <input
                           type="checkbox"
                           checked={selectedUsers.includes(follower.id)}
                           onChange={() => handleUserSelect(follower.id)}
                         />
-                        {follower.name}
                       </label>
                     ))
                   ) : (
