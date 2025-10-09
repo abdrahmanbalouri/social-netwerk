@@ -69,6 +69,7 @@ func Createpost(w http.ResponseWriter, r *http.Request) {
 
 	// Create post
 	postID := uuid.New().String()
+	fmt.Println(postID)
 	_, err = repository.Db.Exec(`
 		INSERT INTO posts (id, user_id, title, content, image_path, visibility, canseperivite)
 		VALUES (?, ?, ?, ?, ?, ?, ?)`,
