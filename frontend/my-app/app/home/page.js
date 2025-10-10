@@ -65,8 +65,15 @@ export default function Home() {
         : [...prevSelected, userId]
     );
   }
+ useEffect(() => {
+    const handleScroll = () => {
 
-  // Logout function
+    };
+
+    window.addEventListener("scroll", handleScroll);
+
+  
+  }, []);
   async function logout(e) {
     e.preventDefault();
 
@@ -116,7 +123,6 @@ export default function Home() {
   };
 
 
-  // Handle image change for post creation
   function handleImageChange(e) {
     setImage(e.target.files[0]);
   }
@@ -294,6 +300,11 @@ export default function Home() {
     }
   }
 
+  useEffect(()=>{
+
+
+  },[])
+
   // Refresh comments after posting a new comment
   async function refreshComments(commentID) {
     if (!selectedPost?.id) return;
@@ -387,6 +398,8 @@ export default function Home() {
 
       {/* Main Content */}
       <main className="content">
+      
+
         <LeftBar showSidebar={showSidebar} />
 
         {/* Feed Section */}
@@ -406,6 +419,7 @@ export default function Home() {
           )}
         </section>
         <RightBar/>
+
       </main>
 
       {/* Create Post Modal */}
@@ -526,5 +540,6 @@ export default function Home() {
         )
       }
     </div >
+
   );
 }
