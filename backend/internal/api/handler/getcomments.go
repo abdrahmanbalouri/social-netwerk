@@ -1,8 +1,8 @@
 package handlers
 
 import (
-	"fmt"
 	"net/http"
+	"strconv"
 	"strings"
 	"time"
 
@@ -18,25 +18,31 @@ func GetCommentsHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	parts := strings.Split(r.URL.Path, "/")
-	if len(parts) < 4 {
+	if len(parts) < 5 { // [0]= "", [1]=api, [2]=Getcomments, [3]=postID, [4]=offset
 		helper.RespondWithError(w, http.StatusNotFound, "Post not found")
 		return
 	}
 
 	postID := parts[3]
-	Userid, err := helper.AuthenticateUser(r)
+	offsetStr := parts[4]
+
+	offset, err := strconv.Atoi(offsetStr)
+	if err != nil || offset < 0 {
+		offset = 0
+	}
+	userID, err := helper.AuthenticateUser(r)
 	if err != nil {
 		helper.RespondWithError(w, http.StatusUnauthorized, "Authentication required")
 		return
 	}
-	can, err := helper.CanViewComments(Userid, postID)
-	fmt.Println(can,"--------------------")
-	if !can {
-		helper.RespondWithError(w, http.StatusForbidden, "You do not have permission to view comments on this post")
-		return
-	}
+
+	can, err := helper.CanViewComments(userID, postID)
 	if err != nil {
 		helper.RespondWithError(w, http.StatusInternalServerError, "Error checking permissions")
+		return
+	}
+	if !can {
+		helper.RespondWithError(w, http.StatusForbidden, "You do not have permission to view comments on this post")
 		return
 	}
 
@@ -45,7 +51,8 @@ func GetCommentsHandler(w http.ResponseWriter, r *http.Request) {
         FROM comments c
         JOIN users u ON c.user_id = u.id
         WHERE c.post_id = ?
-        ORDER BY c.created_at ASC`, postID)
+        ORDER BY c.created_at desc
+        LIMIT 10 OFFSET ?`, postID, offset)
 	if err != nil {
 		helper.RespondWithError(w, http.StatusInternalServerError, "Failed to fetch comments")
 		return
@@ -69,6 +76,9 @@ func GetCommentsHandler(w http.ResponseWriter, r *http.Request) {
 		}
 		comments = append(comments, comment)
 	}
-
+	if len(comments) == 0 {
+		helper.RespondWithError(w, http.StatusInternalServerError, "no comment in found ")
+		return
+	}
 	helper.RespondWithJSON(w, http.StatusOK, comments)
 }
