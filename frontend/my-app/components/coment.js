@@ -1,7 +1,7 @@
 // components/coment.js
 "use client";
 import { useState, useEffect, useRef } from "react";
-import { useDarkMode } from '../context/darkMod';
+//import { useDarkMode } from '../context/darkMod';
 
 export default function Comment({
   comments,
@@ -9,16 +9,22 @@ export default function Comment({
   onClose,
   postId,
   postTitle = "",
-  onCommentChange
+  onCommentChange,
+  loadingcoment
 }) {
-  const { darkMode } = useDarkMode();
+  //const { darkMode } = useDarkMode();
   const [commentContent, setCommentContent] = useState("");
   const [loading, setLoading] = useState(false);
   const modalRef = useRef(null);
+  const [scrollPos, setScrollPos] = useState(0);
+useEffect(() => {
 
-  // Handle click outside to close modal
+    //  if(scrollPos>=127 && !loadingcoment){
+      
 
-  // Post new 
+    //  }
+    
+  }, [scrollPos]);
   useEffect(() => {
     if (modalRef.current) {
       modalRef.current.scrollTop = modalRef.current.scrollHeight;
@@ -47,12 +53,12 @@ export default function Comment({
       if (!response.ok) {
         throw new Error("Failed to post comment");
       }
-
-      // Reset form and refresh comments
+        const res = await response.json()
+          
       setCommentContent("");
       if (onCommentChange) {
 
-        onCommentChange();
+        onCommentChange(res.comment_id);
       }
     } catch (err) {
       console.error("Error posting comment:", err);
@@ -91,10 +97,13 @@ export default function Comment({
           <h2 className="post-title">{postTitle}</h2>
 
           {/* Comments List */}
-          <div 
-          className="comments-container"
-          ref={modalRef}>
-            
+          <div
+            className="comments-container"
+            ref={modalRef}
+            onScroll={(e) => setScrollPos(e.target.scrollTop)}
+
+            >
+
             {comments && comments.length > 0 ? (
               comments.map((comment) => (
                 <div key={comment.id} className="comment-item">
