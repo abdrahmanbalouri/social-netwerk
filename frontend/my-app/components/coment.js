@@ -10,7 +10,7 @@ export default function Comment({
   postId,
   postTitle = "",
   onCommentChange,
-  loadingcoment,
+  lodinggg,
   ongetcomment,
   post
 }) {
@@ -26,25 +26,29 @@ export default function Comment({
     const modal = modalRef.current;
 
     const reachedBottom = modal.scrollTop + modal.clientHeight >= modal.scrollHeight - 5;
-    console.log(modal.scrollTop, modal.scrollHeight);
-
+    const previousScrollHeight = modal.scrollHeight;
     async function getcomment() {
-
       let b = await ongetcomment(post);
-      console.log(b);
 
       if (b) {
-        modalRef.current.scrollTop = reachedBottom / 2
+        
+  setTimeout(() => {
+            const newScrollHeight = modal.scrollHeight;
+            const heightIncrease = newScrollHeight - previousScrollHeight;
+            
+            modal.scrollTop -= heightIncrease - modal.clientHeight ; 
+        }, 0); 
       }
 
     }
-
-    if (reachedBottom && !loadingcoment) {
-
+    console.log(lodinggg);
+    
+    if (reachedBottom && !lodinggg) {
       getcomment()
     }
-
   }, [scrollPos]);
+
+
 
   async function handlePostComment(e) {
     e.preventDefault();

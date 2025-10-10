@@ -2,6 +2,8 @@ package handlers
 
 import (
 	"net/http"
+	"strconv"
+	"strings"
 
 	"social-network/internal/helper"
 	"social-network/internal/repository/post"
@@ -13,10 +15,20 @@ func AllpostsHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	userId := r.URL.Query().Get("userId")
+	parts := strings.Split(r.URL.Path, "/")
+	if len(parts) < 4 { // [0]= "", [1]=api, [2]=Getcomments, [3]=postID, [4]=offset
+		helper.RespondWithError(w, http.StatusNotFound, "Post not found")
+		return
+	}
 
-	
-	posts, err := post.GetAllPosts(userId, r)
+	offsetStr := parts[3]
+	userId := r.URL.Query().Get("userId")
+	offset, err := strconv.Atoi(offsetStr)
+	if err != nil || offset < 0 {
+		offset = 0
+	}
+
+	posts, err := post.GetAllPosts(userId, r, offset)
 	if err != nil {
 		helper.RespondWithError(w, http.StatusInternalServerError, "Failed to retrieve posts")
 		return
