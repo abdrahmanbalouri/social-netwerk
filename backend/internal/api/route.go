@@ -32,6 +32,7 @@ func Routes(db *sql.DB) http.Handler {
 	mux.HandleFunc("/api/like/{id}",handlers.LikeHandler)
 	mux.HandleFunc("/api/follow",handlers.FollowHandler)
 	mux.HandleFunc("/api/users/followers",handlers.Getfollowers)
+	mux.HandleFunc("/api/getlastcomment/{id}",handlers.Getlastcommnet)
 
 	return mux
 }
