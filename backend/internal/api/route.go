@@ -23,7 +23,7 @@ func Routes(db *sql.DB) http.Handler {
 	mux.HandleFunc("/api/profile",handlers.ProfileHandler)
 	mux.HandleFunc("/api/createpost", handlers.Createpost)
 	mux.HandleFunc("/api/Getpost/{id}", handlers.GetPostsHandler)
-	mux.HandleFunc("/api/Getallpost", handlers.AllpostsHandler)
+	mux.HandleFunc("/api/Getallpost/{id}", handlers.AllpostsHandler)
 	mux.HandleFunc("/api/GetUsersHandler",handlers.GetUsersHandler)
 	mux.HandleFunc("/api/Getcomments/{id}/{offset}",handlers.GetCommentsHandler)
 	mux.HandleFunc("/api/gallery",handlers.GalleryHandler)
