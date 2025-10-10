@@ -1,11 +1,8 @@
 package handlers
 
 import (
-	"database/sql"
 	"encoding/json"
-	"errors"
 	"fmt"
-	"log"
 	"net/http"
 
 	"social-network/internal/helper"
@@ -54,42 +51,31 @@ func Websocket(w http.ResponseWriter, r *http.Request) {
 		}
 
 		if messageStruct.Type == "follow" {
-			q := `
-				SELECT u.nickname 
-				FROM followers f
-				JOIN users u ON u.id = f.user_id
-				WHERE f.user_id = ? AND f.follower_id = ?
-			`
+			q := `SELECT id FROM followers WHERE user_id = ? AND follower_id = ?`
+			var followID int
+			var name string
+			_ = repository.Db.QueryRow(`SELECT nickname FROM users WHERE id = ? `, id).Scan(&name)
+			_ = repository.Db.QueryRow(q, id, messageStruct.ReceiverId).Scan(&followID)
 
-			var nickname string
-			err := repository.Db.QueryRow(q, id, messageStruct.ReceiverId).Scan(&nickname)
-			if err != nil {
-				if errors.Is(err, sql.ErrNoRows) {
-					messageStruct.Type = "follow"
-					messageStruct.Name = nickname
-					fmt.Println(nickname)
-				} else {
-					log.Println("Error checking follow:", err)
-				}
-			} else {
+			if followID != 0 {
 				messageStruct.Type = "already_following"
+			} else {
+				messageStruct.ReceiverId = id
+				messageStruct.Name = name
 			}
 
-			messageStruct.ReceiverId = id
-
-		}
-
-		for i, conArr := range ConnectedUsers {
-			if i != id {
-				for _, con := range conArr {
-					jsonMsg, err := json.Marshal(messageStruct)
-					if err != nil {
-						fmt.Println("Error marshaling message:", err)
-						continue
-					}
-					if err := con.WriteMessage(websocket.TextMessage, jsonMsg); err != nil {
-						fmt.Println("Error writing message:", err)
-						break
+			for i, conArr := range ConnectedUsers {
+				if i != id {
+					for _, con := range conArr {
+						jsonMsg, err := json.Marshal(messageStruct)
+						if err != nil {
+							fmt.Println("Error marshaling message:", err)
+							continue
+						}
+						if err := con.WriteMessage(websocket.TextMessage, jsonMsg); err != nil {
+							fmt.Println("Error writing message:", err)
+							break
+						}
 					}
 				}
 			}
