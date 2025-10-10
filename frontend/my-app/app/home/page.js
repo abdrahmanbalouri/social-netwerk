@@ -34,6 +34,8 @@ export default function Home() {
   const [loadingFollowers, setLoadingFollowers] = useState(false); // Loading state for fetching followers
   const [error, setError] = useState(''); // Error state for fetching
   const [followers, setFollowers] = useState([]); // Followers list
+  const [loadingcomment, setLoadingcomment] = useState(false);
+  
 
 
 
@@ -252,12 +254,9 @@ export default function Home() {
     }
   }
 
-  // Fetch comments for a specific post
   async function GetComments(post) {
-
-
+    setLoadingcomment(true)
     try {
-      // Set selected post immediately using post data we already have
       setSelectedPost({
         id: post.id,
         title: post.title || post.post_title || "Post"
@@ -275,20 +274,14 @@ export default function Home() {
       }
 
       const data = await res.json();
-
-
-      // Handle different response structures
       let comments = [];
       if (Array.isArray(data)) {
         comments = data;
       } else if (data && typeof data === 'object' && data.comments && Array.isArray(data.comments)) {
         comments = data.comments;
       } else if (data && typeof data === 'object') {
-        // Single comment object
         comments = [data];
       }
-
-      // Ensure each comment has required properties
       comments = comments.map(comment => ({
         id: comment.id || Math.random(),
         author: comment.author || comment.username || "Anonymous",
@@ -305,32 +298,42 @@ export default function Home() {
       setComment([]);
       setSelectedPost({ id: post.id, title: post.title || "Post" });
       setShowComments(true);
+    } 
+    finally{
+      setLoadingcomment(false);
     }
+
+    
   }
 
   // Refresh comments after posting a new comment
-  async function refreshComments() {
+  async function refreshComments(commentID) {
     if (!selectedPost?.id) return;
 
     try {
-      const res = await fetch(`http://localhost:8080/api/Getcomments/${selectedPost.id}`, {
+      const res = await fetch(`http://localhost:8080/api/getlastcomment/${commentID}`, {
         method: "GET",
         credentials: "include",
       });
 
       if (res.ok) {
         const data = await res.json();
-        let comments = [];
+        
+        let newcomment = [];
 
         if (Array.isArray(data)) {
-          comments = data;
-        } else if (data && data.comments && Array.isArray(data.comments)) {
-          comments = data.comments;
+          newcomment = data;
+        } else if (data && data.newcomment && Array.isArray(data.newcomment)) {
+          newcomment = data.newcomment;
         } else if (data) {
-          comments = [data];
+          newcomment = [data];
         }
+        console.log(newcomment);
+        
 
-        setComment(comments);
+        setComment([...comment,...newcomment]);
+        
+        
         const potsreplace = await fetchPosts(selectedPost.id)
 
 
@@ -530,6 +533,7 @@ export default function Home() {
             postId={selectedPost?.id}
             postTitle={selectedPost?.title}
             onCommentChange={refreshComments}
+            loading={loadingcomment}
           />
         )
       }
