@@ -1,8 +1,11 @@
 package handlers
 
 import (
+	"database/sql"
 	"encoding/json"
+	"errors"
 	"fmt"
+	"log"
 	"net/http"
 
 	"social-network/internal/helper"
@@ -21,6 +24,7 @@ type Message struct {
 	ReceiverId     string `json:"receiverId"`
 	MessageContent string `json:"messageContent"`
 	Type           string `json:"type"`
+	Name           string `json:"name"`
 }
 
 var ConnectedUsers = make(map[string][]*websocket.Conn)
@@ -50,15 +54,29 @@ func Websocket(w http.ResponseWriter, r *http.Request) {
 		}
 
 		if messageStruct.Type == "follow" {
-			q := `SELECT id FROM followers WHERE user_id = ? AND follower_id = ?`
-			var followID int
+			q := `
+				SELECT u.nickname 
+				FROM followers f
+				JOIN users u ON u.id = f.user_id
+				WHERE f.user_id = ? AND f.follower_id = ?
+			`
 
-			_ = repository.Db.QueryRow(q, id, messageStruct.ReceiverId).Scan(&followID)
-
-			if followID != 0 {
-				messageStruct.Type="already_following"
+			var nickname string
+			err := repository.Db.QueryRow(q, id, messageStruct.ReceiverId).Scan(&nickname)
+			if err != nil {
+				if errors.Is(err, sql.ErrNoRows) {
+					messageStruct.Type = "follow"
+					messageStruct.Name = nickname
+					fmt.Println(nickname)
+				} else {
+					log.Println("Error checking follow:", err)
+				}
+			} else {
+				messageStruct.Type = "already_following"
 			}
+
 			messageStruct.ReceiverId = id
+
 		}
 
 		for i, conArr := range ConnectedUsers {
