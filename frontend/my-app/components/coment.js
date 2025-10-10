@@ -10,26 +10,42 @@ export default function Comment({
   postId,
   postTitle = "",
   onCommentChange,
-  loadingcoment
+  loadingcoment,
+  ongetcomment,
+  post
 }) {
   //const { darkMode } = useDarkMode();
   const [commentContent, setCommentContent] = useState("");
   const [loading, setLoading] = useState(false);
   const modalRef = useRef(null);
   const [scrollPos, setScrollPos] = useState(0);
-useEffect(() => {
-
-    //  if(scrollPos>=127 && !loadingcoment){
-      
-
-    //  }
-    
-  }, [scrollPos]);
   useEffect(() => {
-    if (modalRef.current) {
-      modalRef.current.scrollTop = modalRef.current.scrollHeight;
+
+    if (!modalRef.current) return;
+
+    const modal = modalRef.current;
+
+    const reachedBottom = modal.scrollTop + modal.clientHeight >= modal.scrollHeight - 5;
+    console.log(modal.scrollTop, modal.scrollHeight);
+
+    async function getcomment() {
+
+      let b = await ongetcomment(post);
+      console.log(b);
+
+      if (b) {
+        modalRef.current.scrollTop = reachedBottom / 2
+      }
+
     }
-  }, [comments]);
+
+    if (reachedBottom && !loadingcoment) {
+
+      getcomment()
+    }
+
+  }, [scrollPos]);
+
   async function handlePostComment(e) {
     e.preventDefault();
 
@@ -53,12 +69,14 @@ useEffect(() => {
       if (!response.ok) {
         throw new Error("Failed to post comment");
       }
-        const res = await response.json()
-          
+      const res = await response.json()
+
       setCommentContent("");
       if (onCommentChange) {
 
         onCommentChange(res.comment_id);
+        modalRef.current.scrollTop = 0;
+
       }
     } catch (err) {
       console.error("Error posting comment:", err);
@@ -102,7 +120,7 @@ useEffect(() => {
             ref={modalRef}
             onScroll={(e) => setScrollPos(e.target.scrollTop)}
 
-            >
+          >
 
             {comments && comments.length > 0 ? (
               comments.map((comment) => (

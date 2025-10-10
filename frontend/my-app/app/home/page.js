@@ -35,22 +35,18 @@ export default function Home() {
   const [error, setError] = useState(''); // Error state for fetching
   const [followers, setFollowers] = useState([]); // Followers list
   const [loadingcomment, setLoadingcomment] = useState(false);
-  
-
-
+  const offsetpsot = useRef(0)
+  const offsetcomment = useRef(0)
 
 
   const modalRef = useRef(null);
-  const commentsModalRef = useRef(null);
   useEffect(() => {
-
     async function midle() {
       try {
         const response = await fetch("http://localhost:8080/api/me", {
           credentials: "include",
           method: "GET",
         });
-
         if (!response.ok) {
           router.replace("/login");
           return null;
@@ -58,13 +54,9 @@ export default function Home() {
       } catch (error) {
         router.replace("/login");
         return null;
-
       }
     }
     midle()
-
-
-
   }, [])
   function handleUserSelect(userId) {
     setSelectedUsers((prevSelected) =>
@@ -254,7 +246,8 @@ export default function Home() {
     }
   }
 
-  async function GetComments(post) {
+  async function GetComments(post) {    
+    
     setLoadingcomment(true)
     try {
       setSelectedPost({
@@ -263,14 +256,15 @@ export default function Home() {
       });
 
       // Fetch comments
-      const res = await fetch(`http://localhost:8080/api/Getcomments/${post.id}`, {
+      const res = await fetch(`http://localhost:8080/api/Getcomments/${post.id}/${offsetcomment.current}`, {
         method: "GET",
         credentials: "include",
       });
 
       if (!res.ok) {
         console.error("Comments fetch failed:", res.status);
-        throw new Error("Failed to fetch comments");
+        //throw new Error("Failed to fetch comments");
+        return false
       }
 
       const data = await res.json();
@@ -288,18 +282,20 @@ export default function Home() {
         content: comment.content || comment.text || "",
         created_at: comment.created_at || comment.createdAt || new Date().toISOString()
       }));
-
-      setComment(comments);
+      
+      setComment([...comments,...comment]);
       setShowComments(true);
+      return true
 
     } catch (err) {
       console.error("Error fetching comments:", err);
-      // Set empty comments array on error
       setComment([]);
       setSelectedPost({ id: post.id, title: post.title || "Post" });
       setShowComments(true);
+      return false
     } 
     finally{
+      offsetcomment.current+=10
       setLoadingcomment(false);
     }
 
@@ -331,7 +327,8 @@ export default function Home() {
         console.log(newcomment);
         
 
-        setComment([...comment,...newcomment]);
+        setComment([...newcomment,...comment]);
+        offsetcomment.current++
         
         
         const potsreplace = await fetchPosts(selectedPost.id)
@@ -358,6 +355,7 @@ export default function Home() {
 
   // Close comments modal and reset state
   function closeComments() {
+    offsetcomment.current = 0
     setShowComments(false);
     setSelectedPost(null);
     setComment([]);
@@ -534,9 +532,11 @@ export default function Home() {
             postTitle={selectedPost?.title}
             onCommentChange={refreshComments}
             loading={loadingcomment}
+            ongetcomment = {GetComments}
+            post = {selectedPost}
           />
         )
       }
     </div >
   );
-} Comment
+}
