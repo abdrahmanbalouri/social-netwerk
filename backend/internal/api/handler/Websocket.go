@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"social-network/internal/helper"
+	"social-network/internal/repository"
 
 	"github.com/gorilla/websocket"
 )
@@ -49,6 +50,14 @@ func Websocket(w http.ResponseWriter, r *http.Request) {
 		}
 
 		if messageStruct.Type == "follow" {
+			q := `SELECT id FROM followers WHERE user_id = ? AND follower_id = ?`
+			var followID int
+
+			_ = repository.Db.QueryRow(q, id, messageStruct.ReceiverId).Scan(&followID)
+
+			if followID != 0 {
+				messageStruct.Type="already_following"
+			}
 			messageStruct.ReceiverId = id
 		}
 
