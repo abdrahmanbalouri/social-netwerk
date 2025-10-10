@@ -151,7 +151,7 @@ export default function Home() {
     async function fetchInitialPosts() {
       try {
         setLoading(true);
-        const res = await fetch("http://localhost:8080/api/Getallpost", {
+        const res = await fetch(`http://localhost:8080/api/Getallpost/${offsetpsot.current}`, {
           method: "GET",
           credentials: "include",
         });
@@ -159,7 +159,7 @@ export default function Home() {
         if (!res.ok) {
           throw new Error("Failed to fetch posts");
         }
-
+        offsetpsot.current+=10
         const data = await res.json();
 
         setPosts(Array.isArray(data) ? data : []);
@@ -247,7 +247,8 @@ export default function Home() {
   }
 
   async function GetComments(post) {    
-    
+     console.log(offsetcomment.current);
+     
     setLoadingcomment(true)
     try {
       setSelectedPost({
@@ -262,11 +263,8 @@ export default function Home() {
       });
 
       if (!res.ok) {
-        console.error("Comments fetch failed:", res.status);
-        //throw new Error("Failed to fetch comments");
         return false
       }
-
       const data = await res.json();
       let comments = [];
       if (Array.isArray(data)) {
@@ -288,18 +286,12 @@ export default function Home() {
       return true
 
     } catch (err) {
-      console.error("Error fetching comments:", err);
-      setComment([]);
-      setSelectedPost({ id: post.id, title: post.title || "Post" });
-      setShowComments(true);
       return false
     } 
     finally{
       offsetcomment.current+=10
       setLoadingcomment(false);
     }
-
-    
   }
 
   // Refresh comments after posting a new comment
@@ -330,11 +322,8 @@ export default function Home() {
         setComment([...newcomment,...comment]);
         offsetcomment.current++
         
-        
+  
         const potsreplace = await fetchPosts(selectedPost.id)
-
-
-
         for (let i = 0; i < posts.length; i++) {
           if (posts[i].id == selectedPost.id) {
 
@@ -416,7 +405,6 @@ export default function Home() {
             ))
           )}
         </section>
-
         <RightBar/>
       </main>
 
@@ -531,7 +519,7 @@ export default function Home() {
             postId={selectedPost?.id}
             postTitle={selectedPost?.title}
             onCommentChange={refreshComments}
-            loading={loadingcomment}
+            lodinggg={loadingcomment}
             ongetcomment = {GetComments}
             post = {selectedPost}
           />
