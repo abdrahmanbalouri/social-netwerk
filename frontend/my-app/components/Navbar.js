@@ -12,9 +12,10 @@ export default function Navbar({ onCreatePost }) {
   const { Profile } = useProfile();
   const { ws, connected } = useWS();
   const [cont, addnotf] = useState(0);
+  const [data, notification] = useState({})
 
   useEffect(() => {
-    
+
     if (!ws) return;
     console.log(1);
     ws.onmessage = (event) => {
@@ -25,6 +26,7 @@ export default function Navbar({ onCreatePost }) {
           const data = JSON.parse(event.data);
           if (data.type === "follow") {
             addnotf((prev) => prev + 1);
+            notification(data)
           }
         } catch (err) {
         }
@@ -48,6 +50,7 @@ export default function Navbar({ onCreatePost }) {
           <input type="text" placeholder="Search..." />
         </div>
       </div>
+     {data && <div>{data.name} start following you</div>}
 
       <div className="right">
         <i
