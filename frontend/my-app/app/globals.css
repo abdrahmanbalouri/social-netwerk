@@ -21,8 +21,10 @@ html::-webkit-scrollbar {
   /* WebKit browsers */
 }
 
-
-
+.ddd {
+  height: 500px; /* height fixed */
+  overflow-y: auto;
+}
 .post .container .user .userInfo .details .date {
   font-size: 12px;
 }
