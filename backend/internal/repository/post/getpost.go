@@ -93,7 +93,6 @@ func GetAllPosts(authUserID string, r *http.Request) ([]map[string]interface{}, 
 			return nil, fmt.Errorf("scan error: %v", err)
 		}
 
-		fmt.Println(id, "+++++++", userID) // Debug to see liked_by_user value
 
 		post := map[string]interface{}{
 			"id":             id,
