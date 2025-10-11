@@ -1,8 +1,8 @@
 .leftBar {
   position: sticky;
   left: 0;
-  top: 70px; 
-  width: 320px;
+  top: 70px;
+  width: 280px;
   height: calc(100vh - 90px);
   overflow-y: auto;
   background-color: #fff;
@@ -38,7 +38,7 @@
   margin-bottom: 20px;
 }
 
-.leftBar .menu > span {
+.leftBar .menu>span {
   font-size: 12px;
   font-weight: 600;
   color: #555;
@@ -113,17 +113,15 @@
   margin: 20px 0;
   border: none;
   height: 1px;
-  background: linear-gradient(
-    to right,
-    transparent,
-    #e0e0e0 20%,
-    #e0e0e0 80%,
-    transparent
-  );
+  background: linear-gradient(to right,
+      transparent,
+      #e0e0e0 20%,
+      #e0e0e0 80%,
+      transparent);
 }
 
 /* Logout button container */
-.leftBar > div[style*="display: flex"] {
+.leftBar>div[style*="display: flex"] {
   margin-top: 20px;
   padding-top: 20px;
   border-top: 1px solid #e0e0e0;

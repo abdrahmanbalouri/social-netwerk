@@ -11,8 +11,8 @@ import Stories from '../../components/stories.js';
 import Comment from '../../components/coment.js';
 import { useProfile } from '../../context/profile.js';
 import Post from '../../components/Post.js';
-import { middleware } from '../../midlwere/midle.js';
 import './Home.css';
+import "../../styles/post.css"
 
 export default function Home() {
   const router = useRouter();

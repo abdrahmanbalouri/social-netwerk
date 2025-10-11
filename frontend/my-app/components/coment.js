@@ -88,7 +88,6 @@ export default function Comment({
         {/* Comments Section */}
         <div className="comments-section">
           {/* Post Title */}
-          <h2 className="post-title">{postTitle}</h2>
 
           {/* Comments List */}
           <div 
