@@ -1,11 +1,13 @@
 package handlers
 
 import (
+	"database/sql"
 	"log"
 	"net/http"
 	"sync"
 
 	"social-network/internal/helper"
+	"social-network/internal/repository"
 
 	"github.com/gorilla/websocket"
 )
@@ -15,7 +17,10 @@ var (
 	Clients      = make(map[string][]*websocket.Conn) // Use models.Client
 	ClientsMutex sync.Mutex
 	Upgrader     = websocket.Upgrader{
-		CheckOrigin: func(r *http.Request) bool { return true },
+		CheckOrigin: func(r *http.Request) bool {
+			// Allow connections from localhost:3000
+			return r.Header.Get("Origin") == "http://localhost:3000"
+		},
 	}
 )
 
@@ -37,36 +42,17 @@ func WebSocketHandler(w http.ResponseWriter, r *http.Request) {
 	Clients[currentUserID] = append(Clients[currentUserID], conn)
 	ClientsMutex.Unlock()
 	BrodcastOnlineStatus(currentUserID, true)
+
 	// Listen for incoming messages
-	for {
-		var msg map[string]any
-		if err := conn.ReadJSON(&msg); err != nil {
-			log.Println("WebSocket read error:", err)
-			break
-		}
-		typeMsg, ok := msg["type"].(string)
-		if !ok {
-			log.Println("Invalid message format")
-			continue
-		}
-		switch typeMsg {
-		case "message":
-			// Handle chat message broadcasting
-			recipientID, ok := msg["to"].(string)
-			if !ok {
-				log.Println("Invalid recipient ID")
-				continue
-			}
-			sendToUser(recipientID, msg)
-			sendToUser(currentUserID, msg) // Echo back to sender
-		default:
-			log.Println("Unknown message type:", typeMsg)
-		}
-		log.Printf("Received message from user %s: %v", currentUserID, msg)
-	}
+	Loop(conn, currentUserID)
+
 	defer func() {
 		ClientsMutex.Lock()
-		conns := Clients[currentUserID]
+		conns, ok := Clients[currentUserID]
+		if !ok {
+			ClientsMutex.Unlock()
+			return
+		}
 		for i, c := range conns {
 			if c == conn {
 				Clients[currentUserID] = append(conns[:i], conns[i+1:]...)
@@ -81,6 +67,73 @@ func WebSocketHandler(w http.ResponseWriter, r *http.Request) {
 		conn.Close()
 		log.Printf("User %s disconnected", currentUserID)
 	}()
+}
+
+func Loop(conn *websocket.Conn, currentUserID string) {
+	for {
+		var msg map[string]any
+		if err := conn.ReadJSON(&msg); err != nil {
+			log.Println("WebSocket read error:", err)
+			break
+		}
+		typeMsg, ok := msg["type"].(string)
+		if !ok {
+			log.Println("Invalid message format")
+			continue
+		}
+		switch typeMsg {
+		case "logout":
+			// Handle user logout
+			BrodcastOnlineStatus(currentUserID, false)
+			delete(Clients, currentUserID)
+			return // Exit the loop to close the connection
+		case "message":
+			// Handle chat message broadcasting
+			recipientID, ok := msg["to"].(string)
+			if !ok {
+				log.Println("Invalid recipient ID")
+				continue
+			}
+			// Check if recipient exists and if either user follows the other
+			var exists int
+			err := repository.Db.QueryRow(`
+				SELECT 1 FROM users WHERE id = ?
+			`, recipientID).Scan(&exists)
+			if err == sql.ErrNoRows {
+				log.Println("Recipient user not found")
+				continue
+			} else if err != nil {
+				log.Println("DB error:", err)
+				continue
+			}
+
+			var followExists int
+			err = repository.Db.QueryRow(`
+				SELECT 1 FROM follows 
+				WHERE (user_id = ? AND followed_id = ?)
+				   OR (user_id = ? AND followed_id = ?)
+			`, currentUserID, recipientID, recipientID, currentUserID).Scan(&followExists)
+			if err == sql.ErrNoRows {
+				log.Println("No follow relationship between users")
+				continue
+			} else if err != nil {
+				log.Println("DB error:", err)
+				continue
+			}
+			// Store message in the database and send to recipient
+			_, err = repository.Db.Exec("INSERT INTO messages (sender_id, recipient_id, content) VALUES (?, ?, ?)", currentUserID, recipientID, msg["content"])
+			if err != nil {
+				log.Println("DB error:", err)
+				continue
+			}
+			// Send the message to the recipient and the sender
+			sendToUser(recipientID, msg)
+			sendToUser(currentUserID, msg) // Echo back to sender
+		default:
+			log.Println("Unknown message type:", typeMsg)
+		}
+		log.Printf("Received message from user %s: %v", currentUserID, msg)
+	}
 }
 
 // BrodcastOnlineStatus notifies all connected clients about a user's online status change
@@ -106,6 +159,7 @@ func BrodcastOnlineStatus(userID string, online bool) {
 		}
 	}
 }
+
 // sendToUser sends a message to all WebSocket connections of a specific user
 func sendToUser(userID string, message map[string]any) {
 	ClientsMutex.Lock()
