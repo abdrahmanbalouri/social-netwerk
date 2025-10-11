@@ -1,39 +1,52 @@
 "use client";
 import { useSearchParams, useRouter, useParams } from "next/navigation";
-
 import Navbar from "../../../components/Navbar.js";
 import LeftBar from "../../../components/LeftBar.js";
 import RightBar from "../../../components/RightBar.js";
 import { useDarkMode } from "../../../context/darkMod.js";
+import { useEffect, useState } from "react";
+import "./follow.css";
 
 export default function FollowPage() {
-    
-    const { darkMode } = useDarkMode();
+  const [followers, setFollowers] = useState([]);
+  const [following, setFollowing] = useState([]);
+  const { darkMode } = useDarkMode();
   const router = useRouter();
   const searchParams = useSearchParams();
   const tab = searchParams.get("tab") || "followers";
-    const params = useParams();
-
+  const params = useParams();
   const userId = params.id;
 
-  const followers = ["Reda", "Amine", "Sara"];
-  const following = ["Ali", "Youssef"];
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const url = tab === "followers"
+          ? `http://localhost:8080/api/followers?id=${userId}`
+          : `http://localhost:8080/api/following?id=${userId}`;
 
-  const handleTabChange = (newTab) => {
+        const res = await fetch(url);
+        const data = await res.json();
 
-    router.push(`/follow/${userId}?tab=${newTab}`);
-  };
+        tab === "followers" ? setFollowers(data) : setFollowing(data);
+      } catch (error) {
+        console.log(error);
+      }
+    }
+    fetchData();
+  }, [tab, userId]);
+
+const handleTabChange = (newTab) => {
+  router.replace(`/follow/${userId}?tab=${newTab}`);
+};
 
   return (
     <div className={darkMode ? "theme-dark" : "theme-light"}>
       <Navbar />
       <main className="content">
         <LeftBar showSidebar={true} />
-
         <div className="pageContainer" style={{ padding: 20, flex: 6 }}>
-
-          <div  className="tabButtons" >
-            <button className="tabButton"
+          <div className="tabButtons">
+            <button
               onClick={() => handleTabChange("followers")}
               style={{
                 backgroundColor: tab === "followers" ? "blue" : "white",
@@ -42,8 +55,7 @@ export default function FollowPage() {
             >
               Followers
             </button>
-
-            <button className="tabButton"
+            <button
               onClick={() => handleTabChange("following")}
               style={{
                 backgroundColor: tab === "following" ? "blue" : "white",
@@ -56,15 +68,17 @@ export default function FollowPage() {
 
           <div className="tabContent" style={{ marginTop: 20 }}>
             {tab === "followers" ? (
-              <ul className="followersList">
-                {followers.map((f, i) => (
-                  <li key={i}>{f}</li>
+              <ul>
+                {followers?.map((f, i) => (
+                  <li key={f.nickname}>{f.image} --- {f.nickname}  </li>
+
                 ))}
               </ul>
             ) : (
-              <ul className="followingList">
-                {following.map((f, i) => (
-                  <li key={i}>{f}</li>
+              <ul>
+                {following?.map((f, i) => (
+                  <li key={f.nickname}>{f.image} --- {f.nickname}  </li>
+
                 ))}
               </ul>
             )}
