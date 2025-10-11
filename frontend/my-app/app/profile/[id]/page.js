@@ -1,8 +1,4 @@
 "use client";
-import FacebookTwoToneIcon from '@mui/icons-material/FacebookTwoTone';
-import InstagramIcon from '@mui/icons-material/Instagram';
-import TwitterIcon from '@mui/icons-material/Twitter';
-import LinkedInIcon from '@mui/icons-material/LinkedIn';
 import { useEffect, useState, useRef } from 'react';
 import Navbar from '../../../components/Navbar.js';
 import { useDarkMode } from '../../../context/darkMod.js';
@@ -13,7 +9,6 @@ import { useParams, useRouter } from 'next/navigation.js';
 import Post from '../../../components/Post.js';
 import Comment from '../../../components/coment.js';
 import { useProfile } from '../../../context/profile.js';
-import PlaceIcon from "@mui/icons-material/Place";
 import LanguageIcon from "@mui/icons-material/Language";
 import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
