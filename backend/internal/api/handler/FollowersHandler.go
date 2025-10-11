@@ -19,7 +19,7 @@ func FollowersHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	Fquery := `SELECT u.nickname, u.image
+	Fquery := `SELECT  u.id , u.nickname, u.image
 FROM followers f
 JOIN users u ON u.id = f.user_id
 WHERE f.follower_id = ?;
@@ -33,12 +33,13 @@ WHERE f.follower_id = ?;
 
 	var followers []map[string]interface{}
 	for rows.Next() {
-		var username, profilePicture string
-		if err := rows.Scan(&username, &profilePicture); err != nil {
+		var username, profilePicture , idU  string
+		if err := rows.Scan(&idU, &username, &profilePicture); err != nil {
 			http.Error(w, "Database error: "+err.Error(), http.StatusInternalServerError)
 			return
 		}
 		follower := map[string]interface{}{
+			"id" : idU,
 			"nickname": username,
 			"image":    profilePicture,
 		}
