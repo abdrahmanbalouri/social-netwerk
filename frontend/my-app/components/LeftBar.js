@@ -3,6 +3,7 @@
 import { useRouter } from 'next/navigation';
 import { useProfile } from '../context/profile';
 import Link from 'next/link';
+import "../styles/leftbar.css"
 
 
 export default function LeftBar({ showSidebar }) {
@@ -39,7 +40,6 @@ export default function LeftBar({ showSidebar }) {
 
   return (
     <div className="leftBar">
-      <div className="container">
         <div className="menu">
           <div className="user">
             <img
@@ -92,7 +92,6 @@ export default function LeftBar({ showSidebar }) {
             <span>Messages</span>
           </div>
         </div>
-        <hr />
 
         <div style={{ display: 'flex', justifyContent: 'center' }}>
           <button onClick={handleLogout} style={logoutStyle} aria-label="Logout">
@@ -100,7 +99,6 @@ export default function LeftBar({ showSidebar }) {
             <span>Logout</span>
           </button>
         </div>
-      </div>
     </div>
   );
 }
