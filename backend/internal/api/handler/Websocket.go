@@ -22,6 +22,7 @@ type Message struct {
 	MessageContent string `json:"messageContent"`
 	Type           string `json:"type"`
 	Name           string `json:"name"`
+	Photo          string `json:"photo"`
 }
 
 var ConnectedUsers = make(map[string][]*websocket.Conn)
@@ -53,8 +54,8 @@ func Websocket(w http.ResponseWriter, r *http.Request) {
 		if messageStruct.Type == "follow" {
 			q := `SELECT id FROM followers WHERE user_id = ? AND follower_id = ?`
 			var followID int
-			var name string
-			_ = repository.Db.QueryRow(`SELECT nickname FROM users WHERE id = ? `, id).Scan(&name)
+			var name, photo string
+			_ = repository.Db.QueryRow(`SELECT nickname image FROM users WHERE id = ? `, id).Scan(&name, &photo)
 			_ = repository.Db.QueryRow(q, id, messageStruct.ReceiverId).Scan(&followID)
 
 			if followID != 0 {
@@ -62,6 +63,7 @@ func Websocket(w http.ResponseWriter, r *http.Request) {
 			} else {
 				messageStruct.ReceiverId = id
 				messageStruct.Name = name
+				messageStruct.Photo = photo
 			}
 
 			for i, conArr := range ConnectedUsers {
@@ -74,7 +76,7 @@ func Websocket(w http.ResponseWriter, r *http.Request) {
 						}
 						if err := con.WriteMessage(websocket.TextMessage, jsonMsg); err != nil {
 							fmt.Println("Error writing message:", err)
-							break
+							
 						}
 					}
 				}
