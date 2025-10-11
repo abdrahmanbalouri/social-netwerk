@@ -20,9 +20,11 @@ func FollowingHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	Fquery := `SELECT u.username,  u.profile_picture from users u
-	INNER JOIN followers f ON u.id = f.user_id
+
+	Fquery := `SELECT u.nickname,  u.image from followers f
+	 JOIN users  u ON u.id = f.follower_id
 	WHERE f.user_id = ?`
+
 	rows, err := repository.Db.Query(Fquery, id)
 	if err != nil {
 		http.Error(w, "Database error: "+err.Error(), http.StatusInternalServerError)
@@ -38,8 +40,8 @@ func FollowingHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		follower := map[string]interface{}{
-			"username":        username,
-			"profile_picture": profilePicture,
+			"nickname":        username,
+			"image": profilePicture,
 		}
 		following = append(following, follower)
 	}
