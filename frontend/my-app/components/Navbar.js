@@ -5,6 +5,7 @@ import { useDarkMode } from "../context/darkMod";
 import { useProfile } from "../context/profile";
 import { useWS } from "../context/wsContext.js";
 import { useState, useEffect } from "react";
+import Notification from "./notofication.js";
 
 export default function Navbar({ onCreatePost }) {
   const router = useRouter();
@@ -12,7 +13,7 @@ export default function Navbar({ onCreatePost }) {
   const { Profile } = useProfile();
   const { ws, connected } = useWS();
   const [cont, addnotf] = useState(0);
-  const [data, notification] = useState({})
+  const [data, notif] = useState({})
 
   useEffect(() => {
 
@@ -26,7 +27,7 @@ export default function Navbar({ onCreatePost }) {
           const data = JSON.parse(event.data);
           if (data.type === "follow") {
             addnotf((prev) => prev + 1);
-            notification(data)
+            notif(data)
           }
         } catch (err) {
         }
@@ -50,8 +51,7 @@ export default function Navbar({ onCreatePost }) {
           <input type="text" placeholder="Search..." />
         </div>
       </div>
-     {data && <div>{data.name} start following you</div>}
-
+      {cont != 0 && <Notification data={data} />}
       <div className="right">
         <i
           className={`fa-solid ${darkMode ? "fa-sun" : "fa-moon"}`}
