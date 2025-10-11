@@ -21,7 +21,7 @@ func FollowingHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 
-	Fquery := `SELECT u.nickname,  u.image from followers f
+	Fquery := `SELECT u.id ,  u.nickname,  u.image from followers f
 	 JOIN users  u ON u.id = f.follower_id
 	WHERE f.user_id = ?`
 
@@ -34,12 +34,13 @@ func FollowingHandler(w http.ResponseWriter, r *http.Request) {
 
 	var following []map[string]interface{}
 	for rows.Next() {
-		var username, profilePicture string
-		if err := rows.Scan(&username, &profilePicture); err != nil {
+		var username, profilePicture  , idU string
+		if err := rows.Scan( &idU, &username, &profilePicture); err != nil {
 			http.Error(w, "Database error: "+err.Error(), http.StatusInternalServerError)
 			return
 		}
 		follower := map[string]interface{}{
+			"id" : idU,
 			"nickname":        username,
 			"image": profilePicture,
 		}
