@@ -2,8 +2,8 @@
 
 import { useEffect, useState } from "react";
 import Link from 'next/link';
-
-
+import SendIcon from '@mui/icons-material/Send';
+import "../styles/rightbar.css"
 export default function RightBar() {
   const [users, setusers] = useState([])
   useEffect(() => {
@@ -34,7 +34,6 @@ export default function RightBar() {
 
   return (
     <div className="rightBar">
-      <div className="container">
         <div className="item">
           <span>Suggestions For You</span>
           <div className="user">
@@ -73,12 +72,19 @@ export default function RightBar() {
             users.map((user) => (
               <div key={user.id} className="user">
                 <div className="userInfo">
-                  <img src={user?.image ? `/uploads/${user.image}` : "/uploads/default.png"} alt="user avatar" />
-
-                  <div className="online" />
-                  <Link href={`/profile/${user.id}`} >
-                    <span>{user.nickname}</span>
-                  </Link>
+                  <div className="userDetails">
+                    <img
+                      src={user?.image ? `/uploads/${user.image}` : "/uploads/default.png"}
+                      alt="user avatar"
+                    />
+                    <div className="online" />
+                    <Link href={`/profile/${user.id}`} className="userLink">
+                      <span>{user.nickname}</span>
+                    </Link>
+                  </div>
+                  <div className="">
+                    <SendIcon className="userIcon" />
+                  </div>
                 </div>
               </div>
             ))
@@ -87,7 +93,6 @@ export default function RightBar() {
 
 
         </div>
-      </div>
     </div>
   );
 }
