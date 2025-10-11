@@ -1,98 +1,155 @@
 /* Container Styles */
-.pageContainer {
-  background: #ffffff;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  max-width: 800px;
-  margin: 0 auto;
+
+
+.content {
+  display: flex;
+  justify-content: space-between;
+  padding: 20px;
+  gap: 2rem;
 }
 
-/* Tab Buttons Container */
+.pageContainer {
+  background: #ffffff;
+  max-width: 600px;
+  margin: 0 auto;
+  border: 1px solid #dbdbdb;
+}
+
+/* Tab Buttons */
 .tabButtons {
   display: flex;
-  gap: 8px;
-  border-bottom: 2px solid #e5e7eb;
-  padding-bottom: 0;
+  border-bottom: 1px solid #dbdbdb;
+  background: #ffffff;
 }
 
 .tabButtons button {
   flex: 1;
-  padding: 12px 24px;
-  border: none;
-  border-radius: 8px 8px 0 0;
-  font-size: 16px;
+  padding: 16px;
+  font-size: 14px;
   font-weight: 600;
+  border: none;
+  background: transparent;
   cursor: pointer;
-  transition: all 0.3s ease;
-  position: relative;
+  transition: all 0.1s ease;
   outline: none;
+  color: #8e8e8e;
+  border-bottom: 1px solid transparent;
+  letter-spacing: 0.5px;
 }
 
 .tabButtons button:hover {
-  opacity: 0.9;
-  transform: translateY(-2px);
+  color: #262626;
 }
 
-.tabButtons button:active {
-  transform: translateY(0);
-}
-
-/* Tab Content Styles */
+/* Tab Content */
 .tabContent {
-  animation: fadeIn 0.4s ease-in;
+  background: #ffffff;
 }
 
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+/* Item Users Container */
+.itemUsers {
+  display: flex;
+  flex-direction: column;
 }
 
-.tabContent ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
+/* User Div */
+.userDiv {
+  padding: 12px 16px;
+  transition: background 0.1s ease;
+  border-bottom: 1px solid #efefef;
 }
 
-.tabContent ul li {
-  padding: 16px 20px;
-  border-bottom: 1px solid #f3f4f6;
+.userDiv:hover {
+  background: #fafafa;
+}
+
+.userDiv:last-child {
+  border-bottom: none;
+}
+
+/* User Infos */
+.userInfos {
   display: flex;
   align-items: center;
   gap: 12px;
-  transition: background-color 0.2s ease;
-  font-size: 15px;
-  color: #374151;
+  position: relative;
 }
 
-.tabContent ul li:hover {
-  background-color: #f9fafb;
-  cursor: pointer;
+.userInfos img {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid #dbdbdb;
 }
 
-.tabContent ul li:last-child {
-  border-bottom: none;
+/* Online Status Indicator */
+.onlin {
+  width: 12px;
+  height: 12px;
+  background: #22c55e;
+  border-radius: 50%;
+  border: 2px solid #ffffff;
+  position: absolute;
+  left: 32px;
+  top: 30px;
+}
+
+/* Username Link */
+.userInfos a {
+  text-decoration: none;
+  color: #262626;
+  font-weight: 600;
+  font-size: 14px;
+  transition: color 0.1s ease;
+}
+
+.userInfos a:hover {
+  color: #737373;
+}
+
+.userInfos span {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Empty State */
+.itemUsers:empty::before {
+  content: "No users yet";
+  display: block;
+  text-align: center;
+  color: #8e8e8e;
+  font-size: 14px;
+  padding: 60px 20px;
 }
 
 /* Responsive Design */
 @media (max-width: 768px) {
   .pageContainer {
-    border-radius: 0;
-    box-shadow: none;
+    border-left: none;
+    border-right: none;
   }
-  
+
   .tabButtons button {
-    font-size: 14px;
-    padding: 10px 16px;
+    padding: 14px;
+    font-size: 13px;
   }
-  
-  .tabContent ul li {
-    padding: 14px 16px;
-    font-size: 14px;
+
+  .userDiv {
+    padding: 10px 12px;
+  }
+
+  .userInfos img {
+    width: 40px;
+    height: 40px;
+  }
+
+  .onlin {
+    left: 29px;
+    top: 27px;
+    width: 10px;
+    height: 10px;
   }
 }
