@@ -23,37 +23,6 @@ html::-webkit-scrollbar {
 
 
 
-.post .container .user .userInfo .details .date {
-  font-size: 12px;
-}
-
-/* 📸 Content */
-.post .container .content {
-  margin: 20px 0px;
-  flex-direction: column;
-}
-
-.post .container .content img {
-  width: 100%;
-  max-height: 500px;
-  object-fit: cover;
-  margin-top: 20px;
-}
-
-/* ℹ️ Info */
-.post .container .info {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-}
-
-.post .container .info .item {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  cursor: pointer;
-  font-size: 14px;
-}
 
 /* ==================== Modal styles ==================== */
 .modal-overlay {
@@ -95,11 +64,7 @@ html::-webkit-scrollbar {
   transform: translateY(0) scale(1);
 }
 
-.posts {
-  display: flex;
-  flex-direction: column;
-  gap: 50px;
-}
+
 
 
 
@@ -122,18 +87,6 @@ html::-webkit-scrollbar {
   --border: #444;
 }
 
-/* 📝 Post */
-/* Post Container */
-.post {
-  background: #fff;
-  /* White background for post card */
-  border-radius: 8px;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-  margin: 16px auto;
-  max-width: 600px;
-  /* Matches typical social media post width */
-  padding: 12px;
-}
 
 /* Inner Container */
 .container {
@@ -171,7 +124,12 @@ html::-webkit-scrollbar {
 
 /* Content Section */
 .content {
-  padding: 0 12px;
+    display: flex;
+  flex-direction: row; /* horizontal layout */
+  justify-content: space-between; /* Left vs Right */
+  align-items: flex-start; /* top alignment */
+  gap: 20px; /* optional spacing */
+  padding: 20px;
 }
 
 .content h3 {
