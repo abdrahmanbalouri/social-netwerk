@@ -9,6 +9,10 @@ export default function LeftBar({ showSidebar }) {
   const router = useRouter();
   const { Profile } = useProfile();
 
+
+  console.log(Profile);
+
+
   async function handleLogout(e) {
     e?.preventDefault?.();
     try {
@@ -36,6 +40,7 @@ export default function LeftBar({ showSidebar }) {
     fontWeight: 600,
     marginTop: '12px'
   };
+console.log(Profile);
 
   return (
     <div className="leftBar">
@@ -49,11 +54,17 @@ export default function LeftBar({ showSidebar }) {
             <span>{Profile?.nickname ?? 'user name'}</span>
           </div>
           <div className="item">
+          <Link href={`/follow/${Profile?.id}?tab=following`}>  
             <img src="/icone/1.png" alt="" />
+            </Link>
             <span>following</span>
           </div>
           <div className="item">
+          <Link href={`/follow/${Profile?.id}?tab=followers`}>  
+
             <img src="/icone/1.png" alt="" />
+            </Link>
+
             <span>followers</span>
           </div>
           <div className="item">
@@ -64,7 +75,7 @@ export default function LeftBar({ showSidebar }) {
             <Link href={'/watch'}>
               <img src="/icone/4.png" alt="" />
             </Link>
-              <span>Watch</span>
+            <span>Watch</span>
           </div>
 
         </div>
