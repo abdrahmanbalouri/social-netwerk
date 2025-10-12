@@ -7,18 +7,24 @@ export default function Notification({ data }) {
 
 
     return (
-        <div className="chat">
-            <Link href={`/profile/${data.receiverId}`}>
-                <div className="Profile">
-                    <img src={data.image || "/uploads/default.png"} alt={data.name} />
+        <div className="notification">
+            <div className="notification-header">
+                <h3 className="notification-title">New notification</h3>
+                <i className="fa fa-times notification-close"></i>
+            </div>
+            <div className="notification-container">
+                <div className="notification-media">
+                    <img src={data?.photo ? `/uploads/${data.photo}` : "/uploads/default.png"} alt="" className="notification-user-avatar" />
+                    <i className="fa fa-thumbs-up notification-reaction"></i>
                 </div>
-                <div className="message">
-                    You have a new follower
+                <div className="notification-content">
+                    <p className="notification-text">
+                        <strong>{data && data.name}</strong>,  {data && data.messageContent} 
+                    </p>
+                    <span className="notification-timer">a few seconds ago</span>
                 </div>
-                <div className="User">
-                    {data.name}
-                </div>
-            </Link>
+                <span className="notification-status"></span>
+            </div>
         </div>
     );
 }
