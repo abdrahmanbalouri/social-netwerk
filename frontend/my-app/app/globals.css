@@ -112,23 +112,20 @@ html::-webkit-scrollbar {
 
 .name:hover {
   color: #1b74e4;
-  /* FB's blue on hover */
   text-decoration: none;
 }
 
 .date {
   font-size: 12px;
   color: #606770;
-  /* FB's gray text for secondary info */
 }
 
 /* Content Section */
 .content {
-    display: flex;
-  flex-direction: row; /* horizontal layout */
-  justify-content: space-between; /* Left vs Right */
-  align-items: flex-start; /* top alignment */
-  gap: 20px; /* optional spacing */
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: flex-start;
   padding: 20px;
 }
 
@@ -365,18 +362,3 @@ html::-webkit-scrollbar {
 .theme-dark .navbar .left .search input {
   color: var(--text-dark);
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
