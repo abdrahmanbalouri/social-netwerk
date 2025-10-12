@@ -1,11 +1,15 @@
 "use client";
 import { useState, useRef } from "react";
+import AddReactionIcon from '@mui/icons-material/AddReaction';
+import SendIcon from '@mui/icons-material/Send';
 import "../styles/chat.css";
 
 export default function ChatBox({ user }) {
     const [messages, setMessages] = useState([]);
     const [input, setInput] = useState("");
-    const inputRef = useRef(null)
+    const [showEmojis, setShowEmojis] = useState(false);
+    const inputRef = useRef(null);
+
     if (!user) {
         return <div className="loading">Loading user...</div>;
     }
@@ -22,6 +26,7 @@ export default function ChatBox({ user }) {
         if (input.trim() === "") return;
         setMessages([...messages, { text: input, sender: "me" }]);
         setInput("");
+        setShowEmojis(false);
     };
 
     const addEmoji = (emoji) => {
@@ -35,13 +40,17 @@ export default function ChatBox({ user }) {
     return (
         <div className="chat-container">
             <div className="chat-header">
-                <img src={user.image ? user.image : "/uploads/default.png"} alt="Profile" className="profile-pic" />
-                <h3 className="username">{user.username}</h3>
+                <img
+                    src={user.image ? `/uploads/${user.image}` : "/uploads/default.png"}
+                    alt="Profile"
+                    className="profile-pic"
+                />
+                <h3 className="username">{user.nickname}</h3>
             </div>
 
             <div className="chat-box">
                 {messages.length === 0 ? (
-                    <p className="no-msg">No messages yet 😶</p>
+                    <p className="no-msg">No messages yet</p>
                 ) : (
                     messages.map((msg, index) => (
                         <div key={index} className={`message ${msg.sender}`}>
@@ -51,23 +60,41 @@ export default function ChatBox({ user }) {
                 )}
             </div>
 
-            <div className="emoji-panel">
-                {emojiArray.map((emoji, i) => (
-                    <span key={i} className="emoji" onClick={() => addEmoji(emoji)}>
-                        {emoji}
-                    </span>
-                ))}
-            </div>
+            {showEmojis && (
+                <div className="emoji-panel">
+                    {emojiArray.map((emoji, i) => (
+                        <span
+                            key={i}
+                            className="emoji"
+                            onClick={() => addEmoji(emoji)}
+                        >
+                            {emoji}
+                        </span>
+                    ))}
+                </div>
+            )}
 
             <div className="input-area">
+                <button
+                    className="emoji-toggle"
+                    onClick={() => setShowEmojis(!showEmojis)}
+                >
+                    <AddReactionIcon />
+                </button>
+
                 <input
                     ref={inputRef}
                     type="text"
                     placeholder="Type a message..."
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
+                    onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                            sendMessage();
+                        }
+                    }}
                 />
-                <button onClick={sendMessage}>Send</button>
+                <button onClick={sendMessage}><SendIcon /></button>
             </div>
         </div>
     );

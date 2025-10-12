@@ -8,19 +8,24 @@
   font-family: Arial, Helvetica, sans-serif;
 }
 
-/* Hide scrollbar for all browsers */
-html {
-  scrollbar-width: none;
-  /* Firefox */
-  -ms-overflow-style: none;
-  /* Internet Explorer 10+ */
+/* Custom Scrollbar */
+*::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
 }
 
-html::-webkit-scrollbar {
-  display: none;
-  /* WebKit browsers */
+*::-webkit-scrollbar-track {
+  background: transparent;
 }
 
+*::-webkit-scrollbar-thumb {
+  background: #0070f3;
+  border-radius: 10px;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background: #1b74e4;
+}
 
 
 

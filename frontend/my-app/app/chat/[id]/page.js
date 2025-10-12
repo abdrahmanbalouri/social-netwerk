@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import Navbar from "../../../components/Navbar";
 import LeftBar from "../../../components/LeftBar";
-import "../../../styles/chat.css";
 import UserBar from "../../../components/UserBar.js";
 import { useDarkMode } from "../../../context/darkMod.js";
 import ChatBox from "../../../components/chatBox.js";
