@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react';
-import './ProfileCardEditor.css';
+import '../styles/ProfileCardEditor.css';
 
 export default function ProfileCardEditor({
     showPrivacy,
