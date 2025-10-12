@@ -3,7 +3,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useDarkMode } from '../context/darkMod';
 import { useProfile } from '../context/profile';
-
+import "../styles/navbar.css"
 
 export default function Navbar({ onCreatePost, onToggleSidebar }) {
   const router = useRouter();
