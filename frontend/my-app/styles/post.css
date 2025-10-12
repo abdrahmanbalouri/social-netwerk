@@ -1,5 +1,5 @@
 .post {
-    background: #fff;
+    background: var(--bg);
     border-radius: 12px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
     margin-bottom: 20px;
@@ -13,6 +13,9 @@
 
 .post .container {
     padding: 15px;
+}
+.post .container > *{
+    color: var(--textColor);
 }
 
 /* User Info Section */
@@ -31,7 +34,7 @@
     height: 45px;
     border-radius: 50%;
     object-fit: cover;
-    border: 2px solid #f0f0f0;
+    border: 2px solid var(--border);
 }
 
 .post .details {
@@ -43,17 +46,17 @@
 .post .details .name {
     font-size: 15px;
     font-weight: 600;
-    color: #333;
+    color: var(--textColor);
     transition: color 0.2s;
 }
 
 .post .details .name:hover {
-    color: #5271ff;
+    color: var(--logo);
 }
 
 .post .details .date {
     font-size: 12px;
-    color: #999;
+    color: var(--textColorSoft);
 }
 
 /* Content Section */
@@ -97,7 +100,7 @@
     align-items: center;
     gap: 8px;
     font-size: 14px;
-    color: #666;
+    color: var(--textColorSoft);
     cursor: pointer;
     padding: 8px 12px;
     border-radius: 6px;
@@ -110,6 +113,7 @@
 }
 
 .post .info .item i {
+    color: var(--textColorSoft);
     font-size: 18px;
     transition: transform 0.2s;
 }
