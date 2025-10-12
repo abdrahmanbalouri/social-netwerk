@@ -14,6 +14,7 @@ export default function Navbar({ onCreatePost }) {
   const { ws, connected } = useWS();
   const [cont, addnotf] = useState(0);
   const [data, notif] = useState({})
+  const [show, cheng] = useState(false)
 
   useEffect(() => {
 
@@ -28,6 +29,12 @@ export default function Navbar({ onCreatePost }) {
           if (data.type === "follow") {
             addnotf((prev) => prev + 1);
             notif(data)
+            cheng(true)
+            setTimeout(() => {
+              cheng(false)
+
+            }, 4000)
+
           }
         } catch (err) {
         }
@@ -51,14 +58,14 @@ export default function Navbar({ onCreatePost }) {
           <input type="text" placeholder="Search..." />
         </div>
       </div>
-      {cont != 0 && <Notification data={data} />}
+      {show && <Notification data={data} />}
       <div className="right">
         <i
           className={`fa-solid ${darkMode ? "fa-sun" : "fa-moon"}`}
           onClick={toggle}
         ></i>
 
-        <div className="notification">
+        <div className="notification2">
           <i className="fa-solid fa-bell"></i>
           {cont > 0 && <span className="notif-count">{cont}</span>}
         </div>
