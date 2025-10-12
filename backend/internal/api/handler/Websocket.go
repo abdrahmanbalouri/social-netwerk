@@ -55,7 +55,10 @@ func Websocket(w http.ResponseWriter, r *http.Request) {
 			q := `SELECT id FROM followers WHERE user_id = ? AND follower_id = ?`
 			var followID int
 			var name, photo string
-			_ = repository.Db.QueryRow(`SELECT nickname image FROM users WHERE id = ? `, id).Scan(&name, &photo)
+			err = repository.Db.QueryRow(`SELECT nickname, image FROM users WHERE id = ?`, id).Scan(&name, &photo)
+			if err != nil {
+				fmt.Println("err", err)
+			}
 			_ = repository.Db.QueryRow(q, id, messageStruct.ReceiverId).Scan(&followID)
 
 			if followID != 0 {
@@ -64,8 +67,9 @@ func Websocket(w http.ResponseWriter, r *http.Request) {
 				messageStruct.ReceiverId = id
 				messageStruct.Name = name
 				messageStruct.Photo = photo
+				messageStruct.MessageContent = "has following you"
 			}
-
+			fmt.Println(";esg", messageStruct)
 			for i, conArr := range ConnectedUsers {
 				if i != id {
 					for _, con := range conArr {
@@ -76,7 +80,7 @@ func Websocket(w http.ResponseWriter, r *http.Request) {
 						}
 						if err := con.WriteMessage(websocket.TextMessage, jsonMsg); err != nil {
 							fmt.Println("Error writing message:", err)
-							
+
 						}
 					}
 				}
