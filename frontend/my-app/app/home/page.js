@@ -12,8 +12,6 @@ import Comment from '../../components/coment.js';
 import { useProfile } from '../../context/profile.js';
 import Post from '../../components/Post.js';
 import './Home.css';
-import "../../styles/post.css"
-
 export default function Home() {
   const router = useRouter();
   const { darkMode } = useDarkMode();

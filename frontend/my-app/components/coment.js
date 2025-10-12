@@ -2,7 +2,7 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
 import { useDarkMode } from '../context/darkMod';
-
+import "../styles/comment.css"
 export default function Comment({
   comments,
   isOpen,
