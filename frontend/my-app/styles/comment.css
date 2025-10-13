@@ -1,10 +1,191 @@
+/* Modal Overlay */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+}
+
+.modal-overlay.is-open {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Modal Content */
+.modal-content {
+  background: var(--bg);
+  border-radius: 16px;
+  width: 90%;
+  max-width: 550px;
+  padding: 30px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  position: relative;
+  transform: scale(0.9);
+  transition: transform 0.3s ease;
+}
+
+.modal-overlay.is-open .modal-content {
+  transform: scale(1);
+}
+
+/* Modal Close Button */
+.modal-close {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: #f5f5f5;
+  border: none;
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  font-size: 20px;
+  color: #666;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.modal-close:hover {
+  background: #ff4757;
+  color: #fff;
+  transform: rotate(90deg);
+}
+
+/* Modal Title */
+.modal-content h3 {
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--textColor);
+  margin: 0 0 24px 0;
+  padding-bottom: 16px;
+  border-bottom: 2px solid #f0f0f0;
+}
+
+/* Form Styling */
+.modal-content form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.modal-content .input {
+  width: 100%;
+  padding: 14px 16px;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 14px;
+  font-family: inherit;
+  transition: all 0.3s ease;
+  background: #fafafa;
+}
+
+.modal-content .input:focus {
+  outline: none;
+  border-color: #5271ff;
+  background: #fff;
+  box-shadow: 0 0 0 3px rgba(82, 113, 255, 0.1);
+}
+
+.modal-content textarea.input {
+  min-height: 120px;
+  resize: vertical;
+  font-family: inherit;
+}
+
+.modal-content input[type="file"].input {
+  padding: 12px;
+  cursor: pointer;
+}
+
+.modal-content input[type="file"].input::file-selector-button {
+  padding: 8px 16px;
+  background: #5271ff;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  margin-right: 12px;
+  transition: background 0.3s ease;
+}
+
+.modal-content input[type="file"].input::file-selector-button:hover {
+  background: #3d5ce8;
+}
+
+/* Modal Actions */
+.modal-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.modal-actions .btn {
+  flex: 1;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.modal-actions .btn.cancel {
+  background: #f0f0f0;
+  color: #666;
+}
+
+.modal-actions .btn.cancel:hover {
+  background: #e0e0e0;
+  color: #333;
+}
+
+.modal-actions .btn.submit {
+  background: linear-gradient(135deg, #5271ff 0%, #3d5ce8 100%);
+  color: white;
+  box-shadow: 0 4px 12px rgba(82, 113, 255, 0.3);
+}
+
+.modal-actions .btn.submit:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(82, 113, 255, 0.4);
+}
+
+.modal-actions .btn.submit:active {
+  transform: translateY(0);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .modal-content {
+    width: 95%;
+    padding: 24px 20px;
+  }
+
+  .modal-content h3 {
+    font-size: 20px;
+  }
+}
+
 
 /* Comments Section */
 .comments-section {
   padding: 20px;
 }
-
-
 
 /* Comments Container */
 .comments-container {
@@ -48,17 +229,17 @@
 
 .comment-author {
   font-weight: 500;
-  color: #1f2937;
+  color: var(--textColor);
 }
 
 .comment-date {
   font-size: 0.85rem;
-  color: #6b7280;
+  color: var(--textColorSoft);
 }
 
 .comment-content {
   font-size: 0.95rem;
-  color: #374151;
+  color: var(--textColor);
   line-height: 1.5;
   margin: 0;
 }
@@ -66,7 +247,7 @@
 /* No Comments Message */
 .no-comments {
   text-align: center;
-  color: #6b7280;
+  color: var(--textColorSoft);
   font-size: 0.95rem;
   margin: 20px 0;
 }
@@ -99,7 +280,6 @@
   background: #f3f4f6;
   cursor: not-allowed;
 }
-
 
 /* Responsive Design */
 @media (max-width: 600px) {

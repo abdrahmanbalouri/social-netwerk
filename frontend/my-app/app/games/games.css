@@ -3,16 +3,16 @@
     gap: 2rem;
     padding: 20px;
     display: flex;
-    background-color: #222;
 }
 
 .game-container {
+    background-color: color-mix(in srgb, var(--bgSoft), white 10%);
     display: flex;
     flex: 6;
     flex-direction: column;
     align-items: center;
     border-radius: 16px;
-    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.199);
     padding: 40px 24px;
     margin: 40px auto;
 }
@@ -40,7 +40,7 @@
 }
 
 .game-card {
-    background:rgb(105 96 252 / 0%) ;
+    background: var(--bg, #fff); ;
     border-radius: 12px;
     box-shadow: 0 2px 8px rgba(82, 113, 255, 0.08);
     padding: 24px 32px;

@@ -102,7 +102,7 @@ main {
   margin: 0 0 8px;
   font-size: 16px;
   font-weight: 400;
-  color: #1c1e21;
+  color: var(--textColor);
   line-height: 1.4;
 }
 
