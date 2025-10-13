@@ -23,11 +23,23 @@ func FollowHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	var privacy string
+
+	err = repository.Db.QueryRow("select privacy from  users  where  id  = ? ", id).Scan(&privacy)
+	if err != nil {
+		http.Error(w, "Database error: "+err.Error(), http.StatusInternalServerError)
+		return
+	}
+
 	qCheck := `SELECT COUNT(*) FROM followers WHERE user_id = ? AND follower_id = ?`
 	var count int
 	err = repository.Db.QueryRow(qCheck, UserID, id).Scan(&count)
 	if err != nil {
 		http.Error(w, "Database error: "+err.Error(), http.StatusInternalServerError)
+		return
+	}
+	if privacy == "private" {
+		// send a request message to the user
 		return
 	}
 	if count > 0 {
