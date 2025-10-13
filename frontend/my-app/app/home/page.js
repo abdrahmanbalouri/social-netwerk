@@ -40,6 +40,15 @@ export default function Home() {
   const modalRef = useRef(null);
   const modalRefhome = useRef(null)
   const boleanofset = useRef(false)
+  const postRefs = useRef({});
+  function scrollToPost(postId) {
+    console.log(postId,"---------+++++++++");
+    
+    const el = postRefs.current[postId];
+    if (el) {
+      el.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }
   useEffect(() => {
     async function midle() {
       try {
@@ -74,22 +83,13 @@ export default function Home() {
       modal.scrollHeight > modal.clientHeight + 10 &&
       modal.scrollTop + modal.clientHeight >= modal.scrollHeight - 50;
 
-    const previousScrollHeight = modal.scrollHeight;
     async function handlescrollhome() {
       let b = await fetchingposts();
       if (b) {
-
-        setTimeout(() => {
-          const newScrollHeight = modal.scrollHeight;
-          const heightIncrease = newScrollHeight - previousScrollHeight;
-
-          modal.scrollTop -= heightIncrease - modal.clientHeight;
-        }, 0);
+        scrollToPost(b)
       }
 
     }
-
-
     if (reachedBottom && !loading) {
       handlescrollhome()
     }
@@ -188,9 +188,6 @@ export default function Home() {
       }
 
       const data = await res.json();
-      console.log(data, "***********************-*/-/*/-/");
-
-      console.log(data.length), "--------------------";
 
       if (data.length !== 0) {
         offsetpsot.current += 10
@@ -198,8 +195,8 @@ export default function Home() {
         return false
       }
 
-      setPosts([...data, ...posts]);
-      return true
+      setPosts([...posts, ...data]);
+      return data[0].id
     } catch (err) {
       console.error("Error fetching posts:", err);
       return false
@@ -223,10 +220,9 @@ export default function Home() {
       const data = await res.json();
       console.log(offsetpsot.current);
 
-      console.log(data);
 
 
-      setPosts([...data, ...posts]);
+      setPosts([...data]);
       return true
     } catch (err) {
       console.error("Error fetching posts:", err);
@@ -354,8 +350,8 @@ export default function Home() {
         offsetcomment.current += 10
 
       }
-      
-        
+
+
       setComment([...comment, ...comments]);
       setShowComments(true);
       return comments[0].id
@@ -405,7 +401,6 @@ export default function Home() {
         const potsreplace = await fetchPosts(selectedPost.id)
         for (let i = 0; i < posts.length; i++) {
           if (posts[i].id == selectedPost.id) {
-
             setPosts([
               ...posts.slice(0, i),
               potsreplace,
@@ -414,7 +409,6 @@ export default function Home() {
             break
           }
         }
-
       }
     } catch (err) {
       console.error("Error refreshing comments:", err);
@@ -438,7 +432,6 @@ export default function Home() {
       </div>
     );
   }
-
   const handleVisibilityChange = (e) => {
     const newVisibility = e.target.value;
     setVisibility(newVisibility);
@@ -485,6 +478,8 @@ export default function Home() {
                 post={post}
                 onGetComments={GetComments}
                 ondolike={Handlelik}
+                ref={el => commentRefs.current[post.id] = el}
+
               />
             ))
           )}
