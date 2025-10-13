@@ -1,7 +1,7 @@
 // components/coment.js
 "use client";
 import { useState, useEffect, useRef } from "react";
-import { useDarkMode } from '../context/darkMod';
+//import { useDarkMode } from '../context/darkMod';
 
 export default function Comment({
   comments,
@@ -9,21 +9,47 @@ export default function Comment({
   onClose,
   postId,
   postTitle = "",
-  onCommentChange
+  onCommentChange,
+  lodinggg,
+  ongetcomment,
+  post
 }) {
-  const { darkMode } = useDarkMode();
+  //const { darkMode } = useDarkMode();
   const [commentContent, setCommentContent] = useState("");
   const [loading, setLoading] = useState(false);
   const modalRef = useRef(null);
-
-  // Handle click outside to close modal
-
-  // Post new 
+  const [scrollPos, setScrollPos] = useState(0);
   useEffect(() => {
-    if (modalRef.current) {
-      modalRef.current.scrollTop = modalRef.current.scrollHeight;
+
+    if (!modalRef.current) return;
+
+    const modal = modalRef.current;
+
+    const reachedBottom = modal.scrollTop + modal.clientHeight >= modal.scrollHeight - 5;
+    const previousScrollHeight = modal.scrollHeight;
+    async function getcomment() {
+      let b = await ongetcomment(post);
+
+      if (b) {
+        
+  setTimeout(() => {
+            const newScrollHeight = modal.scrollHeight;
+            const heightIncrease = newScrollHeight - previousScrollHeight;
+            
+            modal.scrollTop -= heightIncrease - modal.clientHeight ; 
+        }, 0); 
+      }
+
     }
-  }, [comments]);
+    console.log(lodinggg);
+    
+    if (reachedBottom && !lodinggg) {
+      getcomment()
+    }
+  }, [scrollPos]);
+
+
+
   async function handlePostComment(e) {
     e.preventDefault();
 
@@ -47,12 +73,14 @@ export default function Comment({
       if (!response.ok) {
         throw new Error("Failed to post comment");
       }
+      const res = await response.json()
 
-      // Reset form and refresh comments
       setCommentContent("");
       if (onCommentChange) {
 
-        onCommentChange();
+        onCommentChange(res.comment_id);
+        modalRef.current.scrollTop = 0;
+
       }
     } catch (err) {
       console.error("Error posting comment:", err);
@@ -90,10 +118,13 @@ export default function Comment({
           {/* Post Title */}
 
           {/* Comments List */}
-          <div 
-          className="comments-container"
-          ref={modalRef}>
-            
+          <div
+            className="comments-container"
+            ref={modalRef}
+            onScroll={(e) => setScrollPos(e.target.scrollTop)}
+
+          >
+
             {comments && comments.length > 0 ? (
               comments.map((comment) => (
                 <div key={comment.id} className="comment-item">
