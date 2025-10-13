@@ -13,7 +13,30 @@ export default function Gallery() {
   const slideRef = useRef(null);
   const { Profile } = useProfile();
   const { darkMode } = useDarkMode();
+  useEffect(() => {
 
+    async function midle() {
+      try {
+        const response = await fetch("http://localhost:8080/api/me", {
+          credentials: "include",
+          method: "GET",
+        });
+
+        if (!response.ok) {
+          router.replace("/login");
+          return null;
+        }
+      } catch (error) {
+        router.replace("/login");
+        return null;
+
+      }
+    }
+    midle()
+
+
+
+  }, [])
   useEffect(() => {
     if (!Profile?.id) return;
 
