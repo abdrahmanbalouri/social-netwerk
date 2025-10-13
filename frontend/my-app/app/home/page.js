@@ -116,10 +116,6 @@ export default function Home() {
         }
       }
 
-
-
-
-
     } catch (err) {
       console.error("Error liking post:", err);
     }
