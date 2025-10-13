@@ -19,7 +19,7 @@ func Getfollowers(w http.ResponseWriter, r *http.Request) {
 		utils.User
 	}
 
-	rows, err := repository.Db.Query("select u.id, u.nickname, u.image from users u join followers f on u.id = f.follower_id where f.user_id = ?", UserId)
+	rows, err := repository.Db.Query("select u.id, u.nickname, u.image from users u join followers f on u.id = ? where f.user_id = f.follower_id", UserId)
 	if err != nil {
 		fmt.Println(err)
 		helper.RespondWithError(w, http.StatusInternalServerError, "Database query error")
