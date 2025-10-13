@@ -38,7 +38,7 @@
   border: none;
   width: 500px;
   background-color: transparent;
-  color: var(--bgSoft);
+  color: var(--textColorSoft);
 }
 
 /* Tablet */

@@ -14,7 +14,7 @@
 
 
 .rightBar .item {
-  background: #f9f9f9;
+  background: var(--bg);
   border-radius: 12px;
   padding: 20px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
@@ -24,7 +24,7 @@
   display: block;
   font-size: 14px;
   font-weight: 600;
-  color: #555;
+  color: var(--textColor);
   margin-bottom: 15px;
   text-transform: uppercase;
   letter-spacing: 0.5px;
@@ -110,7 +110,7 @@
 .rightBar .userInfo span {
   font-size: 14px;
   font-weight: 500;
-  color: #333;
+  color: var(--textColor);
 }
 
 .rightBar .userInfo span:hover {
@@ -165,7 +165,7 @@
 /* No users message */
 .rightBar h1 {
   font-size: 13px;
-  color: #999;
+  color: var(--textColorSoft);
   text-align: center;
   padding: 20px 0;
   font-weight: 400;
