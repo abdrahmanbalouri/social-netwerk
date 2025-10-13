@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from 'next/link';
-import SendIcon from '@mui/icons-material/Send';
+import ChatIcon from '@mui/icons-material/Chat';
 import "../styles/rightbar.css"
 export default function RightBar() {
   const [users, setusers] = useState([])
@@ -65,7 +65,7 @@ export default function RightBar() {
       </div>
 
       <div className="item">
-        <span>Online Friends</span>
+        <span>Friends</span>
         {!users || users.length === 0 ? (
           <h1>no users for now</h1>
         ) : (
@@ -78,12 +78,12 @@ export default function RightBar() {
                     alt="user avatar"
                   />
                   <div className="online" />
-                  <Link href={`/profile/${user.id}`} className="userLink">
+                  <Link href={`/profile/${user.id}`}>
                     <span>{user.nickname}</span>
                   </Link>
                 </div>
                 <div className="">
-                  <Link href={`/chat/${user.id}`}><SendIcon className="userIcon" /></Link>
+                  <Link href={`/chat/${user.id}`}><ChatIcon className="userIcon" /></Link>
                 </div>
               </div>
             </div>
