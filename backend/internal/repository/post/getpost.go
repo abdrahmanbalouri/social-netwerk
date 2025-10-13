@@ -21,7 +21,6 @@ func GetAllPosts(authUserID string, r *http.Request) ([]map[string]interface{}, 
 		authUserID = userId
 	 }
 	if authUserID != "" {
-		fmt.Println("Fetching posts for user:", authUserID)
 		rows, err = repository.Db.Query(`
 			SELECT 
 				p.id, 
@@ -44,7 +43,6 @@ func GetAllPosts(authUserID string, r *http.Request) ([]map[string]interface{}, 
 			ORDER BY p.created_at DESC;
 		`, authUserID, authUserID)
 	} else {
-		fmt.Println("Fetching all posts")
 		rows, err = repository.Db.Query(`
 			SELECT 
 				p.id, 
