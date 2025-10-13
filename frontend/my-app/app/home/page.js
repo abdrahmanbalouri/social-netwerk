@@ -173,7 +173,7 @@ export default function Home() {
   }
   async function fetchingposts() {
     if (!boleanofset.current) {
-      offsetpsot.current+=10
+      offsetpsot.current += 10
       boleanofset.current = true
     }
     try {
@@ -188,13 +188,13 @@ export default function Home() {
       }
 
       const data = await res.json();
-      console.log(data,"***********************-*/-/*/-/");
-      
-      console.log(data.length),"--------------------";
-      
-      if (data.length!==0) {
-        offsetpsot.current+=10
-      }else{
+      console.log(data, "***********************-*/-/*/-/");
+
+      console.log(data.length), "--------------------";
+
+      if (data.length !== 0) {
+        offsetpsot.current += 10
+      } else {
         return false
       }
 
@@ -348,16 +348,22 @@ export default function Home() {
         content: comment.content || comment.text || "",
         created_at: comment.created_at || comment.createdAt || new Date().toISOString()
       }));
+      if (comments.length == 0) {
+        return false
+      } else {
+        offsetcomment.current += 10
 
-      setComment([...comments, ...comment]);
+      }
+      
+        
+      setComment([...comment, ...comments]);
       setShowComments(true);
-      return true
+      return comments[0].id
 
     } catch (err) {
       return false
     }
     finally {
-      offsetcomment.current += 10
       setLoadingcomment(false);
     }
   }
