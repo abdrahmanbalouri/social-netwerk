@@ -10,7 +10,9 @@ export default function ChatBox({ user }) {
     const [input, setInput] = useState("");
     const [showEmojis, setShowEmojis] = useState(false);
     const inputRef = useRef(null);
-
+    setTimeout(() => {
+        inputRef.current.focus();
+    },0)
     if (!user) {
         return <div className="loading">Loading user...</div>;
     }
