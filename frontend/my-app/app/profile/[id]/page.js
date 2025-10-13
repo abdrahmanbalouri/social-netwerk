@@ -94,31 +94,31 @@ export default function Profile() {
   useEffect(() => {
     loadProfile();
   }, []);
-  // Fetch posts for this profile user
-  useEffect(() => {
-    async function fetchUserPosts() {
-      try {
-        const res = await fetch(
-          `http://localhost:8080/api/Getallpost?userId=${params.id}`,
-          {
-            method: "GET",
-            credentials: "include",
-          }
-        );
-        if (!res.ok) {
-          throw new Error("Failed to fetch user posts");
-        }
-        const data = await res.json();
+  // // Fetch posts for this profile user
+  // useEffect(() => {
+  //   async function fetchUserPosts() {
+  //     try {
+  //       const res = await fetch(
+  //         `http://localhost:8080/api/Getallpost?userId=${params.id}`,
+  //         {
+  //           method: "GET",
+  //           credentials: "include",
+  //         }
+  //       );
+  //       if (!res.ok) {
+  //         throw new Error("Failed to fetch user posts");
+  //       }
+  //       const data = await res.json();
 
-        setPosts(Array.isArray(data) ? data : []);
-      } catch (err) {
-        console.error("Error fetching user posts:", err);
-      }
-    }
-    if (params.id) {
-      fetchUserPosts();
-    }
-  }, [params.id]);
+  //       setPosts(Array.isArray(data) ? data : []);
+  //     } catch (err) {
+  //       console.error("Error fetching user posts:", err);
+  //     }
+  //   }
+  //   if (params.id) {
+  //     fetchUserPosts();
+  //   }
+  // }, [params.id]);
 
   // Fetch comments for a specific post (like home page)
   async function GetComments(post) {
