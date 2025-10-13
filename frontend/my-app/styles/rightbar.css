@@ -101,11 +101,6 @@
   border: 2px solid #fff;
 }
 
-.rightBar .userLink {
-  text-decoration: none;
-  color: inherit;
-  flex: 1;
-}
 
 .rightBar .userInfo span {
   font-size: 14px;

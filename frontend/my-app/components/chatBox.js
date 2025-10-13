@@ -2,6 +2,7 @@
 import { useState, useRef } from "react";
 import AddReactionIcon from '@mui/icons-material/AddReaction';
 import SendIcon from '@mui/icons-material/Send';
+import Link from "next/link"
 import "../styles/chat.css";
 
 export default function ChatBox({ user }) {
@@ -31,23 +32,31 @@ export default function ChatBox({ user }) {
 
     const addEmoji = (emoji) => {
         const cursorPos = inputRef.current.selectionStart;
-        const newText =
-            input.slice(0, cursorPos) + emoji + input.slice(cursorPos);
+        const newText = input.slice(0, cursorPos) + input.slice(cursorPos) + emoji;
         setInput(newText);
-        setTimeout(() => inputRef.current.focus(), 0);
+        setTimeout(() => {
+            inputRef.current.focus();
+            const end = inputRef.current.value.length;
+            inputRef.current.setSelectionRange(end, end);
+        }, 0);
     };
 
     return (
         <div className="chat-container">
             <div className="chat-header">
-                <img
-                    src={user.image ? `/uploads/${user.image}` : "/uploads/default.png"}
-                    alt="Profile"
-                    className="profile-pic"
-                />
-                <h3 className="username">{user.nickname}</h3>
+                <Link href={`/profile/${user.id}`}>
+                    <img
+                        src={user?.image ? `/uploads/${user.image}` : "/uploads/default.png"}
+                        alt="user avatar"
+                    />
+                </Link>
+                <div className="onlinee">
+                    <Link href={`/profile/${user.id}`}>
+                        <span className="username">{user.nickname}</span>
+                    </Link>
+                    <span className="on">online</span>
+                </div>
             </div>
-
             <div className="chat-box">
                 {messages.length === 0 ? (
                     <p className="no-msg">No messages yet</p>
