@@ -19,34 +19,33 @@ export default function Comment({
   const [loading, setLoading] = useState(false);
   const modalRef = useRef(null);
   const [scrollPos, setScrollPos] = useState(0);
-  useEffect(() => {
+  const commentRefs = useRef({});
+  function scrollToComment(commentId) {
+    const el = commentRefs.current[commentId];
+    if (el) {
+      el.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }
 
+  useEffect(() => {
     if (!modalRef.current) return;
 
     const modal = modalRef.current;
-
     const reachedBottom = modal.scrollTop + modal.clientHeight >= modal.scrollHeight - 5;
-    const previousScrollHeight = modal.scrollHeight;
+
     async function getcomment() {
-      let b = await ongetcomment(post);
-
-      if (b) {
-        
-  setTimeout(() => {
-            const newScrollHeight = modal.scrollHeight;
-            const heightIncrease = newScrollHeight - previousScrollHeight;
-            
-            modal.scrollTop -= heightIncrease - modal.clientHeight ; 
-        }, 0); 
+      let r = await ongetcomment(post);
+      if (r) {
+        scrollToComment(r)
+  
       }
-
     }
-    console.log(lodinggg);
-    
+
     if (reachedBottom && !lodinggg) {
-      getcomment()
+      getcomment();
     }
   }, [scrollPos]);
+
 
 
 
@@ -127,8 +126,12 @@ export default function Comment({
 
             {comments && comments.length > 0 ? (
               comments.map((comment) => (
-                <div key={comment.id} className="comment-item">
-                  <div className="comment-header">
+                <div
+                  key={comment.id}
+                  id={`comment-${comment.id}`}
+                  className="comment-item"
+                  ref={el => commentRefs.current[comment.id] = el} 
+                >                  <div className="comment-header">
                     <span className="comment-author">{comment.author}</span>
                     <span className="comment-date">
                       {new Date(comment.created_at).toLocaleString()}
