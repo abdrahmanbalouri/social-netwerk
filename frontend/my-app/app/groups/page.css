@@ -72,3 +72,42 @@
 .join-button:active {
     transform: scale(0.98);
 }
+
+/* Tabs CSS */
+.tabs-container {
+    display: flex;
+    justify-content: center;
+    gap: 0;
+    margin: 20px 0;
+}
+
+.tab-button {
+    padding: 12px 24px;
+    font-size: 16px;
+    font-weight: 500;
+    border: none;
+    background-color: #f0f0f0;
+    color: #666;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border-bottom: 3px solid transparent;
+}
+
+.tab-button:hover {
+    background-color: #e0e0e0;
+    color: #333;
+}
+
+.tab-button.active {
+    background-color: white;
+    color: #0070f3;
+    border-bottom: 3px solid #0070f3;
+}
+
+.tab-button:first-child {
+    border-radius: 8px 0 0 0;
+}
+
+.tab-button:last-child {
+    border-radius: 0 8px 0 0;
+}
