@@ -34,6 +34,7 @@ export default function Home() {
 
   const modalRef = useRef(null);
   const commentsModalRef = useRef(null);
+ 
   useEffect(() => {
 
     async function midle() {
@@ -94,18 +95,18 @@ export default function Home() {
       });
       const response = await res.json();
 
-      
-      if(res.ok){
+
+      if (res.ok) {
 
         const newpost = await fetchPosts(postId)
-        
 
 
-        
-  
+
+
+
         for (let i = 0; i < posts.length; i++) {
           if (posts[i].id == newpost.id) {
-  
+
             setPosts([
               ...posts.slice(0, i),
               newpost,
