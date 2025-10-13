@@ -1,57 +1,32 @@
 "use client"
 import Navbar from '../../components/Navbar.js';
 import { useEffect, useState } from "react";
-import styles from './page.module.css';
+import { useRouter } from 'next/router';
+import "./page.css"
 
 
 export default function () {
     return (
         <>
             <Navbar />
-            <Groups />
+            {/* <Groups /> */}
+            <GroupsTabs />
         </>
     )
 }
-
-function Groups() {
-    const [group, setGroup] = useState(null);
-    const [loading, setLoading] = useState(true);
-
-    useEffect(() => {
-        fetch('http://localhost:8080/groups', {
-            method: 'GET',
-            credentials: 'include',
-        })
-            .then(res => res.json())
-            .then(data => {
-                console.log("data is :", data);
-                setGroup(data);
-                setLoading(false);
-            })
-            .catch(error => {
-                console.error("Failed to fetch group data:", error);
-                setLoading(false);
-            });
-    }, [])
-
-    if (!group) {
-        return <div>No group data available.</div>;
-    }
-    console.log("heeey: ", group)
+function GroupsTabs() {
+    const [activeTab, setActiveTab] = useState('my-groups');
     return (
-        <div className={styles["group-container"]}>
-            {group.map(grp => (
-                <div key={grp.ID} className={styles["group-card"]}>
-                    <div className={styles["group-content"]}>
-                        <h2 className={styles["group-title"]}>{grp.Title}</h2>
-                        <p className={styles["group-description"]}>{grp.Description}</p>
-                    </div>
-                    <div className={styles["group-footer"]}>
-                        <button className={styles["join-button"]}>Join</button>
-                    </div>
-                </div>
-            ))}
-        </div>
-    )
+        <>
+            <div className="tabs-container">
+                <button className={activeTab === 'my-groups' ? 'tab-button active' : 'tab-button'}
+                    onClick={() => setActiveTab('my-groups')}>My Groups</button>
+                <button className={activeTab === 'all-groups' ? 'tab-button active' : 'tab-button'}
+                    onClick={() => setActiveTab('all-groups')}>All Groups</button>
+            </div>
+        </>
+    );
 }
+
+
 
