@@ -404,12 +404,10 @@ export default function Home() {
   const handleVisibilityChange = (e) => {
     const newVisibility = e.target.value;
     setVisibility(newVisibility);
-    // Clear selected users when changing from private
     if (visibility === 'private' && newVisibility !== 'private') {
       setSelectedUsers([]);
       return;
     }
-
     if (newVisibility === 'private') {
       fetchFollowers();
     }
@@ -461,6 +459,7 @@ export default function Home() {
           className={`modal-overlay ${showModal ? 'is-open' : ''}`}
           onMouseDown={(e) => {
             if (e.target === e.currentTarget) setShowModal(false);
+            setVisibility("public")
           }}
         >
           <div
@@ -474,7 +473,9 @@ export default function Home() {
             <button
               className="modal-close"
               aria-label="Close modal"
-              onClick={() => setShowModal(false)}
+              onClick={() => {setShowModal(false)
+                setVisibility('public')
+              }}
             >
               ✕
             </button>
@@ -544,7 +545,9 @@ export default function Home() {
                 </div>
               )}
               <div className="modal-actions">
-                <button type="button" className="btn cancel" onClick={() => setShowModal(false)}>
+                <button type="button" className="btn cancel" onClick={() => {setShowModal(false)
+                  setVisibility('public')
+                }}>
                   Cancel
                 </button>
                 <button type="submit" className="btn submit" disabled={loadingFollowers}>
