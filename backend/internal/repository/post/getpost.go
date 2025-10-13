@@ -140,9 +140,9 @@ LIMIT ? OFFSET ?;
 		}
 		posts = append(posts, post)
 	}
-	if len(posts) == 0{
-		return  nil, err
-	}
+	// if len(posts) == 0{
+	// 	return  nil, err
+	// }
 
 	if err := rows.Err(); err != nil {
 		return nil, fmt.Errorf("rows error: %v", err)
