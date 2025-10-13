@@ -53,10 +53,10 @@
   align-items: center;
   gap: 12px;
   padding: 8px;
-  background: color-mix(in srgb, var(--bg), white 10%);
+  background: color-mix(in srgb, var(--bg), rgb(179, 177, 177) 30%);
   border-radius: 10px;
   margin-bottom: 10px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+  /* box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25); */
 }
 
 .leftBar .menu .user img {
@@ -97,7 +97,7 @@
 .leftBar .menu .item span {
   font-size: 14px;
   font-weight: 500;
-  color: #555;
+  color: var(--textColorSoft);
 }
 
 .leftBar .menu .item:hover span {
