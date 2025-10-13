@@ -1,4 +1,5 @@
 @import url("../styles/comment.css");
+@import url("../styles/addpost.css");
 
 
 * {
@@ -28,6 +29,41 @@
 }
 
 
+.ddd {
+  height: 500px; /* height fixed */
+  overflow-y: auto;
+}
+.post .container .user .userInfo .details .date {
+  font-size: 12px;
+}
+
+/* 📸 Content */
+.post .container .content {
+  margin: 20px 0px;
+  flex-direction: column;
+}
+
+.post .container .content img {
+  width: 100%;
+  max-height: 500px;
+  object-fit: cover;
+  margin-top: 20px;
+}
+
+/* ℹ️ Info */
+.post .container .info {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.post .container .info .item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  font-size: 14px;
+}
 
 /* ==================== Modal styles ==================== */
 .modal-overlay {
