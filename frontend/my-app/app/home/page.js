@@ -39,6 +39,7 @@ export default function Home() {
   const offsetcomment = useRef(0)
   const modalRef = useRef(null);
   const modalRefhome = useRef(null)
+  const boleanofset = useRef(false)
   useEffect(() => {
     async function midle() {
       try {
@@ -65,7 +66,6 @@ export default function Home() {
     );
   }
   useEffect(() => {
-
     if (!modalRefhome.current) return;
 
     const modal = modalRefhome.current;
@@ -76,10 +76,7 @@ export default function Home() {
 
     const previousScrollHeight = modal.scrollHeight;
     async function handlescrollhome() {
-      let b = await fetchInitialPosts();
-
-
-
+      let b = await fetchingposts();
       if (b) {
 
         setTimeout(() => {
@@ -94,8 +91,6 @@ export default function Home() {
 
 
     if (reachedBottom && !loading) {
-      offsetpsot.current += 10
-
       handlescrollhome()
     }
   }, [scroollhome]);
@@ -176,10 +171,46 @@ export default function Home() {
       console.error("Error liking post:", err);
     }
   }
-  async function fetchInitialPosts() {
+  async function fetchingposts() {
+    if (!boleanofset.current) {
+      offsetpsot.current+=10
+      boleanofset.current = true
+    }
     try {
       setLoading(true);
       const res = await fetch(`http://localhost:8080/api/Getallpost/${offsetpsot.current}`, {
+        method: "GET",
+        credentials: "include",
+      });
+
+      if (!res.ok) {
+        return false
+      }
+
+      const data = await res.json();
+      console.log(data,"***********************-*/-/*/-/");
+      
+      console.log(data.length),"--------------------";
+      
+      if (data.length!==0) {
+        offsetpsot.current+=10
+      }else{
+        return false
+      }
+
+      setPosts([...data, ...posts]);
+      return true
+    } catch (err) {
+      console.error("Error fetching posts:", err);
+      return false
+    } finally {
+      setLoading(false);
+    }
+  }
+  async function fetchInitialPosts() {
+    try {
+      setLoading(true);
+      const res = await fetch(`http://localhost:8080/api/Getallpost/${0}`, {
         method: "GET",
         credentials: "include",
       });
@@ -248,6 +279,7 @@ export default function Home() {
           setPosts(prevPosts => [newPost, ...prevPosts]);
         }
       }
+      offsetpsot.current++
 
     } catch (err) {
       console.error("Error creating post:", err);
@@ -433,6 +465,8 @@ export default function Home() {
         {/* Feed Section */}
         <section className="feed"
           onScroll={(e) => setscroolHome(e.target.scrollTop)}
+          style={{ height: "100vh", overflowY: "auto" }}
+
           ref={modalRefhome}
         >
           <Stories />
@@ -473,7 +507,8 @@ export default function Home() {
             <button
               className="modal-close"
               aria-label="Close modal"
-              onClick={() => {setShowModal(false)
+              onClick={() => {
+                setShowModal(false)
                 setVisibility('public')
               }}
             >
@@ -545,7 +580,8 @@ export default function Home() {
                 </div>
               )}
               <div className="modal-actions">
-                <button type="button" className="btn cancel" onClick={() => {setShowModal(false)
+                <button type="button" className="btn cancel" onClick={() => {
+                  setShowModal(false)
                   setVisibility('public')
                 }}>
                   Cancel
