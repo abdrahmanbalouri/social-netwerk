@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"database/sql"
+	"encoding/json"
 	"log"
 	"net/http"
 	"sync"
@@ -14,7 +15,7 @@ import (
 
 // Global WebSocket-related variables managed within this package
 var (
-	Clients      = make(map[string][]*websocket.Conn) // Use models.Client
+	Clients      = make(map[string][]*websocket.Conn)
 	ClientsMutex sync.Mutex
 	Upgrader     = websocket.Upgrader{
 		CheckOrigin: func(r *http.Request) bool {
@@ -24,8 +25,18 @@ var (
 	}
 )
 
+type Message struct {
+	Type           string `json:"type"`
+	ReceiverId     string `json:"receiverId"`
+	MessageContent string `json:"messageContent"`
+	Name           string `json:"name"`
+	Photo          string `json:"photo"`
+	Content        string `json:"content"`
+	To             string `json:"to"`
+}
+
 // WebSocketHandler handles WebSocket connections and manages user sessions
-func WebSocketHandler(w http.ResponseWriter, r *http.Request) {
+func Websocket(w http.ResponseWriter, r *http.Request) {
 	conn, err := Upgrader.Upgrade(w, r, nil)
 	if err != nil {
 		log.Println("WebSocket upgrade error:", err)
@@ -71,34 +82,34 @@ func WebSocketHandler(w http.ResponseWriter, r *http.Request) {
 
 func Loop(conn *websocket.Conn, currentUserID string) {
 	for {
-		var msg map[string]any
+		var msg Message
 		if err := conn.ReadJSON(&msg); err != nil {
 			log.Println("WebSocket read error:", err)
 			break
 		}
-		typeMsg, ok := msg["type"].(string)
-		if !ok {
-			log.Println("Invalid message format")
-			continue
-		}
-		switch typeMsg {
+
+		switch msg.Type {
+		// ===============================
+		//  HANDLE LOGOUT
+		// ===============================
 		case "logout":
-			// Handle user logout
 			BrodcastOnlineStatus(currentUserID, false)
 			delete(Clients, currentUserID)
-			return // Exit the loop to close the connection
+			return
+
+		// ===============================
+		//  HANDLE CHAT MESSAGE
+		// ===============================
 		case "message":
-			// Handle chat message broadcasting
-			recipientID, ok := msg["to"].(string)
-			if !ok {
+			if msg.To == "" {
 				log.Println("Invalid recipient ID")
 				continue
 			}
-			// Check if recipient exists and if either user follows the other
+
 			var exists int
 			err := repository.Db.QueryRow(`
 				SELECT 1 FROM users WHERE id = ?
-			`, recipientID).Scan(&exists)
+			`, msg.To).Scan(&exists)
 			if err == sql.ErrNoRows {
 				log.Println("Recipient user not found")
 				continue
@@ -112,7 +123,7 @@ func Loop(conn *websocket.Conn, currentUserID string) {
 				SELECT 1 FROM follows 
 				WHERE (user_id = ? AND followed_id = ?)
 				   OR (user_id = ? AND followed_id = ?)
-			`, currentUserID, recipientID, recipientID, currentUserID).Scan(&followExists)
+			`, currentUserID, msg.To, msg.To, currentUserID).Scan(&followExists)
 			if err == sql.ErrNoRows {
 				log.Println("No follow relationship between users")
 				continue
@@ -120,19 +131,71 @@ func Loop(conn *websocket.Conn, currentUserID string) {
 				log.Println("DB error:", err)
 				continue
 			}
-			// Store message in the database and send to recipient
-			_, err = repository.Db.Exec("INSERT INTO messages (sender_id, recipient_id, content) VALUES (?, ?, ?)", currentUserID, recipientID, msg["content"])
+
+			_, err = repository.Db.Exec("INSERT INTO messages (sender_id, recipient_id, content) VALUES (?, ?, ?)", currentUserID, msg.To, msg.Content)
 			if err != nil {
 				log.Println("DB error:", err)
 				continue
 			}
-			// Send the message to the recipient and the sender
-			sendToUser(recipientID, msg)
-			sendToUser(currentUserID, msg) // Echo back to sender
+
+			sendToUser(msg.To, map[string]any{
+				"type":    "message",
+				"from":    currentUserID,
+				"content": msg.Content,
+			})
+			sendToUser(currentUserID, map[string]any{
+				"type":    "message",
+				"from":    currentUserID,
+				"content": msg.Content,
+			})
+
+		// ===============================
+		//  HANDLE FOLLOW NOTIFICATION
+		// ===============================
+		case "follow":
+			var followID int
+			var name, photo string
+
+			err := repository.Db.QueryRow(`SELECT nickname, image FROM users WHERE id = ?`, currentUserID).Scan(&name, &photo)
+			if err != nil {
+				log.Println("DB error getting user info:", err)
+				continue
+			}
+
+			query := `SELECT id FROM followers WHERE user_id = ? AND follower_id = ?`
+			_ = repository.Db.QueryRow(query, currentUserID, msg.ReceiverId).Scan(&followID)
+
+			if followID != 0 {
+				msg.Type = "already_following"
+			} else {
+				msg.Name = name
+				msg.Photo = photo
+				msg.MessageContent = "has followed you"
+			}
+
+			// Notify all connected users (except current user)
+			ClientsMutex.Lock()
+			for uid, conns := range Clients {
+				if uid == currentUserID {
+					continue
+				}
+				for _, con := range conns {
+					jsonMsg, err := json.Marshal(msg)
+					if err != nil {
+						continue
+					}
+					if err := con.WriteMessage(websocket.TextMessage, jsonMsg); err != nil {
+						log.Println("WebSocket write error:", err)
+					}
+				}
+			}
+			ClientsMutex.Unlock()
+
 		default:
-			log.Println("Unknown message type:", typeMsg)
+			log.Println("Unknown message type:", msg.Type)
 		}
-		log.Printf("Received message from user %s: %v", currentUserID, msg)
+
+		log.Printf("Received message from user %s: %+v", currentUserID, msg)
 	}
 }
 
