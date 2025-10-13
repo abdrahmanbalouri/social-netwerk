@@ -37,7 +37,7 @@ export default function Home() {
   const [scroollhome, setscroolHome] = useState(0)
   const offsetpsot = useRef(0)
   const offsetcomment = useRef(0)
-  const modalRef = useRef(null); 
+  const modalRef = useRef(null);
   const modalRefhome = useRef(null)
   useEffect(() => {
     async function midle() {
@@ -70,15 +70,15 @@ export default function Home() {
 
     const modal = modalRefhome.current;
 
-const reachedBottom =
-  modal.scrollHeight > modal.clientHeight + 10 && 
-  modal.scrollTop + modal.clientHeight >= modal.scrollHeight - 50;
+    const reachedBottom =
+      modal.scrollHeight > modal.clientHeight + 10 &&
+      modal.scrollTop + modal.clientHeight >= modal.scrollHeight - 50;
 
     const previousScrollHeight = modal.scrollHeight;
     async function handlescrollhome() {
       let b = await fetchInitialPosts();
-      
-      
+
+
 
       if (b) {
 
@@ -91,8 +91,8 @@ const reachedBottom =
       }
 
     }
- 
-           
+
+
     if (reachedBottom && !loading) {
       offsetpsot.current += 10
 
@@ -188,7 +188,7 @@ const reachedBottom =
         return false
       }
       console.log(res);
-      
+
       const data = await res.json();
       console.log(offsetpsot.current);
 
@@ -436,7 +436,7 @@ const reachedBottom =
         <section className="feed"
           onScroll={(e) => setscroolHome(e.target.scrollTop)}
           ref={modalRefhome}
-          style={{ height: "100vh", overflowY: "auto" }}>
+        >
           <Stories />
           {!posts ? (
             <p>No posts available</p>
