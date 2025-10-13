@@ -71,7 +71,6 @@ WHERE u.id = ?;
 		http.Error(w, "User not found", http.StatusNotFound)
 		return
 	}
-	fmt.Println("user", user.IsFollowing)
 
 	var followers int
 

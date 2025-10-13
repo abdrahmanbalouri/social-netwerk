@@ -13,7 +13,7 @@ import LanguageIcon from "@mui/icons-material/Language";
 import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import ProfileCardEditor from '../../../components/ProfileCardEditor.js';
-
+import { useWS } from "../../../context/wsContext.js";
 export default function Profile() {
   const { Profile } = useProfile();
 
@@ -29,6 +29,19 @@ export default function Profile() {
   const [selectedPost, setSelectedPost] = useState(null);
   const [comment, setComment] = useState([]);
   const commentsModalRef = useRef(null);
+  const { ws, connected } = useWS();
+
+  const sendMsg = () => {
+    const payload = {
+      receiverId: params.id,
+      messageContent: "",
+      type: "follow",
+    };
+
+    if (connected && ws) {
+      ws.send(JSON.stringify(payload));
+    }
+  };
 
 
   const [theprofile, setProfile] = useState(null);
@@ -288,9 +301,10 @@ export default function Profile() {
                 </div>
                 {Profile && Profile.id !== theprofile.id && (
                   <button id='FollowBtn'
-
-
-                    onClick={followUser}
+                    onClick={() => {
+                      followUser();
+                      sendMsg();
+                    }}
                     style={{
                       backgroundColor: theprofile.isFollowing ? "blue" : "white",
                       color: theprofile.isFollowing ? "white" : "black",
