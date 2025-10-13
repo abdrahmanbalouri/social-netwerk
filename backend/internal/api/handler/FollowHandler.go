@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"fmt"
 	"net/http"
 
 	"social-network/internal/helper"
@@ -35,7 +34,6 @@ func FollowHandler(w http.ResponseWriter, r *http.Request) {
 		isFollowed = false
 		_, err := repository.Db.Exec(`DELETE FROM followers WHERE  user_id = ? AND follower_id = ?`, UserID, id)
 		if err != nil {
-			fmt.Println("Error following user:", err)
 			http.Error(w, "Failed to follow user: "+err.Error(), http.StatusInternalServerError)
 			return
 		}
@@ -45,7 +43,6 @@ func FollowHandler(w http.ResponseWriter, r *http.Request) {
 		q := `INSERT INTO followers (user_id, follower_id) VALUES (?, ?)`
 		_, err = repository.Db.Exec(q, UserID, id)
 		if err != nil {
-			fmt.Println("Error following user:", err)
 			http.Error(w, "Failed to follow user: "+err.Error(), http.StatusInternalServerError)
 			return
 		}
@@ -57,7 +54,6 @@ func FollowHandler(w http.ResponseWriter, r *http.Request) {
 
 	errr := repository.Db.QueryRow(`SELECT COUNT(*) FROM followers WHERE user_id = ?  `, id).Scan(&followers)
 	if errr != nil {
-		fmt.Println(errr)
 		return
 	}
 
@@ -65,7 +61,6 @@ func FollowHandler(w http.ResponseWriter, r *http.Request) {
 
 	errr = repository.Db.QueryRow(`SELECT COUNT(*) FROM followers WHERE follower_id = ?  `, id).Scan(&following)
 	if errr != nil {
-		fmt.Println(errr)
 		return
 	}
 

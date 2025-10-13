@@ -10,6 +10,10 @@ export default function LeftBar({ showSidebar }) {
   const router = useRouter();
   const { Profile } = useProfile();
 
+
+  console.log(Profile);
+
+
   async function handleLogout(e) {
     e?.preventDefault?.();
     try {
@@ -37,6 +41,7 @@ export default function LeftBar({ showSidebar }) {
     fontWeight: 600,
     marginTop: '12px'
   };
+console.log(Profile);
 
   return (
     <div className="leftBar">
@@ -48,24 +53,30 @@ export default function LeftBar({ showSidebar }) {
             />
             <span>{Profile?.nickname ?? 'user name'}</span>
           </div>
+          <Link href={`/follow/${Profile?.id}?tab=following`}  >  
           <div className="item">
             <img src="/icone/1.png" alt="" />
             <span>following</span>
           </div>
+            </Link>
+          <Link href={`/follow/${Profile?.id}?tab=followers`} >  
           <div className="item">
+
             <img src="/icone/1.png" alt="" />
+
             <span>followers</span>
           </div>
+            </Link>
           <div className="item">
             <img src="/icone/2.png" alt="" />
             <span>Groups</span>
           </div>
-          <div className="item">
             <Link href={'/watch'}>
+          <div className="item">
               <img src="/icone/4.png" alt="" />
-            </Link>
-              <span>Watch</span>
+            <span>Watch</span>
           </div>
+            </Link>
 
         </div>
         <hr />
@@ -75,18 +86,18 @@ export default function LeftBar({ showSidebar }) {
             <img src="/icone/6.png" alt="" />
             <span>Events</span>
           </div>
-          <div className="item">
             <Link href={'/games'}>
+          <div className="item">
               <img src="/icone/7.png" alt="" />
-            </Link>
             <span>Gaming</span>
           </div>
-          <div className="item">
-            <Link href={'/Gallery'}>
-              <img src="/icone/8.png" alt="" />
             </Link>
+            <Link href={'/Gallery'}>
+          <div className="item">
+              <img src="/icone/8.png" alt="" />
             <span>Gallery</span>
           </div>
+            </Link>
           <div className="item">
             <img src="/icone/10.png" alt="" />
             <span>Messages</span>
