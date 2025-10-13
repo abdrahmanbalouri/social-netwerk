@@ -34,7 +34,13 @@ export default function Post({ post, onGetComments, ondolike }) {
             />
             {post.like || 0} Likes
           </div>
-          <div className="item" onClick={() => onGetComments(post)}>
+          <div className="item" onClick={() => { onGetComments(post)
+
+            console.log(2323232323232);
+            
+          }
+        
+        }>
             <i className="fa-solid fa-comment"></i> {post.comments_count || 0} Comments
           </div>
         </div>
