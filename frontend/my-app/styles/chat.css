@@ -73,34 +73,6 @@
   transform: scale(1.08);
 }
 
-.profile-pic::before {
-  content: '';
-  position: absolute;
-  bottom: 2px;
-  right: 2px;
-  width: 12px;
-  height: 12px;
-  background: black;
-  border: 2px solid black;
-  border-radius: 50%;
-  box-shadow: 0 0 8px rgba(66, 183, 42, 0.6);
-  animation: onlinePulse 2s infinite;
-}
-
-@keyframes onlinePulse {
-
-  0%,
-  100% {
-    opacity: 1;
-    transform: scale(1);
-  }
-
-  50% {
-    opacity: 0.7;
-    transform: scale(0.95);
-  }
-}
-
 .username {
   font-size: 17px;
   font-weight: 700;
@@ -414,47 +386,5 @@
 .message.me+.message.them,
 .message.them+.message.me {
   margin-top: 12px;
-}
-
-.typing-indicator {
-  align-self: flex-start;
-  background: var(--message-received);
-  padding: 12px 18px;
-  border-radius: 18px;
-  border-bottom-left-radius: 4px;
-  display: flex;
-  gap: 4px;
-  align-items: center;
-}
-
-.typing-indicator span {
-  width: 8px;
-  height: 8px;
-  background: var(--text-secondary);
-  border-radius: 50%;
-  animation: typingBounce 1.4s infinite ease-in-out;
-}
-
-.typing-indicator span:nth-child(1) {
-  animation-delay: -0.32s;
-}
-
-.typing-indicator span:nth-child(2) {
-  animation-delay: -0.16s;
-}
-
-@keyframes typingBounce {
-
-  0%,
-  80%,
-  100% {
-    transform: scale(0);
-    opacity: 0.5;
-  }
-
-  40% {
-    transform: scale(1);
-    opacity: 1;
-  }
 }
 
