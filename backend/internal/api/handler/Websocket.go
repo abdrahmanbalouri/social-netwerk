@@ -63,6 +63,7 @@ func Websocket(w http.ResponseWriter, r *http.Request) {
 				messageStruct.Name = name
 				messageStruct.Photo = photo
 				messageStruct.MessageContent = "has following you"
+				
 			}
 			for i, conArr := range ConnectedUsers {
 				if i != id {
