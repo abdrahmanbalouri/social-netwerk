@@ -49,7 +49,7 @@ export default function Navbar({ onCreatePost }) {
   return (
     <div className="navbar">
       <div className="left">
-        <Link href="/home" style={{ textDecoration: "none" }}>
+        <Link href="/home">
           <span>Social-Network</span>
         </Link>
 
