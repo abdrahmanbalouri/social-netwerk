@@ -30,21 +30,7 @@ func GetCommentsHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil || offset < 0 {
 		offset = 0
 	}
-	userID, err := helper.AuthenticateUser(r)
-	if err != nil {
-		helper.RespondWithError(w, http.StatusUnauthorized, "Authentication required")
-		return
-	}
-
-	can, err := helper.CanViewComments(userID, postID)
-	if err != nil {
-		helper.RespondWithError(w, http.StatusInternalServerError, "Error checking permissions")
-		return
-	}
-	if !can {
-		helper.RespondWithError(w, http.StatusForbidden, "You do not have permission to view comments on this post")
-		return
-	}
+	
 
 	rows, err := repository.Db.Query(`
         SELECT c.id, c.content, c.created_at, u.nickname
@@ -76,9 +62,6 @@ func GetCommentsHandler(w http.ResponseWriter, r *http.Request) {
 		}
 		comments = append(comments, comment)
 	}
-	if len(comments) == 0 {
-		helper.RespondWithError(w, http.StatusInternalServerError, "no comment in found ")
-		return
-	}
+	
 	helper.RespondWithJSON(w, http.StatusOK, comments)
 }
