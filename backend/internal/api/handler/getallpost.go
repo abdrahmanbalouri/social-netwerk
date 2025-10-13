@@ -33,5 +33,9 @@ func AllpostsHandler(w http.ResponseWriter, r *http.Request) {
 		helper.RespondWithError(w, http.StatusInternalServerError, "Failed to retrieve posts")
 		return
 	}
+	if posts == nil {
+		helper.RespondWithError(w, http.StatusInternalServerError, "Failed to retrieve posts")
+		return
+	}
 	helper.RespondWithJSON(w, http.StatusOK, posts)
 }
