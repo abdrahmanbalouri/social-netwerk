@@ -38,6 +38,31 @@ export default function Post({ post, onGetComments, ondolike }) {
             </div>
           </div>
         </div>
+        <div className="content">
+          <h3>
+            <p style={{ color: "#5271ff" }}>{post.title}</p>
+            {post.content}
+          </h3>
+          {post.image_path && <img src={`/${post.image_path}`} alt="Post content" />}
+        </div>
+        <div className="info">
+          <div className="item" onClick={() => ondolike(post.id)} >
+            <i
+              className={post.liked_by_user ? "fa-solid fa-heart" : "fa-regular fa-heart"}
+              style={post.liked_by_user ? { color: "red" } : {}}
+            />
+            {post.like || 0} Likes
+          </div>
+          <div className="item" onClick={() => { onGetComments(post)
+
+            console.log(2323232323232);
+            
+          }
+        
+        }>
+            <i className="fa-solid fa-comment"></i> {post.comments_count || 0} Comments
+          </div>
+        </div>
       </div>
   );
 }
