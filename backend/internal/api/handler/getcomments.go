@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"fmt"
 	"net/http"
 	"strconv"
 	"strings"
@@ -30,7 +31,23 @@ func GetCommentsHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil || offset < 0 {
 		offset = 0
 	}
-	
+	userID, err := helper.AuthenticateUser(r)
+	if err != nil {
+		helper.RespondWithError(w, http.StatusUnauthorized, "Authentication required")
+		return
+	}
+
+	fmt.Println(userID)
+
+	// can, err := helper.CanViewComments(userID, postID)
+	// if err != nil {
+	// 	helper.RespondWithError(w, http.StatusInternalServerError, "Error checking permissions")
+	// 	return
+	// }
+	// if !can {
+	// 	helper.RespondWithError(w, http.StatusForbidden, "You do not have permission to view comments on this post")
+	// 	return
+	// }
 
 	rows, err := repository.Db.Query(`
         SELECT c.id, c.content, c.created_at, u.nickname
@@ -40,6 +57,7 @@ func GetCommentsHandler(w http.ResponseWriter, r *http.Request) {
         ORDER BY c.created_at desc
         LIMIT 10 OFFSET ?`, postID, offset)
 	if err != nil {
+		fmt.Println("1111",err)
 		helper.RespondWithError(w, http.StatusInternalServerError, "Failed to fetch comments")
 		return
 	}
