@@ -53,30 +53,30 @@ console.log(Profile);
             />
             <span>{Profile?.nickname ?? 'user name'}</span>
           </div>
+          <Link href={`/follow/${Profile?.id}?tab=following`}  >  
           <div className="item">
-          <Link href={`/follow/${Profile?.id}?tab=following`}>  
             <img src="/icone/1.png" alt="" />
-            </Link>
             <span>following</span>
           </div>
+            </Link>
+          <Link href={`/follow/${Profile?.id}?tab=followers`} >  
           <div className="item">
-          <Link href={`/follow/${Profile?.id}?tab=followers`}>  
 
             <img src="/icone/1.png" alt="" />
-            </Link>
 
             <span>followers</span>
           </div>
+            </Link>
           <div className="item">
             <img src="/icone/2.png" alt="" />
             <span>Groups</span>
           </div>
-          <div className="item">
             <Link href={'/watch'}>
+          <div className="item">
               <img src="/icone/4.png" alt="" />
-            </Link>
             <span>Watch</span>
           </div>
+            </Link>
 
         </div>
         <hr />
@@ -86,18 +86,18 @@ console.log(Profile);
             <img src="/icone/6.png" alt="" />
             <span>Events</span>
           </div>
-          <div className="item">
             <Link href={'/games'}>
+          <div className="item">
               <img src="/icone/7.png" alt="" />
-            </Link>
             <span>Gaming</span>
           </div>
-          <div className="item">
-            <Link href={'/Gallery'}>
-              <img src="/icone/8.png" alt="" />
             </Link>
+            <Link href={'/Gallery'}>
+          <div className="item">
+              <img src="/icone/8.png" alt="" />
             <span>Gallery</span>
           </div>
+            </Link>
           <div className="item">
             <img src="/icone/10.png" alt="" />
             <span>Messages</span>
