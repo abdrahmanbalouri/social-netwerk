@@ -65,7 +65,7 @@ export default function RightBar() {
       </div>
 
       <div className="item">
-        <span>Online Friends</span>
+        <span>Friends</span>
         {!users || users.length === 0 ? (
           <h1>no users for now</h1>
         ) : (
