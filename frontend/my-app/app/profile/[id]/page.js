@@ -223,6 +223,15 @@ export default function Profile() {
       );
       if (res.ok) {
         let followw = await res.json();
+        theprofile
+        console.log("33333333333333333",
+          theprofile.privacy
+        );
+
+       /*  if (theprofile.privacy === "private") {
+
+           return           
+        } */
 
         // Update state directly, ma t3melsh direct DOM manipulation
         setProfile((prevProfile) => ({
@@ -234,6 +243,29 @@ export default function Profile() {
       }
     } catch (error) {
       console.error("Error following user:", error);
+    }
+  }
+
+
+
+
+  function PrFollow() {
+    if (!theprofile) return "";
+
+    if (theprofile.privacy === "private") {
+      if (theprofile.isFollowing) {
+        return "Unfollow";
+      } else if (theprofile.isPending) {
+        return "Pending";
+      } else {
+        return "Request";
+      }
+    } else {
+      if (theprofile.isFollowing) {
+        return "Unfollow";
+      } else {
+        return "Follow";
+      }
     }
   }
 
@@ -365,13 +397,7 @@ export default function Profile() {
                       padding: "8px 16px",
                     }}
                   >
-                    {Profile &&
-                      (theprofile.isFollowing
-                        ? "Unfollow"
-                        : theprofile.privacy === "private" &&
-                          !theprofile.isFollowing
-                          ? "Pending"
-                          : "Follow")}
+                    {PrFollow()}
                   </button>
                 )}
               </div>
