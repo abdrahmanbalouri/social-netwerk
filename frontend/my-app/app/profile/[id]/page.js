@@ -14,6 +14,8 @@ import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import ProfileCardEditor from '../../../components/ProfileCardEditor.js';
 import { useWS } from "../../../context/wsContext.js";
+import Link from 'next/link';
+
 export default function Profile() {
   const { Profile } = useProfile();
 
@@ -322,7 +324,7 @@ export default function Profile() {
             <div className="uInfo">
               <div className="left">
                 <Link href={`/follow/${theprofile.id}?tab=followers`}>
-                  
+
                   <p>
                     following
                     <strong id="following">{theprofile.following} </strong>
@@ -331,12 +333,12 @@ export default function Profile() {
 
 
                 <Link href={`/follow/${theprofile.id}?tab=following`}>
-                <p>
-                  followers
-                  <strong id="followers"> {theprofile.followers}</strong>
-                </p>
+                  <p>
+                    followers
+                    <strong id="followers"> {theprofile.followers}</strong>
+                  </p>
 
-                 </Link>
+                </Link>
               </div>
               <div className="center">
                 <span>{theprofile.nickname}</span>
@@ -364,8 +366,8 @@ export default function Profile() {
                         ? "Unfollow"
                         : theprofile.privacy === "private" &&
                           !theprofile.isFollowing
-                        ? "Pending"
-                        : "Follow")}
+                          ? "Pending"
+                          : "Follow")}
                   </button>
                 )}
               </div>
