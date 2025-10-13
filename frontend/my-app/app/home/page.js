@@ -22,7 +22,6 @@ export default function Home() {
   const [showComments, setShowComments] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [posts, setPosts] = useState([]);
-  const [users, setusers] = useState([]);
   const [title, setTitle] = useState("");
   const [image, setImage] = useState(null);
   const [content, setContent] = useState("");
@@ -35,13 +34,13 @@ export default function Home() {
   const [error, setError] = useState(''); // Error state for fetching
   const [followers, setFollowers] = useState([]); // Followers list
   const [loadingcomment, setLoadingcomment] = useState(false);
+  const [scroollhome, setscroolHome] = useState(0)
   const offsetpsot = useRef(0)
   const offsetcomment = useRef(0)
-
-
   const modalRef = useRef(null);
   const commentsModalRef = useRef(null);
  
+  const modalRefhome = useRef(null)
   useEffect(() => {
     async function midle() {
       try {
@@ -67,15 +66,41 @@ export default function Home() {
         : [...prevSelected, userId]
     );
   }
- useEffect(() => {
-    const handleScroll = () => {
+  useEffect(() => {
 
-    };
+    if (!modalRefhome.current) return;
 
-    window.addEventListener("scroll", handleScroll);
+    const modal = modalRefhome.current;
 
-  
-  }, []);
+const reachedBottom =
+  modal.scrollHeight > modal.clientHeight + 10 && 
+  modal.scrollTop + modal.clientHeight >= modal.scrollHeight - 50;
+
+    const previousScrollHeight = modal.scrollHeight;
+    async function handlescrollhome() {
+      let b = await fetchInitialPosts();
+      
+      
+
+      if (b) {
+
+        setTimeout(() => {
+          const newScrollHeight = modal.scrollHeight;
+          const heightIncrease = newScrollHeight - previousScrollHeight;
+
+          modal.scrollTop -= heightIncrease - modal.clientHeight;
+        }, 0);
+      }
+
+    }
+ 
+           
+    if (reachedBottom && !loading) {
+      offsetpsot.current += 10
+
+      handlescrollhome()
+    }
+  }, [scroollhome]);
   async function logout(e) {
     e.preventDefault();
 
@@ -96,7 +121,6 @@ export default function Home() {
       console.error("Logout error:", err);
     }
   }
-  // Function to fetch followers from backend
   const fetchFollowers = async () => {
     setLoadingFollowers(true);
     setError('');
@@ -107,13 +131,13 @@ export default function Home() {
       });
       if (!response.ok) {
         console.log(222);
-        
+
         throw new Error('Failed to fetch followers');
       }
-      let  data = await response.json();
+      let data = await response.json();
       console.log(data);
-      
-      if (!data){
+
+      if (!data) {
         data = []
       }
       setFollowers(data);
@@ -161,29 +185,35 @@ export default function Home() {
       console.error("Error liking post:", err);
     }
   }
-  // Fetch initial posts on component mount
-  useEffect(() => {
-    async function fetchInitialPosts() {
-      try {
-        setLoading(true);
-        const res = await fetch(`http://localhost:8080/api/Getallpost/${offsetpsot.current}`, {
-          method: "GET",
-          credentials: "include",
-        });
+  async function fetchInitialPosts() {
+    try {
+      setLoading(true);
+      const res = await fetch(`http://localhost:8080/api/Getallpost/${offsetpsot.current}`, {
+        method: "GET",
+        credentials: "include",
+      });
 
-        if (!res.ok) {
-          throw new Error("Failed to fetch posts");
-        }
-        offsetpsot.current+=10
-        const data = await res.json();
-
-        setPosts(Array.isArray(data) ? data : []);
-      } catch (err) {
-        console.error("Error fetching posts:", err);
-      } finally {
-        setLoading(false);
+      if (!res.ok) {
+        return false
       }
+      console.log(res);
+      
+      const data = await res.json();
+      console.log(offsetpsot.current);
+
+      console.log(data);
+
+
+      setPosts([...data, ...posts]);
+      return true
+    } catch (err) {
+      console.error("Error fetching posts:", err);
+      return false
+    } finally {
+      setLoading(false);
     }
+  }
+  useEffect(() => {
 
     fetchInitialPosts();
   }, []);
@@ -199,8 +229,8 @@ export default function Home() {
       if (image) formData.append("image", image);
       formData.append("content", content);
       formData.append("visibility", visibility);
-      
-      
+
+
       if (visibility === 'private') {
         formData.append("allowed_users", JSON.stringify(selectedUsers.join(',')));
       }
@@ -261,9 +291,9 @@ export default function Home() {
     }
   }
 
-  async function GetComments(post) {    
-     console.log(offsetcomment.current);
-     
+  async function GetComments(post) {
+    console.log(offsetcomment.current);
+
     setLoadingcomment(true)
     try {
       setSelectedPost({
@@ -295,24 +325,24 @@ export default function Home() {
         content: comment.content || comment.text || "",
         created_at: comment.created_at || comment.createdAt || new Date().toISOString()
       }));
-      
-      setComment([...comments,...comment]);
+
+      setComment([...comments, ...comment]);
       setShowComments(true);
       return true
 
     } catch (err) {
       return false
-    } 
-    finally{
-      offsetcomment.current+=10
+    }
+    finally {
+      offsetcomment.current += 10
       setLoadingcomment(false);
     }
   }
 
-  useEffect(()=>{
+  useEffect(() => {
 
 
-  },[])
+  }, [])
 
   // Refresh comments after posting a new comment
   async function refreshComments(commentID) {
@@ -326,7 +356,7 @@ export default function Home() {
 
       if (res.ok) {
         const data = await res.json();
-        
+
         let newcomment = [];
 
         if (Array.isArray(data)) {
@@ -337,12 +367,12 @@ export default function Home() {
           newcomment = [data];
         }
         console.log(newcomment);
-        
 
-        setComment([...newcomment,...comment]);
+
+        setComment([...newcomment, ...comment]);
         offsetcomment.current++
-        
-  
+
+
         const potsreplace = await fetchPosts(selectedPost.id)
         for (let i = 0; i < posts.length; i++) {
           if (posts[i].id == selectedPost.id) {
@@ -407,12 +437,15 @@ export default function Home() {
 
       {/* Main Content */}
       <main className="content">
-      
+
 
         <LeftBar showSidebar={showSidebar} />
 
         {/* Feed Section */}
-        <section className="feed">
+        <section className="feed"
+          onScroll={(e) => setscroolHome(e.target.scrollTop)}
+          ref={modalRefhome}
+          style={{ height: "100vh", overflowY: "auto" }}>
           <Stories />
           {!posts ? (
             <p>No posts available</p>
@@ -427,7 +460,7 @@ export default function Home() {
             ))
           )}
         </section>
-        <RightBar/>
+        <RightBar />
 
       </main>
 
@@ -505,7 +538,7 @@ export default function Home() {
                           src={`/uploads/${follower.image}` || "/default-avatar.png"}
                           alt={follower.nickname}
                           className="image-avatar"
-                        />              
+                        />
                         <span>{follower.nickname}</span>
                         <input
                           type="checkbox"
@@ -543,8 +576,8 @@ export default function Home() {
             postTitle={selectedPost?.title}
             onCommentChange={refreshComments}
             lodinggg={loadingcomment}
-            ongetcomment = {GetComments}
-            post = {selectedPost}
+            ongetcomment={GetComments}
+            post={selectedPost}
           />
         )
       }
