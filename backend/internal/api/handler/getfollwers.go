@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"fmt"
 	"net/http"
 
 	"social-network/internal/helper"
@@ -21,7 +20,6 @@ func Getfollowers(w http.ResponseWriter, r *http.Request) {
 
 	rows, err := repository.Db.Query("select u.id, u.nickname, u.image from users u join followers f on u.id = f.follower_id where f.user_id = ?", UserId)
 	if err != nil {
-		fmt.Println(err)
 		helper.RespondWithError(w, http.StatusInternalServerError, "Database query error")
 		return
 	}
@@ -30,7 +28,6 @@ func Getfollowers(w http.ResponseWriter, r *http.Request) {
 	for rows.Next() {
 		var user utils.User
 		if err := rows.Scan(&user.ID, &user.Nickname, &user.Image); err != nil {
-			fmt.Println("222")
 			helper.RespondWithError(w, http.StatusInternalServerError, "Database scan error")
 			return
 		}
@@ -40,7 +37,6 @@ func Getfollowers(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := rows.Err(); err != nil {
-		fmt.Println("333")
 		helper.RespondWithError(w, http.StatusInternalServerError, "Database rows error")
 		return
 	}

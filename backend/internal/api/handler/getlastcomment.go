@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"database/sql"
-	"fmt"
 	"net/http"
 	"strings"
 
@@ -23,12 +22,7 @@ func Getlastcommnet(w http.ResponseWriter, r *http.Request) {
 	}
 
 	coomentId := parts[3]
-	userID, err := helper.AuthenticateUser(r)
-	if err != nil {
-		helper.RespondWithError(w, http.StatusUnauthorized, "Authentication required")
-		return
-	}
-	fmt.Println(userID)
+
 	row := repository.Db.QueryRow(`
 		SELECT 
 			c.id, 
@@ -53,7 +47,7 @@ func Getlastcommnet(w http.ResponseWriter, r *http.Request) {
 		Profile   string `json:"profile"`
 	}
 
-	err = row.Scan(&comment.ID, &comment.PostID, &comment.UserID, &comment.Content, &comment.CreatedAt, &comment.Author, &comment.Profile)
+	err := row.Scan(&comment.ID, &comment.PostID, &comment.UserID, &comment.Content, &comment.CreatedAt, &comment.Author, &comment.Profile)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			helper.RespondWithError(w, http.StatusNotFound, "Comment not found")
