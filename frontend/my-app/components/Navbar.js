@@ -7,6 +7,7 @@ import { useWS } from "../context/wsContext.js";
 import { useState, useEffect } from "react";
 import Notification from "./notofication.js";
 import "../styles/search.css"
+import NOtBar from "./notfcationBar.js"
 
 export default function Navbar({ onCreatePost }) {
   const router = useRouter();
