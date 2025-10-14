@@ -18,7 +18,6 @@ export default function Game() {
         });
 
         if (!response.ok) {
-          console.log(1111111111);
           
           router.replace("/login");
           return null;
