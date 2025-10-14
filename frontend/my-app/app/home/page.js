@@ -42,8 +42,6 @@ export default function Home() {
   const boleanofset = useRef(false)
   const postRefs = useRef({});
   function scrollToPost(postId) {
-    console.log(postId, "---------+++++++++");
-
     const el = postRefs.current[postId];
     if (el) {
       el.scrollIntoView({ behavior: "smooth", block: "start" });
