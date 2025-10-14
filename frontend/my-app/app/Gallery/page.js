@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useRef, useState } from "react";
-import "./gallery.css";
+import "../../styles/gallery.css";
 import { useProfile } from "../../context/profile";
 import { useDarkMode } from "../../context/darkMod";
 import Navbar from "../../components/Navbar";
@@ -45,6 +45,8 @@ export default function Gallery() {
     })
       .then((res) => res.json())
       .then((data) => {
+        console.log(data);
+
         setImages(data);
 
         if (data.length > 0) {
@@ -55,7 +57,9 @@ export default function Gallery() {
   }, [Profile]);
 
   function next() {
-    let items = slideRef.current.querySelectorAll(".item");
+    let items = slideRef.current.querySelectorAll(".gallery-item");
+    if (items.length === 0) return;
+
     slideRef.current.appendChild(items[0]);
 
     const bg = window.getComputedStyle(items[items.length - 1]).backgroundImage;
@@ -63,7 +67,9 @@ export default function Gallery() {
   }
 
   function prev() {
-    let items = slideRef.current.querySelectorAll(".item");
+    let items = slideRef.current.querySelectorAll(".gallery-item");
+    if (items.length === 0) return;
+
     slideRef.current.prepend(items[items.length - 1]);
 
     const bg = window.getComputedStyle(items[items.length - 1]).backgroundImage;
@@ -73,42 +79,42 @@ export default function Gallery() {
   return (
     <div className={darkMode ? "theme-dark" : "theme-light"}>
       <Navbar />
-      <div className="con" >
+      <div className="gallery-page">
         <LeftBar showSidebar={true} />
-        <main className="gallery">
-          <div className="container1" style={{ backgroundImage: imgIndex }}>
-            <div className="slide" ref={slideRef}>
+        <main className="gallery-main">
+          <div className="gallery-wrapper" style={{ backgroundImage: imgIndex }}>
+            <div className="gallery-slider" ref={slideRef}>
               {images.map((img, index) => (
                 <div
-                  className="item"
-                  key={index + 1}
+                  className="gallery-item"
+                  key={index}
                   style={{ backgroundImage: `url(/${img.imagePath})` }}
                 >
-                  <div className="content">
-                    <div className="name">{img.title || "No Title"}</div>
-                    <div className="des">
+                  <div className="gallery-content">
+                    <div className="gallery-title">{img.title || "No Title"}</div>
+                    <div className="gallery-desc">
                       {img.description ||
                         "Lorem ipsum dolor sit amet consectetur adipisicing elit. Ab, eum!"}
                     </div>
-                    <button>See More</button>
+                    <button className="gallery-btn">See More</button>
                   </div>
                 </div>
               ))}
             </div>
 
-            <div className="button">
-              <button className="prev" onClick={prev}>
+            <div className="gallery-nav">
+              <button className="gallery-prev" onClick={prev}>
                 <i className="fa-solid fa-arrow-left"></i>
               </button>
-              <button className="next" onClick={next}>
+              <button className="gallery-next" onClick={next}>
                 <i className="fa-solid fa-arrow-right"></i>
               </button>
             </div>
           </div>
         </main>
         <RightBar showSidebar={true} />
-
       </div>
     </div>
+
   );
 }

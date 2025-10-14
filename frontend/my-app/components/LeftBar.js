@@ -12,6 +12,8 @@ export default function LeftBar({ showSidebar }) {
 
 
   console.log(Profile);
+  console.log(22);
+  
 
 
   async function handleLogout(e) {
