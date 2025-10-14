@@ -3,6 +3,7 @@ package handlers
 import (
 	"encoding/json"
 	"net/http"
+	"time"
 
 	"social-network/internal/helper"
 	"social-network/internal/repository"
@@ -59,11 +60,12 @@ func Websocket(w http.ResponseWriter, r *http.Request) {
 			if followID != 0 {
 				messageStruct.Type = "already_following"
 			} else {
-				messageStruct.ReceiverId = id
 				messageStruct.Name = name
 				messageStruct.Photo = photo
 				messageStruct.MessageContent = "has following you"
-				
+				q := `INSERT INTO notifications ( sender_id, receiver_id, type, message, created_at) VALUES (?, ?, ?, ?, ?) `
+				_, _ = repository.Db.Exec(q, id, messageStruct.ReceiverId, messageStruct.Type, messageStruct.MessageContent, time.Now().Unix())
+				messageStruct.ReceiverId = id
 			}
 			for i, conArr := range ConnectedUsers {
 				if i != id {
