@@ -1,0 +1,106 @@
+.gallery-page {
+  display: flex;
+  min-height: 100vh;
+  background: var(--bg-color);
+  transition: background 0.3s;
+}
+
+.gallery-main {
+  flex: 1;
+  padding: 20px;
+  position: relative;
+}
+
+.gallery-wrapper {
+  position: relative;
+  width: 100%;
+  height: 80vh;
+  border-radius: 20px;
+  overflow: hidden;
+  background-size: cover;
+  background-position: center;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.gallery-slider {
+  display: flex;
+  height: 100%;
+  transition: transform 0.6s ease;
+}
+
+.gallery-item {
+  flex: 0 0 100%;
+  background-size: cover;
+  background-position: center;
+  position: relative;
+}
+
+.gallery-content {
+  position: absolute;
+  bottom: 40px;
+  left: 40px;
+  background: rgba(0, 0, 0, 0.55);
+  color: #fff;
+  padding: 20px 30px;
+  border-radius: 12px;
+  max-width: 400px;
+}
+
+.gallery-title {
+  font-size: 1.6rem;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.gallery-desc {
+  font-size: 0.95rem;
+  line-height: 1.4;
+  margin-bottom: 15px;
+  opacity: 0.9;
+}
+
+.gallery-btn {
+  background: #22c55e;
+  color: #fff;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.gallery-btn:hover {
+  background: #16a34a;
+}
+
+.gallery-nav {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  display: flex;
+  gap: 10px;
+}
+
+.gallery-nav button {
+  background: rgba(0, 0, 0, 0.6);
+  border: none;
+  color: #fff;
+  font-size: 1.2rem;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.gallery-nav button:hover {
+  background: rgba(0, 0, 0, 0.8);
+}
+
+.theme-dark {
+  --bg-color: #0f172a;
+}
+
+.theme-light {
+  --bg-color: #f8fafc;
+}
