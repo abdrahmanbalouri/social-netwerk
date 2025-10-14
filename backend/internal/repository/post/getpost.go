@@ -9,7 +9,7 @@ import (
 	"social-network/internal/repository"
 )
 
-func GetAllPosts(authUserID string, r *http.Request,ofseet int) ([]map[string]interface{}, error) {
+func GetAllPosts(authUserID string, r *http.Request, ofseet int) ([]map[string]interface{}, error) {
 	var rows *sql.Rows
 	var err error
 
@@ -20,7 +20,7 @@ func GetAllPosts(authUserID string, r *http.Request,ofseet int) ([]map[string]in
 	if authUserID == "0" {
 		authUserID = userId
 	}
-	limit:= 10 
+	limit := 10
 
 	if authUserID != "" {
 		rows, err = repository.Db.Query(`
@@ -47,7 +47,7 @@ func GetAllPosts(authUserID string, r *http.Request,ofseet int) ([]map[string]in
 			GROUP BY p.id, p.user_id, p.title, p.content, p.image_path, p.created_at, u.nickname, u.image
 			ORDER BY p.created_at DESC
 			LIMIT ? OFFSET ?;
-		`, authUserID, authUserID,limit,ofseet)
+		`, authUserID, authUserID, limit, ofseet)
 	} else {
 		rows, err = repository.Db.Query(`
 	SELECT 
@@ -90,7 +90,7 @@ WHERE
 GROUP BY p.id, p.user_id, p.title, p.content, p.image_path, p.created_at, u.nickname, u.image
 ORDER BY p.created_at DESC
 LIMIT ? OFFSET ?;
-`, userId, userId, userId, userId, userId,limit,ofseet)
+`, userId, userId, userId, userId, userId, limit, ofseet)
 	}
 
 	if err != nil {

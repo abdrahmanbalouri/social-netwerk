@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 
 	"social-network/internal/helper"
@@ -30,7 +29,6 @@ var ConnectedUsers = make(map[string][]*websocket.Conn)
 func Websocket(w http.ResponseWriter, r *http.Request) {
 	conn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
-		fmt.Println("Upgrade error:", err)
 		return
 	}
 	id, _ := helper.AuthenticateUser(r)
@@ -39,7 +37,6 @@ func Websocket(w http.ResponseWriter, r *http.Request) {
 	for {
 		_, msg, err := conn.NextReader()
 		if err != nil {
-			fmt.Println("Connection closed:", err)
 			break
 		}
 
@@ -47,7 +44,6 @@ func Websocket(w http.ResponseWriter, r *http.Request) {
 		decoder := json.NewDecoder(msg)
 		err = decoder.Decode(&messageStruct)
 		if err != nil {
-			fmt.Println("err", err)
 			continue
 		}
 
@@ -57,7 +53,6 @@ func Websocket(w http.ResponseWriter, r *http.Request) {
 			var name, photo string
 			err = repository.Db.QueryRow(`SELECT nickname, image FROM users WHERE id = ?`, id).Scan(&name, &photo)
 			if err != nil {
-				fmt.Println("err", err)
 			}
 			_ = repository.Db.QueryRow(q, id, messageStruct.ReceiverId).Scan(&followID)
 
@@ -69,18 +64,14 @@ func Websocket(w http.ResponseWriter, r *http.Request) {
 				messageStruct.Photo = photo
 				messageStruct.MessageContent = "has following you"
 			}
-			fmt.Println(";esg", messageStruct)
 			for i, conArr := range ConnectedUsers {
 				if i != id {
 					for _, con := range conArr {
 						jsonMsg, err := json.Marshal(messageStruct)
 						if err != nil {
-							fmt.Println("Error marshaling message:", err)
 							continue
 						}
 						if err := con.WriteMessage(websocket.TextMessage, jsonMsg); err != nil {
-							fmt.Println("Error writing message:", err)
-
 						}
 					}
 				}

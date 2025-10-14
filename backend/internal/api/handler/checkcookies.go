@@ -31,13 +31,11 @@ func MeHandler(w http.ResponseWriter, r *http.Request) {
 
 	// var userId int
 	// if err := rows.Scan(&userId); err != nil {
-	//     fmt.Println("Error scanning result:", err)
 	//     w.WriteHeader(http.StatusUnauthorized)
 	//     w.Write([]byte(`{"message":"unauthorized"}`))
 	//     return
 	// }
 
-	//fmt.Println("User authorized with user_id:", userId)
 	w.WriteHeader(http.StatusOK)
 	w.Write([]byte(`{"message":"authorized"}`))
 }

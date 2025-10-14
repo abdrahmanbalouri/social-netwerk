@@ -80,9 +80,6 @@ func GetCommentsHandler(w http.ResponseWriter, r *http.Request) {
 		}
 		comments = append(comments, comment)
 	}
-	// if len(comments) == 0 {
-	// 	helper.RespondWithError(w, http.StatusInternalServerError, "no comment in found ")
-	// 	return
-	// }
+	
 	helper.RespondWithJSON(w, http.StatusOK, comments)
 }
