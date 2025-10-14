@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"fmt"
 	"net/http"
 
 	"social-network/internal/helper"
@@ -67,7 +66,6 @@ WHERE u.id = ?;
 		&user.IsFollowing,
 	)
 	if err != nil {
-		fmt.Println("err", err)
 		http.Error(w, "User not found", http.StatusNotFound)
 		return
 	}
@@ -76,7 +74,6 @@ WHERE u.id = ?;
 
 	errr := repository.Db.QueryRow(`SELECT COUNT(*) FROM followers WHERE user_id = ?  `, targetUserID).Scan(&followers)
 	if errr != nil {
-		fmt.Println(errr)
 		return
 	}
 
@@ -84,7 +81,6 @@ WHERE u.id = ?;
 
 	errr = repository.Db.QueryRow(`SELECT COUNT(*) FROM followers WHERE follower_id = ?  `, targetUserID).Scan(&following)
 	if errr != nil {
-		fmt.Println(errr)
 		return
 	}
 	profileData := map[string]interface{}{
