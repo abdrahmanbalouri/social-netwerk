@@ -93,19 +93,12 @@ export default function Home() {
         credentials: "include",
       });
       const response = await res.json();
-
-      
-      if(res.ok){
-
+      if (res.ok) {
         const newpost = await fetchPosts(postId)
-        
 
-
-        
-  
         for (let i = 0; i < posts.length; i++) {
           if (posts[i].id == newpost.id) {
-  
+
             setPosts([
               ...posts.slice(0, i),
               newpost,
@@ -115,11 +108,6 @@ export default function Home() {
           }
         }
       }
-
-
-
-
-
     } catch (err) {
       console.error("Error liking post:", err);
     }
@@ -147,7 +135,6 @@ export default function Home() {
         setLoading(false);
       }
     }
-
     fetchInitialPosts();
   }, []);
 
@@ -245,8 +232,6 @@ export default function Home() {
 
   // Fetch comments for a specific post
   async function GetComments(post) {
-
-
     try {
       // Set selected post immediately using post data we already have
       setSelectedPost({
@@ -266,8 +251,6 @@ export default function Home() {
       }
 
       const data = await res.json();
-
-
       // Handle different response structures
       let comments = [];
       if (Array.isArray(data)) {
@@ -324,11 +307,8 @@ export default function Home() {
         setComment(comments);
         const potsreplace = await fetchPosts(selectedPost.id)
 
-
-
         for (let i = 0; i < posts.length; i++) {
           if (posts[i].id == selectedPost.id) {
-
             setPosts([
               ...posts.slice(0, i),
               potsreplace,
@@ -337,7 +317,6 @@ export default function Home() {
             break
           }
         }
-
       }
     } catch (err) {
       console.error("Error refreshing comments:", err);
