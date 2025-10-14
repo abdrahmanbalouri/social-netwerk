@@ -45,10 +45,11 @@ export default function Gallery() {
     })
       .then((res) => res.json())
       .then((data) => {
-        console.log(data);
 
-        setImages(data);
-
+        if (data) {
+          setImages(data);
+          return
+        }
         if (data.length > 0) {
           setImgIndex(`url(/${data[0].imagePath})`);
         }
@@ -84,22 +85,29 @@ export default function Gallery() {
         <main className="gallery-main">
           <div className="gallery-wrapper" style={{ backgroundImage: imgIndex }}>
             <div className="gallery-slider" ref={slideRef}>
-              {images.map((img, index) => (
+              {images.length === 0 ? (
                 <div
                   className="gallery-item"
-                  key={index}
-                  style={{ backgroundImage: `url(/${img.imagePath})` }}
-                >
-                  <div className="gallery-content">
-                    <div className="gallery-title">{img.title || "No Title"}</div>
-                    <div className="gallery-desc">
-                      {img.description ||
-                        "Lorem ipsum dolor sit amet consectetur adipisicing elit. Ab, eum!"}
+                  style={{ backgroundImage: `url(/uploads/default.png)` }}
+                ></div>
+              ) : (
+                images.map((img, index) => (
+                  <div
+                    className="gallery-item"
+                    key={index}
+                    style={{ backgroundImage: `url(/${img.imagePath})` }}
+                  >
+                    <div className="gallery-content">
+                      <div className="gallery-title">{img.title || "No Title"}</div>
+                      <div className="gallery-desc">
+                        {img.description || "Lorem ipsum dolor sit amet consectetur adipisicing elit. Ab, eum!"}
+                      </div>
+                      <button className="gallery-btn">See More</button>
                     </div>
-                    <button className="gallery-btn">See More</button>
                   </div>
-                </div>
-              ))}
+                ))
+              )}
+
             </div>
 
             <div className="gallery-nav">
