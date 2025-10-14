@@ -6,45 +6,88 @@ import { useProfile } from "../context/profile";
 import { useWS } from "../context/wsContext.js";
 import { useState, useEffect } from "react";
 import Notification from "./notofication.js";
+import "../styles/search.css"
 
 export default function Navbar({ onCreatePost }) {
   const router = useRouter();
   const { darkMode, toggle } = useDarkMode();
   const { Profile } = useProfile();
   const { ws, connected } = useWS();
+
   const [cont, addnotf] = useState(0);
-  const [data, notif] = useState({})
-  const [show, cheng] = useState(false)
+  const [data, notif] = useState({});
+  const [show, cheng] = useState(false);
+
+  const [searchTerm, setSearchTerm] = useState("");
+  const [searchResults, setSearchResults] = useState([]);
+  const [showResults, setShowResults] = useState(false);
+
+  const [showNotbar, chengBool] = useState(false)
+  const [notData, setnot] = useState({})
 
   useEffect(() => {
-
     if (!ws) return;
-    console.log(1);
     ws.onmessage = (event) => {
-      console.log(event);
-
       if (event.data) {
         try {
           const data = JSON.parse(event.data);
           if (data.type === "follow") {
             addnotf((prev) => prev + 1);
-            notif(data)
-            cheng(true)
-            setTimeout(() => {
-              cheng(false)
-
-            }, 4000)
-
+            notif(data);
+            cheng(true);
+            setTimeout(() => cheng(false), 4000);
           }
-        } catch (err) {
-        }
+        } catch (err) {}
       }
     };
-
     return () => {
       ws.onmessage = null;
     };
   }, [ws, connected]);
+
+
+  const notifications = async () => {
+    try {
+      const res = await fetch("http://localhost:8080/notifcation", {
+        method: "GET",
+        credentials: "include",
+      });
+
+      if (!res.ok) {
+        throw new Error(`Failed to fetch notifications: ${res.status}`);
+      }
+
+      const data = await res.json();
+      setnot(data);
+      addnotf(0);
+      chengBool(!showNotbar);
+    } catch (err) {
+      console.error("Error fetching notifications:", err);
+    }
+  };
+
+
+  useEffect(() => {
+    if (!searchTerm.trim()) {
+      setSearchResults([]);
+      return;
+    }
+
+    const delay = setTimeout(async () => {
+      try {
+        const res = await fetch(`http://localhost:8080/api/searchUser?query=${encodeURIComponent(searchTerm)}`, {
+          credentials: "include",
+        });
+        const data = await res.json();
+        setSearchResults(data);
+        setShowResults(true);
+      } catch (err) {
+        console.error(err);
+      }
+    }, 300); 
+
+    return () => clearTimeout(delay);
+  }, [searchTerm]);
 
   return (
     <div className="navbar">
@@ -53,19 +96,47 @@ export default function Navbar({ onCreatePost }) {
           <span>Social-Network</span>
         </Link>
 
-        <div className="search">
+        <div className="search" style={{ position: "relative" }}>
           <i className="fa-solid fa-magnifying-glass"></i>
-          <input type="text" placeholder="Search..." />
+          <input
+            type="text"
+            placeholder="Search..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            onFocus={() => setShowResults(true)}
+            onBlur={() => setTimeout(() => setShowResults(false), 150)}
+          />
+
+{showResults && Array.isArray(searchResults) && searchResults.length > 0 && (
+            <div className="search-results" >
+              {searchResults.map((user) => (
+                <div
+                  key={user.id}
+                  onClick={() => router.push(`/profile/${user.id}`)}
+                >
+                  <img
+                    src={`/uploads/${user.image || "default.png"}`}
+                    alt=""
+                    width="35"
+                    height="35"
+                  />
+                  <span>{user.nickname || `${user.first_name} ${user.last_name}`}</span>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
+      {showNotbar  && <NOtBar notData={notData} />}
       {show && <Notification data={data} />}
+
       <div className="right">
         <i
           className={`fa-solid ${darkMode ? "fa-sun" : "fa-moon"}`}
           onClick={toggle}
         ></i>
 
-        <div className="notification2">
+        <div className="notification2" onClick={notifications}>
           <i className="fa-solid fa-bell"></i>
           {cont > 0 && <span className="notif-count">{cont}</span>}
         </div>

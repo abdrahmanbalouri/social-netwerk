@@ -39,6 +39,16 @@ export default function Home() {
   const offsetcomment = useRef(0)
   const modalRef = useRef(null); 
   const modalRefhome = useRef(null)
+  const boleanofset = useRef(false)
+  const postRefs = useRef({});
+  function scrollToPost(postId) {
+    console.log(postId,"---------+++++++++");
+    
+    const el = postRefs.current[postId];
+    if (el) {
+      el.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }
   useEffect(() => {
     async function midle() {
       try {
@@ -65,7 +75,6 @@ export default function Home() {
     );
   }
   useEffect(() => {
-
     if (!modalRefhome.current) return;
 
     const modal = modalRefhome.current;
@@ -74,28 +83,14 @@ export default function Home() {
       modal.scrollHeight > modal.clientHeight + 10 &&
       modal.scrollTop + modal.clientHeight >= modal.scrollHeight - 50;
 
-    const previousScrollHeight = modal.scrollHeight;
     async function handlescrollhome() {
-      let b = await fetchInitialPosts();
-
-
-
+      let b = await fetchingposts();
       if (b) {
-
-        setTimeout(() => {
-          const newScrollHeight = modal.scrollHeight;
-          const heightIncrease = newScrollHeight - previousScrollHeight;
-
-          modal.scrollTop -= heightIncrease - modal.clientHeight;
-        }, 0);
+        scrollToPost(b)
       }
 
     }
-
-
     if (reachedBottom && !loading) {
-      offsetpsot.current += 10
-
       handlescrollhome()
     }
   }, [scroollhome]);
@@ -176,10 +171,43 @@ export default function Home() {
       console.error("Error liking post:", err);
     }
   }
-  async function fetchInitialPosts() {
+  async function fetchingposts() {
+    if (!boleanofset.current) {
+      offsetpsot.current += 10
+      boleanofset.current = true
+    }
     try {
       setLoading(true);
       const res = await fetch(`http://localhost:8080/api/Getallpost/${offsetpsot.current}`, {
+        method: "GET",
+        credentials: "include",
+      });
+
+      if (!res.ok) {
+        return false
+      }
+
+      const data = await res.json();
+
+      if (data.length !== 0) {
+        offsetpsot.current += 10
+      } else {
+        return false
+      }
+
+      setPosts([...posts, ...data]);
+      return data[0].id
+    } catch (err) {
+      console.error("Error fetching posts:", err);
+      return false
+    } finally {
+      setLoading(false);
+    }
+  }
+  async function fetchInitialPosts() {
+    try {
+      setLoading(true);
+      const res = await fetch(`http://localhost:8080/api/Getallpost/${0}`, {
         method: "GET",
         credentials: "include",
       });
@@ -192,10 +220,9 @@ export default function Home() {
       const data = await res.json();
       console.log(offsetpsot.current);
 
-      console.log(data);
 
 
-      setPosts([...data, ...posts]);
+      setPosts([...data]);
       return true
     } catch (err) {
       console.error("Error fetching posts:", err);
@@ -248,6 +275,7 @@ export default function Home() {
           setPosts(prevPosts => [newPost, ...prevPosts]);
         }
       }
+      offsetpsot.current++
 
     } catch (err) {
       console.error("Error creating post:", err);
@@ -316,16 +344,22 @@ export default function Home() {
         content: comment.content || comment.text || "",
         created_at: comment.created_at || comment.createdAt || new Date().toISOString()
       }));
+      if (comments.length == 0) {
+        return false
+      } else {
+        offsetcomment.current += 10
 
-      setComment([...comments, ...comment]);
+      }
+
+
+      setComment([...comment, ...comments]);
       setShowComments(true);
-      return true
+      return comments[0].id
 
     } catch (err) {
       return false
     }
     finally {
-      offsetcomment.current += 10
       setLoadingcomment(false);
     }
   }
@@ -367,7 +401,6 @@ export default function Home() {
         const potsreplace = await fetchPosts(selectedPost.id)
         for (let i = 0; i < posts.length; i++) {
           if (posts[i].id == selectedPost.id) {
-
             setPosts([
               ...posts.slice(0, i),
               potsreplace,
@@ -376,7 +409,6 @@ export default function Home() {
             break
           }
         }
-
       }
     } catch (err) {
       console.error("Error refreshing comments:", err);
@@ -400,16 +432,13 @@ export default function Home() {
       </div>
     );
   }
-
   const handleVisibilityChange = (e) => {
     const newVisibility = e.target.value;
     setVisibility(newVisibility);
-    // Clear selected users when changing from private
     if (visibility === 'private' && newVisibility !== 'private') {
       setSelectedUsers([]);
       return;
     }
-
     if (newVisibility === 'private') {
       fetchFollowers();
     }
@@ -435,6 +464,8 @@ export default function Home() {
         {/* Feed Section */}
         <section className="feed"
           onScroll={(e) => setscroolHome(e.target.scrollTop)}
+          style={{ height: "100vh", overflowY: "auto" }}
+
           ref={modalRefhome}
         >
           <Stories />
@@ -447,6 +478,8 @@ export default function Home() {
                 post={post}
                 onGetComments={GetComments}
                 ondolike={Handlelik}
+                ref={el => commentRefs.current[post.id] = el}
+
               />
             ))
           )}
@@ -461,6 +494,7 @@ export default function Home() {
           className={`modal-overlay ${showModal ? 'is-open' : ''}`}
           onMouseDown={(e) => {
             if (e.target === e.currentTarget) setShowModal(false);
+            setVisibility("public")
           }}
         >
           <div
@@ -474,7 +508,10 @@ export default function Home() {
             <button
               className="modal-close"
               aria-label="Close modal"
-              onClick={() => setShowModal(false)}
+              onClick={() => {
+                setShowModal(false)
+                setVisibility('public')
+              }}
             >
               ✕
             </button>
@@ -544,7 +581,10 @@ export default function Home() {
                 </div>
               )}
               <div className="modal-actions">
-                <button type="button" className="btn cancel" onClick={() => setShowModal(false)}>
+                <button type="button" className="btn cancel" onClick={() => {
+                  setShowModal(false)
+                  setVisibility('public')
+                }}>
                   Cancel
                 </button>
                 <button type="submit" className="btn submit" disabled={loadingFollowers}>
