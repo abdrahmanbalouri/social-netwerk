@@ -11,7 +11,6 @@ import Stories from '../../components/stories.js';
 import Comment from '../../components/coment.js';
 import Post from '../../components/Post.js';
 import './Home.css';
-import "../../styles/post.css"
 
 export default function Home() {
   const router = useRouter();
@@ -309,12 +308,16 @@ export default function Home() {
   }
 
   async function GetComments(post) {
-
     setLoadingcomment(true)
+    console.log(post,"--------------------------++++++++++++++++++++");
+    
     try {
       setSelectedPost({
         id: post.id,
-        title: post.title || post.post_title || "Post"
+        title: post.title || post.post_title || "Post",
+        image_path :post.image_path,
+        content : post.content,
+        author : post.author
       });
 
       // Fetch comments
