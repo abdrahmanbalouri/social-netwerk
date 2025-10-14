@@ -1,10 +1,13 @@
 package handlers
 
 import (
-	"encoding/json"
+	"fmt"
 	"html"
+	"io"
 	"net/http"
+	"os"
 	"regexp"
+	"strconv"
 	"strings"
 	"time"
 
@@ -28,13 +31,46 @@ type User struct {
 }
 
 func RegisterHandler(w http.ResponseWriter, r *http.Request) {
-	var userInformation User
-	if err := json.NewDecoder(r.Body).Decode(&userInformation); err != nil {
-		http.Error(w, "Invalid request body", http.StatusBadRequest)
+	err := r.ParseMultipartForm(10 << 20)
+	if err != nil {
+		http.Error(w, "Error parsing form", http.StatusBadRequest)
 		return
 	}
+
+	userInformation := User{
+		Nickname:  r.FormValue("nickname"),
+		FirstName: r.FormValue("firstName"),
+		LastName:  r.FormValue("lastName"),
+		Email:     r.FormValue("email"),
+		Password:  r.FormValue("password"),
+		Image:     "",
+		About:     r.FormValue("aboutMe"),
+		Privacy:   r.FormValue("privacy"),
+	}
+
+	file, handler, err := r.FormFile("avatar")
+	if err == nil {
+		defer file.Close()
+		filePath := fmt.Sprintf("../frontend/my-app/public/uploads/%s", handler.Filename)
+		dst, _ := os.Create(filePath)
+		defer dst.Close()
+		io.Copy(dst, file)
+		userInformation.Image = handler.Filename
+	} else {
+		fmt.Println("err", err)
+	}
+
+	dobStr := r.FormValue("dob")
+	if dobStr != "" {
+		unixDob, err := strconv.ParseInt(dobStr, 10, 64)
+		if err != nil {
+			http.Error(w, "Invalid date format for dob", http.StatusBadRequest)
+			return
+		}
+		userInformation.DateBirth = unixDob
+	}
 	var exists int
-	err := repository.Db.QueryRow(
+	err = repository.Db.QueryRow(
 		"SELECT COUNT(*) FROM users WHERE email = ? OR nickname = ?",
 		html.EscapeString(userInformation.Email),
 		html.EscapeString(userInformation.Nickname),
