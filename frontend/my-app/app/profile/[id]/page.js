@@ -30,7 +30,6 @@ export default function Profile() {
   const [showComments, setShowComments] = useState(false);
   const [selectedPost, setSelectedPost] = useState(null);
   const [comment, setComment] = useState([]);
-  const commentsModalRef = useRef(null);
   const { ws, connected } = useWS();
 
   const sendMsg = () => {
