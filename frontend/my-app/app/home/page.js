@@ -42,7 +42,6 @@ export default function Home() {
   const boleanofset = useRef(false)
   const postRefs = useRef({});
   function scrollToPost(postId) {
-    console.log(postId,"---------+++++++++");
     
     const el = postRefs.current[postId];
     if (el) {
@@ -123,12 +122,10 @@ export default function Home() {
         credentials: 'include',
       });
       if (!response.ok) {
-        console.log(222);
 
         throw new Error('Failed to fetch followers');
       }
       let data = await response.json();
-      console.log(data);
 
       if (!data) {
         data = []
@@ -215,10 +212,8 @@ export default function Home() {
       if (!res.ok) {
         return false
       }
-      console.log(res);
 
       const data = await res.json();
-      console.log(offsetpsot.current);
 
 
 
@@ -311,7 +306,6 @@ export default function Home() {
   }
 
   async function GetComments(post) {
-    console.log(offsetcomment.current);
 
     setLoadingcomment(true)
     try {
@@ -391,7 +385,6 @@ export default function Home() {
         } else if (data) {
           newcomment = [data];
         }
-        console.log(newcomment);
 
 
         setComment([...newcomment, ...comment]);

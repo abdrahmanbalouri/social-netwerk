@@ -11,8 +11,6 @@ export default function LeftBar({ showSidebar }) {
   const { Profile } = useProfile();
 
 
-  console.log(Profile);
-  console.log(22);
   
 
 
@@ -43,7 +41,6 @@ export default function LeftBar({ showSidebar }) {
     fontWeight: 600,
     marginTop: '12px'
   };
-console.log(Profile);
 
   return (
     <div className="leftBar">
