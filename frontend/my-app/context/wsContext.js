@@ -1,28 +1,29 @@
 "use client";
-import { createContext, useContext, useEffect, useRef, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 
 const WSContext = createContext(null);
 
 export function WSProvider({ children }) {
-    const [connected, setConnected] = useState(false);
-    const ws = useRef(null);
+  const [ws, setWs] = useState(null);
+  const [connected, setConnected] = useState(false);
 
-    useEffect(() => {
-        ws.current = new WebSocket("ws://localhost:8080/ws");
+  useEffect(() => {
+    const socket = new WebSocket("ws://localhost:8080/ws");
+    setWs(socket);
 
-        ws.current.onopen = () => setConnected(true);
-        ws.current.onclose = () => setConnected(false);
+    socket.onopen = () => setConnected(true);
+    socket.onclose = () => setConnected(false);
 
-        return () => ws.current.close();
-    }, []);
+    return () => socket.close();
+  }, []);
 
-    return (
-        <WSContext.Provider value={{ ws: ws.current, connected }}>
-            {children}
-        </WSContext.Provider>
-    );
+  return (
+    <WSContext.Provider value={{ ws, connected }}>
+      {children}
+    </WSContext.Provider>
+  );
 }
 
 export function useWS() {
-    return useContext(WSContext);
+  return useContext(WSContext);
 }
