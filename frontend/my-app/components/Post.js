@@ -36,7 +36,6 @@ export default function Post({ post, onGetComments, ondolike }) {
           </div>
           <div className="item" onClick={() => { onGetComments(post)
 
-            console.log(2323232323232);
             
           }
         

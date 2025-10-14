@@ -33,11 +33,12 @@ export default function Profile() {
   const commentsModalRef = useRef(null);
   const { ws, connected } = useWS();
 
-  const sendMsg = () => {
+  const sendMsg = (FollowType) => {
+    
     const payload = {
       receiverId: params.id,
       messageContent: "",
-      type: "follow",
+      type: FollowType,
     };
 
     if (connected && ws) {
@@ -82,18 +83,20 @@ export default function Profile() {
       );
       if (res.ok) {
         const json = await res.json();
-console.log("kzehfkezhfiehfioezfoizejofjezofj" , json);
+        console.log("khoya", json);
 
 
-        setProfile(json);
+         setProfile(json);
+      
       }
     } catch (err) {
       console.error("loadProfile", err);
     }
   }
-  
+
   useEffect(() => {
     loadProfile();
+    
   }, []);
 
   // Fetch comments for a specific post (like home page)
@@ -200,7 +203,6 @@ console.log("kzehfkezhfiehfioezfoizejofjezofj" , json);
       if (res.ok) {
         let followw = await res.json();
 
-        console.log(followw);
 
 
         setProfile((prevProfile) => ({
@@ -353,22 +355,30 @@ console.log("kzehfkezhfiehfioezfoizejofjezofj" , json);
                 {Profile && Profile.id !== theprofile.id && (
                   <button
                     id="FollowBtn"
+
+
                     onClick={() => {
-                      sendMsg();
+
+                      if (theprofile.privacy === "private" && !theprofile.isFollowed) {
+                        sendMsg("followRequest");
+                      } else if (theprofile.privacy === "public" && !theprofile.isFollowed) {
+                        sendMsg("follow")
+                      }
+
                       followUser();
                     }}
 
                     style={{
-                      backgroundColor: theprofile.isFollowing
+                      backgroundColor: !theprofile.isFollowing && !theprofile.isPending
                         ? "blue"
                         : "white",
-                      color: theprofile.isFollowing ? "white" : "black",
+                      color: !theprofile.isFollowing && !theprofile.isPending ? "white" : "black",
                       border: "1px solid #ccc",
                       padding: "8px 16px",
-                      
+
                     }}
 
-                   
+
                   >
                     {PrFollow()}
                   </button>

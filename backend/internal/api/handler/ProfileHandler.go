@@ -86,14 +86,14 @@ WHERE u.id = ?;
 		return
 	}
 
-	var IsPending bool 
+	var IsPending bool
 	errr = repository.Db.QueryRow(` 
             SELECT EXISTS(
         SELECT 1 
         FROM follow_requests 
         WHERE user_id = ? 
           AND follower_id = ?
-    )` , targetUserID, currentUserID).Scan(&IsPending)
+    )`, targetUserID, currentUserID).Scan(&IsPending)
 	if errr != nil {
 		return
 	}
@@ -111,6 +111,10 @@ WHERE u.id = ?;
 		"following":   following,
 		"followers":   followers,
 	}
+
+
+
+	fmt.Println("<<<<<<", profileData)
 
 	helper.RespondWithJSON(w, http.StatusOK, profileData)
 }
