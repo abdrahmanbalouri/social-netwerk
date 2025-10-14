@@ -25,12 +25,6 @@
   border: none;
 }
 
-body {
-  font-family: "Poppins", sans-serif;
-  color: var(--text);
-  background: var(--bg-soft);
-}
-
 .content {
   display: flex;
   justify-content: space-between;
