@@ -3,9 +3,11 @@ package handlers
 import (
 	"database/sql"
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 	"sync"
+	"time"
 
 	"social-network/internal/helper"
 	"social-network/internal/repository"
@@ -31,8 +33,6 @@ type Message struct {
 	MessageContent string `json:"messageContent"`
 	Name           string `json:"name"`
 	Photo          string `json:"photo"`
-	Content        string `json:"content"`
-	To             string `json:"to"`
 }
 
 // WebSocketHandler handles WebSocket connections and manages user sessions
@@ -81,7 +81,9 @@ func Websocket(w http.ResponseWriter, r *http.Request) {
 }
 
 func Loop(conn *websocket.Conn, currentUserID string) {
+	fmt.Println("---------------------------dkjl",Clients)
 	for {
+		fmt.Println("-----------------------hwaaa")
 		var msg Message
 		if err := conn.ReadJSON(&msg); err != nil {
 			log.Println("WebSocket read error:", err)
@@ -89,27 +91,20 @@ func Loop(conn *websocket.Conn, currentUserID string) {
 		}
 
 		switch msg.Type {
-		// ===============================
-		//  HANDLE LOGOUT
-		// ===============================
-		case "logout":
-			BrodcastOnlineStatus(currentUserID, false)
-			delete(Clients, currentUserID)
-			return
-
-		// ===============================
 		//  HANDLE CHAT MESSAGE
-		// ===============================
 		case "message":
-			if msg.To == "" {
+			fmt.Println("-----------------------------", msg)
+
+			if msg.ReceiverId == "" {
 				log.Println("Invalid recipient ID")
 				continue
 			}
 
+			// ✅ Vérifie ghir wach receiver kayn
 			var exists int
 			err := repository.Db.QueryRow(`
-				SELECT 1 FROM users WHERE id = ?
-			`, msg.To).Scan(&exists)
+        SELECT 1 FROM users WHERE id = ?
+    `, msg.ReceiverId).Scan(&exists)
 			if err == sql.ErrNoRows {
 				log.Println("Recipient user not found")
 				continue
@@ -118,35 +113,30 @@ func Loop(conn *websocket.Conn, currentUserID string) {
 				continue
 			}
 
-			var followExists int
-			err = repository.Db.QueryRow(`
-				SELECT 1 FROM follows 
-				WHERE (user_id = ? AND followed_id = ?)
-				   OR (user_id = ? AND followed_id = ?)
-			`, currentUserID, msg.To, msg.To, currentUserID).Scan(&followExists)
-			if err == sql.ErrNoRows {
-				log.Println("No follow relationship between users")
-				continue
-			} else if err != nil {
-				log.Println("DB error:", err)
-				continue
-			}
-
-			_, err = repository.Db.Exec("INSERT INTO messages (sender_id, recipient_id, content) VALUES (?, ?, ?)", currentUserID, msg.To, msg.Content)
+			// ✅ Insert message direct sans check dyal follows
+			_, err = repository.Db.Exec(`
+        INSERT INTO messages (sender_id, receiver_id, content)
+        VALUES (?, ?, ?)
+    `, currentUserID, msg.ReceiverId, msg.MessageContent)
 			if err != nil {
-				log.Println("DB error:", err)
+				log.Println("DB error inserting message:", err)
 				continue
 			}
 
-			sendToUser(msg.To, map[string]any{
-				"type":    "message",
+			// ✅ send message to receiver
+			sendToUser(msg.ReceiverId, map[string]any{
+				"type":    msg.Type,
+				"time":    time.Now().Format(time.RFC3339),
 				"from":    currentUserID,
-				"content": msg.Content,
+				"content": msg.MessageContent,
 			})
+
+			// ✅ send back to sender also
 			sendToUser(currentUserID, map[string]any{
-				"type":    "message",
+				"type":    msg.Type,
+				"time":    time.Now().Format(time.RFC3339),
 				"from":    currentUserID,
-				"content": msg.Content,
+				"content": msg.MessageContent,
 			})
 
 		// ===============================
