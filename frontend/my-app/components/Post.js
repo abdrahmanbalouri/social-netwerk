@@ -1,5 +1,7 @@
 // Post.js
 import Link from 'next/link';
+import "../styles/post.css"
+
 
 export default function Post({ post, onGetComments, ondolike }) {
   
