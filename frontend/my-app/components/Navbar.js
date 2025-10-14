@@ -6,6 +6,7 @@ import { useProfile } from "../context/profile";
 import { useWS } from "../context/wsContext.js";
 import { useState, useEffect } from "react";
 import Notification from "./notofication.js";
+import NOtBar from "./notfcationBar.js";
 
 export default function Navbar({ onCreatePost }) {
   const router = useRouter();
@@ -15,11 +16,12 @@ export default function Navbar({ onCreatePost }) {
   const [cont, addnotf] = useState(0);
   const [data, notif] = useState({})
   const [show, cheng] = useState(false)
+  const [showNotbar, chengBool] = useState(false)
+  const [notData, setnot] = useState({})
 
   useEffect(() => {
 
     if (!ws) return;
-    console.log(1);
     ws.onmessage = (event) => {
       console.log(event);
 
@@ -46,6 +48,28 @@ export default function Navbar({ onCreatePost }) {
     };
   }, [ws, connected]);
 
+
+  const notifications = async () => {
+    try {
+      const res = await fetch("http://localhost:8080/notifcation", {
+        method: "GET",
+        credentials: "include",
+      });
+
+      if (!res.ok) {
+        throw new Error(`Failed to fetch notifications: ${res.status}`);
+      }
+
+      const data = await res.json();
+      setnot(data);
+      addnotf(0);
+      chengBool(!showNotbar);
+    } catch (err) {
+      console.error("Error fetching notifications:", err);
+    }
+  };
+
+
   return (
     <div className="navbar">
       <div className="left">
@@ -58,6 +82,7 @@ export default function Navbar({ onCreatePost }) {
           <input type="text" placeholder="Search..." />
         </div>
       </div>
+      {showNotbar  && <NOtBar notData={notData} />}
       {show && <Notification data={data} />}
       <div className="right">
         <i
@@ -65,7 +90,7 @@ export default function Navbar({ onCreatePost }) {
           onClick={toggle}
         ></i>
 
-        <div className="notification2">
+        <div className="notification2" onClick={notifications}>
           <i className="fa-solid fa-bell"></i>
           {cont > 0 && <span className="notif-count">{cont}</span>}
         </div>
