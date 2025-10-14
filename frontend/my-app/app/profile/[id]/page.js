@@ -82,7 +82,8 @@ export default function Profile() {
       );
       if (res.ok) {
         const json = await res.json();
-        console.log(json);
+console.log("kzehfkezhfiehfioezfoizejofjezofj" , json);
+
 
         setProfile(json);
       }
@@ -90,35 +91,10 @@ export default function Profile() {
       console.error("loadProfile", err);
     }
   }
-
+  
   useEffect(() => {
     loadProfile();
   }, []);
-  // // Fetch posts for this profile user
-  // useEffect(() => {
-  //   async function fetchUserPosts() {
-  //     try {
-  //       const res = await fetch(
-  //         `http://localhost:8080/api/Getallpost?userId=${params.id}`,
-  //         {
-  //           method: "GET",
-  //           credentials: "include",
-  //         }
-  //       );
-  //       if (!res.ok) {
-  //         throw new Error("Failed to fetch user posts");
-  //       }
-  //       const data = await res.json();
-
-  //       setPosts(Array.isArray(data) ? data : []);
-  //     } catch (err) {
-  //       console.error("Error fetching user posts:", err);
-  //     }
-  //   }
-  //   if (params.id) {
-  //     fetchUserPosts();
-  //   }
-  // }, [params.id]);
 
   // Fetch comments for a specific post (like home page)
   async function GetComments(post) {
@@ -223,22 +199,16 @@ export default function Profile() {
       );
       if (res.ok) {
         let followw = await res.json();
-        theprofile
-        console.log("33333333333333333",
-          theprofile.privacy
-        );
 
-       /*  if (theprofile.privacy === "private") {
+        console.log(followw);
 
-           return           
-        } */
 
-        // Update state directly, ma t3melsh direct DOM manipulation
         setProfile((prevProfile) => ({
           ...prevProfile,
           followers: followw.followers,
           following: followw.following,
           isFollowing: followw.isFollowed,
+          isPending: followw.isPending
         }));
       }
     } catch (error) {
@@ -395,7 +365,10 @@ export default function Profile() {
                       color: theprofile.isFollowing ? "white" : "black",
                       border: "1px solid #ccc",
                       padding: "8px 16px",
+                      
                     }}
+
+                   
                   >
                     {PrFollow()}
                   </button>
