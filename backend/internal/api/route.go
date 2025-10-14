@@ -35,6 +35,7 @@ func Routes(db *sql.DB) http.Handler {
 	mux.HandleFunc("/api/users/followers", handlers.Getfollowers)
 	mux.HandleFunc("/api/getlastcomment/{id}", handlers.Getlastcommnet)
 	mux.HandleFunc("/ws", handlers.Websocket)
+	mux.HandleFunc("/notifcation", handlers.Notifications)
 
 	return mux
 }
