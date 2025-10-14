@@ -9,14 +9,7 @@ import "../styles/leftbar.css"
 export default function LeftBar({ showSidebar }) {
   const router = useRouter();
   const { Profile } = useProfile();
-
-
-  console.log(Profile);
-  console.log(22);
-  
-
-
-  async function handleLogout(e) {
+ async function handleLogout(e) {
     e?.preventDefault?.();
     try {
       await fetch('/api/logout', { method: 'POST', credentials: 'include' });
