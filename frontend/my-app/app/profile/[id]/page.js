@@ -351,7 +351,11 @@ export default function Profile() {
                 {Profile && Profile.id !== theprofile.id && (
                   <button
                     id="FollowBtn"
-                    onClick={followUser}
+                    onClick={() => {
+                      sendMsg();
+                      followUser();
+                    }}
+
                     style={{
                       backgroundColor: theprofile.isFollowing
                         ? "blue"

@@ -69,14 +69,12 @@ func Createpost(w http.ResponseWriter, r *http.Request) {
 
 	// Create post
 	postID := uuid.New().String()
-	fmt.Println(postID)
 	_, err = repository.Db.Exec(`
 		INSERT INTO posts (id, user_id, title, content, image_path, visibility, canseperivite)
 		VALUES (?, ?, ?, ?, ?, ?, ?)`,
 		postID, userID, title, content, imagePath, visibility, allowedUsers,
 	)
 	if err != nil {
-		fmt.Println("Error inserting post:", err)
 		helper.RespondWithError(w, http.StatusInternalServerError, "Failed to create post")
 		return
 	}
@@ -95,7 +93,6 @@ func Createpost(w http.ResponseWriter, r *http.Request) {
 			var exists int
 			err := repository.Db.QueryRow(`SELECT 1 FROM users WHERE id = ?`, uid).Scan(&exists)
 			if err != nil {
-				fmt.Println("Skipping invalid user:", uid)
 				continue
 			}
 
@@ -104,7 +101,6 @@ func Createpost(w http.ResponseWriter, r *http.Request) {
 				VALUES (?, ?, ?)
 			`, userID, postID, uid)
 			if err != nil {
-				fmt.Println("Error inserting allowed follower:", err)
 				continue
 			}
 		}
