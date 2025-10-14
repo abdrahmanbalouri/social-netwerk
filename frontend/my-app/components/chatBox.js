@@ -1,21 +1,48 @@
 "use client";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import AddReactionIcon from '@mui/icons-material/AddReaction';
 import SendIcon from '@mui/icons-material/Send';
 import Link from "next/link"
 import "../styles/chat.css";
+import { useWS } from "../context/wsContext.js";
+
 
 export default function ChatBox({ user }) {
     const [messages, setMessages] = useState([]);
     const [input, setInput] = useState("");
     const [showEmojis, setShowEmojis] = useState(false);
     const inputRef = useRef(null);
-    setTimeout(() => {
-        inputRef.current.focus();
-    },0)
+    const { ws, connected } = useWS();
+    console.log("user in chatbox:", ws, "connection", connected);
+
     if (!user) {
         return <div className="loading">Loading user...</div>;
     }
+    setTimeout(() => {
+        inputRef.current.focus();
+    }, 0)
+
+    useEffect(() => {
+        if (!ws) return;
+
+        ws.onmessage = (event) => {
+            console.log("📩 Received:", event.data);
+            const msg = JSON.parse(event.data);
+
+            if (msg.type === "message") {
+                setMessages((prev) => [...prev, {
+                    text: msg.content,
+                    sender: msg.from === user.id ? "them" : "me",
+                }]);
+            }
+        };
+
+        return () => {
+            ws.onmessage = null;
+        };
+    }, [ws]);
+
+
 
     const emojiArray = [
         "😀", "😃", "😄", "😁", "😆", "😅", "🤣", "😂", "🚀", "💡",
@@ -27,7 +54,15 @@ export default function ChatBox({ user }) {
 
     const sendMessage = () => {
         if (input.trim() === "") return;
-        setMessages([...messages, { text: input, sender: "me" }]);
+        const payload = {
+            receiverId: user.id,
+            messageContent: input,
+            type: "message",
+        };
+
+        if (connected && ws) {
+            ws.send(JSON.stringify(payload));
+        }
         setInput("");
         setShowEmojis(false);
     };
