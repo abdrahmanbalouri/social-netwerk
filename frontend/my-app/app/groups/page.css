@@ -53,7 +53,8 @@
     border-top: 1px solid #e5e5e5;
 }
 
-.join-button {
+.join-button,
+.show-button {
     background: #0070f3;
     color: white;
     border: none;
@@ -65,13 +66,16 @@
     transition: background 0.2s ease;
 }
 
-.join-button:hover {
+.join-button:hover,
+.show-button:hover {
     background: #0051cc;
 }
 
-.join-button:active {
+/* .join-button:active,
+.show-button:active {
     transform: scale(0.98);
-}
+} */
+
 
 /* Tabs CSS */
 .tabs-container {

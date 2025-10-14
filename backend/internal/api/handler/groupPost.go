@@ -26,12 +26,17 @@ type FetchPost struct {
 }
 
 type Post struct {
-	ID        string    `json:"id"`
-	Title     string    `json:"title"`
-	Content   string    `json:"content"`
-	ImagePath string    `json:"image_path"`
-	CreatedAt time.Time `json:"created_at"`
-	AuthorID  string    `json:"author_id"`
+	ID           string    `json:"id"`
+	UserID       string    `json:"user_id"`
+	Title        string    `json:"title"`
+	Content      string    `json:"content"`
+	ImagePath    string    `json:"image_path"`
+	CreatedAt    time.Time `json:"created_at"`
+	Author       string    `json:"author"`
+	Profile      string    `json:"profile"`
+	Like         int       `json:"likeCount"`
+	LikedByUSer  int       `json:"liked_by_user"`
+	CommentCount int       `json:"comment_count"`
 }
 
 func CreatePostGroup(w http.ResponseWriter, r *http.Request) {
@@ -51,7 +56,7 @@ func CreatePostGroup(w http.ResponseWriter, r *http.Request) {
 	// parse Data
 	err := r.ParseMultipartForm(10 << 20) // 10MB
 	if err != nil {
-		fmt.Println("Unable to parse form")
+		fmt.Println("Unable to parse form :", err)
 		helper.RespondWithError(w, http.StatusBadRequest, "Unable to parse form")
 		return
 	}
@@ -133,7 +138,7 @@ func CreatePostGroup(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetPostGroup(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodGet {
+	if r.Method != http.MethodPost {
 		helper.RespondWithError(w, http.StatusMethodNotAllowed, "Method not allowed")
 		return
 	}
@@ -152,8 +157,11 @@ func GetPostGroup(w http.ResponseWriter, r *http.Request) {
 
 	// Check for user's membership
 	var isMember bool
+	fmt.Println("user id is :", userID)
+	GrpId := newPost.GrpID[1 : len(newPost.GrpID)-1]
+	fmt.Println("group id is :", GrpId)
 	query := `SELECT EXISTS (SELECT 1 FROM group_members WHERE user_id = ? AND group_id = ?)`
-	if err := repository.Db.QueryRow(query, userID, newPost.GrpID).Scan(&isMember); err != nil {
+	if err := repository.Db.QueryRow(query, userID, GrpId).Scan(&isMember); err != nil {
 		helper.RespondWithError(w, http.StatusInternalServerError, "Failed to check group membership")
 		return
 	}
@@ -163,9 +171,33 @@ func GetPostGroup(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Fetch all the posts of this group
-	query = `SELECT id, title, content, image_path, created_at, user_id FROM posts WHERE group_id = ?`
-	rows, err := repository.Db.Query(query, newPost.GrpID)
+	// query = `SELECT id, title, content, image_path, created_at, user_id FROM posts WHERE group_id = ?`
+	query = `
+	SELECT 
+    p.id, 
+    p.user_id, 
+    p.title, 
+    p.content, 
+    p.image_path, 
+    p.created_at, 
+    u.nickname,
+    u.image AS profile,
+    COUNT(DISTINCT l.id) AS like_count,
+    COUNT(DISTINCT CASE WHEN l.user_id = ? THEN l.id END) AS liked_by_user,
+    COUNT(DISTINCT c.id) AS comments_count
+	FROM posts p
+	JOIN users u ON p.user_id = u.id
+	LEFT JOIN likes l ON p.id = l.liked_item_id AND l.liked_item_type = 'post'
+	LEFT JOIN comments c ON p.id = c.post_id
+	WHERE p.group_id = ?
+	GROUP BY 
+    p.id, p.user_id, p.title, p.content, p.image_path, p.created_at, 
+    u.nickname, u.image
+	ORDER BY p.created_at DESC;
+`
+	rows, err := repository.Db.Query(query, userID, GrpId)
 	if err != nil {
+		fmt.Println("Failed to get posts:", err)
 		helper.RespondWithError(w, http.StatusInternalServerError, "Failed to get posts")
 		return
 	}
@@ -174,7 +206,7 @@ func GetPostGroup(w http.ResponseWriter, r *http.Request) {
 	var postsJson []Post
 	for rows.Next() {
 		var p Post
-		err := rows.Scan(&p.ID, &p.Title, &p.Content, &p.ImagePath, &p.CreatedAt, &p.AuthorID);
+		err := rows.Scan(&p.ID,&p.UserID, &p.Title, &p.Content, &p.ImagePath, &p.CreatedAt, &p.Author, &p.Profile, &p.Like, &p.LikedByUSer, &p.CommentCount)
 		if err != nil {
 			fmt.Println("heeeere :", err)
 			helper.RespondWithError(w, http.StatusInternalServerError, "Failed to scan posts")
@@ -186,7 +218,6 @@ func GetPostGroup(w http.ResponseWriter, r *http.Request) {
 	// Return the posts as a JSON response
 	helper.RespondWithJSON(w, http.StatusOK, postsJson)
 }
-
 
 // {
 //     "grpId": "b5212293-b4db-40d6-b0e0-7f68a143d2b8"
