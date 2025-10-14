@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"fmt"
 	"net/http"
 
 	"social-network/internal/helper"
@@ -13,7 +12,6 @@ func GalleryHandler(w http.ResponseWriter, r *http.Request) {
 	userID := r.URL.Query().Get("id")
 	rows, err := repository.Db.Query(q, userID)
 	if err != nil {
-		fmt.Println("Error querying gallery:", err)
 		helper.RespondWithError(w, http.StatusInternalServerError, "Failed to retrieve gallery")
 		return
 	}
@@ -34,7 +32,6 @@ func GalleryHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := rows.Err(); err != nil {
-		fmt.Println("Row iteration error:", err)
 		helper.RespondWithError(w, http.StatusInternalServerError, "Failed to retrieve gallery")
 		return
 	}

@@ -37,7 +37,7 @@ export default function Home() {
   const [scroollhome, setscroolHome] = useState(0)
   const offsetpsot = useRef(0)
   const offsetcomment = useRef(0)
-  const modalRef = useRef(null);
+  const modalRef = useRef(null); 
   const modalRefhome = useRef(null)
   const boleanofset = useRef(false)
   const postRefs = useRef({});
