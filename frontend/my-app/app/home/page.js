@@ -37,13 +37,13 @@ export default function Home() {
   const [scroollhome, setscroolHome] = useState(0)
   const offsetpsot = useRef(0)
   const offsetcomment = useRef(0)
-  const modalRef = useRef(null); 
+  const modalRef = useRef(null);
   const modalRefhome = useRef(null)
   const boleanofset = useRef(false)
   const postRefs = useRef({});
   function scrollToPost(postId) {
-    console.log(postId,"---------+++++++++");
-    
+    console.log(postId, "---------+++++++++");
+
     const el = postRefs.current[postId];
     if (el) {
       el.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -311,7 +311,6 @@ export default function Home() {
   }
 
   async function GetComments(post) {
-    console.log(offsetcomment.current);
 
     setLoadingcomment(true)
     try {
@@ -344,6 +343,8 @@ export default function Home() {
         content: comment.content || comment.text || "",
         created_at: comment.created_at || comment.createdAt || new Date().toISOString()
       }));
+      setShowComments(true);
+
       if (comments.length == 0) {
         return false
       } else {
@@ -353,7 +354,6 @@ export default function Home() {
 
 
       setComment([...comment, ...comments]);
-      setShowComments(true);
       return comments[0].id
 
     } catch (err) {
