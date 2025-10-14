@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"fmt"
 	"net/http"
 
 	"social-network/internal/helper"
@@ -67,6 +68,7 @@ WHERE u.id = ?;
 	)
 	if err != nil {
 		http.Error(w, "User not found", http.StatusNotFound)
+		fmt.Println("eezdezdezdezdezdezdezdze", err)
 		return
 	}
 
@@ -83,6 +85,19 @@ WHERE u.id = ?;
 	if errr != nil {
 		return
 	}
+
+	var IsPending bool 
+	errr = repository.Db.QueryRow(` 
+            SELECT EXISTS(
+        SELECT 1 
+        FROM follow_requests 
+        WHERE user_id = ? 
+          AND follower_id = ?
+    )` , targetUserID, currentUserID).Scan(&IsPending)
+	if errr != nil {
+		return
+	}
+
 	profileData := map[string]interface{}{
 		"id":          user.ID,
 		"nickname":    user.Nickname,
@@ -92,6 +107,7 @@ WHERE u.id = ?;
 		"image":       user.Image,
 		"cover":       user.Cover,
 		"isFollowing": user.IsFollowing,
+		"isPending":   IsPending,
 		"following":   following,
 		"followers":   followers,
 	}
