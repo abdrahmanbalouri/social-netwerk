@@ -190,7 +190,7 @@ export default function Home() {
       const data = await res.json();
       console.log(offsetpsot.current);
 
-      console.log(data);
+      console.log("posts",data);
 
 
       setPosts([...data, ...posts]);
