@@ -22,7 +22,8 @@ export default function Post({ post, onGetComments, ondolike }) {
         <div className="content">
           <h3>
             <p style={{ color: "#5271ff" }}>{post.title}</p>
-            {post.content}
+
+          <strong className ="content1">{post.content}</strong>
           </h3>
           {post.image_path && <img src={`/${post.image_path}`} alt="Post content" />}
         </div>
