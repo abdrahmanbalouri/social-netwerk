@@ -255,16 +255,6 @@ const Stories = () => {
   return (
     <div className="story-bar">
       {error && <div className="story-error">{error}</div>}
-
-   
-      {/* Empty State - SEULEMENT s'il n'y a vraiment aucune story */}
-      {allGroups.length === 0 && !error && stories.length === 0 && (
-        <div className="stories-empty">
-          <div className="stories-empty-icon">📱</div>
-          <div className="stories-empty-text">No stories yet</div>
-        </div>
-      )}
-
       {/* "Your Story" - TOUJOURS VISIBLE avec le bouton + */}
       {Profile && (
         <div
