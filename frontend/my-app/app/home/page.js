@@ -1,6 +1,5 @@
 // Home.js
 "use client";
-import './Home.css';
 import { useRouter } from "next/navigation";
 import { useEffect, useState, useRef, use } from "react";
 import Navbar from '../../components/Navbar.js';
@@ -10,8 +9,6 @@ import { useDarkMode } from '../../context/darkMod';
 import Stories from '../../components/stories.js';
 import Comment from '../../components/coment.js';
 import Post from '../../components/Post.js';
-import './Home.css';
-
 export default function Home() {
   const router = useRouter();
   const { darkMode } = useDarkMode();
@@ -216,9 +213,6 @@ export default function Home() {
 
       const data = await res.json();
       console.log(offsetpsot.current);
-
-
-
       setPosts([...data]);
       return true
     } catch (err) {
