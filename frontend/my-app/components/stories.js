@@ -256,13 +256,7 @@ const Stories = () => {
     <div className="story-bar">
       {error && <div className="story-error">{error}</div>}
 
-      {/* Loading State */}
-      {stories.length === 0 && !error && (
-        <div className="story-loading">
-          <div className="story-loading-spinner"></div>
-        </div>
-      )}
-
+   
       {/* Empty State - SEULEMENT s'il n'y a vraiment aucune story */}
       {allGroups.length === 0 && !error && stories.length === 0 && (
         <div className="stories-empty">
