@@ -64,7 +64,6 @@ const Stories = () => {
 
   const groupedStories = groupStoriesByUser();
 
-  // Filter active (non-expired)
   const activeGrouped = groupedStories.map(group => ({
     ...group,
     stories: group.stories.filter(s => !s.expires_at || new Date(s.expires_at) > new Date()),
@@ -279,6 +278,7 @@ const Stories = () => {
             className="story-add-btn add-more"
             onClick={(e) => {
               e.stopPropagation();
+              setShowModal(true); e.stopPropagation();
               setShowModal(true);
             }}
           >
@@ -397,8 +397,6 @@ const Stories = () => {
                 );
               })}
             </div>
-
-
             {/* User Info Overlay - Instagram Style */}
             <div className="story-user-info">
               <img

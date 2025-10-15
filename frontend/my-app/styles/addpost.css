@@ -1,5 +1,5 @@
 /* Modal Overlay */
-.modal-overlay {
+/* .modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
@@ -18,7 +18,7 @@
 .modal-overlay.is-open {
   opacity: 1;
   visibility: visible;
-}
+} */
 
 /* Modal Content */
 .modal-content {
