@@ -2,8 +2,6 @@ package handlers
 
 import (
 	"database/sql"
-	"encoding/json"
-	"fmt"
 	"log"
 	"net/http"
 	"sync"
@@ -29,6 +27,7 @@ var (
 
 type Message struct {
 	Type           string `json:"type"`
+	SubType        string `json:"subType"`
 	ReceiverId     string `json:"receiverId"`
 	MessageContent string `json:"messageContent"`
 	Name           string `json:"name"`
@@ -79,9 +78,9 @@ func Websocket(w http.ResponseWriter, r *http.Request) {
 }
 
 func Loop(conn *websocket.Conn, currentUserID string) {
-	fmt.Println("---------------------------dkjl", Clients)
+	// fmt.Println("---------------------------dkjl", Clients)
 	for {
-		fmt.Println("-----------------------hwaaa")
+		// fmt.Println("-----------------------hwaaa")
 		var msg Message
 		if err := conn.ReadJSON(&msg); err != nil {
 			log.Println("WebSocket read error:", err)
@@ -91,7 +90,7 @@ func Loop(conn *websocket.Conn, currentUserID string) {
 		switch msg.Type {
 		//  HANDLE CHAT MESSAGE
 		case "message":
-			fmt.Println("-----------------------------", msg)
+			// fmt.Println("-----------------------------", msg)
 
 			if msg.ReceiverId == "" {
 				log.Println("Invalid recipient ID")
@@ -137,6 +136,15 @@ func Loop(conn *websocket.Conn, currentUserID string) {
 				"content": msg.MessageContent,
 			})
 
+			// send notification to receiver
+			BrodcastNotification(msg.ReceiverId, map[string]any{
+				"type":    "notification",
+				"subType": "message",
+				"from":    currentUserID,
+				"content": "sent you a message",
+				"time":    time.Now().Format(time.RFC3339),
+			})
+
 		// ===============================
 		//  HANDLE FOLLOW NOTIFICATION
 		// ===============================
@@ -154,37 +162,38 @@ func Loop(conn *websocket.Conn, currentUserID string) {
 			_ = repository.Db.QueryRow(query, currentUserID, msg.ReceiverId).Scan(&followID)
 
 			if followID != 0 {
-				msg.Type = "already_following"
+				msg.SubType = "unfollow"
+				msg.Name = name
+				msg.Photo = photo
+				msg.MessageContent = "has unfollowed you"
 			} else {
+				msg.SubType = "follow"
 				msg.Name = name
 				msg.Photo = photo
 				msg.MessageContent = "has followed you"
 			}
 
 			// Notify all connected users (except current user)
-			ClientsMutex.Lock()
-			for uid, conns := range Clients {
-				if uid == currentUserID {
-					continue
-				}
-				for _, con := range conns {
-					jsonMsg, err := json.Marshal(msg)
-					if err != nil {
-						continue
-					}
-					if err := con.WriteMessage(websocket.TextMessage, jsonMsg); err != nil {
-						log.Println("WebSocket write error:", err)
-					}
-				}
-			}
-			ClientsMutex.Unlock()
-
+			BrodcastNotification(msg.ReceiverId, map[string]any{
+				"type":    "notification",
+				"subType": msg.SubType,
+				"from":    currentUserID,
+				"name":    msg.Name,
+				"photo":   msg.Photo,
+				"content": msg.MessageContent,
+				"time":    time.Now().Format(time.RFC3339),
+			})
 		default:
 			log.Println("Unknown message type:", msg.Type)
 		}
 
 		log.Printf("Received message from user %s: %+v", currentUserID, msg)
 	}
+}
+
+func BrodcastNotification(userID string, message map[string]any) {
+	// TO BE IMPLEMENTED
+	sendToUser(userID, message)
 }
 
 // BrodcastOnlineStatus notifies all connected clients about a user's online status change
