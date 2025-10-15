@@ -5,13 +5,14 @@ import SendIcon from "@mui/icons-material/Send";
 import Link from "next/link";
 import "../styles/chat.css";
 import { useWS } from "../context/wsContext.js";
-
+import { useChat } from "../context/chatContext.js";
 export default function ChatBox({ user }) {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
   const [showEmojis, setShowEmojis] = useState(false);
   const inputRef = useRef(null);
   const { sendMessage, addListener, removeListener } = useWS();
+  const { activeChatID, setActiveChatID } = useChat();
 
   if (!user) {
     return <div className="loading">Loading user...</div>;
@@ -20,16 +21,22 @@ export default function ChatBox({ user }) {
     inputRef.current.focus();
   }, 0);
 
+  
+  useEffect(() => {
+    setActiveChatID(user.id);
+    return () => setActiveChatID(null);
+  }, [user.id]);
+
   useEffect(() => {
     const handleIncomingMessage = (data) => {
-        setMessages((prev) => [
-          ...prev,
-          {
-            text: data.content,
-            sender: data.from === user.id ? "them" : "me",
-          },
-        ]);
-      
+      if (data.from !== user.id && activeChatID !== user.id) return;
+      setMessages((prev) => [
+        ...prev,
+        {
+          text: data.content,
+          sender: data.from === user.id ? "them" : "me",
+        },
+      ]);
     };
 
     addListener("message", handleIncomingMessage);
@@ -92,11 +99,11 @@ export default function ChatBox({ user }) {
   const handleSendMessage = () => {
     if (input.trim() === "") return;
     const payload = {
-        receiverId: user.id,
-        messageContent: input,
-        type: "message",
+      receiverId: user.id,
+      messageContent: input,
+      type: "message",
     };
-    sendMessage(payload)
+    sendMessage(payload);
     setInput("");
     setShowEmojis(false);
   };
@@ -168,13 +175,11 @@ export default function ChatBox({ user }) {
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={(e) => {
             if (e.key === "Enter") {
-              handleSendMessage()
+              handleSendMessage();
             }
           }}
         />
-        <button
-          onClick={handleSendMessage}
-        >
+        <button onClick={handleSendMessage}>
           <SendIcon />
         </button>
       </div>
