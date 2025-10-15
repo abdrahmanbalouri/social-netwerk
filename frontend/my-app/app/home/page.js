@@ -125,9 +125,7 @@ export default function Home() {
         if (!res.ok) {
           throw new Error("Failed to fetch posts");
         }
-
         const data = await res.json();
-
         setPosts(Array.isArray(data) ? data : []);
       } catch (err) {
         console.error("Error fetching posts:", err);
