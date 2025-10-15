@@ -6,46 +6,29 @@ import { useProfile } from "../context/profile";
 import { useWS } from "../context/wsContext.js";
 import { useState, useEffect } from "react";
 import Notification from "./notofication.js";
-import '../styles/navbar.css'
+import "../styles/navbar.css";
 
 export default function Navbar({ onCreatePost }) {
   const router = useRouter();
   const { darkMode, toggle } = useDarkMode();
   const { Profile } = useProfile();
-  const { ws, connected } = useWS();
   const [cont, addnotf] = useState(0);
-  const [data, notif] = useState({})
-  const [show, cheng] = useState(false)
-
+  const [data, notif] = useState({});
+  const [show, cheng] = useState(false);
+  const { addListener, removeListener, connected } = useWS();
   useEffect(() => {
-
-    if (!ws) return;
-    console.log(1);
-    ws.onmessage = (event) => {
-      console.log(event);
-
-      if (event.data) {
-        try {
-          const data = JSON.parse(event.data);
-          if (data.type === "follow") {
-            addnotf((prev) => prev + 1);
-            notif(data)
-            cheng(true)
-            setTimeout(() => {
-              cheng(false)
-
-            }, 4000)
-
-          }
-        } catch (err) {
-        }
-      }
+    if (!connected) return; // wait for connection
+    const handleNotification = (data) => {
+      console.log("Notification received:", data);
+      addnotf((prev) => prev + 1);
+      notif(data.data || data);
+      cheng(true);
+      setTimeout(() => cheng(false), 4000);
     };
 
-    return () => {
-      ws.onmessage = null;
-    };
-  }, [ws, connected]);
+    addListener("follow", handleNotification);
+    return () => removeListener("follow", handleNotification);
+  }, [connected]);
 
   return (
     <div className="navbar">
@@ -75,7 +58,11 @@ export default function Navbar({ onCreatePost }) {
 
         <div className="user" onClick={() => router.push("/profile/0")}>
           <img
-            src={Profile?.image ? `/uploads/${Profile.image}` : "/uploads/default.png"}
+            src={
+              Profile?.image
+                ? `/uploads/${Profile.image}`
+                : "/uploads/default.png"
+            }
             alt="user avatar"
           />
         </div>
