@@ -36,7 +36,31 @@ export default function Profile() {
   const commentsModalRef = useRef(null);
 
 
-  const [profile, setProfile] = useState(null);
+  const [theprofile, setProfile] = useState(null);
+  useEffect(() => {
+
+    async function midle() {
+      try {
+        const response = await fetch("http://localhost:8080/api/me", {
+          credentials: "include",
+          method: "GET",
+        });
+
+        if (!response.ok) {
+          router.replace("/login");
+          return null;
+        }
+      } catch (error) {
+        router.replace("/login");
+        return null;
+
+      }
+    }
+    midle()
+
+
+
+  }, [])
 
   async function loadProfile() {
     try {
@@ -169,33 +193,25 @@ export default function Profile() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ userId: userId }),
-      })
+      });
       if (res.ok) {
         let followw = await res.json();
 
-        document.getElementById("followers").textContent = followw.followers
-        document.getElementById("following").textContent = followw.following
-
-
-        if (followw.isFollowed) {
-
-
-          document.getElementById("FollowBtn").textContent = "Unfollow"
-        } else {
-          document.getElementById("FollowBtn").textContent = "Follow"
-
-        }
-
-
-      };
-
+        // Update state directly, ma t3melsh direct DOM manipulation
+        setProfile(prevProfile => ({
+          ...prevProfile,
+          followers: followw.followers,
+          following: followw.following,
+          isFollowing: followw.isFollowed
+        }));
+      }
     } catch (error) {
       console.error('Error following user:', error);
-
-    };
+    }
   }
 
-  if (!profile) {
+
+  if (!theprofile) {
     return (
       <div className={darkMode ? 'theme-dark' : 'theme-light'}>
         <Navbar
@@ -235,7 +251,7 @@ export default function Profile() {
       </div>
     );
   }
-  const data = profile;
+
 
   return (
     <div className={darkMode ? 'theme-dark' : 'theme-light'}>
@@ -249,12 +265,12 @@ export default function Profile() {
           <div className="images">
             <img
 
-              src={data.cover ? `/uploads/${data.cover}` : "https://images.pexels.com/photos/13440765/pexels-photo-13440765.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"}
+              src={theprofile.cover ? `/uploads/${theprofile.cover}` : "https://images.pexels.com/photos/13440765/pexels-photo-13440765.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"}
               alt=""
               className="cover"
             />
             <img
-              src={data.image ? `/uploads/${data.image}` : "/uploads/default.png"}
+              src={theprofile.image ? `/uploads/${theprofile.image}` : "/uploads/default.png"}
               alt="profile picture"
               className="profilePic"
             />
@@ -263,50 +279,40 @@ export default function Profile() {
             <div className="uInfo">
 
               <div className="left">
-                {/*  <a href="http://facebook.com">
-                  <FacebookTwoToneIcon fontSize="large" />
-                </a>
-                <a href="http://instagram.com">
-                  <InstagramIcon fontSize="large" />
-                </a>
-                <a href="http://x.com">
-                  <TwitterIcon fontSize="large" />
-                </a>
-                <a href="http://linkedin.com">
-                  <LinkedInIcon fontSize="large" />
-                </a> */}
-
-               <button className='followingBtn'>          <p> following    <strong id='following'> {data.following} </strong> </p></button>
-               <button className='followersBtn'>          <p>followers    <strong id='followers'> {data.followers}</strong></p></button>
-              </div>
-
-              <div >
-                show folloing and followers 
+                <button className='followingBtn'>          <p> following    <strong id='following'> {theprofile.following} </strong> </p></button>
+                <button className='followersBtn'>          <p>followers    <strong id='followers'> {theprofile.followers}</strong></p></button>
               </div>
               <div className="center">
-                <span>{data.nickname}</span>
+                <span>{theprofile.nickname}</span>
                 <div className="info">
 
                   <div className="item">
                     <LanguageIcon />
-                    <span>{data.about}</span>
+                    <span>{theprofile.about}</span>
                   </div>
                 </div>
+                {Profile && Profile.id !== theprofile.id && (
+                  <button id='FollowBtn'
 
-                <button id='FollowBtn'
 
+                    onClick={followUser}
+                    style={{
+                      backgroundColor: theprofile.isFollowing ? "blue" : "white",
+                      color: theprofile.isFollowing ? "white" : "black",
+                      border: "1px solid #ccc",
+                      padding: "8px 16px",
+                    }}
 
-                  onClick={followUser}
-
-                >
-                  {Profile && Profile.id !== data.id && (data.isFollowing ? ("Unfollow") : ("Follow"))}
-                </button>
+                  >
+                    {Profile && (theprofile.isFollowing ? ("Unfollow") : ("Follow"))}
+                  </button>)
+                }
 
 
 
               </div>
               <div className="right" >
-                {Profile && Profile.id !== data.id ? (
+                {Profile && Profile.id !== theprofile.id ? (
                   <EmailOutlinedIcon />
                 ) : (<MoreVertIcon onClick={handleShowPrivacy} />)}
 
@@ -330,18 +336,20 @@ export default function Profile() {
           </div>
         </div>
         <RightBar />
-      </main>
+      </main >
       {/* Comments Modal */}
-      {showComments && (
-        <Comment
-          comments={comment}
-          isOpen={showComments}
-          onClose={closeComments}
-          postId={selectedPost?.id}
-          postTitle={selectedPost?.title}
-          onCommentChange={refreshComments}
-        />
-      )}
-    </div>
+      {
+        showComments && (
+          <Comment
+            comments={comment}
+            isOpen={showComments}
+            onClose={closeComments}
+            postId={selectedPost?.id}
+            postTitle={selectedPost?.title}
+            onCommentChange={refreshComments}
+          />
+        )
+      }
+    </div >
   );
 }
