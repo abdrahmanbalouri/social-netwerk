@@ -65,49 +65,11 @@
 }
 
 /* ==================== Modal styles ==================== */
-.modal-overlay {
-  position: fixed;
-  inset: 0;
-  display: grid;
-  place-items: center;
-  background: rgba(2, 6, 23, 0.6);
-  backdrop-filter: blur(4px) saturate(120%);
-  z-index: 1200;
-  padding: 1.25rem;
-  transition: opacity 160ms ease, visibility 160ms ease;
-  opacity: 0;
-  visibility: hidden;
-  pointer-events: none;
-}
-
-.modal-overlay.is-open {
-  opacity: 1;
-  visibility: visible;
-  pointer-events: auto;
-}
-
-.modal-content {
-  width: min(680px, 96%);
-  background: var(--bg, #fff);
-  color: var(--text, #111);
-  border-radius: 12px;
-  padding: 1.25rem;
-  box-shadow: 0 10px 30px rgba(2, 8, 23, 0.45);
-  max-height: 85vh;
-  overflow: auto;
-  transform: translateY(6px) scale(.995);
-  transition: transform 200ms cubic-bezier(.2, .9, .2, 1);
-  position: relative;
-}
-
-.modal-overlay.is-open .modal-content {
-  transform: translateY(0) scale(1);
-}
 
 
-a {
-  text-decoration: none;
-}
+
+
+
 
 
 /* 🎨 Themes */
