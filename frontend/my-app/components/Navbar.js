@@ -5,6 +5,7 @@ import { useDarkMode } from "../context/darkMod";
 import { useProfile } from "../context/profile";
 import { useWS } from "../context/wsContext.js";
 import { useState, useEffect } from "react";
+import { useChat } from "../context/chatContext.js";
 import Notification from "./notofication.js";
 import "../styles/navbar.css";
 
@@ -16,19 +17,22 @@ export default function Navbar({ onCreatePost }) {
   const [data, notif] = useState({});
   const [show, cheng] = useState(false);
   const { addListener, removeListener, connected } = useWS();
+  const { activeChatID } = useChat();
   useEffect(() => {
     if (!connected) return; // wait for connection
+
     const handleNotification = (data) => {
       console.log("Notification received:", data);
+      if (activeChatID && data.from === activeChatID) return; // don't notify if chatting with the sender
       addnotf((prev) => prev + 1);
       notif(data.data || data);
       cheng(true);
       setTimeout(() => cheng(false), 4000);
     };
 
-    addListener("follow", handleNotification);
-    return () => removeListener("follow", handleNotification);
-  }, [connected]);
+    addListener("notification", handleNotification);
+    return () => removeListener("notification", handleNotification);
+  }, [connected, addListener, removeListener, activeChatID]);
 
   return (
     <div className="navbar">
