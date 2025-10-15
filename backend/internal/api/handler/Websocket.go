@@ -60,28 +60,26 @@ func Websocket(w http.ResponseWriter, r *http.Request) {
 	defer func() {
 		ClientsMutex.Lock()
 		conns, ok := Clients[currentUserID]
-		if !ok {
-			ClientsMutex.Unlock()
-			return
-		}
-		for i, c := range conns {
-			if c == conn {
-				Clients[currentUserID] = append(conns[:i], conns[i+1:]...)
-				break
+
+		if ok {
+			for i, c := range conns {
+				if c == conn {
+					Clients[currentUserID] = append(conns[:i], conns[i+1:]...)
+					break
+				}
+			}
+			if len(Clients[currentUserID]) == 0 {
+				delete(Clients, currentUserID)
 			}
 		}
-		if len(Clients[currentUserID]) == 0 {
-			delete(Clients, currentUserID)
-			BrodcastOnlineStatus(currentUserID, false)
-		}
 		ClientsMutex.Unlock()
+		BrodcastOnlineStatus(currentUserID, false)
 		conn.Close()
-		log.Printf("User %s disconnected", currentUserID)
 	}()
 }
 
 func Loop(conn *websocket.Conn, currentUserID string) {
-	fmt.Println("---------------------------dkjl",Clients)
+	fmt.Println("---------------------------dkjl", Clients)
 	for {
 		fmt.Println("-----------------------hwaaa")
 		var msg Message
@@ -199,7 +197,6 @@ func BrodcastOnlineStatus(userID string, online bool) {
 		"userID": userID,
 		"online": online,
 	}
-
 	for id, conns := range Clients {
 		if id == userID {
 			continue
