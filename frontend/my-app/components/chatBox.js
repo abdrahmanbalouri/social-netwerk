@@ -13,15 +13,58 @@ export default function ChatBox({ user }) {
   const inputRef = useRef(null);
   const { sendMessage, addListener, removeListener } = useWS();
   const { activeChatID, setActiveChatID } = useChat();
-
+  let [offset, setOffset] = useState(0);
   if (!user) {
     return <div className="loading">Loading user...</div>;
   }
   setTimeout(() => {
     inputRef.current.focus();
   }, 0);
+  // Fetch on scroll up for more messages
+  const handleScroll = (e) => {
+    if (e.target.scrollTop === 0) {
+      setOffset((prev) => prev + 20);
+    }
+  };
 
-  
+  useEffect(() => {
+    const fetchMessages = async () => {
+      try {
+        const response = await fetch(
+          `http://localhost:8080/api/getmessages?receiverId=${user.id}&limit=20&offset=${offset}`,
+          {
+            credentials: "include",
+            method: "GET",
+          }
+        );
+        if (!response.ok) {
+          throw new Error("Failed to fetch messages");
+        }
+        const data = await response.json();
+        if (data.messages) {
+          console.log("data from messages", data.messages);
+
+          console.log("measssagesg", messages);
+          const formattedMessages = data.messages
+            .map((msg) => ({
+              text: msg.content,
+              sender: msg.senderId === user.id ? "them" : "me",
+            }))
+            .reverse();
+          if (offset === 0) {
+            setMessages(formattedMessages);
+          } else {
+            setMessages((prev) => [...formattedMessages, ...prev]);
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching messages:", error);
+      }
+    };
+
+    fetchMessages();
+  }, [offset, user.id]);
+
   useEffect(() => {
     setActiveChatID(user.id);
     return () => setActiveChatID(null);
@@ -29,6 +72,9 @@ export default function ChatBox({ user }) {
 
   useEffect(() => {
     const handleIncomingMessage = (data) => {
+      console.log("activeChatID", activeChatID);
+      console.log("user.id", user.id);
+
       if (data.from !== user.id && activeChatID !== user.id) return;
       setMessages((prev) => [
         ...prev,
@@ -137,7 +183,7 @@ export default function ChatBox({ user }) {
           <span className="on">online</span>
         </div>
       </div>
-      <div className="chat-box">
+      <div className="chat-box" onScroll={handleScroll}>
         {messages.length === 0 ? (
           <p className="no-msg">No messages yet</p>
         ) : (
