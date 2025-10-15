@@ -15,17 +15,13 @@
   background: #fafafa;
   border-bottom: 1px solid #dbdbdb;
   gap: 16px;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
   justify-content: flex-start; /* Changed from center to flex-start for better scrolling */
   max-width: 600px;
   margin:  auto;
   margin-bottom: 10px;
 }
 
-.story-bar::-webkit-scrollbar {
-  display: none;
-}
+
 
 /* Individual Story Item - Compact */
 .story-item {
