@@ -12,11 +12,16 @@ export default function ChatBox({ user }) {
   const [showEmojis, setShowEmojis] = useState(false);
   const inputRef = useRef(null);
   const { sendMessage, addListener, removeListener } = useWS();
-  const { activeChatID, setActiveChatID } = useChat();
   let [offset, setOffset] = useState(0);
+  const { activeChatID, setActiveChatID } = useChat();
+
   if (!user) {
     return <div className="loading">Loading user...</div>;
   }
+  useEffect(() => {
+    setActiveChatID(user.id);
+    return () => setActiveChatID(null);
+  }, [user.id]);
   setTimeout(() => {
     inputRef.current.focus();
   }, 0);
@@ -66,27 +71,23 @@ export default function ChatBox({ user }) {
   }, [offset, user.id]);
 
   useEffect(() => {
-    setActiveChatID(user.id);
-    return () => setActiveChatID(null);
-  }, [user.id]);
-
-  useEffect(() => {
     const handleIncomingMessage = (data) => {
-      console.log("activeChatID", activeChatID);
-      console.log("user.id", user.id);
 
-      if (data.from !== user.id && activeChatID !== user.id) return;
-      setMessages((prev) => [
-        ...prev,
-        {
-          text: data.content,
-          sender: data.from === user.id ? "them" : "me",
-        },
-      ]);
-    };
+      if (data.from === user.id || data.to === user.id) {
+
+        setMessages((prev) => [
+          ...prev,
+          {
+            text: data.content,
+            sender: data.from === user.id ? "them" : "me",
+          },
+        ]);
+      };
+    }
 
     addListener("message", handleIncomingMessage);
-    return () => removeListener("message", handleIncomingMessage);
+    return () => removeListener("message", handleIncomingMessage)
+
   }, [addListener, removeListener]);
 
   const emojiArray = [
