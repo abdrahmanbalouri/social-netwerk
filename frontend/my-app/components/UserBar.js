@@ -27,7 +27,6 @@ export default function UserBar() {
 
         fetchusers();
     }, []);
-    console.log(users);
 
     return (
         <div className="userBar">
