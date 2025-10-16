@@ -5,19 +5,16 @@ import { useDarkMode } from "../context/darkMod";
 import { useProfile } from "../context/profile";
 import { useWS } from "../context/wsContext.js";
 import { useState, useEffect } from "react";
+import { useChat } from "../context/chatContext.js";
 import Notification from "./notofication.js";
 import "../styles/search.css"
 import NOtBar from "./notfcationBar.js"
+import "../styles/navbar.css";
 
 export default function Navbar({ onCreatePost }) {
   const router = useRouter();
   const { darkMode, toggle } = useDarkMode();
   const { Profile } = useProfile();
-  const { ws, connected } = useWS();
-
-  const [cont, addnotf] = useState(0);
-  const [data, notif] = useState({});
-  const [show, cheng] = useState(false);
 
   const [searchTerm, setSearchTerm] = useState("");
   const [searchResults, setSearchResults] = useState([]);
@@ -26,25 +23,26 @@ export default function Navbar({ onCreatePost }) {
   const [showNotbar, chengBool] = useState(false)
   const [notData, setnot] = useState({})
 
+  const [cont, addnotf] = useState(0);
+  const [data, notif] = useState({});
+  const [show, cheng] = useState(false);
+  const { addListener, removeListener, connected } = useWS();
+  const { activeChatID } = useChat();
   useEffect(() => {
-    if (!ws) return;
-    ws.onmessage = (event) => {
-      if (event.data) {
-        try {
-          const data = JSON.parse(event.data);
-          if (data.type === "follow") {
-            addnotf((prev) => prev + 1);
-            notif(data);
-            cheng(true);
-            setTimeout(() => cheng(false), 4000);
-          }
-        } catch (err) {}
-      }
+    if (!connected) return; // wait for connection
+
+    const handleNotification = (data) => {
+      console.log("Notification received:", data);
+      if (activeChatID && data.from === activeChatID) return; // don't notify if chatting with the sender
+      addnotf((prev) => prev + 1);
+      notif(data.data || data);
+      cheng(true);
+      setTimeout(() => cheng(false), 4000);
     };
-    return () => {
-      ws.onmessage = null;
-    };
-  }, [ws, connected]);
+
+    addListener("notification", handleNotification);
+    return () => removeListener("notification", handleNotification);
+  }, [connected, addListener, removeListener, activeChatID]);
 
 
   const notifications = async () => {
@@ -93,7 +91,7 @@ export default function Navbar({ onCreatePost }) {
   return (
     <div className="navbar">
       <div className="left">
-        <Link href="/home" style={{ textDecoration: "none" }}>
+        <Link href="/home">
           <span>Social-Network</span>
         </Link>
 
@@ -146,7 +144,11 @@ export default function Navbar({ onCreatePost }) {
 
         <div className="user" onClick={() => router.push("/profile/0")}>
           <img
-            src={Profile?.image ? `/uploads/${Profile.image}` : "/uploads/default.png"}
+            src={
+              Profile?.image
+                ? `/uploads/${Profile.image}`
+                : "/uploads/default.png"
+            }
             alt="user avatar"
           />
         </div>

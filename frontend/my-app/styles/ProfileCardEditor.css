@@ -39,10 +39,6 @@
     gap: 8px;
 }
 
-.body {
-    padding: 20px;
-}
-
 .avatar-section {
     display: flex;
     align-items: flex-end;
