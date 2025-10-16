@@ -378,7 +378,7 @@ export default function Profile() {
                 {Profile && Profile.id !== theprofile.id ? (
                   <EmailOutlinedIcon />
                 ) : (
-                  <MoreVertIcon onClick={handleShowPrivacy} />
+                  <MoreVertIcon showPrivacy={showPrivacy} onClick={handleShowPrivacy} />
                 )}
               </div>
               {showPrivacy && <ProfileCardEditor showPrivacy={showPrivacy} />}
