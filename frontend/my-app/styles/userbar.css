@@ -66,11 +66,7 @@
     width: 100%;
 }
 
-.userBar .userLink {
-    text-decoration: none;
-    color: inherit;
-    display: block;
-}
+
 
 .userBar .userDetails {
     display: flex;

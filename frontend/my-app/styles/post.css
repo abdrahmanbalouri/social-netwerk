@@ -51,9 +51,9 @@
 
 
 .post .details {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 }
 
 .post .details .name {
