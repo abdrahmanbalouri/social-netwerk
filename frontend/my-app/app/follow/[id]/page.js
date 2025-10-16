@@ -30,7 +30,7 @@ export default function FollowPage() {
         const data = await res.json();
         tab === "followers" ? setFollowers(data) : setFollowing(data);
       } catch (error) {
-        console.log(error);
+        console.error(error);
       }
     };
     fetchData();

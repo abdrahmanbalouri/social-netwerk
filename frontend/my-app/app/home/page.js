@@ -38,6 +38,7 @@ export default function Home() {
   const boleanofset = useRef(false)
   const postRefs = useRef({});
   function scrollToPost(postId) {
+    
     const el = postRefs.current[postId];
     if (el) {
       el.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -117,12 +118,10 @@ export default function Home() {
         credentials: 'include',
       });
       if (!response.ok) {
-        console.log(222);
 
         throw new Error('Failed to fetch followers');
       }
       let data = await response.json();
-      console.log(data);
 
       if (!data) {
         data = []
@@ -209,10 +208,11 @@ export default function Home() {
       if (!res.ok) {
         return false
       }
-      console.log(res);
 
       const data = await res.json();
-      console.log(offsetpsot.current);
+
+
+
       setPosts([...data]);
       return true
     } catch (err) {
@@ -386,7 +386,6 @@ export default function Home() {
         } else if (data) {
           newcomment = [data];
         }
-        console.log(newcomment);
 
 
         setComment([...newcomment, ...comment]);
