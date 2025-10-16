@@ -78,9 +78,7 @@ func Websocket(w http.ResponseWriter, r *http.Request) {
 }
 
 func Loop(conn *websocket.Conn, currentUserID string) {
-	// fmt.Println("---------------------------dkjl", Clients)
 	for {
-		// fmt.Println("-----------------------hwaaa")
 		var msg Message
 		if err := conn.ReadJSON(&msg); err != nil {
 			log.Println("WebSocket read error:", err)
@@ -90,7 +88,6 @@ func Loop(conn *websocket.Conn, currentUserID string) {
 		switch msg.Type {
 		//  HANDLE CHAT MESSAGE
 		case "message":
-			// fmt.Println("-----------------------------", msg)
 
 			if msg.ReceiverId == "" {
 				log.Println("Invalid recipient ID")
@@ -125,6 +122,7 @@ func Loop(conn *websocket.Conn, currentUserID string) {
 				"type":    msg.Type,
 				"time":    time.Now().Format(time.RFC3339),
 				"from":    currentUserID,
+				"to":      msg.ReceiverId,
 				"content": msg.MessageContent,
 			})
 
@@ -133,6 +131,7 @@ func Loop(conn *websocket.Conn, currentUserID string) {
 				"type":    msg.Type,
 				"time":    time.Now().Format(time.RFC3339),
 				"from":    currentUserID,
+				"to":      msg.ReceiverId,
 				"content": msg.MessageContent,
 			})
 
