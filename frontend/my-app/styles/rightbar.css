@@ -3,7 +3,7 @@
   top: 70px;
   right: 0;
   width: 350px;
-  height: calc(100vh - 70px);
+  height: calc(100vh - 90px);
   overflow-y: auto;
   padding: 20px;
   z-index: 100;
