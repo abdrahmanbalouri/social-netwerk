@@ -80,7 +80,7 @@ export default function FollowPage() {
                     </Link>
                   </div>
                 </div>
-              ))}
+              )) || <div className="itemUsersR"> no user found </div>}
               </div>
             ) : (
               <div className="itemUsers">
@@ -95,7 +95,7 @@ export default function FollowPage() {
                       </Link>
                     </div>
                   </div>
-                ))}
+                )) || <div className="itemUsersR"> no user found </div>}
               </div>
             )}
           </div>
