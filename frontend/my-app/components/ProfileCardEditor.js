@@ -71,7 +71,7 @@ export default function ProfileCardEditor({
         }
     }
     function handleShowPrivacy() {
-        
+
         showPrivacy = false
 
     }
@@ -155,7 +155,7 @@ export default function ProfileCardEditor({
                         </select>
                     </label>
 
-                    
+
 
                     <div className="actions">
                         <button
@@ -163,6 +163,7 @@ export default function ProfileCardEditor({
                                 setCoverPreview(initialCover);
                                 setAvatarPreview(initialAvatar);
                                 setPrivacy(initialPrivacy);
+                                !showPrivacy
                             }}
                             className="btn"
                         >

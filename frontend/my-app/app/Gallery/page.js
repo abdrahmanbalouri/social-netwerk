@@ -47,7 +47,8 @@ export default function Gallery() {
       .then((data) => {
 
         if (data) {
-          setImages(data);
+          let images = data.filter(img => img.imagePath);          
+          setImages(images);
           return
         }
         if (data.length > 0) {
@@ -102,7 +103,6 @@ export default function Gallery() {
                       <div className="gallery-desc">
                         {img.description || "Lorem ipsum dolor sit amet consectetur adipisicing elit. Ab, eum!"}
                       </div>
-                      <button className="gallery-btn">See More</button>
                     </div>
                   </div>
                 ))
