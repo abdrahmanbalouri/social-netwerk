@@ -12,7 +12,6 @@ export default function ChatBox({ user }) {
   const [showEmojis, setShowEmojis] = useState(false);
   const inputRef = useRef(null);
   const { sendMessage, addListener, removeListener } = useWS();
-  let [offset, setOffset] = useState(0);
   const { activeChatID, setActiveChatID } = useChat();
 
   if (!user) {
@@ -25,18 +24,12 @@ export default function ChatBox({ user }) {
   setTimeout(() => {
     inputRef.current.focus();
   }, 0);
-  // Fetch on scroll up for more messages
-  const handleScroll = (e) => {
-    if (e.target.scrollTop === 0) {
-      setOffset((prev) => prev + 20);
-    }
-  };
 
   useEffect(() => {
     const fetchMessages = async () => {
       try {
         const response = await fetch(
-          `http://localhost:8080/api/getmessages?receiverId=${user.id}&limit=20&offset=${offset}`,
+          `http://localhost:8080/api/getmessages?receiverId=${user.id}`,
           {
             credentials: "include",
             method: "GET",
