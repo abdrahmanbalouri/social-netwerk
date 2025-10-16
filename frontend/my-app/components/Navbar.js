@@ -7,7 +7,6 @@ import { useWS } from "../context/wsContext.js";
 import { useState, useEffect } from "react";
 import { useChat } from "../context/chatContext.js";
 import Notification from "./notofication.js";
-import "../styles/search.css"
 import NOtBar from "./notfcationBar.js"
 import "../styles/navbar.css";
 
