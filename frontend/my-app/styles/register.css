@@ -13,7 +13,8 @@ body {
   max-width: 600px;
   margin: 50px auto;
   padding: 20px;
-  background-color: #1a1a1a; /* Dark background similar to Kick */
+  background-color: #1a1a1a;
+  /* Dark background similar to Kick */
   border-radius: 10px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
   color: #ffffff;
@@ -24,7 +25,8 @@ body {
   font-size: 2.5rem;
   text-align: center;
   margin-bottom: 20px;
-  color: #00ff88; /* Neon green accent like Kick */
+  color: #00ff88;
+  /* Neon green accent like Kick */
   text-transform: uppercase;
   letter-spacing: 2px;
 }
