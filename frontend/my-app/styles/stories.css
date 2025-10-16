@@ -514,7 +514,7 @@
 /* Close Button */
 .story-close-btn {
   position: absolute;
-  top: 20px;
+  top: 40px;
   right: 16px;
   background: rgba(0, 0, 0, 0.3);
   color: #fff;

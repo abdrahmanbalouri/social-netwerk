@@ -27,11 +27,16 @@
   background: #1b74e4;
 }
 
+a {
+  text-decoration: none;
+}
 
 .ddd {
-  height: 500px; /* height fixed */
+  height: 500px;
+  /* height fixed */
   overflow-y: auto;
 }
+
 .post .container .user .userInfo .details .date {
   font-size: 12px;
 }
