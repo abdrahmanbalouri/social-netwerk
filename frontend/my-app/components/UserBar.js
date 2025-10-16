@@ -39,7 +39,7 @@ export default function UserBar() {
                     users.map((user) => (
                         <div key={user.id} className="user">
                             <div className="userInfo">
-                                <Link href={`/chat/${user.id}`} className="userLink">
+                                <Link href={`/chat/${user.id}`}>
                                     <div className="userDetails">
                                         <img
                                             src={user?.image ? `/uploads/${user.image}` : "/uploads/default.png"}
