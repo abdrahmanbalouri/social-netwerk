@@ -15,10 +15,11 @@
   background: #fafafa;
   border-bottom: 1px solid #dbdbdb;
   gap: 16px;
-  justify-content: flex-start; /* Changed from center to flex-start for better scrolling */
+  justify-content: flex-start;
   max-width: 600px;
   margin:  auto;
   margin-bottom: 10px;
+  border-radius: 12px;
 }
 
 
