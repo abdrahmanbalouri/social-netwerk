@@ -36,6 +36,8 @@
 }
 
 .chat-container {
+  position: sticky;
+  top: 70px;
   flex: 1;
   margin-left: 150px;
   margin-right: 150px;
@@ -43,7 +45,6 @@
   flex-direction: column;
   height: calc(100vh - 90px);
   width: 700px;
-  position: relative;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
 }
 
