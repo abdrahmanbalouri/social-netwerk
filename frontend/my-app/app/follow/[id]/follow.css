@@ -92,8 +92,7 @@
 }
 
 /* Empty State */
-.itemUsers:empty::before {
-  content: "No users yet";
+.itemUsersR  {
   display: block;
   text-align: center;
   color: #8e8e8e;
