@@ -10,7 +10,8 @@ import (
 
 	"social-network/internal/helper"
 	"social-network/internal/repository"
-	"social-network/internal/repository/midlweare"
+	"social-network/internal/repository/middleware"
+
 
 	"github.com/google/uuid"
 )
@@ -21,7 +22,7 @@ func Createpost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	userID, err := midlweare.AuthenticateUser(r)
+	userID, err := middleware.AuthenticateUser(r)
 	if err != nil {
 		helper.RespondWithError(w, http.StatusUnauthorized, "Authentication required")
 		return

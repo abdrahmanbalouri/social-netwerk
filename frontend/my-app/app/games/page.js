@@ -18,7 +18,7 @@ export default function Game() {
         });
 
         if (!response.ok) {
-          
+
           router.replace("/login");
           return null;
         }
@@ -49,43 +49,43 @@ export default function Game() {
           <div className="games-list">
             <div className="game-card">
               <h3>Boomber man</h3>
-              <Link href="https://raji383.github.io/bomberman/">
+              <Link href="https://raji383.github.io/bomberman/" target="_blank">
                 <img src="/bomberman.png" alt="Boomber man" />
               </Link>
             </div>
             <div className="game-card">
               <h3>Arkanoid</h3>
-              <Link href="https://brick-breaker-abaid.netlify.app/">
+              <Link href="https://brick-breaker-abaid.netlify.app/" target="_blank">
                 <img src="/Arkanoid.png" alt="Arkanoid" />
               </Link>
             </div>
             <div className="game-card">
               <h3>super-mario</h3>
-              <Link href="https://raji383.github.io/super-mario/">
+              <Link href="https://raji383.github.io/super-mario/" target="_blank">
                 <img src="/super-mario.png" alt="Arkanoid" />
               </Link>
             </div>
             <div className="game-card">
               <h3>Raven</h3>
-              <Link href="https://raji383.github.io/Raven-game/">
+              <Link href="https://raji383.github.io/Raven-game/" target="_blank">
                 <img src="/Raven.png" alt="Arkanoid" />
               </Link>
             </div>
             <div className="game-card">
               <h3>shadow</h3>
-              <Link href="https://raji383.github.io/shadow-game/">
+              <Link href="https://raji383.github.io/shadow-game/" target="_blank">
                 <img src="/shadow.png" alt="Arkanoid" />
               </Link>
             </div>
             <div className="game-card">
               <h3>War-machine</h3>
-              <Link href="https://raji383.github.io/War-machine/">
+              <Link href="https://raji383.github.io/War-machine/" target="_blank">
                 <img src="/war.png" alt="Arkanoid" />
               </Link>
             </div>
             <div className="game-card">
               <h3>toad</h3>
-              <Link href="https://raji383.github.io/War-machine/">
+              <Link href="https://raji383.github.io/War-machine/" target="_blank">
                 <img src="/toad.png" alt="Arkanoid" />
               </Link>
             </div>
