@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 
 	"social-network/internal/helper"
@@ -17,8 +16,8 @@ func FollowRequestAction(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var req struct {
-		ID     int    `json:"id"`
-		Action string `json:"action"`
+		ID     string    `json:"id"`    
+		Action string `json:"action"` 
 	}
 
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
@@ -34,7 +33,6 @@ func FollowRequestAction(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if !exists {
-		fmt.Println("zedzedzedezde" , err)
 		http.Error(w, "Follow request not found", http.StatusNotFound)
 		return
 	}
@@ -42,11 +40,10 @@ func FollowRequestAction(w http.ResponseWriter, r *http.Request) {
 	if req.Action == "accept" {
 		_, err = repository.Db.Exec(
 			"INSERT INTO followers (user_id, follower_id) VALUES (?, ?)",
-			req.ID, UserID,
+			UserID, req.ID,
 		)
 		if err != nil {
-			fmt.Println("Error inserting follower:", err)
-			http.Error(w, "Error inserting follower", http.StatusInternalServerError)
+			http.Error(w, "Error inserting follower: "+err.Error(), http.StatusInternalServerError)
 			return
 		}
 	}
@@ -56,8 +53,7 @@ func FollowRequestAction(w http.ResponseWriter, r *http.Request) {
 		UserID, req.ID,
 	)
 	if err != nil {
-		fmt.Println("Error deleting follow request:", err)
-		http.Error(w, "Error deleting follow request", http.StatusInternalServerError)
+		http.Error(w, "Error deleting follow request: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
 
