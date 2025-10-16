@@ -1,0 +1,731 @@
+/* stories.css - Centered Instagram Style Stories */
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+/* Story Bar Tray - Centered horizontal scroll */
+.story-bar {
+  display: flex;
+  overflow-x: auto;
+  padding: 16px 12px;
+  background: #fafafa;
+  border-bottom: 1px solid #dbdbdb;
+  gap: 16px;
+  justify-content: flex-start;
+  max-width: 600px;
+  margin:  auto;
+  margin-bottom: 10px;
+  border-radius: 12px;
+}
+
+
+
+/* Individual Story Item - Compact */
+.story-item {
+  flex-shrink: 0;
+  text-align: center;
+  cursor: pointer;
+  position: relative;
+  width: 78px;
+  height: 98px;
+  transition: transform 0.2s ease;
+}
+
+.story-item:hover {
+  transform: scale(1.05);
+}
+
+/* Image Wrapper - Circle with gradient ring */
+.story-image-wrapper {
+  position: relative;
+  width: 68px;
+  height: 68px;
+  border-radius: 50%;
+  margin: 0 auto 6px;
+  border: 2px solid transparent;
+  background: linear-gradient(white, white) padding-box,
+              linear-gradient(45deg, #f58529, #dd2a7b, #8134af, #f58529) border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2px;
+}
+
+/* Profile Image - Perfect circle */
+.story-image-wrapper img.profile-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 2px solid white;
+}
+
+/* Story Label */
+.story-label {
+  font-size: 12px;
+  font-weight: 400;
+  color: #262626;
+  max-width: 68px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-align: center;
+  line-height: 1.2;
+}
+
+/* My Story Variants */
+.my-story .story-image-wrapper {
+  background: none;
+  border: 2px solid #dbdbdb;
+}
+
+.my-story.has-story .story-image-wrapper {
+  background: linear-gradient(white, white) padding-box,
+              linear-gradient(45deg, #f58529, #dd2a7b, #8134af, #f58529) border-box;
+  border: 2px solid transparent;
+}
+
+/* Add Button - Blue circle */
+.story-add-btn.add-more {
+  position: absolute;
+  bottom: 22px;
+  right: 0;
+  background: #0095f6;
+  color: white;
+  border: 2px solid white;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  font-size: 14px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  z-index: 5;
+  transition: all 0.2s ease;
+}
+
+.story-add-btn.add-more:hover {
+  background: #0077c5;
+  transform: scale(1.1);
+}
+
+/* Error Message */
+.story-error {
+  color: #ed4956;
+  background: #ffebee;
+  padding: 12px;
+  margin: 10px 12px;
+  border-radius: 8px;
+  font-size: 14px;
+  text-align: center;
+  border: 1px solid #fcc7c7;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Modal Overlay */
+.story-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.75);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  backdrop-filter: blur(4px);
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Modal Content */
+.story-modal {
+  background: #fff;
+  border-radius: 16px;
+  width: 90%;
+  max-width: 400px;
+  padding: 20px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+  from { 
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to { 
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.story-modal h2 {
+  text-align: center;
+  margin-bottom: 16px;
+  font-size: 18px;
+  font-weight: 600;
+  color: #262626;
+}
+
+/* Preview */
+.create-cover-preview {
+  width: 100%;
+  height: 200px;
+  margin-bottom: 16px;
+  background: #f5f5f5;
+  border-radius: 12px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px dashed #dbdbdb;
+  transition: all 0.3s ease;
+}
+
+.create-cover-preview:hover {
+  border-color: #0095f6;
+}
+
+.create-cover-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.placeholder-cover {
+  color: #8e8e8e;
+  font-size: 14px;
+  font-style: italic;
+}
+
+/* Inputs */
+.story-modal input[type="text"] {
+  width: 100%;
+  padding: 12px;
+  margin: 8px 0;
+  border: 1px solid #dbdbdb;
+  border-radius: 8px;
+  font-size: 14px;
+  background: #fafafa;
+  transition: all 0.2s ease;
+}
+
+.story-modal input[type="text"]:focus {
+  border-color: #0095f6;
+  background: white;
+  outline: none;
+}
+
+.story-modal input[type="color"] {
+  width: 100%;
+  height: 44px;
+  margin: 8px 0;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.story-modal input[type="color"]:hover {
+  transform: scale(1.02);
+}
+
+.story-modal input[type="file"] {
+  width: 100%;
+  padding: 8px 0;
+  margin: 8px 0;
+  cursor: pointer;
+}
+
+/* Buttons */
+.modal-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.modal-buttons button {
+  width: 100%;
+  padding: 12px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.modal-buttons button:first-child {
+  background: #0095f6;
+  color: #fff;
+  border: none;
+}
+
+.modal-buttons button:first-child:hover {
+  background: #0077c5;
+  transform: translateY(-1px);
+}
+
+.modal-buttons button:last-child {
+  background: #efefef;
+  border: 1px solid #dbdbdb;
+  color: #262626;
+}
+
+.modal-buttons button:last-child:hover {
+  background: #e0e0e0;
+  transform: translateY(-1px);
+}
+
+/* Viewer Overlay */
+.story-view-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: #000;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 0.3s ease;
+}
+
+/* Viewer Container */
+.story-view-container {
+  position: relative;
+  width: 100%;
+  max-width: 400px;
+  height: 100%;
+  background: #000;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Progress Bars - Instagram Style */
+.stories-progress-container {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  right: 16px;
+  display: flex;
+  gap: 4px;
+  z-index: 20;
+}
+
+.story-segment-bar {
+  flex: 1;
+  height: 2px;
+  background: rgba(255, 255, 255, 0.4);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.story-segment-fill {
+  height: 100%;
+  background: #fff;
+  width: 0%;
+  transition: width 1s linear;
+}
+
+.story-segment-bar.completed .story-segment-fill {
+  width: 100% !important;
+}
+
+.story-segment-bar.active .story-segment-fill {
+  animation: countdown 6s linear forwards;
+}
+
+@keyframes countdown {
+  from { width: 100%; }
+  to { width: 0%; }
+}
+
+/* User Info Overlay - Instagram Style */
+.story-user-info {
+  position: absolute;
+  top: 30px;
+  left: 16px;
+  display: flex;
+  align-items: center;
+  z-index: 15;
+  background: rgba(0, 0, 0, 0.3);
+  padding: 6px 12px;
+  border-radius: 20px;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.story-user-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  margin-right: 8px;
+  border: 2px solid rgba(255, 255, 255, 0.6);
+  object-fit: cover;
+}
+
+.story-user-name {
+  color: white;
+  font-weight: 600;
+  font-size: 13px;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.story-time {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 12px;
+  margin-left: 6px;
+}
+
+/* Timer */
+.story-timer-text {
+  position: absolute;
+  bottom: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.6);
+  color: white;
+  padding: 6px 12px;
+  border-radius: 16px;
+  font-size: 12px;
+  font-weight: 600;
+  z-index: 12;
+  backdrop-filter: blur(4px);
+}
+
+/* STORY CONTENT CONTAINER - CENTERED LIKE INSTAGRAM */
+.story-content-container {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  width: 100%;
+  height: 100%;
+  padding: 60px 20px 80px; /* Space for header and bottom */
+}
+
+/* Centered Image - Instagram Style */
+.story-centered-image {
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+/* Text Content - Centered */
+.story-text-content {
+  font-size: 24px;
+  font-weight: 600;
+  text-align: center;
+  max-width: 80%;
+  padding: 20px;
+  border-radius: 12px;
+  line-height: 1.3;
+  word-wrap: break-word;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+/* Navigation Buttons - Like Instagram */
+.story-nav-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(0, 0, 0, 0.3);
+  color: white;
+  border: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  font-size: 24px;
+  font-weight: bold;
+  cursor: pointer;
+  z-index: 15;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  transition: all 0.3s ease;
+  opacity: 0.8;
+}
+
+.story-nav-btn:hover {
+  background: rgba(0, 0, 0, 0.5);
+  opacity: 1;
+  transform: translateY(-50%) scale(1.1);
+}
+
+.story-prev-btn {
+  left: 20px;
+}
+
+.story-next-btn {
+  right: 20px;
+}
+
+/* Tap Zones */
+.tap-left,
+.tap-right {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 50%;
+  z-index: 10;
+  cursor: pointer;
+}
+
+.tap-left { left: 0; }
+.tap-right { right: 0; }
+
+/* Close Button */
+.story-close-btn {
+  position: absolute;
+  top: 40px;
+  right: 16px;
+  background: rgba(0, 0, 0, 0.3);
+  color: #fff;
+  border: none;
+  font-size: 22px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  cursor: pointer;
+  z-index: 15;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  transition: all 0.2s ease;
+}
+
+.story-close-btn:hover {
+  background: rgba(0, 0, 0, 0.5);
+  transform: scale(1.1);
+}
+
+/* Loading States */
+.story-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.story-loading-spinner {
+  width: 24px;
+  height: 24px;
+  border: 2px solid #f3f3f3;
+  border-top: 2px solid #0095f6;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Empty State */
+.stories-empty {
+  text-align: center;
+  padding: 40px 20px;
+  color: #8e8e8e;
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.stories-empty-icon {
+  font-size: 48px;
+  margin-bottom: 16px;
+  opacity: 0.5;
+}
+
+.stories-empty-text {
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+/* Responsive Design */
+@media (max-width: 480px) {
+  .story-bar {
+    padding: 14px 10px;
+    gap: 14px;
+    max-width: 100%;
+  }
+  
+  .story-item {
+    width: 70px;
+    height: 90px;
+  }
+  
+  .story-image-wrapper {
+    width: 60px;
+    height: 60px;
+  }
+  
+  .story-label {
+    font-size: 11px;
+    max-width: 60px;
+  }
+  
+  .story-add-btn.add-more {
+    width: 18px;
+    height: 18px;
+    font-size: 12px;
+    bottom: 20px;
+  }
+  
+  .story-modal {
+    width: 95%;
+    padding: 16px;
+  }
+  
+  .create-cover-preview {
+    height: 180px;
+  }
+  
+  .story-text-content {
+    font-size: 20px;
+    padding: 16px;
+  }
+  
+  .story-user-info {
+    top: 26px;
+    left: 12px;
+    padding: 5px 10px;
+  }
+  
+  .story-user-avatar {
+    width: 24px;
+    height: 24px;
+  }
+  
+  .story-user-name {
+    font-size: 12px;
+  }
+  
+  .stories-progress-container {
+    top: 14px;
+    left: 12px;
+    right: 12px;
+  }
+  
+  .story-content-container {
+    padding: 50px 15px 70px;
+  }
+}
+
+@media (min-width: 768px) {
+  .story-view-container {
+    border-radius: 12px;
+    height: 85vh;
+    max-width: 350px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  }
+}
+
+@media (min-width: 1024px) {
+  .story-view-container {
+    max-width: 400px;
+    height: 80vh;
+  }
+}
+
+/* Hide buttons on mobile, keep tap zones */
+@media (max-width: 768px) {
+  .story-nav-btn {
+    display: none;
+  }
+  
+  .tap-left,
+  .tap-right {
+    display: block;
+  }
+}
+
+@media (min-width: 769px) {
+  .story-nav-btn {
+    display: flex;
+  }
+  
+  .tap-left,
+  .tap-right {
+    display: none;
+  }
+}
+
+/* High Contrast Mode Support */
+@media (prefers-contrast: high) {
+  .story-image-wrapper {
+    border: 2px solid #000;
+  }
+  
+  .story-user-info {
+    background: rgba(0, 0, 0, 0.8);
+    border: 1px solid #fff;
+  }
+  
+  .story-close-btn {
+    background: rgba(0, 0, 0, 0.8);
+    border: 1px solid #fff;
+  }
+}
+
+/* Reduced Motion Support */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  
+  .story-segment-fill {
+    transition: none;
+  }
+  
+  .story-segment-bar.active .story-segment-fill {
+    animation: none;
+  }
+}
+
+/* Dark Mode Support */

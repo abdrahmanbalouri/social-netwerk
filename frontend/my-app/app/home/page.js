@@ -1,6 +1,5 @@
 // Home.js
 "use client";
-import './Home.css';
 import { useRouter } from "next/navigation";
 import { useEffect, useState, useRef, use } from "react";
 import Navbar from '../../components/Navbar.js';
@@ -10,9 +9,6 @@ import { useDarkMode } from '../../context/darkMod';
 import Stories from '../../components/stories.js';
 import Comment from '../../components/coment.js';
 import Post from '../../components/Post.js';
-import './Home.css';
-import "../../styles/post.css"
-
 export default function Home() {
   const router = useRouter();
   const { darkMode } = useDarkMode();
@@ -37,7 +33,7 @@ export default function Home() {
   const [scroollhome, setscroolHome] = useState(0)
   const offsetpsot = useRef(0)
   const offsetcomment = useRef(0)
-  const modalRef = useRef(null); 
+  const modalRef = useRef(null);
   const modalRefhome = useRef(null)
   const boleanofset = useRef(false)
   const postRefs = useRef({});
@@ -306,12 +302,16 @@ export default function Home() {
   }
 
   async function GetComments(post) {
-
     setLoadingcomment(true)
+    console.log(post,"--------------------------++++++++++++++++++++");
+    
     try {
       setSelectedPost({
         id: post.id,
-        title: post.title || post.post_title || "Post"
+        title: post.title || post.post_title || "Post",
+        image_path :post.image_path,
+        content : post.content,
+        author : post.author
       });
 
       // Fetch comments
@@ -338,6 +338,8 @@ export default function Home() {
         content: comment.content || comment.text || "",
         created_at: comment.created_at || comment.createdAt || new Date().toISOString()
       }));
+      setShowComments(true);
+
       if (comments.length == 0) {
         return false
       } else {
@@ -347,7 +349,6 @@ export default function Home() {
 
 
       setComment([...comment, ...comments]);
-      setShowComments(true);
       return comments[0].id
 
     } catch (err) {
