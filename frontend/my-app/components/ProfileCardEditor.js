@@ -163,6 +163,7 @@ export default function ProfileCardEditor({
                                 setCoverPreview(initialCover);
                                 setAvatarPreview(initialAvatar);
                                 setPrivacy(initialPrivacy);
+                                !showPrivacy
                             }}
                             className="btn"
                         >
