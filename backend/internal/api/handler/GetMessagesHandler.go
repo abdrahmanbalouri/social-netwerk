@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"strconv"
 	"time"
 
 	"social-network/internal/helper"
@@ -33,25 +32,13 @@ func GetMessagesHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Missing receiverId parameter", http.StatusBadRequest)
 		return
 	}
-	offsetStr := r.URL.Query().Get("offset")
-	limitStr := r.URL.Query().Get("limit")
-
-	offset, err := strconv.Atoi(offsetStr)
-	if err != nil || offset < 0 {
-		offset = 0
-	}
-
-	limit, err := strconv.Atoi(limitStr)
-	if err != nil || (limit <= 0 || limit > 20) {
-		limit = 20 // Default limit
-	}
 	query := `
 		SELECT m.content, m.sender_id, m.receiver_id, m.sent_at FROM messages m
 		WHERE (m.sender_id = ? AND m.receiver_id = ?) OR (m.sender_id = ? AND m.receiver_id = ?)
 		ORDER BY m.sent_at DESC
-		LIMIT ? OFFSET ?`
+		`
 
-	rows, err := repository.Db.Query(query, currentUserID, reciverId, reciverId, currentUserID, limit, offset)
+	rows, err := repository.Db.Query(query, currentUserID, reciverId, reciverId, currentUserID)
 	if err != nil {
 		http.Error(w, "Database error: "+err.Error(), http.StatusInternalServerError)
 		return
