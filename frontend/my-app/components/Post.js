@@ -1,5 +1,7 @@
 // Post.js
 import Link from 'next/link';
+import "../styles/post.css"
+
 
 export default function Post({ post, onGetComments, ondolike }) {
   
@@ -19,10 +21,11 @@ export default function Post({ post, onGetComments, ondolike }) {
             </div>
           </div>
         </div>
-        <div className="content">
+        <div className="content1">
           <h3>
             <p style={{ color: "#5271ff" }}>{post.title}</p>
-            {post.content}
+
+          <strong className ="content2">{post.content}</strong>
           </h3>
           {post.image_path && <img src={`/${post.image_path}`} alt="Post content" />}
         </div>
