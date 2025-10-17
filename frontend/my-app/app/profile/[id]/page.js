@@ -390,7 +390,13 @@ export default function Profile() {
                   <MoreVertIcon onClick={handleShowPrivacy} />
                 )}
               </div>
-              {showPrivacy && <ProfileCardEditor handleShowPrivacy={handleShowPrivacy} initialCover={theprofile.cover} initialAvatar={theprofile.image} initialAbout={theprofile.about} initialPrivacy={theprofile.privacy} />}
+              {showPrivacy &&
+                (<div className='privacy-overlay'>
+                  <div onClick={handleShowPrivacy} className='privacy-backdrop'></div>
+                  <ProfileCardEditor handleShowPrivacy={handleShowPrivacy} initialCover={theprofile.cover} initialAvatar={theprofile.image} initialAbout={theprofile.about} initialPrivacy={theprofile.privacy} />
+                </div>
+                )
+              }
             </div>
             <div className="posts" style={{ marginTop: 20 }}>
               {posts.length === 0 ? (
