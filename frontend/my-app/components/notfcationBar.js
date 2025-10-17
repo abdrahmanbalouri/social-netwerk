@@ -5,15 +5,6 @@ export default function NotBar({ notData }) {
     const [filter, setFilter] = useState('all');
     const [notifications, setNotifications] = useState(notData || []);
 
-    const markAsRead = (index) => {
-        const updatedNotifications = [...notifications];
-        updatedNotifications[index].isRead = true;
-        setNotifications(updatedNotifications);
-    };
-
-    const filterNotifications = (type) => {
-        setFilter(type);
-    };
 
     const getFilteredNotifications = () => {
         if (filter === 'unread') {
@@ -26,6 +17,7 @@ export default function NotBar({ notData }) {
         switch (type) {
             case 'like': return { icon: '❤️', className: 'icon-like' };
             case 'comment': return { icon: '💬', className: 'icon-comment' };
+            case 'message': return { icon: '💬', className: 'icon-message' };
             default: return { icon: '🔔', className: 'icon-like' };
         }
     };
@@ -43,16 +35,10 @@ export default function NotBar({ notData }) {
                     <div className="dropdown-tabs">
                         <button
                             className={`tab-button ${filter === 'all' ? 'active' : ''}`}
-                            onClick={() => filterNotifications('all')}
                         >
                             All
                         </button>
-                        <button
-                            className={`tab-button ${filter === 'unread' ? 'active' : ''}`}
-                            onClick={() => filterNotifications('unread')}
-                        >
-                            Unread
-                        </button>
+                       
                     </div>
                 </div>
 
