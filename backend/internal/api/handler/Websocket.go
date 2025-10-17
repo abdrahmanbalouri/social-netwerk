@@ -95,10 +95,10 @@ func Loop(conn *websocket.Conn, currentUserID string) {
 			}
 
 			// ✅ Vérifie ghir wach receiver kayn
-			var exists int
+			var nickname string
 			err := repository.Db.QueryRow(`
-        SELECT 1 FROM users WHERE id = ?
-    `, msg.ReceiverId).Scan(&exists)
+			SELECT nickname FROM users WHERE id = ?
+		`, msg.ReceiverId).Scan(&nickname)
 			if err == sql.ErrNoRows {
 				log.Println("Recipient user not found")
 				continue
@@ -120,19 +120,19 @@ func Loop(conn *websocket.Conn, currentUserID string) {
 			// ✅ send message to receiver
 			sendToUser(msg.ReceiverId, map[string]any{
 				"type":    msg.Type,
-				"time":    time.Now().Format(time.RFC3339),
 				"from":    currentUserID,
 				"to":      msg.ReceiverId,
 				"content": msg.MessageContent,
+				"username": nickname,
 			})
 
 			// ✅ send back to sender also
 			sendToUser(currentUserID, map[string]any{
 				"type":    msg.Type,
-				"time":    time.Now().Format(time.RFC3339),
 				"from":    currentUserID,
 				"to":      msg.ReceiverId,
 				"content": msg.MessageContent,
+				"username": nickname,
 			})
 
 			// send notification to receiver
@@ -141,7 +141,6 @@ func Loop(conn *websocket.Conn, currentUserID string) {
 				"subType": "message",
 				"from":    currentUserID,
 				"content": "sent you a message",
-				"time":    time.Now().Format(time.RFC3339),
 			})
 
 		// ===============================
