@@ -29,6 +29,7 @@ func Routes(db *sql.DB) http.Handler {
 	mux.HandleFunc("/api/createpost", handlers.Createpost)
 	mux.HandleFunc("/api/Getpost/{id}", handlers.GetPostsHandler)
 	mux.HandleFunc("/api/Getallpost/{id}", handlers.AllpostsHandler)
+	mux.HandleFunc("api/Getpostbyuser/{id}/", handlers.GetPostByUserHandler)
 	mux.HandleFunc("/api/GetUsersHandler", handlers.GetUsersHandler)
 	mux.HandleFunc("/api/Getcomments/{id}/{offset}", handlers.GetCommentsHandler)
 	mux.HandleFunc("/api/gallery", handlers.GalleryHandler)
@@ -40,8 +41,8 @@ func Routes(db *sql.DB) http.Handler {
 	mux.HandleFunc("/api/getlastcomment/{id}", handlers.Getlastcommnet)
 	mux.HandleFunc("/api/searchUser", handlers.SearchUserHandler)
 	mux.HandleFunc("/notifcation", handlers.Notifications)
-	mux.HandleFunc("/api/Getstories",handlers.GetStories)
-	mux.HandleFunc("/api/Createstories",handlers.CreateStories)
+	mux.HandleFunc("/api/Getstories", handlers.GetStories)
+	mux.HandleFunc("/api/Createstories", handlers.CreateStories)
 	mux.HandleFunc("/api/getmessages", handlers.GetMessagesHandler)
 	mux.HandleFunc("/ws", handlers.Websocket)
 
