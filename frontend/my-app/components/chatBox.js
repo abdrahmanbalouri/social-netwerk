@@ -16,7 +16,7 @@ export default function ChatBox({ user }) {
   const { sendMessage, addListener, removeListener } = useWS();
   const { activeChatID, setActiveChatID } = useChat();
 
-  if (!user) {
+  if (!user || user.id == 0) {
     return <div className="loading">Loading user...</div>;
   }
 
@@ -41,14 +41,16 @@ export default function ChatBox({ user }) {
 
         if (data.messages) {
           const formattedMessages = data.messages
-            .map((msg) => ({
+            .map((msg) => ({              
               text: msg.content,
               sender: msg.senderId === user.id ? "them" : "me",
             }))
             .reverse();
 
+          console.log("Fetched messages:", formattedMessages);
           setMessages(formattedMessages);
         }
+
       } catch (error) {
         console.error("Error fetching messages:", error);
       }
@@ -139,11 +141,12 @@ export default function ChatBox({ user }) {
 
   const addEmoji = (emoji) => {
     const cursorPos = inputRef.current.selectionStart;
-    const newText = input.slice(0, cursorPos) + emoji + input.slice(cursorPos);
+    const newText = input.slice(0, cursorPos) + input.slice(cursorPos) + emoji;
     setInput(newText);
     setTimeout(() => {
       inputRef.current.focus();
-      inputRef.current.setSelectionRange(cursorPos + 1, cursorPos + 1);
+      const end = inputRef.current.value.length;
+      inputRef.current.setSelectionRange(end, end);
     }, 0);
   };
 
@@ -175,7 +178,7 @@ export default function ChatBox({ user }) {
             </div>
           ))
         )}
-        <div ref={chatEndRef}></div> {/* 👈 Invisible element at bottom */}
+        <div ref={chatEndRef}></div>
       </div>
 
       {/* Emoji panel */}
