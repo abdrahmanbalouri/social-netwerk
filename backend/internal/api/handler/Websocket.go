@@ -84,7 +84,12 @@ func Loop(conn *websocket.Conn, currentUserID string) {
 			log.Println("WebSocket read error:", err)
 			break
 		}
-
+		var nickname string
+		err := repository.Db.QueryRow(`SELECT nickname FROM users WHERE id = ?`, currentUserID).Scan(&nickname)
+		if err != nil {
+			log.Println("DB error getting sender nickname:", err)
+			nickname = "Unknown"
+		}
 		switch msg.Type {
 		//  HANDLE CHAT MESSAGE
 		case "message":
@@ -95,10 +100,10 @@ func Loop(conn *websocket.Conn, currentUserID string) {
 			}
 
 			// ✅ Vérifie ghir wach receiver kayn
-			var nickname string
+			var exist int
 			err := repository.Db.QueryRow(`
-			SELECT nickname FROM users WHERE id = ?
-		`, msg.ReceiverId).Scan(&nickname)
+			SELECT 1 FROM users WHERE id = ?
+		`, msg.ReceiverId).Scan(&exist)
 			if err == sql.ErrNoRows {
 				log.Println("Recipient user not found")
 				continue
@@ -108,8 +113,6 @@ func Loop(conn *websocket.Conn, currentUserID string) {
 			}
 			q := `INSERT INTO notifications ( sender_id, receiver_id, type, message, created_at) VALUES (?, ?, ?, ?, ?) `
 			_, _ = repository.Db.Exec(q, currentUserID, msg.ReceiverId, msg.Type, "Send you a message", time.Now().Unix())
-
-
 
 			// ✅ Insert message direct sans check dyal follows
 			_, err = repository.Db.Exec(`
@@ -123,20 +126,20 @@ func Loop(conn *websocket.Conn, currentUserID string) {
 
 			// ✅ send message to receiver
 			sendToUser(msg.ReceiverId, map[string]any{
-				"type":    msg.Type,
-				"from":    currentUserID,
-				"to":      msg.ReceiverId,
-				"content": msg.MessageContent,
-				"username": nickname,
+				"type":     msg.Type,
+				"from":     currentUserID,
+				"to":       msg.ReceiverId,
+				"content":  msg.MessageContent,
+				"time":     time.Now().Format(time.RFC3339),
 			})
 
 			// ✅ send back to sender also
 			sendToUser(currentUserID, map[string]any{
-				"type":    msg.Type,
-				"from":    currentUserID,
-				"to":      msg.ReceiverId,
-				"content": msg.MessageContent,
-				"username": nickname,
+				"type":     msg.Type,
+				"from":     currentUserID,
+				"to":       msg.ReceiverId,
+				"content":  msg.MessageContent,
+				"time":     time.Now().Format(time.RFC3339),
 			})
 
 			// send notification to receiver
@@ -145,6 +148,7 @@ func Loop(conn *websocket.Conn, currentUserID string) {
 				"subType": "message",
 				"from":    currentUserID,
 				"content": "sent you a message",
+				"time":    time.Now().Format(time.RFC3339),
 			})
 
 		// ===============================
