@@ -3,8 +3,13 @@
 import { useEffect, useState } from "react";
 import Link from 'next/link';
 import "../styles/userbar.css"
+import { useWS } from "../context/wsContext";
 export default function UserBar() {
     const [users, setusers] = useState([])
+    const { onlineUsers } = useWS();
+    console.log("hello",onlineUsers);
+    
+
     useEffect(() => {
         async function fetchusers() {
             try {
@@ -44,7 +49,7 @@ export default function UserBar() {
                                             src={user?.image ? `/uploads/${user.image}` : "/uploads/default.png"}
                                             alt="user avatar"
                                         />
-                                        <div className="online" />
+                                        <div className={onlineUsers.includes(user.id) ? "online" : "offline"} />
                                         <span>{user.nickname}</span>
                                     </div>
                                 </Link>

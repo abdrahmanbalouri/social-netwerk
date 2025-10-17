@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"database/sql"
+	"fmt"
 	"log"
 	"net/http"
 	"sync"
@@ -34,6 +35,16 @@ type Message struct {
 	Photo          string `json:"photo"`
 }
 
+func GetOnlineUsers() []string {
+	ClientsMutex.Lock()
+	defer ClientsMutex.Unlock()
+	users := []string{}
+	for id := range Clients {
+		users = append(users, id)
+	}
+	return users
+}
+
 // WebSocketHandler handles WebSocket connections and manages user sessions
 func Websocket(w http.ResponseWriter, r *http.Request) {
 	conn, err := Upgrader.Upgrade(w, r, nil)
@@ -53,6 +64,15 @@ func Websocket(w http.ResponseWriter, r *http.Request) {
 	ClientsMutex.Unlock()
 	BrodcastOnlineStatus(currentUserID, true)
 
+	// ✅ Send current online list to the new user
+	onlineUsers := GetOnlineUsers()
+	fmt.Println("Online users:", onlineUsers)
+	conn.WriteJSON(map[string]any{
+		"type":   "online_list",
+		"users":  onlineUsers,
+		"selfID": currentUserID,
+	})
+
 	// Listen for incoming messages
 	Loop(conn, currentUserID)
 
@@ -69,15 +89,16 @@ func Websocket(w http.ResponseWriter, r *http.Request) {
 			}
 			if len(Clients[currentUserID]) == 0 {
 				delete(Clients, currentUserID)
+				BrodcastOnlineStatus(currentUserID, false)
+				conn.Close()
 			}
 		}
 		ClientsMutex.Unlock()
-		BrodcastOnlineStatus(currentUserID, false)
-		conn.Close()
 	}()
 }
 
 func Loop(conn *websocket.Conn, currentUserID string) {
+	fmt.Println("WebSocket connected for user:", currentUserID)
 	for {
 		var msg Message
 		if err := conn.ReadJSON(&msg); err != nil {
@@ -126,20 +147,20 @@ func Loop(conn *websocket.Conn, currentUserID string) {
 
 			// ✅ send message to receiver
 			sendToUser(msg.ReceiverId, map[string]any{
-				"type":     msg.Type,
-				"from":     currentUserID,
-				"to":       msg.ReceiverId,
-				"content":  msg.MessageContent,
-				"time":     time.Now().Format(time.RFC3339),
+				"type":    msg.Type,
+				"from":    currentUserID,
+				"to":      msg.ReceiverId,
+				"content": msg.MessageContent,
+				"time":    time.Now().Format(time.RFC3339),
 			})
 
 			// ✅ send back to sender also
 			sendToUser(currentUserID, map[string]any{
-				"type":     msg.Type,
-				"from":     currentUserID,
-				"to":       msg.ReceiverId,
-				"content":  msg.MessageContent,
-				"time":     time.Now().Format(time.RFC3339),
+				"type":    msg.Type,
+				"from":    currentUserID,
+				"to":      msg.ReceiverId,
+				"content": msg.MessageContent,
+				"time":    time.Now().Format(time.RFC3339),
 			})
 
 			// send notification to receiver

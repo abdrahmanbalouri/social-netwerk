@@ -12,12 +12,13 @@ export default function ChatBox({ user }) {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
   const [showEmojis, setShowEmojis] = useState(false);
+  const [isOnline, setIsOnline] = useState(false);
   const inputRef = useRef(null);
   const chatEndRef = useRef(null);
   const { sendMessage, addListener, removeListener } = useWS();
   const { activeChatID, setActiveChatID } = useChat();
   const id = useParams().id;
-  if (id=='0'){
+  if (id == '0') {
     return <div className="no-chat-selected">
       <div className="no-chat-header">
         <h2>Select a chat to start messaging</h2><br />
@@ -33,6 +34,21 @@ export default function ChatBox({ user }) {
     setActiveChatID(user.id);
     return () => setActiveChatID(null);
   }, [user.id]);
+
+  // listen for online/offline status updates
+  useEffect(() => {
+    const handleStatus = (data) => {
+      console.log("Status update:", data);
+      
+      if (data.type === "status" && data.userID === user.id) {
+        setIsOnline(data.online);
+      }
+    };
+
+    addListener("status", handleStatus);
+    return () => removeListener("status", handleStatus);
+  }, [user.id, addListener, removeListener]);
+
 
   setTimeout(() => {
     inputRef.current?.focus();
@@ -173,8 +189,11 @@ export default function ChatBox({ user }) {
           <Link href={`/profile/${user.id}`}>
             <span className="username">{user.nickname}</span>
           </Link>
-          <span className="on">online</span>
+          <span className={isOnline ? "on" : "off"}>
+            {isOnline ? "online" : "offline"}
+          </span>
         </div>
+
       </div>
 
       {/* Chat box */}
