@@ -106,6 +106,10 @@ func Loop(conn *websocket.Conn, currentUserID string) {
 				log.Println("DB error:", err)
 				continue
 			}
+			q := `INSERT INTO notifications ( sender_id, receiver_id, type, message, created_at) VALUES (?, ?, ?, ?, ?) `
+			_, _ = repository.Db.Exec(q, currentUserID, msg.ReceiverId, msg.Type, "Send you a message", time.Now().Unix())
+
+
 
 			// ✅ Insert message direct sans check dyal follows
 			_, err = repository.Db.Exec(`

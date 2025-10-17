@@ -33,11 +33,9 @@ export default function RightBar() {
       }
 
       const data = await res.json();
-      console.log("✅ Action result:", data);
 
       setFollowRequest((prev) => prev.filter((user) => user.id !== userId));
     } catch (err) {
-      console.error("❌ Error:", err);
     }
   }
 
