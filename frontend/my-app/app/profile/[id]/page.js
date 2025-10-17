@@ -33,7 +33,7 @@ export default function Profile() {
   const { ws, connected } = useWS();
 
   const sendMsg = (FollowType) => {
-    
+
     const payload = {
       receiverId: params.id,
       messageContent: "",
@@ -85,8 +85,8 @@ export default function Profile() {
         console.log("khoya", json);
 
 
-         setProfile(json);
-      
+        setProfile(json);
+
       }
     } catch (err) {
       console.error("loadProfile", err);
@@ -95,7 +95,7 @@ export default function Profile() {
 
   useEffect(() => {
     loadProfile();
-    
+
   }, []);
 
   // Fetch comments for a specific post (like home page)
@@ -295,7 +295,7 @@ export default function Profile() {
   }
 
   return (
-    <div className={darkMode ? "theme-dark" : "theme-light"}>
+    <div className={darkMode ? "theme-dark" : "theme-light"} >
       <Navbar
         onCreatePost={() => setShowModal(true)}
         onToggleSidebar={() => setShowSidebar(!showSidebar)}
@@ -387,10 +387,10 @@ export default function Profile() {
                 {Profile && Profile.id !== theprofile.id ? (
                   <EmailOutlinedIcon />
                 ) : (
-                  <MoreVertIcon showPrivacy={showPrivacy} onClick={handleShowPrivacy} />
+                  <MoreVertIcon onClick={handleShowPrivacy} />
                 )}
               </div>
-              {showPrivacy && <ProfileCardEditor showPrivacy={showPrivacy} />}
+              {showPrivacy && <ProfileCardEditor handleShowPrivacy={handleShowPrivacy} initialCover={theprofile.cover} initialAvatar={theprofile.image} initialAbout={theprofile.about} initialPrivacy={theprofile.privacy} />}
             </div>
             <div className="posts" style={{ marginTop: 20 }}>
               {posts.length === 0 ? (
