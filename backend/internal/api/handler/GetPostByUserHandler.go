@@ -1,15 +1,51 @@
-package post
+package handlers
 
 import (
 	"database/sql"
 	"fmt"
 	"net/http"
+	"strconv"
+	"strings"
 
 	"social-network/internal/helper"
 	"social-network/internal/repository"
+	"social-network/internal/repository/post"
 )
 
-func GetAllPosts(authUserID string, r *http.Request, ofseet int) ([]map[string]interface{}, error) {
+func GetPostByUserHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method != "GET" {
+		helper.RespondWithError(w, http.StatusMethodNotAllowed, "Method Not Allowed")
+		return
+	}
+
+	parts := strings.Split(r.URL.Path, "/")
+	fmt.Println("parts:", parts)
+	if len(parts) < 4 {
+		helper.RespondWithError(w, http.StatusNotFound, "Post not found")
+		return
+	}
+
+	offsetStr := parts[3]
+	userId := r.URL.Query().Get("userId")
+	offset, err := strconv.Atoi(offsetStr)
+	if err != nil || offset < 0 {
+		offset = 0
+	}
+
+	posts, err := GetAllPostsByuser(userId, r, offset)
+	fmt.Println("posts:", posts)
+	if err != nil {
+		helper.RespondWithError(w, http.StatusInternalServerError, "Failed to retrieve posts")
+		return
+	}
+	if posts == nil {
+		helper.RespondWithError(w, http.StatusInternalServerError, "Failed to retrieve posts")
+		return
+	}
+	helper.RespondWithJSON(w, http.StatusOK, posts)
+}
+
+func GetAllPostsByuser(authUserID string, r *http.Request, ofseet int) ([]map[string]interface{}, error) {
 	var rows *sql.Rows
 	var err error
 
@@ -127,21 +163,21 @@ LIMIT ? OFFSET ?;
 			"user_id":        userID,
 			"title":          title,
 			"content":        content,
-			"image_path":     NilIfEmpty(imagePath),
+			"image_path":     post.NilIfEmpty(imagePath),
 			"visibility":     visibility,
 			"canseperivite":  canseperivite,
 			"privacy":        privacy,
 			"created_at":     createdAt,
 			"author":         nickname,
-			"profile":        NilIfEmpty(profile),
+			"profile":        post.NilIfEmpty(profile),
 			"like":           likeCount,
 			"liked_by_user":  likedByUser > 0,
 			"comments_count": commentsCount,
 		}
 		posts = append(posts, post)
 	}
-	if len(posts) == 0{
-		return  nil, err
+	if len(posts) == 0 {
+		return nil, err
 	}
 
 	if err := rows.Err(); err != nil {
@@ -149,12 +185,4 @@ LIMIT ? OFFSET ?;
 	}
 
 	return posts, nil
-}
-
-// Helper to convert sql.NullString to interface{}
-func NilIfEmpty(ns sql.NullString) interface{} {
-	if ns.Valid {
-		return ns.String
-	}
-	return nil
 }
