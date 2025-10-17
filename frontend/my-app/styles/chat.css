@@ -292,15 +292,7 @@
   transform: scale(1);
 }
 
-.loading {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 100%;
-  font-size: 16px;
-  color: var(--text-secondary);
-  background: var(--bg-chat);
-}
+
 
 @media (max-width: 1400px) {
   .chat-container {
@@ -399,4 +391,28 @@
 .message.me+.message.them,
 .message.them+.message.me {
   margin-top: 12px;
+}
+
+.info-time {
+  font-size: 10px;
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 4px;
+}
+
+.msg-content {
+  font-size: 15px;
+}
+
+.no-chat-selected,
+.loading {
+  font-size: 12px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.no-chat-header {
+  text-align: center;
 }
