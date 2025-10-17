@@ -65,7 +65,7 @@ export default function LeftBar({ showSidebar }) {
           <img src="/icone/2.png" alt="" />
           <span>Groups</span>
         </div>
-        <Link href={'/watch'}>
+        <Link href='/watch'>
           <div className="item">
             <img src="/icone/4.png" alt="" />
             <span>Watch</span>
@@ -80,22 +80,24 @@ export default function LeftBar({ showSidebar }) {
           <img src="/icone/6.png" alt="" />
           <span>Events</span>
         </div>
-        <Link href={'/games'}>
+        <Link href='/games'>
           <div className="item">
             <img src="/icone/7.png" alt="" />
             <span>Gaming</span>
           </div>
         </Link>
-        <Link href={'/Gallery'}>
+        <Link href='/Gallery'>
           <div className="item">
             <img src="/icone/8.png" alt="" />
             <span>Gallery</span>
           </div>
         </Link>
-        <div className="item">
-          <img src="/icone/10.png" alt="" />
-          <span>Messages</span>
-        </div>
+        <Link href="/chat/0">
+          <div className="item">
+            <img src="/icone/10.png" alt="" />
+            <span>Messages</span>
+          </div>
+        </Link>
       </div>
 
       <hr />
