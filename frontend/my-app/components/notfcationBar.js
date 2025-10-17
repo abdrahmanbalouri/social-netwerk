@@ -1,5 +1,7 @@
 import { useState } from "react";
 import "../styles/notfcationBar.css";
+import formatTime from "../helpers/formatTime.js";
+
 
 export default function NotBar({ notData }) {
     const [filter, setFilter] = useState('all');
@@ -38,7 +40,7 @@ export default function NotBar({ notData }) {
                         >
                             All
                         </button>
-                       
+
                     </div>
                 </div>
 
@@ -76,7 +78,7 @@ export default function NotBar({ notData }) {
                                         <div className="notification-text">
                                             <strong>{noti.name}</strong> {noti.message}
                                         </div>
-                                        <div className="notification-time">{noti.created_at}</div>
+                                        <div className="notification-time">{formatTime(noti.created_at)}</div>
                                     </div>
                                     {!noti.isRead && <div className="notification-dot"></div>}
                                 </div>
