@@ -6,6 +6,7 @@ import Link from "next/link";
 import "../styles/chat.css";
 import { useWS } from "../context/wsContext.js";
 import { useChat } from "../context/chatContext.js";
+import formatTime from "../helpers/formatTime.js";
 
 export default function ChatBox({ user }) {
   const [messages, setMessages] = useState([]);
@@ -38,16 +39,16 @@ export default function ChatBox({ user }) {
         );
         if (!response.ok) throw new Error("Failed to fetch messages");
         const data = await response.json();
-
         if (data.messages) {
           const formattedMessages = data.messages
-            .map((msg) => ({              
+            .map((msg) => ({
               text: msg.content,
               sender: msg.senderId === user.id ? "them" : "me",
+              from: msg.username,
+              time: formatTime(msg.createdAt),
             }))
             .reverse();
 
-          console.log("Fetched messages:", formattedMessages);
           setMessages(formattedMessages);
         }
 
@@ -60,10 +61,12 @@ export default function ChatBox({ user }) {
 
   useEffect(() => {
     const handleIncomingMessage = (data) => {
+      console.log("Received message:", data);
+      
       if (data.from === user.id || data.to === user.id) {
         setMessages((prev) => [
           ...prev,
-          { text: data.content, sender: data.from === user.id ? "them" : "me" },
+          { text: data.content, sender: data.from === user.id ? "them" : "me", from: data.username, time: formatTime(Date.now()) },
         ]);
       }
     };
@@ -174,7 +177,13 @@ export default function ChatBox({ user }) {
         ) : (
           messages.map((msg, index) => (
             <div key={index} className={`message ${msg.sender}`}>
-              {msg.text}
+              <div className="">
+                {msg.text}
+              </div>
+              <div className="info-time">
+                {msg.from}
+                {msg.time}
+              </div>
             </div>
           ))
         )}
