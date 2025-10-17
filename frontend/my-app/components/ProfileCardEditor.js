@@ -166,7 +166,6 @@ export default function ProfileCardEditor({
                             className="select"
                         >
                             <option value="public">Public</option>
-                            <option value="friends">Friends</option>
                             <option value="private">Private</option>
                         </select>
                     </label>
