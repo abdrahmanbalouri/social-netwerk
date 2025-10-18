@@ -558,12 +558,12 @@ export default function Home() {
                           alt={follower.nickname}
                           className="image-avatar"
                         />
-                        <span>{follower.nickname}</span>
                         <input
                           type="checkbox"
                           checked={selectedUsers.includes(follower.id)}
                           onChange={() => handleUserSelect(follower.id)}
                         />
+                        <span>{follower.nickname}</span>
                       </label>
                     ))
                   ) : (
