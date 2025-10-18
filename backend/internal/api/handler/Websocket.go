@@ -36,13 +36,29 @@ type Message struct {
 }
 
 func GetOnlineUsers() []string {
-	ClientsMutex.Lock()
-	defer ClientsMutex.Unlock()
 	users := []string{}
 	for id := range Clients {
 		users = append(users, id)
 	}
 	return users
+}
+
+func BrodcastOnlineListe() {
+	ClientsMutex.Lock()
+	defer ClientsMutex.Unlock()
+	msg := map[string]any{
+		"type":  "online_list",
+		"users": GetOnlineUsers(),
+	}
+	fmt.Printf("msg: %v\n", msg)
+	for _, client := range Clients {
+		for _, conn := range client {
+			if err := conn.WriteJSON(msg); err != nil {
+				log.Println("WebSocket write error:", err)
+				conn.Close()
+			}
+		}
+	}
 }
 
 // WebSocketHandler handles WebSocket connections and manages user sessions
@@ -62,17 +78,9 @@ func Websocket(w http.ResponseWriter, r *http.Request) {
 	ClientsMutex.Lock()
 	Clients[currentUserID] = append(Clients[currentUserID], conn)
 	ClientsMutex.Unlock()
-	BrodcastOnlineStatus(currentUserID, true)
 
-	// ✅ Send current online list to the new user
-	onlineUsers := GetOnlineUsers()
-	fmt.Println("Online users:", onlineUsers)
-	conn.WriteJSON(map[string]any{
-		"type":   "online_list",
-		"users":  onlineUsers,
-		"selfID": currentUserID,
-	})
-
+	fmt.Printf("Clients: %v\n", Clients)
+	BrodcastOnlineListe()
 	// Listen for incoming messages
 	Loop(conn, currentUserID)
 
@@ -94,6 +102,7 @@ func Websocket(w http.ResponseWriter, r *http.Request) {
 			}
 		}
 		ClientsMutex.Unlock()
+		fmt.Println("------------------------")
 	}()
 }
 
@@ -105,6 +114,7 @@ func Loop(conn *websocket.Conn, currentUserID string) {
 			log.Println("WebSocket read error:", err)
 			break
 		}
+
 		var nickname string
 		err := repository.Db.QueryRow(`SELECT nickname FROM users WHERE id = ?`, currentUserID).Scan(&nickname)
 		if err != nil {
@@ -112,7 +122,12 @@ func Loop(conn *websocket.Conn, currentUserID string) {
 			nickname = "Unknown"
 		}
 		switch msg.Type {
+		case "logout":
+			BrodcastOnlineStatus(currentUserID, false)
 		//  HANDLE CHAT MESSAGE
+		case "online_list":
+			// ✅ Send current online list to the new user
+			BrodcastOnlineListe()
 		case "message":
 
 			if msg.ReceiverId == "" {
@@ -227,11 +242,8 @@ func BrodcastNotification(userID string, message map[string]any) {
 
 // BrodcastOnlineStatus notifies all connected clients about a user's online status change
 func BrodcastOnlineStatus(userID string, online bool) {
-	ClientsMutex.Lock()
-	defer ClientsMutex.Unlock()
-
 	message := map[string]any{
-		"type":   "status",
+		"type":   "logout",
 		"userID": userID,
 		"online": online,
 	}

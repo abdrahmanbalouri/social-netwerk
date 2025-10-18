@@ -1,5 +1,5 @@
 "use client";
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { useDarkMode } from "../context/darkMod";
 import { useProfile } from "../context/profile";
@@ -27,12 +27,14 @@ export default function Navbar({ onCreatePost }) {
   const [show, cheng] = useState(false);
   const { addListener, removeListener, connected } = useWS();
   const { activeChatID } = useChat();
+  const id = useParams().id
   useEffect(() => {
     if (!connected) return; // wait for connection
 
     const handleNotification = (data) => {
       console.log("Notification received:", data);
-      if (activeChatID && data.from === activeChatID) return; // don't notify if chatting with the sender
+      
+      if (data.from !== id) return; // don't notify if chatting with the sender
       addnotf((prev) => prev + 1);
       notif(data.data || data);
       cheng(true);

@@ -12,19 +12,22 @@ export default function ChatBox({ user }) {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
   const [showEmojis, setShowEmojis] = useState(false);
-  const [isOnline, setIsOnline] = useState(false);
   const inputRef = useRef(null);
   const chatEndRef = useRef(null);
-  const { sendMessage, addListener, removeListener } = useWS();
   const { activeChatID, setActiveChatID } = useChat();
+  const [onlineUsers, setonlineUsers] = useState([])
+  const { sendMessage, addListener, removeListener } = useWS();
   const id = useParams().id;
-  if (id == '0') {
-    return <div className="no-chat-selected">
-      <div className="no-chat-header">
-        <h2>Select a chat to start messaging</h2><br />
-        <h4>No chat selected</h4>
+  if (id == "0") {
+    return (
+      <div className="no-chat-selected">
+        <div className="no-chat-header">
+          <h2>Select a chat to start messaging</h2>
+          <br />
+          <h4>No chat selected</h4>
+        </div>
       </div>
-    </div>;
+    );
   }
   if (!user) {
     return <div className="loading">Loading user...</div>;
@@ -37,17 +40,35 @@ export default function ChatBox({ user }) {
 
   // listen for online/offline status updates
   useEffect(() => {
-    const handleStatus = (data) => {
-      console.log("Status update:", data);
-      
-      if (data.type === "status" && data.userID === user.id) {
-        setIsOnline(data.online);
-      }
-    };
+    console.log("dsqdqs", user.id);
+    console.log("sqdqsdqsd", onlineUsers);
 
-    addListener("status", handleStatus);
-    return () => removeListener("status", handleStatus);
-  }, [user.id, addListener, removeListener]);
+
+    const handleOlineUser = (data) => {
+      setonlineUsers(data.users)
+    }
+    sendMessage({ type: "online_list" })
+    addListener("online_list", handleOlineUser)
+    return () => removeListener("online_list", handleOlineUser)
+  }, [addListener, removeListener])
+
+  useEffect(() => {
+    console.log("dsqdqs", user.id);
+    console.log("sqdqsdqsd", onlineUsers);
+
+
+    const handleLogout = (data) => {
+      let useroff = data.userID
+      let arr = onlineUsers.filter((id) => {
+        return id !== useroff
+      })
+      setonlineUsers([...arr])
+    }
+
+    addListener("logout", handleLogout)
+    return () => removeListener("logout", handleLogout)
+  }, [addListener, removeListener])
+
 
 
   setTimeout(() => {
@@ -74,7 +95,6 @@ export default function ChatBox({ user }) {
 
           setMessages(formattedMessages);
         }
-
       } catch (error) {
         console.error("Error fetching messages:", error);
       }
@@ -89,7 +109,11 @@ export default function ChatBox({ user }) {
       if (data.from === user.id || data.to === user.id) {
         setMessages((prev) => [
           ...prev,
-          { text: data.content, sender: data.from === user.id ? "them" : "me", time: data.time },
+          {
+            text: data.content,
+            sender: data.from === user.id ? "them" : "me",
+            time: data.time,
+          },
         ]);
       }
     };
@@ -159,7 +183,11 @@ export default function ChatBox({ user }) {
   ];
   const handleSendMessage = () => {
     if (input.trim() === "") return;
-    const payload = { receiverId: user.id, messageContent: input, type: "message" };
+    const payload = {
+      receiverId: user.id,
+      messageContent: input,
+      type: "message",
+    };
     sendMessage(payload);
     setInput("");
     setShowEmojis(false);
@@ -181,7 +209,9 @@ export default function ChatBox({ user }) {
       <div className="chat-header">
         <Link href={`/profile/${user.id}`}>
           <img
-            src={user?.image ? `/uploads/${user.image}` : "/uploads/default.png"}
+            src={
+              user?.image ? `/uploads/${user.image}` : "/uploads/default.png"
+            }
             alt="user avatar"
           />
         </Link>
@@ -189,11 +219,10 @@ export default function ChatBox({ user }) {
           <Link href={`/profile/${user.id}`}>
             <span className="username">{user.nickname}</span>
           </Link>
-          <span className={isOnline ? "on" : "off"}>
-            {isOnline ? "online" : "offline"}
+          <span className={onlineUsers.includes(user.id) ? "on" : "off"}>
+            {onlineUsers.includes(user.id) ? "online" : "offline"}
           </span>
         </div>
-
       </div>
 
       {/* Chat box */}
@@ -203,11 +232,11 @@ export default function ChatBox({ user }) {
         ) : (
           messages.map((msg, index) => (
             <div key={index} className={`message ${msg.sender}`}>
-              <div className="msg-content">
-                {msg.text}
-              </div>
+              <div className="msg-content">{msg.text}</div>
               <div className="info-time">
-                <span className="time">{new Date(msg.time).toLocaleTimeString("en-US")}</span>
+                <span className="time">
+                  {new Date(msg.time).toLocaleTimeString("en-US")}
+                </span>
               </div>
             </div>
           ))
@@ -228,7 +257,10 @@ export default function ChatBox({ user }) {
 
       {/* Input area */}
       <div className="input-area">
-        <button className="emoji-toggle" onClick={() => setShowEmojis(!showEmojis)}>
+        <button
+          className="emoji-toggle"
+          onClick={() => setShowEmojis(!showEmojis)}
+        >
           <AddReactionIcon />
         </button>
 
