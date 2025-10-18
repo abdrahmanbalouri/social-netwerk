@@ -12,6 +12,8 @@ export function ProfileProvider({ children }) {
         method: "GET",
         credentials: "include",
       });
+      console.log("Response status:", res.status);
+      console.log("Response headers:", res.headers);
       if (res.ok) {
         const json = await res.json();
 

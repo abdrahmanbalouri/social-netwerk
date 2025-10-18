@@ -151,6 +151,7 @@ export default function Home() {
         for (let i = 0; i < posts.length; i++) {
           if (posts[i].id == newpost.id) {
 
+
             setPosts([
               ...posts.slice(0, i),
               newpost,
