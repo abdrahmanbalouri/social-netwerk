@@ -1,12 +1,12 @@
 "use client";
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, use } from "react";
 import AddReactionIcon from "@mui/icons-material/AddReaction";
 import SendIcon from "@mui/icons-material/Send";
 import Link from "next/link";
 import "../styles/chat.css";
 import { useWS } from "../context/wsContext.js";
 import { useChat } from "../context/chatContext.js";
-import formatTime from "../helpers/formatTime.js";
+import { useParams } from "next/navigation";
 
 export default function ChatBox({ user }) {
   const [messages, setMessages] = useState([]);
@@ -16,8 +16,16 @@ export default function ChatBox({ user }) {
   const chatEndRef = useRef(null);
   const { sendMessage, addListener, removeListener } = useWS();
   const { activeChatID, setActiveChatID } = useChat();
-
-  if (!user || user.id == 0) {
+  const id = useParams().id;
+  if (id=='0'){
+    return <div className="no-chat-selected">
+      <div className="no-chat-header">
+        <h2>Select a chat to start messaging</h2><br />
+        <h4>No chat selected</h4>
+      </div>
+    </div>;
+  }
+  if (!user) {
     return <div className="loading">Loading user...</div>;
   }
 
@@ -44,8 +52,7 @@ export default function ChatBox({ user }) {
             .map((msg) => ({
               text: msg.content,
               sender: msg.senderId === user.id ? "them" : "me",
-              from: msg.username,
-              time: formatTime(msg.createdAt),
+              time: new Date(msg.createdAt).toLocaleString(),
             }))
             .reverse();
 
@@ -62,11 +69,11 @@ export default function ChatBox({ user }) {
   useEffect(() => {
     const handleIncomingMessage = (data) => {
       console.log("Received message:", data);
-      
+
       if (data.from === user.id || data.to === user.id) {
         setMessages((prev) => [
           ...prev,
-          { text: data.content, sender: data.from === user.id ? "them" : "me", from: data.username, time: formatTime(Date.now()) },
+          { text: data.content, sender: data.from === user.id ? "them" : "me", time: data.time },
         ]);
       }
     };
@@ -177,12 +184,11 @@ export default function ChatBox({ user }) {
         ) : (
           messages.map((msg, index) => (
             <div key={index} className={`message ${msg.sender}`}>
-              <div className="">
+              <div className="msg-content">
                 {msg.text}
               </div>
               <div className="info-time">
-                {msg.from}
-                {msg.time}
+                <span className="time">{new Date(msg.time).toLocaleTimeString("en-US")}</span>
               </div>
             </div>
           ))
