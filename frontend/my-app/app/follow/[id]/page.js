@@ -18,6 +18,34 @@ export default function FollowPage() {
   const router = useRouter();
   const userId = params.id;
   const tab = searchParams.get("tab") || "followers";
+  useEffect(() => {
+
+    async function midle() {
+      try {
+        const response = await fetch("http://localhost:8080/api/me", {
+          credentials: "include",
+          method: "GET",
+        });
+        console.log(response);
+
+        if (!response.ok) {
+
+          router.replace("/login");
+          return null;
+        }
+      } catch (error) {
+        router.replace("/login");
+        return null;
+
+      }
+    }
+    midle()
+
+
+
+  }, [])
+
+
 
   useEffect(() => {
     const fetchData = async () => {
