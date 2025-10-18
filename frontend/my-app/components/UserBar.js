@@ -6,9 +6,27 @@ import "../styles/userbar.css"
 import { useWS } from "../context/wsContext";
 export default function UserBar() {
     const [users, setusers] = useState([])
-    const { onlineUsers } = useWS();
-    console.log("hello",onlineUsers);
-    
+    const [onlineUsers, setonlineUsers] = useState([])
+    const { addListener, removeListener } = useWS();
+    useEffect(() => {
+        const handleOlineUser = (data) => {
+            setonlineUsers(data.users)
+        }
+        addListener("online_list", handleOlineUser)
+        return () => removeListener("online_list", handleOlineUser)
+    }, [addListener, removeListener])
+    useEffect(() => {
+        const handleLogout = (data) => {
+            let useroff = data.userID
+            let arr = onlineUsers.filter((id) => {
+                return id !== useroff
+            })
+            setonlineUsers([...arr])
+        }
+
+        addListener("logout", handleLogout)
+        return () => removeListener("logout", handleLogout)
+    }, [addListener, removeListener])
 
     useEffect(() => {
         async function fetchusers() {

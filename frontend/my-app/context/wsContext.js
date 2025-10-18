@@ -5,7 +5,6 @@ const WSContext = createContext(null);
 
 export function WSProvider({ children }) {
   const [connected, setConnected] = useState(false);
-  const [onlineUsers, setOnlineUsers] = useState([]);
   const ws = useRef(null);
   const reconnectTimeout = useRef(null);
   const listeners = useRef({});
@@ -52,20 +51,22 @@ export function WSProvider({ children }) {
           console.log("📩 Received:", data);
 
           // 🔥 Handle online user updates
-          if (data.type === "online_list") {
-            setOnlineUsers(data.users);
-          } else if (data.type === "status") {
-            setOnlineUsers((prev) => {
-              if (data.online) {
-                return prev.includes(data.userID) ? prev : [...prev, data.userID];
-              } else {
-                return prev.filter((id) => id !== data.userID);
-              }
-            });
-          }
+          // if (data.type === "online_list") {
+          //   setOnlineUsers(data.users);
+          // } else if (data.type === "status") {
+          //   setOnlineUsers((prev) => {
+          //     if (data.online) {
+          //       return prev.includes(data.userID) ? prev : [...prev, data.userID];
+          //     } else {
+          //       return prev.filter((id) => id !== data.userID);
+          //     }
+          //   });
+          // }
 
           // 🔥 Trigger any custom listeners
+          console.log("listeenenn-------", listeners.current);
           if (listeners.current[data.type]) {
+
             listeners.current[data.type].forEach((cb) => cb(data));
           } else {
             console.warn("⚠️ No listeners for type:", data.type);
@@ -100,7 +101,6 @@ export function WSProvider({ children }) {
         sendMessage,
         addListener,
         removeListener,
-        onlineUsers,
       }}
     >
       {children}
