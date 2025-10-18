@@ -10,6 +10,7 @@ import "./follow.css";
 import { middleware } from "../../../middleware/middelware.js";
 import { useWS } from "../../../context/wsContext.js";
 
+
 export default function FollowPage() {
   const [followers, setFollowers] = useState([]);
   const [following, setFollowing] = useState([]);

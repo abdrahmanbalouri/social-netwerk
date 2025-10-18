@@ -7,8 +7,11 @@ import { useDarkMode } from "../../context/darkMod.js";
 import Link from "next/link.js";
 import "../../styles/games.css";
 import { useWS } from "../../context/wsContext.js";
+import { middleware } from "../../middleware/middelware.js";
+import { useRouter } from "next/navigation";
 
 export default function Game() {
+  const router = useRouter();
   const sendMessage = useWS()
   // Authentication check
   useEffect(() => {
