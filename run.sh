@@ -7,7 +7,8 @@ go run main.go &
 cd ../frontend/my-app
 npm install
 # ensure npm uses the same node binary (helps with snap-installed node mismatch)
-npm run dev --scripts-prepend-node-path=true
+ npm run dev --scripts-prepend-node-path=
+
 
 
 
