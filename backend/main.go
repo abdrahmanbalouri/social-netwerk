@@ -9,11 +9,10 @@ import (
 	"social-network/internal/repository"
 	// "social-network/pkg/middlewares"
 	// "social-network/pkg/ratelimiter"
+	
 )
 
 var Db *sql.DB
-fmt.Println(5664664)
-
 
 func enableCORS(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
