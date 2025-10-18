@@ -1,17 +1,32 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import Navbar from "../../../components/Navbar";
 import LeftBar from "../../../components/LeftBar";
 import UserBar from "../../../components/UserBar.js";
 import { useDarkMode } from "../../../context/darkMod.js";
 import ChatBox from "../../../components/chatBox.js";
+import { middleware } from "../../../middleware/middelware.js";
+import { useWS } from "../../../context/wsContext.js";
 
 export default function ChatPage() {
+    const router = useRouter();
     const { darkMode } = useDarkMode();
     const { id } = useParams();
     const [user, setUser] = useState(null);
+    const sendMessage = useWS()
+    // Authentication check
+    useEffect(() => {
+        const checkAuth = async () => {
+            const auth = await middleware();
+            if (!auth) {
+                router.push("/login");
+                sendMessage({ type: "logout" })
+            }
+        }
+        checkAuth();
+    }, [])
     useEffect(() => {
         async function fetchUser() {
             try {
