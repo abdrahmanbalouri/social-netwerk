@@ -102,30 +102,27 @@
 }
 
 /* Online Status Indicator */
-.userBar .online {
+.userBar .online,
+.userBar .offline {
     position: absolute;
     width: 12px;
     height: 12px;
-    background: linear-gradient(135deg, #42b72a 0%, #36a420 100%);
     border-radius: 50%;
     bottom: 12px;
     left: 42px;
-    border: 2px solid #ffffff;
+    border: 1px solid #ffffff;
+}
+
+.userBar .offline {
+    background: gray;
+    box-shadow: 0 0 8px rgba(128, 128, 128, 0.6);
+}
+
+.userBar .online {
+    background: #42b72a;
     box-shadow: 0 0 8px rgba(66, 183, 42, 0.6);
-    animation: pulse 2s infinite;
 }
 
-@keyframes pulse {
-
-    0%,
-    100% {
-        box-shadow: 0 0 8px rgba(66, 183, 42, 0.6);
-    }
-
-    50% {
-        box-shadow: 0 0 16px rgba(66, 183, 42, 0.8);
-    }
-}
 
 /* User Name */
 .userBar .userDetails span {
