@@ -6,6 +6,7 @@ import { useDarkMode } from "../../context/darkMod";
 import Navbar from "../../components/Navbar";
 import LeftBar from "../../components/LeftBar";
 import RightBar from "../../components/RightBar";
+import { useRouter } from "next/navigation";
 
 export default function Gallery() {
   const [images, setImages] = useState([]);
@@ -13,6 +14,7 @@ export default function Gallery() {
   const slideRef = useRef(null);
   const { Profile } = useProfile();
   const { darkMode } = useDarkMode();
+  const router = useRouter();
   useEffect(() => {
 
     async function midle() {
@@ -21,8 +23,10 @@ export default function Gallery() {
           credentials: "include",
           method: "GET",
         });
+        console.log(response);
 
         if (!response.ok) {
+
           router.replace("/login");
           return null;
         }
@@ -37,6 +41,7 @@ export default function Gallery() {
 
 
   }, [])
+
   useEffect(() => {
     if (!Profile?.id) return;
 
@@ -47,7 +52,7 @@ export default function Gallery() {
       .then((data) => {
 
         if (data) {
-          let images = data.filter(img => img.imagePath);          
+          let images = data.filter(img => img.imagePath);
           setImages(images);
           return
         }
