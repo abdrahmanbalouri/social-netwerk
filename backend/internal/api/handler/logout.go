@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"fmt"
 	"net/http"
 	"time"
 
@@ -8,6 +9,7 @@ import (
 )
 
 func LogoutHandler(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("32123132321311")
 	c, err := r.Cookie("session")
 	if err == nil {
 		_, dbErr := repository.Db.Exec("DELETE FROM sessions WHERE token=?", c.Value)
@@ -23,6 +25,6 @@ func LogoutHandler(w http.ResponseWriter, r *http.Request) {
 			HttpOnly: true,
 			Expires:  time.Unix(0, 0),
 		})
+		w.Write([]byte("logged out"))
 	}
-	w.Write([]byte("logged out"))
 }

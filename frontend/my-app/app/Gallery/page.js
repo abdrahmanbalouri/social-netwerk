@@ -6,6 +6,9 @@ import { useDarkMode } from "../../context/darkMod";
 import Navbar from "../../components/Navbar";
 import LeftBar from "../../components/LeftBar";
 import RightBar from "../../components/RightBar";
+import { middleware } from "../../middleware/middelware";
+import { useWS } from "../../context/wsContext";
+import { useRouter } from "next/navigation";
 
 export default function Gallery() {
   const [images, setImages] = useState([]);
@@ -13,29 +16,18 @@ export default function Gallery() {
   const slideRef = useRef(null);
   const { Profile } = useProfile();
   const { darkMode } = useDarkMode();
+  const router = useRouter();
+  const sendMessage = useWS()
+  // Authentication check
   useEffect(() => {
-
-    async function midle() {
-      try {
-        const response = await fetch("http://localhost:8080/api/me", {
-          credentials: "include",
-          method: "GET",
-        });
-
-        if (!response.ok) {
-          router.replace("/login");
-          return null;
-        }
-      } catch (error) {
-        router.replace("/login");
-        return null;
-
+    const checkAuth = async () => {
+      const auth = await middleware();
+      if (!auth) {
+        router.push("/login");
+        sendMessage({ type: "logout" })
       }
     }
-    midle()
-
-
-
+    checkAuth();
   }, [])
   useEffect(() => {
     if (!Profile?.id) return;
@@ -47,7 +39,7 @@ export default function Gallery() {
       .then((data) => {
 
         if (data) {
-          let images = data.filter(img => img.imagePath);          
+          let images = data.filter(img => img.imagePath);
           setImages(images);
           return
         }

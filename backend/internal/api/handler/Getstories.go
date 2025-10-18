@@ -71,7 +71,6 @@ func GetStories(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fmt.Println(stories) // Debug log
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(stories)
 }
