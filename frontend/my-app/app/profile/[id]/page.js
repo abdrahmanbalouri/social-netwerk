@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Navbar from '../../../components/Navbar.js';
 import { useDarkMode } from '../../../context/darkMod.js';
 import './profile.css';
@@ -15,12 +15,11 @@ import MoreVertIcon from "@mui/icons-material/MoreVert";
 import ProfileCardEditor from '../../../components/ProfileCardEditor.js';
 import { useWS } from "../../../context/wsContext.js";
 import Link from 'next/link';
+import { middleware } from '../../../middleware/middelware.js';
 
 export default function Profile() {
   const { Profile } = useProfile();
-
   const { darkMode } = useDarkMode();
-
   const params = useParams();
   const router = useRouter();
   const userId = Number(params.id);
@@ -49,9 +48,18 @@ export default function Profile() {
   const boleanofset = useRef(false)
   const postRefs = useRef({});
   const [showPrivacy, setShowPrivacy] = useState(false);
-
+  // Authentication check
+  useEffect(() => {
+    const checkAuth = async () => {
+      const auth = await middleware();
+      if (!auth) {
+        router.push("/login");
+        sendMessage({ type: "logout" })
+      }
+    }
+    checkAuth();
+  }, [])
   const sendMsg = (FollowType) => {
-
     const payload = {
       receiverId: params.id,
       messageContent: "",
@@ -64,30 +72,6 @@ export default function Profile() {
   };
 
   const [theprofile, setProfile] = useState(null);
-  useEffect(() => {
-
-    async function midle() {
-      try {
-        const response = await fetch("http://localhost:8080/api/me", {
-          credentials: "include",
-          method: "GET",
-        });
-
-        if (!response.ok) {
-          router.replace("/login");
-          return null;
-        }
-      } catch (error) {
-        router.replace("/login");
-        return null;
-
-      }
-    }
-    midle()
-
-
-
-  }, [])
 
   async function loadProfile() {
     try {
