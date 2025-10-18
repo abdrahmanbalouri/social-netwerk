@@ -1,5 +1,6 @@
 "use client";
 import React, { useEffect } from "react";
+import { useRouter } from "next/navigation";
 import Navbar from "../../components/Navbar.js";
 import LeftBar from "../../components/LeftBar.js";
 import RightBar from "../../components/RightBar.js";
@@ -8,6 +9,7 @@ import Link from "next/link.js";
 import "../../styles/games.css";
 
 export default function Game() {
+  const router = useRouter();
   useEffect(() => {
 
     async function midle() {
@@ -16,6 +18,7 @@ export default function Game() {
           credentials: "include",
           method: "GET",
         });
+        console.log(response);
 
         if (!response.ok) {
 
@@ -33,6 +36,7 @@ export default function Game() {
 
 
   }, [])
+
   const { darkMode } = useDarkMode();
   const [showSidebar, setShowSidebar] = React.useState(true);
   return (
