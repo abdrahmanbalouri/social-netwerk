@@ -3,8 +3,31 @@
 import { useEffect, useState } from "react";
 import Link from 'next/link';
 import "../styles/userbar.css"
+import { useWS } from "../context/wsContext";
 export default function UserBar() {
     const [users, setusers] = useState([])
+    const [onlineUsers, setonlineUsers] = useState([])
+    const { addListener, removeListener } = useWS();
+    useEffect(() => {
+        const handleOlineUser = (data) => {
+            setonlineUsers(data.users)
+        }
+        addListener("online_list", handleOlineUser)
+        return () => removeListener("online_list", handleOlineUser)
+    }, [addListener, removeListener])
+    useEffect(() => {
+        const handleLogout = (data) => {
+            let useroff = data.userID
+            let arr = onlineUsers.filter((id) => {
+                return id !== useroff
+            })
+            setonlineUsers([...arr])
+        }
+
+        addListener("logout", handleLogout)
+        return () => removeListener("logout", handleLogout)
+    }, [addListener, removeListener])
+
     useEffect(() => {
         async function fetchusers() {
             try {
@@ -44,7 +67,7 @@ export default function UserBar() {
                                             src={user?.image ? `/uploads/${user.image}` : "/uploads/default.png"}
                                             alt="user avatar"
                                         />
-                                        <div className="online" />
+                                        <div className={onlineUsers.includes(user.id) ? "online" : "offline"} />
                                         <span>{user.nickname}</span>
                                     </div>
                                 </Link>

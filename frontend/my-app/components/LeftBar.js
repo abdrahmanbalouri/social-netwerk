@@ -3,16 +3,19 @@
 import { useRouter } from 'next/navigation';
 import { useProfile } from '../context/profile';
 import Link from 'next/link';
+import { useWS } from "../context/wsContext.js";
 import "../styles/leftbar.css"
 
 
 export default function LeftBar({ showSidebar }) {
   const router = useRouter();
   const { Profile } = useProfile();
+  const { sendMessage } = useWS();
   async function handleLogout(e) {
     e?.preventDefault?.();
+    sendMessage({ type: "logout" })
     try {
-      await fetch('/api/logout', { method: 'POST', credentials: 'include' });
+      await fetch('http://localhost:8080/api/logout', { method: 'POST', credentials: 'include' });
     } catch (err) {
       // ignore network errors here; still redirect
       console.error('Logout failed', err);

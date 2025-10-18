@@ -7,34 +7,23 @@ import RightBar from "../../components/RightBar.js";
 import { useDarkMode } from "../../context/darkMod.js";
 import Link from "next/link.js";
 import "../../styles/games.css";
+import { useWS } from "../../context/wsContext.js";
+import { middleware } from "../../middleware/middelware.js";
 
 export default function Game() {
   const router = useRouter();
+  const sendMessage = useWS()
+  // Authentication check
   useEffect(() => {
-
-    async function midle() {
-      try {
-        const response = await fetch("http://localhost:8080/api/me", {
-          credentials: "include",
-          method: "GET",
-        });
-        console.log(response);
-
-        if (!response.ok) {
-
-          router.replace("/login");
-          return null;
-        }
-      } catch (error) {
-        router.replace("/login");
-        return null;
-
-      }
+    const checkAuth = async () => {
+      const midle = await middleware();
+      return midle;
     }
-    midle()
-
-
-
+    const auth = checkAuth()
+    if (!auth) {
+      router.push("/login");
+      sendMessage({ type: "logout" })
+    }
   }, [])
 
   const { darkMode } = useDarkMode();
