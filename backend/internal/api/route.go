@@ -48,3 +48,12 @@ func Routes(db *sql.DB) http.Handler {
 
 	return mux
 }
+
+
+
+
+// {
+//     "title": "Group 1",
+//     "description": "group for developpers",
+//     "invitedUsers": []
+// }
