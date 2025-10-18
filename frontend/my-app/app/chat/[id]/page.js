@@ -7,34 +7,25 @@ import LeftBar from "../../../components/LeftBar";
 import UserBar from "../../../components/UserBar.js";
 import { useDarkMode } from "../../../context/darkMod.js";
 import ChatBox from "../../../components/chatBox.js";
+import { middleware } from "../../../middleware/middelware.js";
+import { useWS } from "../../../context/wsContext.js";
 
 export default function ChatPage() {
+    const router = useRouter();
     const { darkMode } = useDarkMode();
     const { id } = useParams();
     const [user, setUser] = useState(null);
-    const router = useRouter();
+    const sendMessage = useWS()
+    // Authentication check
     useEffect(() => {
-
-        async function midle() {
-            try {
-                const response = await fetch("http://localhost:8080/api/me", {
-                    credentials: "include",
-                    method: "GET",
-                });
-                console.log(response);
-
-                if (!response.ok) {
-
-                    router.replace("/login");
-                    return null;
-                }
-            } catch (error) {
-                router.replace("/login");
-                return null;
-
+        const checkAuth = async () => {
+            const auth = await middleware();
+            if (!auth) {
+                router.push("/login");
+                sendMessage({ type: "logout" })
             }
         }
-        midle()
+        checkAuth();
     }, [])
     useEffect(() => {
         async function fetchUser() {

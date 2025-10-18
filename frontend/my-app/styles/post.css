@@ -380,40 +380,6 @@ tainer .user .userInfo .details .name {
 }
 
 
-
-
-
-
-.modal-content textarea.input {
-  min-height: 120px;
-  resize: vertical;
-}
-
-.modal-actions {
-  display: flex;
-  gap: 10px;
-  justify-content: flex-end;
-  margin-top: 14px;
-}
-
-.modal-content .btn {
-  padding: 8px 14px;
-  border-radius: 8px;
-  cursor: pointer;
-}
-
-.modal-content .btn.cancel {
-  background: transparent;
-  color: var(--text, #111);
-  border: 1px solid var(--border, #ddd);
-}
-
-.modal-content .btn.submit {
-  background: var(--color-primary);
-  color: var(--color-white);
-  border: none;
-}
-
 .modal-content .modal-close {
   position: absolute;
   right: 12px;
