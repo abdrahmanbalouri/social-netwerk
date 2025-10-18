@@ -9,6 +9,8 @@ export default function Comment({ comments, isOpen, onClose, postId, onCommentCh
   const commentsContainerRef = useRef(null)
   const [scrollPos, setScrollPos] = useState(0)
   const commentRefs = useRef({})
+  console.log(post);
+  
 
   function scrollToComment(commentId) {
     const el = commentRefs.current[commentId]
@@ -92,7 +94,7 @@ export default function Comment({ comments, isOpen, onClose, postId, onCommentCh
             <div className="cm-post">
               <div className="cm-img-wrap">
                 <img
-                  src={post.image_path || "/placeholder.svg"}
+                  src={`../${post.image_path}`}
                   alt="Post"
                   className="cm-img"
                   onLoad={(e) => {
