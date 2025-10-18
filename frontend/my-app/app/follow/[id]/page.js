@@ -7,45 +7,31 @@ import LeftBar from "../../../components/LeftBar.js";
 import RightBar from "../../../components/RightBar.js";
 import { useDarkMode } from "../../../context/darkMod.js";
 import "./follow.css";
+import { middleware } from "../../../middleware/middelware.js";
+import { useWS } from "../../../context/wsContext.js";
+
 
 export default function FollowPage() {
   const [followers, setFollowers] = useState([]);
   const [following, setFollowing] = useState([]);
   const { darkMode } = useDarkMode();
-
   const params = useParams();
   const searchParams = useSearchParams();
   const router = useRouter();
   const userId = params.id;
   const tab = searchParams.get("tab") || "followers";
+  const sendMessage = useWS()
+  // Authentication check
   useEffect(() => {
-
-    async function midle() {
-      try {
-        const response = await fetch("http://localhost:8080/api/me", {
-          credentials: "include",
-          method: "GET",
-        });
-        console.log(response);
-
-        if (!response.ok) {
-
-          router.replace("/login");
-          return null;
-        }
-      } catch (error) {
-        router.replace("/login");
-        return null;
-
+    const checkAuth = async () => {
+      const auth = await middleware();
+      if (!auth) {
+        router.push("/login");
+        sendMessage({ type: "logout" })
       }
     }
-    midle()
-
-
-
+    checkAuth();
   }, [])
-
-
 
   useEffect(() => {
     const fetchData = async () => {
@@ -54,9 +40,17 @@ export default function FollowPage() {
           tab === "followers"
             ? `http://localhost:8080/api/followers?id=${userId}`
             : `http://localhost:8080/api/following?id=${userId}`;
-        const res = await fetch(url);
-        const data = await res.json();
-        tab === "followers" ? setFollowers(data) : setFollowing(data);
+        const res = await fetch(url, {
+          method: "GET",
+          credentials: "include",
+        });
+
+
+        if (res.ok) {
+          
+          const data = await res.json();
+          tab === "followers" ? setFollowers(data) : setFollowing(data);
+        }
       } catch (error) {
         console.error(error);
       }

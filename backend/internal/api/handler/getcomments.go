@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"fmt"
 	"net/http"
 	"strconv"
 	"strings"
@@ -31,13 +30,11 @@ func GetCommentsHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil || offset < 0 {
 		offset = 0
 	}
-	userID, err := helper.AuthenticateUser(r)
+	_, err = helper.AuthenticateUser(r)
 	if err != nil {
 		helper.RespondWithError(w, http.StatusUnauthorized, "Authentication required")
 		return
 	}
-
-	fmt.Println(userID)
 
 	// can, err := helper.CanViewComments(userID, postID)
 	// if err != nil {
@@ -57,7 +54,6 @@ func GetCommentsHandler(w http.ResponseWriter, r *http.Request) {
         ORDER BY c.created_at desc
         LIMIT 10 OFFSET ?`, postID, offset)
 	if err != nil {
-		fmt.Println("1111",err)
 		helper.RespondWithError(w, http.StatusInternalServerError, "Failed to fetch comments")
 		return
 	}
@@ -80,6 +76,6 @@ func GetCommentsHandler(w http.ResponseWriter, r *http.Request) {
 		}
 		comments = append(comments, comment)
 	}
-	
+
 	helper.RespondWithJSON(w, http.StatusOK, comments)
 }
