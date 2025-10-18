@@ -8,7 +8,7 @@ export async function middleware() {
 
         return response
     } catch (error) {
-
+        
         throw error;
     }
 }
