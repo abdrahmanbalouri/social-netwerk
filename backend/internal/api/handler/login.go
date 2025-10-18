@@ -20,7 +20,8 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	var userID string
 
 	err1 := logindata.Checklogindata(loginInformations.Nickname, repository.Db, w, &dbPassword, &userID, loginInformations.Password)
-	if err1 == "0" {
+	if err1 != "" {
+		http.Error(w, err1, http.StatusUnauthorized)
 		return
 	}
 	sessionID := helper.GenerateSessionID()
