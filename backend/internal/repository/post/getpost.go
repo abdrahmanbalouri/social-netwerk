@@ -20,35 +20,7 @@ func GetAllPosts(authUserID string, r *http.Request, ofseet int) ([]map[string]i
 	if authUserID == "0" {
 		authUserID = userId
 	}
-	limit := 10
-
-	if authUserID != "" {
-		rows, err = repository.Db.Query(`
-			SELECT 
-			  p.id, 
-            p.user_id, 
-            p.title, 
-            p.content, 
-            p.image_path,
-            p.visibility,
-            p.canseperivite,
-            p.created_at, 
-            u.nickname,
-            u.privacy,
-             u.image AS profile,
-			COUNT(DISTINCT l.id) AS like_count,
-			COUNT(DISTINCT CASE WHEN l.user_id = ? THEN l.id END) AS liked_by_user,
-			COUNT(DISTINCT c.id) AS comments_count
-			FROM posts p
-			JOIN users u ON p.user_id = u.id
-			LEFT JOIN likes l ON p.id = l.liked_item_id AND l.liked_item_type = 'post'
-			LEFT JOIN comments c ON p.id = c.post_id
-			WHERE p.user_id = ?
-			GROUP BY p.id, p.user_id, p.title, p.content, p.image_path, p.created_at, u.nickname, u.image
-			ORDER BY p.created_at DESC
-			LIMIT ? OFFSET ?;
-		`, authUserID, authUserID, limit, ofseet)
-	} else {
+	limit := 10 
 		rows, err = repository.Db.Query(`
 	SELECT 
     p.id, 
@@ -91,7 +63,7 @@ GROUP BY p.id, p.user_id, p.title, p.content, p.image_path, p.created_at, u.nick
 ORDER BY p.created_at DESC
 LIMIT ? OFFSET ?;
 `, userId, userId, userId, userId, userId, limit, ofseet)
-	}
+	
 
 	if err != nil {
 		return nil, fmt.Errorf("query error: %v", err)
