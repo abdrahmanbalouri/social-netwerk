@@ -649,19 +649,35 @@ export default function Profile() {
 
           <div className="profileContainer">
             <div className="uInfo">
-              <div className="left">
-                <Link href={`/follow/${theprofile.id}?tab=followers`}>
+
+                {!theprofile.isFollowing && theprofile.privacy === "private" ?  (
+                  <div className="left">
+                  <p>
+                    following
+                    <strong id="following">{theprofile.following} </strong>
+                  </p>
+                  <p>
+                    followers
+                    <strong id="followers"> {theprofile.followers}</strong>
+                  </p>
+              </div>
+             
+                )  : (
+                   <div className="left">
+                <Link   href={`/follow/${theprofile.id}?tab=following`}>
+
                   <p>
                     following <strong id="following">{theprofile.following}</strong>
                   </p>
                 </Link>
-
-                <Link href={`/follow/${theprofile.id}?tab=following`}>
+                <Link href={`/follow/${theprofile.id}?tab=followers`}>
                   <p>
                     followers <strong id="followers">{theprofile.followers}</strong>
                   </p>
                 </Link>
               </div>
+                )}
+
 
               <div className="center">
                 <span className="nickname">{theprofile.nickname}</span>
