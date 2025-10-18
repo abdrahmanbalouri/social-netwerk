@@ -19,7 +19,7 @@ export default function Notification({ data }) {
                 </div>
                 <div className="notification-content">
                     <p className="notification-text">
-                        <strong>{data && data.name}</strong>,  {data && data.messageContent}
+                        <strong>{data && data.name}</strong>,  {data && data.content}
                     </p>
                     <span className="notification-timer">a few seconds ago</span>
                 </div>
