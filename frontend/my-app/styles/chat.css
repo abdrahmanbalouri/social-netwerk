@@ -73,6 +73,14 @@
   color: green;
 }
 
+
+.off {
+  color: rgb(228, 15, 15);
+  font-size: 12px;
+  font-weight: bold;
+}
+
+
 .chat-header img {
   width: 42px;
   height: 42px;
