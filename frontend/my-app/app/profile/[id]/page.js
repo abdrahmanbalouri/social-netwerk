@@ -15,12 +15,11 @@ import MoreVertIcon from "@mui/icons-material/MoreVert";
 import ProfileCardEditor from '../../../components/ProfileCardEditor.js';
 import { useWS } from "../../../context/wsContext.js";
 import Link from 'next/link';
+import { middleware } from '../../../middleware/middelware.js';
 
 export default function Profile() {
   const { Profile } = useProfile();
-
   const { darkMode } = useDarkMode();
-
   const [showSidebar, setShowSidebar] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const params = useParams();
@@ -30,10 +29,19 @@ export default function Profile() {
   const [showComments, setShowComments] = useState(false);
   const [selectedPost, setSelectedPost] = useState(null);
   const [comment, setComment] = useState([]);
-  const { ws, connected } = useWS();
-
+  const { ws, connected,sendMessage } = useWS();
+  // Authentication check
+  useEffect(() => {
+    const checkAuth = async () => {
+      const auth = await middleware();
+      if (!auth) {
+        router.push("/login");
+        sendMessage({ type: "logout" })
+      }
+    }
+    checkAuth();
+  }, [])
   const sendMsg = (FollowType) => {
-
     const payload = {
       receiverId: params.id,
       messageContent: "",
