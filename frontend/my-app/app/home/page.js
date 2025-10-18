@@ -9,10 +9,9 @@ import { useDarkMode } from '../../context/darkMod';
 import Stories from '../../components/stories.js';
 import Comment from '../../components/coment.js';
 import Post from '../../components/Post.js';
+import { middleware } from "../../middleware/middelware.js";
+import { useWS } from "../../context/wsContext.js";
 export default function Home() {
-  const router = useRouter();
-  const { darkMode } = useDarkMode();
-
   // State management
   const [showSidebar, setShowSidebar] = useState(true);
   const [showComments, setShowComments] = useState(false);
@@ -37,31 +36,27 @@ export default function Home() {
   const modalRefhome = useRef(null)
   const boleanofset = useRef(false)
   const postRefs = useRef({});
+  const router = useRouter();
+  const { darkMode } = useDarkMode();
+  const sendMessage = useWS()
+  // Authentication check
+  useEffect(() => {
+    const checkAuth = async () => {
+      const auth = await middleware();
+      if (!auth) {
+        router.push("/login");
+        sendMessage({ type: "logout" })
+      }
+    }
+    checkAuth();
+  }, [])
   function scrollToPost(postId) {
-    
+
     const el = postRefs.current[postId];
     if (el) {
       el.scrollIntoView({ behavior: "smooth", block: "start" });
     }
   }
-  useEffect(() => {
-    async function midle() {
-      try {
-        const response = await fetch("http://localhost:8080/api/me", {
-          credentials: "include",
-          method: "GET",
-        });
-        if (!response.ok) {
-          router.replace("/login");
-          return null;
-        }
-      } catch (error) {
-        router.replace("/login");
-        return null;
-      }
-    }
-    midle()
-  }, [])
   function handleUserSelect(userId) {
     setSelectedUsers((prevSelected) =>
       prevSelected.includes(userId)
@@ -303,15 +298,15 @@ export default function Home() {
 
   async function GetComments(post) {
     setLoadingcomment(true)
-    console.log(post,"--------------------------++++++++++++++++++++");
-    
+    console.log(post, "--------------------------++++++++++++++++++++");
+
     try {
       setSelectedPost({
         id: post.id,
         title: post.title || post.post_title || "Post",
-        image_path :post.image_path,
-        content : post.content,
-        author : post.author
+        image_path: post.image_path,
+        content: post.content,
+        author: post.author
       });
 
       // Fetch comments
