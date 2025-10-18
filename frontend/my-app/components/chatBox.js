@@ -18,7 +18,7 @@ export default function ChatBox({ user }) {
   const [onlineUsers, setonlineUsers] = useState([])
   const { sendMessage, addListener, removeListener } = useWS();
   const id = useParams().id;
-  if (id == "0") {
+  if (id == "0" || !id) {
     return (
       <div className="no-chat-selected">
         <div className="no-chat-header">
