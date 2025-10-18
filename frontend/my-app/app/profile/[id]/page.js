@@ -23,7 +23,7 @@ export default function Profile() {
   const params = useParams();
   const router = useRouter();
   const userId = Number(params.id);
-  const { ws, connected } = useWS();
+  const { sendMessage } = useWS();
   const [showSidebar, setShowSidebar] = useState(true);
   const [showComments, setShowComments] = useState(false);
   const [showModal, setShowModal] = useState(false);
@@ -59,17 +59,6 @@ export default function Profile() {
     }
     checkAuth();
   }, [])
-  const sendMsg = (FollowType) => {
-    const payload = {
-      receiverId: params.id,
-      messageContent: "",
-      type: FollowType,
-    };
-
-    if (connected && ws) {
-      ws.send(JSON.stringify(payload));
-    }
-  };
 
   const [theprofile, setProfile] = useState(null);
 
@@ -316,7 +305,7 @@ export default function Profile() {
       const data = await res.json();
 
 
-    if (data.length==0) return        
+      if (data.length == 0) return
       setPosts([...data]);
       return true
     } catch (err) {
@@ -596,283 +585,289 @@ export default function Profile() {
     );
   }
 
- return (
-  <div className={darkMode ? "theme-dark" : "theme-light"}>
-    {/* Navbar */}
-    <Navbar
-      onCreatePost={() => setShowModal(true)}
-      onToggleSidebar={() => setShowSidebar(!showSidebar)}
-    />
+  return (
+    <div className={darkMode ? "theme-dark" : "theme-light"}>
+      {/* Navbar */}
+      <Navbar
+        onCreatePost={() => setShowModal(true)}
+        onToggleSidebar={() => setShowSidebar(!showSidebar)}
+      />
 
-    <main className="content">
-      <LeftBar showSidebar={showSidebar} />
+      <main className="content">
+        <LeftBar showSidebar={showSidebar} />
 
-      <div className="main-section">
-        {/* ===== Profile Section ===== */}
-        <div className="profile">
-          <div className="images">
-            <img
-              src={
-                theprofile.cover
-                  ? `/uploads/${theprofile.cover}`
-                  : "https://images.pexels.com/photos/13440765/pexels-photo-13440765.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
-              }
-              alt=""
-              className="cover"
-            />
-            <img
-              src={
-                theprofile.image
-                  ? `/uploads/${theprofile.image}`
-                  : "/uploads/default.png"
-              }
-              alt="profile picture"
-              className="profilePic"
-            />
-          </div>
+        <div className="main-section">
+          {/* ===== Profile Section ===== */}
+          <div className="profile">
+            <div className="images">
+              <img
+                src={
+                  theprofile.cover
+                    ? `/uploads/${theprofile.cover}`
+                    : "https://images.pexels.com/photos/13440765/pexels-photo-13440765.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
+                }
+                alt=""
+                className="cover"
+              />
+              <img
+                src={
+                  theprofile.image
+                    ? `/uploads/${theprofile.image}`
+                    : "/uploads/default.png"
+                }
+                alt="profile picture"
+                className="profilePic"
+              />
+            </div>
 
-          <div className="profileContainer">
-            <div className="uInfo">
+            <div className="profileContainer">
+              <div className="uInfo">
 
-                {!theprofile.isFollowing && theprofile.privacy === "private" ?  (
+                {!theprofile.isFollowing && theprofile.privacy === "private" ? (
                   <div className="left">
-                  <p>
-                    following
-                    <strong id="following">{theprofile.following} </strong>
-                  </p>
-                  <p>
-                    followers
-                    <strong id="followers"> {theprofile.followers}</strong>
-                  </p>
-              </div>
-             
-                )  : (
-                   <div className="left">
-                <Link   href={`/follow/${theprofile.id}?tab=following`}>
+                    <p>
+                      following
+                      <strong id="following">{theprofile.following} </strong>
+                    </p>
+                    <p>
+                      followers
+                      <strong id="followers"> {theprofile.followers}</strong>
+                    </p>
+                  </div>
 
-                  <p>
-                    following <strong id="following">{theprofile.following}</strong>
-                  </p>
-                </Link>
-                <Link href={`/follow/${theprofile.id}?tab=followers`}>
-                  <p>
-                    followers <strong id="followers">{theprofile.followers}</strong>
-                  </p>
-                </Link>
-              </div>
+                ) : (
+                  <div className="left">
+                    <Link href={`/follow/${theprofile.id}?tab=following`}>
+
+                      <p>
+                        following <strong id="following">{theprofile.following}</strong>
+                      </p>
+                    </Link>
+                    <Link href={`/follow/${theprofile.id}?tab=followers`}>
+                      <p>
+                        followers <strong id="followers">{theprofile.followers}</strong>
+                      </p>
+                    </Link>
+                  </div>
                 )}
 
 
-              <div className="center">
-                <span className="nickname">{theprofile.nickname}</span>
-                <div className="info">
-                  <div className="item">
-                    <LanguageIcon />
-                    <span>{theprofile.about}</span>
+                <div className="center">
+                  <span className="nickname">{theprofile.nickname}</span>
+                  <div className="info">
+                    <div className="item">
+                      <LanguageIcon />
+                      <span>{theprofile.about}</span>
+                    </div>
                   </div>
+
+                  {Profile && Profile.id !== theprofile.id && (
+                    <button
+                      id="FollowBtn"
+                      onClick={() => {
+                        if (theprofile.privacy === "private" && !theprofile.isFollowed) {
+                          sendMessage({
+                            type: "followRequest", receiverId: params.id,
+                            messageContent: "",
+                          });
+                        } else if (theprofile.privacy === "public" && !theprofile.isFollowed) {
+                          sendMessage({
+                            type: "follow", receiverId: params.id,
+                            messageContent: "",
+                          });
+                        }
+                        followUser();
+                      }}
+                      style={{
+                        backgroundColor:
+                          !theprofile.isFollowing && !theprofile.isPending ? "blue" : "white",
+                        color:
+                          !theprofile.isFollowing && !theprofile.isPending ? "white" : "black",
+                        border: "1px solid #ccc",
+                        padding: "8px 16px",
+                      }}
+                    >
+                      {PrFollow()}
+                    </button>
+                  )}
                 </div>
 
-                {Profile && Profile.id !== theprofile.id && (
-                  <button
-                    id="FollowBtn"
-                    onClick={() => {
-                      if (theprofile.privacy === "private" && !theprofile.isFollowed) {
-                        sendMsg("followRequest");
-                      } else if (theprofile.privacy === "public" && !theprofile.isFollowed) {
-                        sendMsg("follow");
-                      }
-                      followUser();
-                    }}
-                    style={{
-                      backgroundColor:
-                        !theprofile.isFollowing && !theprofile.isPending ? "blue" : "white",
-                      color:
-                        !theprofile.isFollowing && !theprofile.isPending ? "white" : "black",
-                      border: "1px solid #ccc",
-                      padding: "8px 16px",
-                    }}
-                  >
-                    {PrFollow()}
-                  </button>
+                <div className="right">
+                  {Profile && Profile.id !== theprofile.id ? (
+                    <EmailOutlinedIcon />
+                  ) : (
+                    <MoreVertIcon onClick={handleShowPrivacy} />
+                  )}
+                </div>
+
+                {showPrivacy && (
+                  <div className="privacy-overlay">
+                    <div onClick={handleShowPrivacy} className="privacy-backdrop"></div>
+                    <ProfileCardEditor
+                      handleShowPrivacy={handleShowPrivacy}
+                      initialCover={theprofile.cover}
+                      initialAvatar={theprofile.image}
+                      initialAbout={theprofile.about}
+                      initialPrivacy={theprofile.privacy}
+                    />
+                  </div>
                 )}
               </div>
+            </div>
+          </div>
 
-              <div className="right">
-                {Profile && Profile.id !== theprofile.id ? (
-                  <EmailOutlinedIcon />
-                ) : (
-                  <MoreVertIcon onClick={handleShowPrivacy} />
-                )}
+          {/* ===== Posts Section ===== */}
+          <section
+            className="feed"
+            onScroll={(e) => setscroolHome(e.target.scrollTop)}
+            ref={modalRefhome}
+          >
+            {!posts ? (
+              <p>No posts available</p>
+            ) : (
+              posts.map((post) => (
+                <Post
+                  key={post.id}
+                  post={post}
+                  onGetComments={GetComments}
+                  ondolike={Handlelik}
+                  ref={(el) => (commentRefs.current[post.id] = el)}
+                />
+              ))
+            )}
+          </section>
+        </div>
+
+        <RightBar />
+      </main>
+
+      {/* ===== Create Post Modal ===== */}
+      {showModal && (
+        <div
+          className={`modal-overlay ${showModal ? "is-open" : ""}`}
+          onMouseDown={(e) => {
+            if (e.target === e.currentTarget) setShowModal(false);
+            setVisibility("public");
+          }}
+        >
+          <div
+            ref={modalRef}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="create-post-title"
+            className="modal-content"
+            onMouseDown={(e) => e.stopPropagation()}
+          >
+            <button
+              className="modal-close"
+              aria-label="Close modal"
+              onClick={() => {
+                setShowModal(false);
+                setVisibility("public");
+              }}
+            >
+              ✕
+            </button>
+            <h3 id="create-post-title">Create a Post</h3>
+            <form onSubmit={handleCreatePost}>
+              <input
+                type="text"
+                placeholder="Title"
+                className="input"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                required
+              />
+              <input
+                type="file"
+                className="input"
+                onChange={handleImageChange}
+                accept="image/*"
+              />
+              <textarea
+                placeholder="What's on your mind?"
+                className="input"
+                value={content}
+                onChange={(e) => setContent(e.target.value)}
+                required
+              />
+
+              <div className="visibility-select">
+                <label htmlFor="visibility">Visibility</label>
+                <select
+                  id="visibility"
+                  value={visibility}
+                  onChange={handleVisibilityChange}
+                >
+                  <option value="public">Public (All users)</option>
+                  <option value="almost_private">Almost Private (Followers only)</option>
+                  <option value="private">Private (Selected followers)</option>
+                </select>
               </div>
 
-              {showPrivacy && (
-                <div className="privacy-overlay">
-                  <div onClick={handleShowPrivacy} className="privacy-backdrop"></div>
-                  <ProfileCardEditor
-                    handleShowPrivacy={handleShowPrivacy}
-                    initialCover={theprofile.cover}
-                    initialAvatar={theprofile.image}
-                    initialAbout={theprofile.about}
-                    initialPrivacy={theprofile.privacy}
-                  />
+              {visibility === "private" && (
+                <div className="user-picker">
+                  {loadingFollowers ? (
+                    <p>Loading followers...</p>
+                  ) : error ? (
+                    <p className="error">Error: {error}</p>
+                  ) : followers.length > 0 ? (
+                    followers.map((follower) => (
+                      <label key={follower.id} className="user-picker-item">
+                        <img
+                          src={`/uploads/${follower.image}` || "/default-avatar.png"}
+                          alt={follower.nickname}
+                          className="image-avatar"
+                        />
+                        <span>{follower.nickname}</span>
+                        <input
+                          type="checkbox"
+                          checked={selectedUsers.includes(follower.id)}
+                          onChange={() => handleUserSelect(follower.id)}
+                        />
+                      </label>
+                    ))
+                  ) : (
+                    <p>No followers found.</p>
+                  )}
                 </div>
               )}
-            </div>
+
+              <div className="modal-actions">
+                <button
+                  type="button"
+                  className="btn cancel"
+                  onClick={() => {
+                    setShowModal(false);
+                    setVisibility("public");
+                  }}
+                >
+                  Cancel
+                </button>
+                <button type="submit" className="btn submit" disabled={loadingFollowers}>
+                  Post
+                </button>
+              </div>
+            </form>
           </div>
         </div>
+      )}
 
-        {/* ===== Posts Section ===== */}
-        <section
-          className="feed"
-          onScroll={(e) => setscroolHome(e.target.scrollTop)}
-          ref={modalRefhome}
-        >
-          {!posts ? (
-            <p>No posts available</p>
-          ) : (
-            posts.map((post) => (
-              <Post
-                key={post.id}
-                post={post}
-                onGetComments={GetComments}
-                ondolike={Handlelik}
-                ref={(el) => (commentRefs.current[post.id] = el)}
-              />
-            ))
-          )}
-        </section>
-      </div>
-
-      <RightBar />
-    </main>
-
-    {/* ===== Create Post Modal ===== */}
-    {showModal && (
-      <div
-        className={`modal-overlay ${showModal ? "is-open" : ""}`}
-        onMouseDown={(e) => {
-          if (e.target === e.currentTarget) setShowModal(false);
-          setVisibility("public");
-        }}
-      >
-        <div
-          ref={modalRef}
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="create-post-title"
-          className="modal-content"
-          onMouseDown={(e) => e.stopPropagation()}
-        >
-          <button
-            className="modal-close"
-            aria-label="Close modal"
-            onClick={() => {
-              setShowModal(false);
-              setVisibility("public");
-            }}
-          >
-            ✕
-          </button>
-          <h3 id="create-post-title">Create a Post</h3>
-          <form onSubmit={handleCreatePost}>
-            <input
-              type="text"
-              placeholder="Title"
-              className="input"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              required
-            />
-            <input
-              type="file"
-              className="input"
-              onChange={handleImageChange}
-              accept="image/*"
-            />
-            <textarea
-              placeholder="What's on your mind?"
-              className="input"
-              value={content}
-              onChange={(e) => setContent(e.target.value)}
-              required
-            />
-
-            <div className="visibility-select">
-              <label htmlFor="visibility">Visibility</label>
-              <select
-                id="visibility"
-                value={visibility}
-                onChange={handleVisibilityChange}
-              >
-                <option value="public">Public (All users)</option>
-                <option value="almost_private">Almost Private (Followers only)</option>
-                <option value="private">Private (Selected followers)</option>
-              </select>
-            </div>
-
-            {visibility === "private" && (
-              <div className="user-picker">
-                {loadingFollowers ? (
-                  <p>Loading followers...</p>
-                ) : error ? (
-                  <p className="error">Error: {error}</p>
-                ) : followers.length > 0 ? (
-                  followers.map((follower) => (
-                    <label key={follower.id} className="user-picker-item">
-                      <img
-                        src={`/uploads/${follower.image}` || "/default-avatar.png"}
-                        alt={follower.nickname}
-                        className="image-avatar"
-                      />
-                      <span>{follower.nickname}</span>
-                      <input
-                        type="checkbox"
-                        checked={selectedUsers.includes(follower.id)}
-                        onChange={() => handleUserSelect(follower.id)}
-                      />
-                    </label>
-                  ))
-                ) : (
-                  <p>No followers found.</p>
-                )}
-              </div>
-            )}
-
-            <div className="modal-actions">
-              <button
-                type="button"
-                className="btn cancel"
-                onClick={() => {
-                  setShowModal(false);
-                  setVisibility("public");
-                }}
-              >
-                Cancel
-              </button>
-              <button type="submit" className="btn submit" disabled={loadingFollowers}>
-                Post
-              </button>
-            </div>
-          </form>
-        </div>
-      </div>
-    )}
-
-    {/* ===== Comments Modal ===== */}
-    {showComments && (
-      <Comment
-        comments={comment}
-        isOpen={showComments}
-        onClose={closeComments}
-        postId={selectedPost?.id}
-        postTitle={selectedPost?.title}
-        onCommentChange={refreshComments}
-        lodinggg={loadingcomment}
-        ongetcomment={GetComments}
-        post={selectedPost}
-      />
-    )}
-  </div>
-);
+      {/* ===== Comments Modal ===== */}
+      {showComments && (
+        <Comment
+          comments={comment}
+          isOpen={showComments}
+          onClose={closeComments}
+          postId={selectedPost?.id}
+          postTitle={selectedPost?.title}
+          onCommentChange={refreshComments}
+          lodinggg={loadingcomment}
+          ongetcomment={GetComments}
+          post={selectedPost}
+        />
+      )}
+    </div>
+  );
 
 }
