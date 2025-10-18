@@ -33,6 +33,10 @@ export default function ChatBox({ user }) {
     return <div className="loading">Loading user...</div>;
   }
 
+  setTimeout(() => {
+    inputRef.current?.focus();
+  }, 0);
+  
   useEffect(() => {
     setActiveChatID(user.id);
     return () => setActiveChatID(null);
@@ -40,10 +44,6 @@ export default function ChatBox({ user }) {
 
   // listen for online/offline status updates
   useEffect(() => {
-    console.log("dsqdqs", user.id);
-    console.log("sqdqsdqsd", onlineUsers);
-
-
     const handleOlineUser = (data) => {
       setonlineUsers(data.users)
     }
@@ -53,10 +53,6 @@ export default function ChatBox({ user }) {
   }, [addListener, removeListener])
 
   useEffect(() => {
-    console.log("dsqdqs", user.id);
-    console.log("sqdqsdqsd", onlineUsers);
-
-
     const handleLogout = (data) => {
       let useroff = data.userID
       let arr = onlineUsers.filter((id) => {
@@ -71,9 +67,6 @@ export default function ChatBox({ user }) {
 
 
 
-  setTimeout(() => {
-    inputRef.current?.focus();
-  }, 0);
 
   useEffect(() => {
     const fetchMessages = async () => {
@@ -129,58 +122,7 @@ export default function ChatBox({ user }) {
     }
   }, [messages]);
 
-  const emojiArray = [
-    "😀",
-    "😃",
-    "😄",
-    "😁",
-    "😆",
-    "😅",
-    "🤣",
-    "😂",
-    "🚀",
-    "💡",
-    "😊",
-    "😇",
-    "🙂",
-    "🙃",
-    "😉",
-    "😍",
-    "🥰",
-    "😘",
-    "😗",
-    "😋",
-    "😛",
-    "😜",
-    "🤪",
-    "😝",
-    "🤑",
-    "🤗",
-    "🤭",
-    "🤔",
-    "🤨",
-    "😐",
-    "😑",
-    "😶",
-    "😏",
-    "😒",
-    "🙄",
-    "😬",
-    "😔",
-    "😪",
-    "🤤",
-    "😴",
-    "😷",
-    "🤒",
-    "🤕",
-    "🤢",
-    "🤮",
-    "🥴",
-    "😵",
-    "🤯",
-    "😎",
-    "🤓",
-  ];
+  const emojiArray = ["😀", "😃", "😄", "😁", "😆", "😅", "🤣", "😂", "🚀", "💡", "😊", "😇", "🙂", "🙃", "😉", "😍", "🥰", "😘", "😗", "😋", "😛", "😜", "🤪", "😝", "🤑", "🤗", "🤭", "🤔", "🤨", "😐", "😑", "😶", "😏", "😒", "🙄", "😬", "😔", "😪", "🤤", "😴", "😷", "🤒", "🤕", "🤢", "🤮", "🥴", "😵", "🤯", "😎", "🤓"];
   const handleSendMessage = () => {
     if (input.trim() === "") return;
     const payload = {
