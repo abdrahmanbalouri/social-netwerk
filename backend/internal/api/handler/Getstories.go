@@ -18,7 +18,7 @@ func GetStories(w http.ResponseWriter, r *http.Request) {
         FROM stories s
         JOIN users u ON s.user_id = u.id
         WHERE s.expires_at IS NULL OR DATETIME(s.expires_at) > CURRENT_TIMESTAMP
-        ORDER BY s.created_at DESC
+        ORDER BY s.created_at ASC
     `)
 	if err != nil {
 		http.Error(w, "Failed to get stories", http.StatusInternalServerError)
