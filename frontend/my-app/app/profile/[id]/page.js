@@ -354,12 +354,15 @@ export default function Profile() {
 
       // Fetch the newly created post
       if (res.post_id) {
-        const newPost = await fetchPosts(res.post_id);
-        if (newPost) {
-          setPosts(prevPosts => [newPost, ...prevPosts]);
+        if (Profile && Profile.id === theprofile.id ) {
+
+          const newPost = await fetchPosts(res.post_id);
+          if (newPost) {
+            setPosts(prevPosts => [newPost, ...prevPosts]);
+          }
+          offsetpsot.current++
         }
       }
-      offsetpsot.current++
 
     } catch (err) {
       console.error("Error creating post:", err);
