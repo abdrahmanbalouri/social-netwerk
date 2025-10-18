@@ -4,10 +4,14 @@ import (
 	"crypto/rand"
 	"encoding/hex"
 	"encoding/json"
+	"fmt"
 	"html"
+	"log"
 	"net/http"
 
 	"social-network/internal/repository"
+
+	"github.com/gofrs/uuid/v5"
 )
 
 func GenerateSessionID() string {
@@ -38,6 +42,7 @@ func AuthenticateUser(r *http.Request) (string, error) {
 	if err != nil {
 		return "", err
 	}
+	fmt.Println("Cookie is :", cookie)
 
 	var userID string
 
@@ -52,4 +57,13 @@ func AuthenticateUser(r *http.Request) (string, error) {
 	}
 
 	return userID, nil
+}
+
+func GenerateUUID() uuid.UUID {
+	// Create a Version 4 UUID
+	u2, err := uuid.NewV4()
+	if err != nil {
+		log.Fatalf("failed to generate UUID: %v", err)
+	}
+	return u2
 }
