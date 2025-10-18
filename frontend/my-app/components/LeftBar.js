@@ -61,10 +61,12 @@ export default function LeftBar({ showSidebar }) {
             <span>followers</span>
           </div>
         </Link>
-        <div className="item">
-          <img src="/icone/2.png" alt="" />
-          <span>Groups</span>
-        </div>
+        <Link href='/groups'>
+          <div className="item">
+            <img src="/icone/2.png" alt="" />
+            <span>Groups</span>
+          </div>
+        </Link>
         <Link href='/watch'>
           <div className="item">
             <img src="/icone/4.png" alt="" />
