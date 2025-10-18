@@ -26,9 +26,17 @@ export default function FollowPage() {
           tab === "followers"
             ? `http://localhost:8080/api/followers?id=${userId}`
             : `http://localhost:8080/api/following?id=${userId}`;
-        const res = await fetch(url);
-        const data = await res.json();
-        tab === "followers" ? setFollowers(data) : setFollowing(data);
+        const res = await fetch(url, {
+          method: "GET",
+          credentials: "include",
+        });
+
+
+        if (res.ok) {
+          
+          const data = await res.json();
+          tab === "followers" ? setFollowers(data) : setFollowing(data);
+        }
       } catch (error) {
         console.error(error);
       }
