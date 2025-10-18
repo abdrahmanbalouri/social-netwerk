@@ -14,7 +14,6 @@ func Checklogindata(nickname string, db *sql.DB, w http.ResponseWriter, dbPasswo
 	).Scan(userID, dbPassword)
 
 	if err == sql.ErrNoRows || bcrypt.CompareHashAndPassword([]byte(*dbPassword), []byte(Password)) != nil {
-
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusUnauthorized)
 		return "0"
