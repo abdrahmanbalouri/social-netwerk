@@ -50,7 +50,7 @@ export default function Home() {
         const response = await fetch("http://localhost:8080/api/me", {
           credentials: "include",
           method: "GET",
-        },{});
+        });
         if (!response.ok) {
           router.replace("/login");
           return null;
