@@ -17,6 +17,8 @@ import { useWS } from "../../../context/wsContext.js";
 import Link from 'next/link';
 
 export default function Profile() {
+  console.log(222);
+  
   const { Profile } = useProfile();
 
   const { darkMode } = useDarkMode();
