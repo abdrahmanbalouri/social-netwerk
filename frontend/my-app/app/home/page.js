@@ -1,7 +1,7 @@
 // Home.js
 "use client";
 import { useRouter } from "next/navigation";
-import { useEffect, useState, useRef, use } from "react";
+import { useEffect, useState, useRef } from "react";
 import Navbar from '../../components/Navbar.js';
 import LeftBar from '../../components/LeftBar.js';
 import RightBar from '../../components/RightBar.js';
@@ -11,6 +11,7 @@ import Comment from '../../components/coment.js';
 import Post from '../../components/Post.js';
 import { middleware } from "../../middleware/middelware.js";
 import { useWS } from "../../context/wsContext.js";
+
 export default function Home() {
   // State management
   const [showSidebar, setShowSidebar] = useState(true);
