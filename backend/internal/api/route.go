@@ -44,6 +44,7 @@ func Routes(db *sql.DB) http.Handler {
 	mux.HandleFunc("/api/Createstories",handlers.CreateStories)
 	mux.HandleFunc("/api/getmessages", handlers.GetMessagesHandler)
 	mux.HandleFunc("/ws", handlers.Websocket)
+	mux.HandleFunc("/ws",handlers.Chabgt)
 
 	return mux
 }
