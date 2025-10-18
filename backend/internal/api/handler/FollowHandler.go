@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"fmt"
 	"net/http"
 
 	"social-network/internal/helper"
@@ -50,7 +49,7 @@ func FollowHandler(w http.ResponseWriter, r *http.Request) {
 				http.Error(w, "Failed to unfollow: "+err.Error(), http.StatusInternalServerError)
 				return
 			}
-	var followers, following int
+			var followers, following int
 			if err = repository.Db.QueryRow(`SELECT COUNT(*) FROM followers WHERE user_id = ?`, id).Scan(&followers); err != nil {
 				http.Error(w, "Failed to count followers", http.StatusInternalServerError)
 				return
@@ -66,7 +65,8 @@ func FollowHandler(w http.ResponseWriter, r *http.Request) {
 				"isFollowed": false,
 				"isPending":  false,
 			})
-			return		}
+			return
+		}
 
 		var reqCount int
 		err = repository.Db.QueryRow(
@@ -114,7 +114,6 @@ func FollowHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	////mochkiiiil hnaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
-	fmt.Println("cou", count)
 	if count > 0 {
 
 		_, err = repository.Db.Exec(`DELETE FROM followers WHERE user_id = ? AND follower_id = ?`, id, UserID)

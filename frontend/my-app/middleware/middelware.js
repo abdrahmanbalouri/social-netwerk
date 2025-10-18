@@ -4,11 +4,8 @@ export async function middleware() {
             method: "GET",
             credentials: "include",
         });
-
-
-        return response
+        return response.ok
     } catch (error) {
-
-        throw error;
+        return false
     }
 }
