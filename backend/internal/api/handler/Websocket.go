@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"database/sql"
+	"fmt"
 	"log"
 	"net/http"
 	"sync"
@@ -126,20 +127,20 @@ func Loop(conn *websocket.Conn, currentUserID string) {
 
 			// ✅ send message to receiver
 			sendToUser(msg.ReceiverId, map[string]any{
-				"type":     msg.Type,
-				"from":     currentUserID,
-				"to":       msg.ReceiverId,
-				"content":  msg.MessageContent,
-				"time":     time.Now().Format(time.RFC3339),
+				"type":    msg.Type,
+				"from":    currentUserID,
+				"to":      msg.ReceiverId,
+				"content": msg.MessageContent,
+				"time":    time.Now().Format(time.RFC3339),
 			})
 
 			// ✅ send back to sender also
 			sendToUser(currentUserID, map[string]any{
-				"type":     msg.Type,
-				"from":     currentUserID,
-				"to":       msg.ReceiverId,
-				"content":  msg.MessageContent,
-				"time":     time.Now().Format(time.RFC3339),
+				"type":    msg.Type,
+				"from":    currentUserID,
+				"to":      msg.ReceiverId,
+				"content": msg.MessageContent,
+				"time":    time.Now().Format(time.RFC3339),
 			})
 
 			// send notification to receiver
@@ -166,13 +167,14 @@ func Loop(conn *websocket.Conn, currentUserID string) {
 
 			query := `SELECT id FROM followers WHERE user_id = ? AND follower_id = ?`
 			_ = repository.Db.QueryRow(query, currentUserID, msg.ReceiverId).Scan(&followID)
-
+			fmt.Println("followID:", followID)
 			if followID != 0 {
 				msg.SubType = "unfollow"
 				msg.Name = name
 				msg.Photo = photo
 				msg.MessageContent = "has unfollowed you"
 			} else {
+				msg.SubType = "follow"
 				msg.Name = name
 				msg.Photo = photo
 				msg.MessageContent = "has following you"
