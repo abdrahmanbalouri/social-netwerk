@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"strings"
 	"time"
 
 	"social-network/internal/helper"
@@ -138,15 +139,23 @@ func CreatePostGroup(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetPostGroup(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodPost {
+	fmt.Println("11111")
+	if r.Method != http.MethodGet {
 		helper.RespondWithError(w, http.StatusMethodNotAllowed, "Method not allowed")
 		return
 	}
-	var newPost FetchPost
-	if err := json.NewDecoder(r.Body).Decode(&newPost); err != nil {
-		helper.RespondWithError(w, http.StatusBadRequest, "Invalid request format")
+	// var newPost FetchPost
+	// if err := json.NewDecoder(r.Body).Decode(&newPost); err != nil {
+	// 	helper.RespondWithError(w, http.StatusBadRequest, "Invalid request format")
+	// 	return
+	// }
+	parts := strings.Split(r.URL.Path, "/")
+	if len(parts) < 4 {
+		helper.RespondWithError(w, http.StatusNotFound, "Group not found")
 		return
 	}
+	GrpId := parts[3]
+	fmt.Println("group is issssss : ", GrpId)
 
 	// Get user ID
 	userID, err := helper.AuthenticateUser(r)
@@ -157,9 +166,9 @@ func GetPostGroup(w http.ResponseWriter, r *http.Request) {
 
 	// Check for user's membership
 	var isMember bool
-	fmt.Println("user id is :", userID)
-	GrpId := newPost.GrpID[1 : len(newPost.GrpID)-1]
-	fmt.Println("group id is :", GrpId)
+	// fmt.Println("user id is :", userID)
+	// // GrpId := GrpId[1 : len(GrpId)-1]
+	// fmt.Println("group id is :", GrpId)
 	query := `SELECT EXISTS (SELECT 1 FROM group_members WHERE user_id = ? AND group_id = ?)`
 	if err := repository.Db.QueryRow(query, userID, GrpId).Scan(&isMember); err != nil {
 		helper.RespondWithError(w, http.StatusInternalServerError, "Failed to check group membership")
@@ -206,7 +215,7 @@ func GetPostGroup(w http.ResponseWriter, r *http.Request) {
 	var postsJson []Post
 	for rows.Next() {
 		var p Post
-		err := rows.Scan(&p.ID,&p.UserID, &p.Title, &p.Content, &p.ImagePath, &p.CreatedAt, &p.Author, &p.Profile, &p.Like, &p.LikedByUSer, &p.CommentCount)
+		err := rows.Scan(&p.ID, &p.UserID, &p.Title, &p.Content, &p.ImagePath, &p.CreatedAt, &p.Author, &p.Profile, &p.Like, &p.LikedByUSer, &p.CommentCount)
 		if err != nil {
 			fmt.Println("heeeere :", err)
 			helper.RespondWithError(w, http.StatusInternalServerError, "Failed to scan posts")
