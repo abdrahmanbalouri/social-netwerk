@@ -3,6 +3,8 @@ import Navbar from "../../../components/Navbar.js"
 import Post from "../../../components/Post.js";
 import { useEffect, useState } from "react";
 import "./page.css"
+import { useParams } from "next/navigation";
+// import {CreatePost} from ""
 
 
 export default function () {
@@ -14,49 +16,52 @@ export default function () {
     )
 }
 
-function AllPosts(){
+function AllPosts() {
 
-    const [posts, setPost] = useState(null);
+    const [posts, setPost] = useState([]);
     const [loading, setLoading] = useState(true);
+    const params = useParams();
+    const grpID = params.id;
 
     useEffect(() => {
-        const grpID = localStorage.getItem('selectedGroup')
-        if (!grpID) return
-        fetch('http://localhost:8080/group/fetchPosts', {
-            method: 'POST',
-            credentials: 'include',
-            body: JSON.stringify({
-                grpId: grpID
-            }),
+        if (!grpID) {
+            setLoading(false);
+            return;
+        }
+
+        fetch(`http://localhost:8080/group/fetchPosts/${grpID}`, {
+            method: 'GET',
             credentials: 'include',
         })
-            .then(res => res.json())
+            .then(res => {
+                if (!res.ok) throw new Error('Failed to fetch posts');
+                return res.json();
+            })
             .then(data => {
-                console.log("data is :", data);
                 setPost(data);
                 setLoading(false);
             })
             .catch(error => {
-                console.error("Failed to fetch posts for data:", error);
+                console.error("Failed to fetch posts:", error);
                 setLoading(false);
             });
-    }, [])
+    }, [grpID]);
     if (!posts) {
         return <div>There is no post yetttttt.</div>;
     }
     console.log("posts are :", posts);
     return (
         <>
-            <CreatePost />
+            {/* <CreatePost /> */}
             <div className="posts-list">
                 {posts.map((post) => (
-                        <Post
-                            key={post.id}
-                            post={post}
-                            onGetComments={GetComments}
-                            ondolike={AddLike}
-                        />
-                        ))}
+                    <Post
+                        key={post.id}
+                        post={post}
+                        onGetComments={GetComments}
+                        ondolike={AddLike}
+                    />
+                ))}
             </div>
         </>
     )

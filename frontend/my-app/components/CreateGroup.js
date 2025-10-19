@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import "../styles/createGroup.css"
+import { createGroup } from '../app/groups/page';
 
 export function CreateGroupForm({ users, onSubmit, onCancel }) {
     const [groupTitle, setGroupTitle] = useState('');
@@ -178,17 +179,6 @@ export function GroupCreationTrigger() {
         setShowNoGroups(true);
     };
 
-    const mockSubmitHandler = (formData) => {
-        console.log('--- Mock Submission Attempt ---');
-        console.log('✅ Form successfully collected and submitted the following data:');
-
-        // Simulate a network delay for better testing experience
-        setTimeout(() => {
-            console.log(formData);
-            console.log('--- Submission Mock Finished ---');
-            alert(`Form Submitted! Check the browser console for data.\nName: ${formData.groupName}`);
-        }, 500);
-    };
     const userList = []
     return (
         <>
@@ -211,15 +201,15 @@ export function GroupCreationTrigger() {
             {isModalOpen && (
                 <CreateGroupForm
                     users={userList}
-                    onSubmit={mockSubmitHandler}
+                    onSubmit={createGroup}
                     onCancel={handleCancel}
                 />
             )}
-            {showNoGroups && (
+            {/* {showNoGroups && (
                 <div className="no-groups">
                     You don’t have any groups yet. Click above to create one!
                 </div>
-            )}
+            )} */}
 
         </>
     )

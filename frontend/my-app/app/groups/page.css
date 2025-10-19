@@ -1,9 +1,10 @@
+/* Groups container - now vertical stack */
 .group-container {
-    flex-direction: row;
-    flex-wrap: wrap;
     display: flex;
+    flex-direction: column;  /* Changed from row to column */
     align-items: center;
-    justify-content: center;
+    width: 100%;
+    padding: 20px;
 }
 
 .group-card {
@@ -15,8 +16,9 @@
     display: flex;
     flex-direction: column;
     gap: 60px;
-    margin: 1vh;
+    margin: 10px 0;  /* Changed from 1vh to 10px 0 for vertical spacing */
     width: 60vw;
+    max-width: 800px;  /* Added max-width for better readability */
 }
 
 .group-card:hover {
@@ -71,47 +73,21 @@
     background: #0051cc;
 }
 
-/* .join-button:active,
-.show-button:active {
-    transform: scale(0.98);
-} */
-
-
-/* Tabs CSS */
-.tabs-container {
+/* Posts container */
+.create-post-container {
     display: flex;
     justify-content: center;
-    gap: 0;
-    margin: 20px 0;
+    padding: 20px;
+    max-width: 800px;
+    width: 100%;
+    margin: 0 auto;
 }
 
-.tab-button {
-    padding: 12px 24px;
-    font-size: 16px;
-    font-weight: 500;
-    border: none;
-    background-color: #f0f0f0;
-    color: #666;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    border-bottom: 3px solid transparent;
-}
-
-.tab-button:hover {
-    background-color: #e0e0e0;
-    color: #333;
-}
-
-.tab-button.active {
-    background-color: white;
-    color: #0070f3;
-    border-bottom: 3px solid #0070f3;
-}
-
-.tab-button:first-child {
-    border-radius: 8px 0 0 0;
-}
-
-.tab-button:last-child {
-    border-radius: 0 8px 0 0;
+.create-post-card {
+    width: 100%;
+    background: white;
+    border: 1px solid #e5e5e5;
+    border-radius: 8px;
+    padding: 16px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 }
