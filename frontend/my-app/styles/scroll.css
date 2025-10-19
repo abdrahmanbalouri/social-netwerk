@@ -1,0 +1,22 @@
+.main-section {
+  overflow-y: auto; 
+  max-height: 100vh;
+  scrollbar-width: thin; 
+}
+
+.main-section::-webkit-scrollbar {
+  width: 8px;
+}
+
+.main-section::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+.main-section::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 4px;
+}
+
+.main-section::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
