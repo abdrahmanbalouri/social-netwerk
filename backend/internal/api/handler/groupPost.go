@@ -66,6 +66,12 @@ func CreatePostGroup(w http.ResponseWriter, r *http.Request) {
 		helper.RespondWithError(w, http.StatusBadRequest, "Missing JSON form field")
 		return
 	}
+	parts := strings.Split(r.URL.Path, "/")
+	if len(parts) < 4 {
+		helper.RespondWithError(w, http.StatusNotFound, "Group not found")
+		return
+	}
+	GrpID := parts[3]
 	var postData PostData
 	err = json.Unmarshal([]byte(data), &postData)
 	if err != nil {
@@ -76,7 +82,7 @@ func CreatePostGroup(w http.ResponseWriter, r *http.Request) {
 	// check for membership of the user
 	var isMember bool
 	query := `SELECT EXISTS (SELECT 1 FROM group_members WHERE user_id = ? AND group_id = ?)`
-	err = repository.Db.QueryRow(query, userID, postData.GrpID).Scan(&isMember)
+	err = repository.Db.QueryRow(query, userID, GrpID).Scan(&isMember)
 	if err != nil {
 		fmt.Println("Failed to check group membership")
 		helper.RespondWithError(w, http.StatusInternalServerError, "Failed to check group membership")
@@ -124,7 +130,7 @@ func CreatePostGroup(w http.ResponseWriter, r *http.Request) {
 	_, err = repository.Db.Exec(`
         INSERT INTO posts (id, user_id, group_id, title, content, image_path, created_at)
         VALUES (?, ?, ?, ?, ?, ?, ?)`,
-		postID, userID, postData.GrpID, postData.Title, postData.Content, imagePath, createdAt,
+		postID, userID, GrpID, postData.Title, postData.Content, imagePath, createdAt,
 	)
 	if err != nil {
 		fmt.Println("Failed to create post (groups)")
@@ -139,23 +145,16 @@ func CreatePostGroup(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetPostGroup(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("11111")
 	if r.Method != http.MethodGet {
 		helper.RespondWithError(w, http.StatusMethodNotAllowed, "Method not allowed")
 		return
 	}
-	// var newPost FetchPost
-	// if err := json.NewDecoder(r.Body).Decode(&newPost); err != nil {
-	// 	helper.RespondWithError(w, http.StatusBadRequest, "Invalid request format")
-	// 	return
-	// }
 	parts := strings.Split(r.URL.Path, "/")
 	if len(parts) < 4 {
 		helper.RespondWithError(w, http.StatusNotFound, "Group not found")
 		return
 	}
 	GrpId := parts[3]
-	fmt.Println("group is issssss : ", GrpId)
 
 	// Get user ID
 	userID, err := helper.AuthenticateUser(r)
@@ -166,9 +165,6 @@ func GetPostGroup(w http.ResponseWriter, r *http.Request) {
 
 	// Check for user's membership
 	var isMember bool
-	// fmt.Println("user id is :", userID)
-	// // GrpId := GrpId[1 : len(GrpId)-1]
-	// fmt.Println("group id is :", GrpId)
 	query := `SELECT EXISTS (SELECT 1 FROM group_members WHERE user_id = ? AND group_id = ?)`
 	if err := repository.Db.QueryRow(query, userID, GrpId).Scan(&isMember); err != nil {
 		helper.RespondWithError(w, http.StatusInternalServerError, "Failed to check group membership")

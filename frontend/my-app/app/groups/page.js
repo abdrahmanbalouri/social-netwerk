@@ -62,7 +62,7 @@ export function MyGroups() {
     const [group, setGroup] = useState(null);
     const [loading, setLoading] = useState(true);
     const router = useRouter()
-    console.log("grouuuup is :", group);
+    
     const handleShow = (group) => {
         router.push(`/groups/${group}`);
     };
