@@ -58,13 +58,20 @@
 
 
 /* CreateGroupForm.css */
+/* Create new group button container */
+.create-group-container {
+    display: flex;
+    justify-content: center;
+    padding: 20px;
+    width: 100%;
+}
 
-.create-group-form-container {
+/* .create-group-form-container {
     display: flex;
     justify-content: center;
     padding: 40px 20px;
     background-color: #f0f2f5;
-}
+} */
 
 .create-group-form-card {
     width: 100%;
