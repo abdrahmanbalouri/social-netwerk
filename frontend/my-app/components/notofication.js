@@ -4,6 +4,7 @@ import "../styles/notifaction.css";
 export default function Notification({ data }) {
     if (!data) return null;
 
+console.log("Notification data:", data);
 
     return (
         <div className="notification">
@@ -11,7 +12,7 @@ export default function Notification({ data }) {
                 <h3 className="notification-title">New notification</h3>
                 <i className="fa fa-times notification-close"></i>
             </div>
-            <Link href={`/profile/${data.receiverId}`} >
+            <Link href={`/profile/${data.from}`} >
             <div className="notification-container">
                 <div className="notification-media">
                     <img src={data?.photo ? `/uploads/${data.photo}` : "/uploads/default.png"} alt="" className="notification-user-avatar" />
