@@ -32,16 +32,8 @@ export default function NotBar({ notData }) {
                 <div className="dropdown-header">
                     <div className="dropdown-title">
                         Notifications
-                        <button className="settings-button">⚙️</button>
                     </div>
-                    <div className="dropdown-tabs">
-                        <button
-                            className={`tab-button ${filter === 'all' ? 'active' : ''}`}
-                        >
-                            All
-                        </button>
-
-                    </div>
+                    <div className="dropdown-tabs">                    </div>
                 </div>
 
                 <div className="notifications-list" id="notificationsList">
@@ -88,7 +80,6 @@ export default function NotBar({ notData }) {
                 </div>
 
                 <div className="dropdown-footer">
-                    <button className="see-all-button">Show All Notifications</button>
                 </div>
             </div>
         </div>
