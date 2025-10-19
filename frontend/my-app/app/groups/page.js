@@ -3,6 +3,7 @@ import Navbar from '../../components/Navbar.js';
 import { useEffect, useState } from "react";
 import "./page.css"
 import { useRouter } from 'next/navigation'
+import { GroupCreationTrigger } from '../../components/CreateGroup.js';
 
 import Link from 'next/link'
 import styles from './page.css';
@@ -62,9 +63,8 @@ function AllGroups() {
             });
     }, [])
     if (!group) {
-        return <div>No group data available.</div>;
+        return <div>You don’t have any groups yet. Go create One ! </div>;
     }
-    console.log("heeey: ", group)
     return (
         <div className="group-container">
             {group.map(grp => (
@@ -82,18 +82,14 @@ function AllGroups() {
     )
 }
 
-
 function MyGroups() {
     const [group, setGroup] = useState(null);
     const [loading, setLoading] = useState(true);
     const router = useRouter()
     const handleShow = (group) => {
-        console.log("grouuuuuup is :", group);
         localStorage.setItem('selectedGroup', JSON.stringify(group))
         router.push('/groups/posts')
     }
-
-
 
     useEffect(() => {
         fetch('http://localhost:8080/myGroups', {
@@ -112,10 +108,15 @@ function MyGroups() {
             });
     }, [])
     if (!group) {
-        return <div>No group data available.</div>;
+        return (
+            <div>
+                <GroupCreationTrigger />
+            </div>
+        )
     }
     return (
         <div className="group-container">
+            <GroupCreationTrigger />
             {group.map(grp => (
                 <div key={grp.ID} className="group-card">
                     <div className="group-content">
