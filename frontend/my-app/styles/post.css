@@ -219,6 +219,10 @@ body {
 
 .feed {
   flex: 6;
+
+}
+.feed::-webkit-scrollbar {
+  width: 8px;
 }
 
 
@@ -334,6 +338,7 @@ body {
 
 
 }
+
 
 @media (max-width: 480px) {
   .stories .story button {
