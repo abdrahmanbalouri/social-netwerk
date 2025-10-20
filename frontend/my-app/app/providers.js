@@ -9,12 +9,9 @@ export default function Providers({ children }) {
     <DarkModeProvider>
       <WSProvider>
         <ProfileProvider>
-          <ChatProvider>
-            {children}
-          </ChatProvider>
+          <ChatProvider>{children}</ChatProvider>
         </ProfileProvider>
       </WSProvider>
-
     </DarkModeProvider>
   );
 }

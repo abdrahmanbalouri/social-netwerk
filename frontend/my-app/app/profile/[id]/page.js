@@ -15,6 +15,7 @@ import MoreVertIcon from "@mui/icons-material/MoreVert";
 import ProfileCardEditor from '../../../components/ProfileCardEditor.js';
 import { useWS } from "../../../context/wsContext.js";
 import Link from 'next/link';
+import "../../../styles/scroll.css";
 import { middleware } from '../../../middleware/middelware.js';
 
 export default function Profile() {
@@ -280,7 +281,8 @@ export default function Profile() {
       } else {
         return false
       }
-
+       console.log(data.length);
+       
       setPosts([...posts, ...data]);
       return data[0].id
     } catch (err) {
@@ -599,7 +601,12 @@ export default function Profile() {
       <main className="content">
         <LeftBar showSidebar={showSidebar} />
 
-        <div className="main-section">
+        <div className="main-section"
+          onScroll={(e) => {setscroolHome(e.target.scrollTop)
+              console.log(scroollhome);
+              
+            }}
+            ref={modalRefhome}>
           {/* ===== Profile Section ===== */}
           <div className="profile">
             <div className="images">
@@ -722,8 +729,7 @@ export default function Profile() {
           {/* ===== Posts Section ===== */}
           <section
             className="feed"
-            onScroll={(e) => setscroolHome(e.target.scrollTop)}
-            ref={modalRefhome}
+          
           >
             {!posts ? (
               <p>No posts available</p>
@@ -734,7 +740,7 @@ export default function Profile() {
                   post={post}
                   onGetComments={GetComments}
                   ondolike={Handlelik}
-                  ref={(el) => (commentRefs.current[post.id] = el)}
+                  ref={(el) => (postRefs.current[post.id] = el)}
                 />
               ))
             )}

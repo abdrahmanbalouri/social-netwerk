@@ -1,5 +1,7 @@
 .notification_dd {
-    position: relative;
+    position: absolute;
+    top: 4vh;
+    right: 10vw;
 }
 
 .dropdown-menu {
