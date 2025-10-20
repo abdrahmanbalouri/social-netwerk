@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 
@@ -61,4 +62,23 @@ func Notifications(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(notifications)
+}
+
+func ClearNotifications(w http.ResponseWriter, r *http.Request) {
+	id, ok := helper.AuthenticateUser(r)
+	if ok != nil {
+		http.Error(w, "Unauthorized", http.StatusUnauthorized)
+		return
+	}
+	fmt.Println("id", id)
+	_, err := repository.Db.Exec(`
+		DELETE FROM notifications WHERE receiver_id = ?
+	`, id)
+	if err != nil {
+		log.Println("Error clearing notifications:", err)
+		http.Error(w, "Database error", http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
 }

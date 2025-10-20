@@ -7,7 +7,18 @@ export default function NotBar({ notData }) {
     const [filter, setFilter] = useState('all');
     const [notifications, setNotifications] = useState(notData || []);
 
+    const Clear = () => {
+        fetch('http://localhost:8080/api/clearNotifications', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            credentials: "include",
 
+        })
+
+        setNotifications([]);
+    };
     const getFilteredNotifications = () => {
         if (filter === 'unread') {
             return notifications.filter(noti => !noti.isRead);
@@ -80,6 +91,7 @@ export default function NotBar({ notData }) {
                 </div>
 
                 <div className="dropdown-footer">
+                    <button className="see-all-button" onClick={Clear}>Clear</button>
                 </div>
             </div>
         </div>
