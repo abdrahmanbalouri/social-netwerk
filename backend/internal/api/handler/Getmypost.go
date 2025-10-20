@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"database/sql"
+	"fmt"
 	"net/http"
 	"strconv"
 	"strings"
@@ -33,7 +34,7 @@ func Getmypost(w http.ResponseWriter, r *http.Request) {
 		offset = 0
 	}
 	limit := 10
-
+	fmt.Println("2")
 	var rows *sql.Rows
 
 	if authUserID == userId {
