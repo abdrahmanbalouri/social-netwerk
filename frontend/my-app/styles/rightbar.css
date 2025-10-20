@@ -20,7 +20,14 @@
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
-.rightBar .item > span {
+.rightBar .item .sections {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+
+}
+
+.rightBar .item .sections>h3 {
   display: block;
   font-size: 14px;
   font-weight: 600;
@@ -28,6 +35,16 @@
   margin-bottom: 15px;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+}
+
+
+.rightBar .item .sections>h3.active {
+  border-bottom: 2px solid #5271ff;
+  color: #5271ff;
+}
+
+.rightBar .item .sections>h3:hover {
+  cursor: pointer;
 }
 
 /* Scrollable section for users */
@@ -90,16 +107,25 @@
   border: 2px solid #e0e0e0;
 }
 
+.rightBar .offline,
 .rightBar .online {
   position: absolute;
   width: 10px;
   height: 10px;
-  background-color: #44b700;
   border-radius: 50%;
   bottom: 2px;
   left: 30px;
   border: 2px solid #fff;
 }
+
+.rightBar .online {
+  background-color: #4caf50;
+}
+
+.rightBar .offline {
+  background-color: gray;
+}
+
 
 
 .rightBar .userInfo span {
