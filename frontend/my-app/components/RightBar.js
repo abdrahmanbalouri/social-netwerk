@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from 'next/link';
 import ChatIcon from '@mui/icons-material/Chat';
+import PersonPinIcon from '@mui/icons-material/PersonPin';
 import "../styles/rightbar.css"
 import { useWS } from "../context/wsContext";
 export default function RightBar() {
@@ -116,6 +117,27 @@ export default function RightBar() {
 
     fetchusers();
   }, []);
+  useEffect(() => {
+    async function fetchfriends() {
+      try {
+        const res = await fetch("http://localhost:8080/api/communfriends", {
+          method: "GET",
+          credentials: "include",
+        });
+        if (!res.ok) {
+          throw new Error("Failed to fetch posts");
+        }
+        const data = await res.json();
+        setFriends(data);
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    fetchfriends();
+  }, [])
+
+
 
   return (
     <div className="rightBar">
@@ -165,28 +187,56 @@ export default function RightBar() {
             All
           </h3>
         </div>
-        {!users || users.length === 0 ? (
-          <h1>no users for now</h1>
-        ) : (
-          users.map((user) => (
-            <div key={user.id} className="user">
-              <div className="userInfo">
-                <div className="userDetails">
-                  <img
-                    src={user?.image ? `/uploads/${user.image}` : "/uploads/default.png"}
-                    alt="user avatar"
-                  />
-                  <div className={onlineUsers.includes(user.id) ? "online" : "offline"} />
-                  <Link href={`/profile/${user.id}`}>
-                    <span>{user.nickname}</span>
-                  </Link>
+        {activeTab === "friends" && (
+          <div>
+            {!friends ? (
+              <p>No friends yet</p>
+            ) : (
+              friends.map((user) => (
+                <div key={user.id} className="user">
+                  <div className="userInfo">
+                    <div className="userDetails">
+                      <img
+                        src={user?.image ? `/uploads/${user.image}` : "/uploads/default.png"}
+                        alt="user avatar"
+                      />
+                      <div className={onlineUsers.includes(user.id) ? "online" : "offline"} />
+                      <Link href={`/profile/${user.id}`}>
+                        <span>{user.nickname}</span>
+                      </Link>
+                    </div>
+                    <div className="">
+                      <Link href={`/chat/${user.id}`}><ChatIcon className="userIcon" /></Link>
+                    </div>
+                  </div>
                 </div>
-                <div className="">
-                  <Link href={`/chat/${user.id}`}><ChatIcon className="userIcon" /></Link>
+              ))
+            )}
+          </div>
+        )}
+        {activeTab === "all" && (
+          <div>
+            {!users ? (
+              <p>No users found</p>
+            ) : (
+              users.map((user) => (
+                <div key={user.id} className="user">
+                  <div className="userInfo">
+                    <div className="userDetails">
+                      <img
+                        src={user?.image ? `/uploads/${user.image}` : "/uploads/default.png"}
+                        alt="user avatar"
+                      />
+                      <span>{user.nickname}</span>
+                      <Link href={`/profile/${user.id}`} className="userLink">
+                        <PersonPinIcon />
+                      </Link>
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </div>
-          ))
+              ))
+            )}
+          </div>
         )}
       </div>
     </div>
