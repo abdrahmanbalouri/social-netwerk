@@ -4,7 +4,9 @@
   padding: 20px;
   display: flex;
 }
-
+.main-section {
+  flex: 8;
+}
 /* 📌 Profile */
 .profile {
   flex: 6;
