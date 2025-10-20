@@ -142,7 +142,7 @@ export default function RightBar() {
   return (
     <div className="rightBar">
       <div className="item">
-        <span>Suggestions For You</span>
+        <span>Follow requests</span>
 
         {!followRequest || followRequest.length === 0 ? (
           <h1>no users for now</h1>
