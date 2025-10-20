@@ -60,7 +60,7 @@ export default function SignupPage() {
         seterror(data)
       }
     } catch (error) {
-      seterror("Network error!")
+      seterror(error.message)
     }
   }
 
