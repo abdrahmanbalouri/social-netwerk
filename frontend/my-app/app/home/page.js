@@ -300,7 +300,6 @@ export default function Home() {
 
   async function GetComments(post) {
     setLoadingcomment(true)
-    console.log(post, "--------------------------++++++++++++++++++++");
 
     try {
       setSelectedPost({
@@ -310,7 +309,7 @@ export default function Home() {
         content: post.content,
         author: post.author
       });
-
+      setShowComments(true);
       // Fetch comments
       const res = await fetch(`http://localhost:8080/api/Getcomments/${post.id}/${offsetcomment.current}`, {
         method: "GET",
@@ -321,23 +320,10 @@ export default function Home() {
         return false
       }
       const data = await res.json();
-      let comments = [];
-      if (Array.isArray(data)) {
-        comments = data;
-      } else if (data && typeof data === 'object' && data.comments && Array.isArray(data.comments)) {
-        comments = data.comments;
-      } else if (data && typeof data === 'object') {
-        comments = [data];
-      }
-      comments = comments.map(comment => ({
-        id: comment.id || Math.random(),
-        author: comment.author || comment.username || "Anonymous",
-        content: comment.content || comment.text || "",
-        created_at: comment.created_at || comment.createdAt || new Date().toISOString()
-      }));
-      setShowComments(true);
+    
+     
 
-      if (comments.length == 0) {
+      if (data.length == 0) {
         return false
       } else {
         offsetcomment.current += 10
@@ -345,8 +331,8 @@ export default function Home() {
       }
 
 
-      setComment([...comment, ...comments]);
-      return comments[0].id
+      setComment([...comment, ...data]);
+      return data[0].id
 
     } catch (err) {
       return false
