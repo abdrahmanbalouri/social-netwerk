@@ -320,8 +320,8 @@ export default function Home() {
         return false
       }
       const data = await res.json();
-    
-     
+
+
 
       if (data.length == 0) {
         return false
@@ -506,7 +506,8 @@ export default function Home() {
                 type="file"
                 className="input"
                 onChange={handleImageChange}
-                accept="image/*"
+                accept="image/*,video/*"
+
               />
               <textarea
                 placeholder="What's on your mind?"
