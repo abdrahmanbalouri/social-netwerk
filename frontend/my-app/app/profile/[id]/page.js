@@ -15,6 +15,7 @@ import MoreVertIcon from "@mui/icons-material/MoreVert";
 import ProfileCardEditor from '../../../components/ProfileCardEditor.js';
 import { useWS } from "../../../context/wsContext.js";
 import Link from 'next/link';
+import "../../../styles/scroll.css";
 import { middleware } from '../../../middleware/middelware.js';
 
 export default function Profile() {
@@ -280,6 +281,7 @@ export default function Profile() {
       } else {
         return false
       }
+      console.log(data.length);
 
       setPosts([...posts, ...data]);
       return data[0].id
@@ -354,7 +356,7 @@ export default function Profile() {
 
       // Fetch the newly created post
       if (res.post_id) {
-        if (Profile && Profile.id === theprofile.id ) {
+        if (Profile && Profile.id === theprofile.id) {
 
           const newPost = await fetchPosts(res.post_id);
           if (newPost) {
@@ -599,7 +601,13 @@ export default function Profile() {
       <main className="content">
         <LeftBar showSidebar={showSidebar} />
 
-        <div className="main-section">
+        <div className="main-section"
+          onScroll={(e) => {
+            setscroolHome(e.target.scrollTop)
+            console.log(scroollhome);
+
+          }}
+          ref={modalRefhome}>
           {/* ===== Profile Section ===== */}
           <div className="profile">
             <div className="images">
@@ -626,7 +634,7 @@ export default function Profile() {
             <div className="profileContainer">
               <div className="uInfo">
 
-                {!theprofile.isFollowing && theprofile.privacy === "private" ? (
+                { Profile && Profile.id !== theprofile.id  &&!theprofile.isFollowing && theprofile.privacy === "private" ? (
                   <div className="left">
                     <p>
                       following
@@ -691,13 +699,16 @@ export default function Profile() {
                       }}
                     >
                       {PrFollow()}
-                    </button>
+                    </button> 
                   )}
                 </div>
 
                 <div className="right">
                   {Profile && Profile.id !== theprofile.id ? (
-                    <EmailOutlinedIcon />
+                    <Link href={Profile.privacy  ? `/chat/${theprofile.id}` : '#'} >
+                      <EmailOutlinedIcon />
+                    </Link>
+
                   ) : (
                     <MoreVertIcon onClick={handleShowPrivacy} />
                   )}
@@ -722,8 +733,7 @@ export default function Profile() {
           {/* ===== Posts Section ===== */}
           <section
             className="feed"
-            onScroll={(e) => setscroolHome(e.target.scrollTop)}
-            ref={modalRefhome}
+
           >
             {!posts ? (
               <p>No posts available</p>
@@ -734,7 +744,7 @@ export default function Profile() {
                   post={post}
                   onGetComments={GetComments}
                   ondolike={Handlelik}
-                  ref={(el) => (commentRefs.current[post.id] = el)}
+                  ref={(el) => (postRefs.current[post.id] = el)}
                 />
               ))
             )}
@@ -742,135 +752,139 @@ export default function Profile() {
         </div>
 
         <RightBar />
-      </main>
+      </main >
 
       {/* ===== Create Post Modal ===== */}
-      {showModal && (
-        <div
-          className={`modal-overlay ${showModal ? "is-open" : ""}`}
-          onMouseDown={(e) => {
-            if (e.target === e.currentTarget) setShowModal(false);
-            setVisibility("public");
-          }}
-        >
+      {
+        showModal && (
           <div
-            ref={modalRef}
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="create-post-title"
-            className="modal-content"
-            onMouseDown={(e) => e.stopPropagation()}
+            className={`modal-overlay ${showModal ? "is-open" : ""}`}
+            onMouseDown={(e) => {
+              if (e.target === e.currentTarget) setShowModal(false);
+              setVisibility("public");
+            }}
           >
-            <button
-              className="modal-close"
-              aria-label="Close modal"
-              onClick={() => {
-                setShowModal(false);
-                setVisibility("public");
-              }}
+            <div
+              ref={modalRef}
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="create-post-title"
+              className="modal-content"
+              onMouseDown={(e) => e.stopPropagation()}
             >
-              ✕
-            </button>
-            <h3 id="create-post-title">Create a Post</h3>
-            <form onSubmit={handleCreatePost}>
-              <input
-                type="text"
-                placeholder="Title"
-                className="input"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                required
-              />
-              <input
-                type="file"
-                className="input"
-                onChange={handleImageChange}
-                accept="image/*"
-              />
-              <textarea
-                placeholder="What's on your mind?"
-                className="input"
-                value={content}
-                onChange={(e) => setContent(e.target.value)}
-                required
-              />
+              <button
+                className="modal-close"
+                aria-label="Close modal"
+                onClick={() => {
+                  setShowModal(false);
+                  setVisibility("public");
+                }}
+              >
+                ✕
+              </button>
+              <h3 id="create-post-title">Create a Post</h3>
+              <form onSubmit={handleCreatePost}>
+                <input
+                  type="text"
+                  placeholder="Title"
+                  className="input"
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  required
+                />
+                <input
+                  type="file"
+                  className="input"
+                  onChange={handleImageChange}
+                  accept="image/*"
+                />
+                <textarea
+                  placeholder="What's on your mind?"
+                  className="input"
+                  value={content}
+                  onChange={(e) => setContent(e.target.value)}
+                  required
+                />
 
-              <div className="visibility-select">
-                <label htmlFor="visibility">Visibility</label>
-                <select
-                  id="visibility"
-                  value={visibility}
-                  onChange={handleVisibilityChange}
-                >
-                  <option value="public">Public (All users)</option>
-                  <option value="almost_private">Almost Private (Followers only)</option>
-                  <option value="private">Private (Selected followers)</option>
-                </select>
-              </div>
-
-              {visibility === "private" && (
-                <div className="user-picker">
-                  {loadingFollowers ? (
-                    <p>Loading followers...</p>
-                  ) : error ? (
-                    <p className="error">Error: {error}</p>
-                  ) : followers.length > 0 ? (
-                    followers.map((follower) => (
-                      <label key={follower.id} className="user-picker-item">
-                        <img
-                          src={`/uploads/${follower.image}` || "/default-avatar.png"}
-                          alt={follower.nickname}
-                          className="image-avatar"
-                        />
-                        <span>{follower.nickname}</span>
-                        <input
-                          type="checkbox"
-                          checked={selectedUsers.includes(follower.id)}
-                          onChange={() => handleUserSelect(follower.id)}
-                        />
-                      </label>
-                    ))
-                  ) : (
-                    <p>No followers found.</p>
-                  )}
+                <div className="visibility-select">
+                  <label htmlFor="visibility">Visibility</label>
+                  <select
+                    id="visibility"
+                    value={visibility}
+                    onChange={handleVisibilityChange}
+                  >
+                    <option value="public">Public (All users)</option>
+                    <option value="almost_private">Almost Private (Followers only)</option>
+                    <option value="private">Private (Selected followers)</option>
+                  </select>
                 </div>
-              )}
 
-              <div className="modal-actions">
-                <button
-                  type="button"
-                  className="btn cancel"
-                  onClick={() => {
-                    setShowModal(false);
-                    setVisibility("public");
-                  }}
-                >
-                  Cancel
-                </button>
-                <button type="submit" className="btn submit" disabled={loadingFollowers}>
-                  Post
-                </button>
-              </div>
-            </form>
+                {visibility === "private" && (
+                  <div className="user-picker">
+                    {loadingFollowers ? (
+                      <p>Loading followers...</p>
+                    ) : error ? (
+                      <p className="error">Error: {error}</p>
+                    ) : followers.length > 0 ? (
+                      followers.map((follower) => (
+                        <label key={follower.id} className="user-picker-item">
+                          <img
+                            src={`/uploads/${follower.image}` || "/default-avatar.png"}
+                            alt={follower.nickname}
+                            className="image-avatar"
+                          />
+                          <span>{follower.nickname}</span>
+                          <input
+                            type="checkbox"
+                            checked={selectedUsers.includes(follower.id)}
+                            onChange={() => handleUserSelect(follower.id)}
+                          />
+                        </label>
+                      ))
+                    ) : (
+                      <p>No followers found.</p>
+                    )}
+                  </div>
+                )}
+
+                <div className="modal-actions">
+                  <button
+                    type="button"
+                    className="btn cancel"
+                    onClick={() => {
+                      setShowModal(false);
+                      setVisibility("public");
+                    }}
+                  >
+                    Cancel
+                  </button>
+                  <button type="submit" className="btn submit" disabled={loadingFollowers}>
+                    Post
+                  </button>
+                </div>
+              </form>
+            </div>
           </div>
-        </div>
-      )}
+        )
+      }
 
       {/* ===== Comments Modal ===== */}
-      {showComments && (
-        <Comment
-          comments={comment}
-          isOpen={showComments}
-          onClose={closeComments}
-          postId={selectedPost?.id}
-          postTitle={selectedPost?.title}
-          onCommentChange={refreshComments}
-          lodinggg={loadingcomment}
-          ongetcomment={GetComments}
-          post={selectedPost}
-        />
-      )}
-    </div>
+      {
+        showComments && (
+          <Comment
+            comments={comment}
+            isOpen={showComments}
+            onClose={closeComments}
+            postId={selectedPost?.id}
+            postTitle={selectedPost?.title}
+            onCommentChange={refreshComments}
+            lodinggg={loadingcomment}
+            ongetcomment={GetComments}
+            post={selectedPost}
+          />
+        )
+      }
+    </div >
   );
 
 }

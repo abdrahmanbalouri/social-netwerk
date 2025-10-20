@@ -1,5 +1,6 @@
 "use client";
 import React, { useEffect } from "react";
+import { useRouter } from "next/navigation";
 import Navbar from "../../components/Navbar.js";
 import LeftBar from "../../components/LeftBar.js";
 import RightBar from "../../components/RightBar.js";
@@ -8,7 +9,6 @@ import Link from "next/link.js";
 import "../../styles/games.css";
 import { useWS } from "../../context/wsContext.js";
 import { middleware } from "../../middleware/middelware.js";
-import { useRouter } from "next/navigation";
 
 export default function Game() {
   const router = useRouter();
@@ -25,6 +25,7 @@ export default function Game() {
       sendMessage({ type: "logout" })
     }
   }, [])
+
   const { darkMode } = useDarkMode();
   const [showSidebar, setShowSidebar] = React.useState(true);
   return (

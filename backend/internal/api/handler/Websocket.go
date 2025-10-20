@@ -184,6 +184,7 @@ func Loop(conn *websocket.Conn, currentUserID string) {
 				"subType": "message",
 				"from":    currentUserID,
 				"content": "sent you a message",
+				"name":    nickname,
 				"time":    time.Now().Format(time.RFC3339),
 			})
 
@@ -201,20 +202,20 @@ func Loop(conn *websocket.Conn, currentUserID string) {
 			}
 
 			query := `SELECT id FROM followers WHERE user_id = ? AND follower_id = ?`
-			_ = repository.Db.QueryRow(query, currentUserID, msg.ReceiverId).Scan(&followID)
-
+			_ = repository.Db.QueryRow(query, msg.ReceiverId, currentUserID).Scan(&followID)
+			fmt.Println("followID:", followID)
 			if followID != 0 {
 				msg.SubType = "unfollow"
 				msg.Name = name
 				msg.Photo = photo
 				msg.MessageContent = "has unfollowed you"
 			} else {
+				msg.SubType = "follow"
 				msg.Name = name
 				msg.Photo = photo
 				msg.MessageContent = "has following you"
 				q := `INSERT INTO notifications ( sender_id, receiver_id, type, message, created_at) VALUES (?, ?, ?, ?, ?) `
 				_, _ = repository.Db.Exec(q, currentUserID, msg.ReceiverId, msg.Type, msg.MessageContent, time.Now().Unix())
-				msg.ReceiverId = currentUserID
 			}
 
 			// Notify all connected users (except current user)
