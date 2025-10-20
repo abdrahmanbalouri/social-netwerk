@@ -24,12 +24,11 @@ func Getmypost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-
 	userId := parts[3]
 	offsetStr := parts[4]
-	if  userId == "0" {
-  userId = authUserID
-		
+	if userId == "0" {
+		userId = authUserID
+
 	}
 	offset, err := strconv.Atoi(offsetStr)
 	if err != nil || offset < 0 {
@@ -104,6 +103,10 @@ func Getmypost(w http.ResponseWriter, r *http.Request) {
 			"comments_count": commentsCount,
 		}
 		posts = append(posts, post)
+	}
+	if len(posts) == 0 {
+		helper.RespondWithError(w, http.StatusInternalServerError, "Failed to retrieve posts")
+		return
 	}
 
 	if err := rows.Err(); err != nil {
