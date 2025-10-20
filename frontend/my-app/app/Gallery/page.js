@@ -29,6 +29,7 @@ export default function Gallery() {
     }
     checkAuth();
   }, [])
+
   useEffect(() => {
     if (!Profile?.id) return;
 
