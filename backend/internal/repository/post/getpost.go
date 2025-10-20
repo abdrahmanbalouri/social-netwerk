@@ -46,13 +46,13 @@ WHERE
     OR (p.visibility = 'public' AND u.privacy = 'public')
     OR (p.visibility = 'public' AND u.privacy = 'private' AND EXISTS (
         SELECT 1 FROM followers f 
-        WHERE f.user_id = ?         
-          AND f.follower_id = p.user_id  
+        WHERE f.user_id = p.user_id           
+          AND f.follower_id = ?
     ))
     OR (p.visibility = 'almost_private' AND EXISTS (
         SELECT 1 FROM followers f 
-        WHERE f.user_id = ? 
-          AND f.follower_id = p.user_id
+        WHERE f.user_id = p.user_id
+          AND f.follower_id = ?
     ))
     OR (p.visibility = 'private' AND EXISTS (
         SELECT 1 FROM allowed_followers af 
