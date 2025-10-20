@@ -4,16 +4,37 @@ import { useEffect, useState } from "react";
 import Link from 'next/link';
 import ChatIcon from '@mui/icons-material/Chat';
 import "../styles/rightbar.css"
+import { useWS } from "../context/wsContext";
 export default function RightBar() {
+  const [friends, setFriends] = useState([])
   const [users, setusers] = useState([])
+  const [onlineUsers, setonlineUsers] = useState([])
+  const [activeTab, setActiveTab] = useState("friends");
   const [followRequest, setFollowRequest] = useState([])
+  const { addListener, removeListener } = useWS();
+  useEffect(() => {
+    const handleOlineUser = (data) => {
+      console.log("online users updated:", data.users);
+      setonlineUsers(data.users)
+    }
+    addListener("online_list", handleOlineUser)
+    return () => removeListener("online_list", handleOlineUser)
+  })
+  useEffect(() => {
+    const handleLogout = (data) => {
+      let useroff = data.userID
+      let arr = users.filter((id) => {
+        return id !== useroff
+      })
+      setonlineUsers([...arr])
+    }
 
-
+    addListener("logout", handleLogout)
+    return () => removeListener("logout", handleLogout)
+  })
   async function handleFollowRequest(userId, action) {
+    console.log("fezfzelkfjzelfjlezjflezjflez", userId, action);
 
-
-    console.log("fezfzelkfjzelfjlezjflezjflez", userId , action);
-    
     try {
       const res = await fetch("http://localhost:8080/api/followRequest/action", {
         method: "POST",
@@ -22,7 +43,7 @@ export default function RightBar() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          id: userId,   
+          id: userId,
           action: action,
         }),
       });
@@ -119,8 +140,8 @@ export default function RightBar() {
                 </div>
 
                 <div className="buttons">
-                  <button onClick={() => { handleFollowRequest(user.id , "accept") }} >accept</button>
-                  <button onClick={() => { handleFollowRequest(user.id  ,  "reject") }} >reject</button>
+                  <button onClick={() => { handleFollowRequest(user.id, "accept") }} >accept</button>
+                  <button onClick={() => { handleFollowRequest(user.id, "reject") }} >reject</button>
                 </div>
               </div>
             </div>
@@ -130,7 +151,20 @@ export default function RightBar() {
       </div>
 
       <div className="item">
-        <span>Friends</span>
+        <div className="sections">
+          <h3
+            className={activeTab === "friends" ? "active" : ""}
+            onClick={() => setActiveTab("friends")}
+          >
+            Friends
+          </h3>
+          <h3
+            className={activeTab === "all" ? "active" : ""}
+            onClick={() => setActiveTab("all")}
+          >
+            All
+          </h3>
+        </div>
         {!users || users.length === 0 ? (
           <h1>no users for now</h1>
         ) : (
@@ -142,7 +176,7 @@ export default function RightBar() {
                     src={user?.image ? `/uploads/${user.image}` : "/uploads/default.png"}
                     alt="user avatar"
                   />
-                  <div className="online" />
+                  <div className={onlineUsers.includes(user.id) ? "online" : "offline"} />
                   <Link href={`/profile/${user.id}`}>
                     <span>{user.nickname}</span>
                   </Link>
@@ -154,9 +188,6 @@ export default function RightBar() {
             </div>
           ))
         )}
-
-
-
       </div>
     </div>
   );
