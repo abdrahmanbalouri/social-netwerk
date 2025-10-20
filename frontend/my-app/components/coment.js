@@ -6,10 +6,81 @@ export default function Comment({ comments, isOpen, onClose, postId, onCommentCh
   const [commentContent, setCommentContent] = useState("")
   const [selectedFile, setSelectedFile] = useState(null)
   const [loading, setLoading] = useState(false)
+  const [showEmojis, setShowEmojis] = useState(false)
+  const [activeCategory, setActiveCategory] = useState("smileys")
   const modalRef = useRef(null)
   const commentsContainerRef = useRef(null)
   const [scrollPos, setScrollPos] = useState(0)
   const commentRefs = useRef({})
+  const fileInputRef = useRef(null)
+  const emojiRef = useRef(null)
+  const textareaRef = useRef(null)
+
+  // Emojis organisés par catégories
+  const emojiCategories = {
+    smileys: [
+      "😀", "😃", "😄", "😁", "😆", "😅", "😂", "🤣", "😊", "😇",
+      "🙂", "🙃", "😉", "😌", "😍", "🥰", "😘", "😗", "😙", "😚",
+      "😋", "😛", "😝", "😜", "🤪", "🤨", "🧐", "🤓", "😎", "🤩",
+      "🥳", "😏", "😒", "😞", "😔", "😟", "😕", "🙁", "☹️", "😣",
+      "😖", "😫", "😩", "🥺", "😢", "😭", "😤", "😠", "😡", "🤬"
+    ],
+    people: [
+      "👶", "🧒", "👦", "👧", "🧑", "👨", "👩", "🧓", "👴", "👵",
+      "🙍", "🙎", "🙅", "🙆", "💁", "🙋", "🧏", "🙇", "🤦", "🤷",
+      "👮", "💂", "👷", "🤴", "👸", "👳", "👲", "🧕", "🤵", "👰",
+      "🤰", "🤱", "👼", "🎅", "🤶", "🦸", "🦹", "🧙", "🧚", "🧛"
+    ],
+    animals: [
+      "🐵", "🐒", "🦍", "🐶", "🐕", "🐩", "🐺", "🦊", "🐱", "🐈",
+      "🦁", "🐯", "🐅", "🐆", "🐴", "🐎", "🦄", "🦓", "🦌", "🐮",
+      "🐂", "🐃", "🐄", "🐷", "🐖", "🐗", "🐽", "🐏", "🐑", "🐐",
+      "🐪", "🐫", "🦙", "🦒", "🐘", "🦏", "🦛", "🐭", "🐁", "🐀"
+    ],
+    food: [
+      "🍎", "🍐", "🍊", "🍋", "🍌", "🍉", "🍇", "🍓", "🫐", "🍈",
+      "🍒", "🍑", "🥭", "🍍", "🥥", "🥝", "🍅", "🍆", "🥑", "🥦",
+      "🥬", "🥒", "🌶", "🫑", "🌽", "🥕", "🫒", "🧄", "🧅", "🥔",
+      "🍠", "🥐", "🥯", "🍞", "🥖", "🥨", "🧀", "🥚", "🍳", "🧈"
+    ],
+    activities: [
+      "⚽", "🏀", "🏈", "⚾", "🥎", "🎾", "🏐", "🏉", "🥏", "🎱",
+      "🪀", "🏓", "🏸", "🏒", "🏑", "🥍", "🏏", "🎿", "⛷", "🏂",
+      "🪂", "🏋️", "🤼", "🤸", "⛹️", "🤾", "🏌️", "🏇", "🧘", "🏄"
+    ],
+    travel: [
+      "🚗", "🚕", "🚙", "🚌", "🚎", "🏎", "🚓", "🚑", "🚒", "🚐",
+      "🛻", "🚚", "🚛", "🚜", "🏍", "🛵", "🚲", "🛴", "🛹", "🛼",
+      "🚁", "✈️", "🛩", "🛫", "🛬", "🚀", "🛸", "🚂", "🚊", "🚉"
+    ],
+    objects: [
+      "💡", "🔦", "🏮", "🪔", "📔", "📕", "📖", "📗", "📘", "📙",
+      "📚", "📓", "📒", "📃", "📜", "📄", "📰", "🗞", "📑", "🔖",
+      "🏷", "💰", "🪙", "💴", "💵", "💶", "💷", "💸", "💳", "🧾"
+    ],
+    symbols: [
+      "❤️", "🧡", "💛", "💚", "💙", "💜", "🖤", "🤍", "🤎", "💔",
+      "❣️", "💕", "💞", "💓", "💗", "💖", "💘", "💝", "💟", "☮️",
+      "✝️", "☪️", "🕉", "☸️", "✡️", "🔯", "🕎", "☯️", "☦️", "🛐"
+    ]
+  }
+
+  const categoryIcons = {
+    smileys: "😀",
+    people: "👨",
+    animals: "🐶",
+    food: "🍎",
+    activities: "⚽",
+    travel: "🚗",
+    objects: "💡",
+    symbols: "❤️"
+  }
+
+  useEffect(() => {
+    if (textareaRef.current) {
+      textareaRef.current.scrollTop = textareaRef.current.scrollHeight;
+    }
+  }, [commentContent]);
 
   function scrollToComment(commentId) {
     const el = commentRefs.current[commentId]
@@ -18,10 +89,22 @@ export default function Comment({ comments, isOpen, onClose, postId, onCommentCh
     }
   }
 
-  useEffect(()=>{
+  // Fermer le picker d'emojis quand on clique ailleurs
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (emojiRef.current && !emojiRef.current.contains(event.target)) {
+        setShowEmojis(false)
+      }
+    }
 
-  console.log(comments);
-  
+    document.addEventListener("mousedown", handleClickOutside)
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside)
+    }
+  }, [])
+
+  useEffect(()=>{
+    console.log(comments);
   },[comments])
 
   useEffect(() => {
@@ -42,6 +125,29 @@ export default function Comment({ comments, isOpen, onClose, postId, onCommentCh
       getcomment()
     }
   }, [scrollPos])
+
+  const handleFileSelect = (e) => {
+    const file = e.target.files[0]
+    if (file) {
+      setSelectedFile(file)
+    }
+    e.target.value = ''
+  }
+
+  const handleRemoveFile = () => {
+    setSelectedFile(null)
+    if (fileInputRef.current) {
+      fileInputRef.current.value = ''
+    }
+  }
+
+  const addEmoji = (emoji) => {
+    setCommentContent(prev => prev + emoji)
+  }
+
+  const handleTextChange = (e) => {
+    setCommentContent(e.target.value);
+  }
 
   async function handlePostComment(e) {
     e.preventDefault()
@@ -66,10 +172,13 @@ export default function Comment({ comments, isOpen, onClose, postId, onCommentCh
         throw new Error("Failed to post comment")
       }
       
-
       const res = await response.json()
       setCommentContent("")
       setSelectedFile(null)
+      
+      if (fileInputRef.current) {
+        fileInputRef.current.value = ''
+      }
 
       if (onCommentChange) {
         onCommentChange(res.comment_id)
@@ -85,124 +194,193 @@ export default function Comment({ comments, isOpen, onClose, postId, onCommentCh
 
   if (!isOpen) return null
 
-  const showImageSection = !!post.image_path
-
   return (
     <div className={`cm-overlay ${isOpen ? "cm-active" : ""}`} onClick={onClose}>
       <div className="cm-modal" onClick={(e) => e.stopPropagation()} ref={modalRef}>
         <div className="cm-header">
           <button className="cm-close" aria-label="Close modal" onClick={onClose}>
-            <span className="icon-close"></span>
+            <span className="icon-close">×</span>
           </button>
           <h3 className="cm-heading">Comments</h3>
         </div>
 
-        <div className={`cm-body ${showImageSection ? "" : "cm-full"}`}>
-          {showImageSection && (
-            <div className="cm-post">
-              <div className="cm-img-wrap">
-                <img
-                  src={`../${post.image_path}`}
-                  alt="Post"
-                  className="cm-img"
-                  onLoad={(e) => e.target.classList.add("cm-loaded")}
-                />
-              </div>
-            </div>
-          )}
-
-          <div className="cm-content">
-            <div className="cm-author">
-              <div className="cm-user">
-                <div className="cm-avatar">{post.author?.charAt(0) || "U"}</div>
-                <div className="cm-info">
-                  <span className="cm-name">{post.author || "Unknown"}</span>
-                </div>
-              </div>
-              <div className="cm-caption">
-                <span className="cm-title">{post.title}</span>
-              </div>
-              {post.content && <div className="cm-desc">{post.content}</div>}
-            </div>
-
-            <div
-              className="cm-list-wrap"
-              ref={commentsContainerRef}
-              onScroll={(e) => setScrollPos(e.target.scrollTop)}
-            >
-              {comments && comments.length > 0 ? (
-                <div className="cm-list">
-                  {comments.map((comment) => (
-                    <div
-                      key={comment.id}
-                      id={`comment-${comment.id}`}
-                      className="cm-item"
-                      ref={(el) => (commentRefs.current[comment.id] = el)}
-                    >
-                      <div className="cm-avatar cm-avatar-sm">{comment.author?.charAt(0) || "U"}</div>
-                      <div className="cm-text">
-                        <div className="cm-meta">
-                          <span className="cm-name">{comment.author}</span>
-                          <span className="cm-time">
-                            {new Date(comment.created_at).toLocaleTimeString([], {
-                              hour: "2-digit",
-                              minute: "2-digit",
-                            })}
-                          </span>
-                        </div>
-                        <p className="cm-msg">{comment.content}</p>
-
-                        {comment.media_path && (
-                          comment.media_path.endsWith(".mp4") || comment.media_path.endsWith(".webm") ? (
-                            <video controls className="cm-media">
-                              <source src={`../${comment.media_path}`} type="video/mp4" />
-                              Your browser does not support the video tag.
-                            </video>
-                          ) : (
-                            <img src={`../${comment.media_path}`} alt="Comment Media" className="cm-media" />
-                          )
-                        )}
+        <div className="cm-content">
+          <div
+            className="cm-list-wrap"
+            ref={commentsContainerRef}
+            onScroll={(e) => setScrollPos(e.target.scrollTop)}
+          >
+            {comments && comments.length > 0 ? (
+              <div className="cm-list">
+                {comments.map((comment) => (
+                  <div
+                    key={comment.id}
+                    id={`comment-${comment.id}`}
+                    className="cm-item"
+                    ref={(el) => (commentRefs.current[comment.id] = el)}
+                  >
+                    <div className="cm-avatar cm-avatar-sm">{comment.author?.charAt(0) || "U"}</div>
+                    <div className="cm-text">
+                      <div className="cm-meta">
+                        <span className="cm-name">{comment.author}</span>
+                        <span className="cm-time">
+                          {new Date(comment.created_at).toLocaleTimeString([], {
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          })}
+                        </span>
                       </div>
+                      <p className="cm-msg">{comment.content}</p>
+
+                      {comment.media_path && (
+                        comment.media_path.endsWith(".mp4") || comment.media_path.endsWith(".webm") ? (
+                          <video controls className="cm-media">
+                            <source src={`../${comment.media_path}`} type="video/mp4" />
+                            Your browser does not support the video tag.
+                          </video>
+                        ) : (
+                          <img src={`../${comment.media_path}`} alt="Comment Media" className="cm-media" />
+                        )
+                      )}
                     </div>
-                  ))}
-                </div>
-              ) : (
-                <div className="cm-empty">
-                  <div className="icon-chat"></div>
-                  <p className="cm-empty-title">No comments yet</p>
-                  <p className="cm-empty-text">Start the conversation</p>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="cm-empty">
+                <div className="icon-chat">💬</div>
+                <p className="cm-empty-title">No comments yet</p>
+                <p className="cm-empty-text">Start the conversation</p>
+              </div>
+            )}
+          </div>
+
+          <div className="cm-form-wrap">
+            <form onSubmit={handlePostComment} className="cm-form" encType="multipart/form-data">
+              <div className={`cm-input-wrap ${commentContent.trim() ? 'has-text' : ''}`}>
+                <textarea
+                  ref={textareaRef}
+                  className="cm-input"
+                  placeholder="Add a comment..."
+                  value={commentContent}
+                  onChange={handleTextChange}
+                  onInput={(e) => {
+                    e.target.scrollTop = e.target.scrollHeight;
+                  }}
+                  rows={1}
+                  required={!selectedFile}
+                  disabled={loading}
+                />
+                
+                {/* Bouton emoji */}
+                <button
+                  type="button"
+                  className={`cm-emoji-btn ${showEmojis ? 'active' : ''}`}
+                  onClick={() => setShowEmojis(!showEmojis)}
+                >
+                  😊
+                </button>
+                
+                {/* Input file */}
+                <input
+                  type="file"
+                  accept="image/*,video/*"
+                  onChange={handleFileSelect}
+                  className="cm-file"
+                  id="comment-file"
+                  ref={fileInputRef}
+                />
+                <label 
+                  htmlFor="comment-file" 
+                  className={`cm-file-label ${selectedFile ? 'has-file' : ''}`}
+                >
+                  {selectedFile && <span className="cm-file-selected"></span>}
+                </label>
+                
+                <button
+                  type="submit"
+                  className="cm-btn"
+                  disabled={loading || (!commentContent.trim() && !selectedFile)}
+                >
+                  {loading ? "..." : "Post"}
+                </button>
+              </div>
+              
+              {/* Picker d'emojis avec catégories */}
+              {showEmojis && (
+                <div className="cm-emoji-picker" ref={emojiRef}>
+                  <div className="cm-emoji-header">
+                    <span>Emojis</span>
+                    <button 
+                      type="button" 
+                      className="cm-emoji-close"
+                      onClick={() => setShowEmojis(false)}
+                    >
+                      ×
+                    </button>
+                  </div>
+                  
+                  {/* Navigation des catégories */}
+                  <div className="cm-emoji-categories">
+                    {Object.keys(emojiCategories).map(category => (
+                      <button
+                        key={category}
+                        type="button"
+                        className={`cm-emoji-category ${activeCategory === category ? 'active' : ''}`}
+                        onClick={() => setActiveCategory(category)}
+                      >
+                        {categoryIcons[category]}
+                      </button>
+                    ))}
+                  </div>
+                  
+                  {/* Grille d'emojis */}
+                  <div className="cm-emoji-grid">
+                    {emojiCategories[activeCategory].map((emoji, index) => (
+                      <button
+                        key={index}
+                        type="button"
+                        className="cm-emoji"
+                        onClick={() => addEmoji(emoji)}
+                      >
+                        {emoji}
+                      </button>
+                    ))}
+                  </div>
                 </div>
               )}
-            </div>
-
-            <div className="cm-form-wrap">
-              <form onSubmit={handlePostComment} className="cm-form" encType="multipart/form-data">
-                <div className="cm-input-wrap">
-                  <textarea
-                    className="cm-input"
-                    placeholder="Add a comment..."
-                    value={commentContent}
-                    onChange={(e) => setCommentContent(e.target.value)}
-                    rows={1}
-                    required={!selectedFile}
-                    disabled={loading}
-                  />
-                  <input
-                    type="file"
-                    accept="image/*,video/*"
-                    onChange={(e) => setSelectedFile(e.target.files[0])}
-                    className="cm-file"
-                  />
-                  <button
-                    type="submit"
-                    className="cm-btn"
-                    disabled={loading || (!commentContent.trim() && !selectedFile)}
+              
+              {/* Preview du fichier sélectionné */}
+              {selectedFile && (
+                <div className="cm-file-preview">
+                  {selectedFile.type.startsWith('image/') ? (
+                    <img 
+                      src={URL.createObjectURL(selectedFile)} 
+                      alt="Preview" 
+                    />
+                  ) : selectedFile.type.startsWith('video/') ? (
+                    <video>
+                      <source src={URL.createObjectURL(selectedFile)} type={selectedFile.type} />
+                    </video>
+                  ) : null}
+                  
+                  <div className="cm-file-info">
+                    <div className="cm-file-name">{selectedFile.name}</div>
+                    <div className="cm-file-size">
+                      {(selectedFile.size / 1024 / 1024).toFixed(2)} MB
+                    </div>
+                  </div>
+                  
+                  <button 
+                    type="button" 
+                    className="cm-file-remove"
+                    onClick={handleRemoveFile}
                   >
-                    {loading ? "..." : "Post"}
+                    ×
                   </button>
                 </div>
-              </form>
-            </div>
+              )}
+            </form>
           </div>
         </div>
       </div>
