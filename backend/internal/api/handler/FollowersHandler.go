@@ -40,7 +40,7 @@ WHERE u.id = ?;
 		fmt.Println("errrrrrrrrrrrrrrrrrrrrrrrrrrrrr", err)
 		return
 	}
-	if privacy == "private" && isFollowing == 0 {
+	if privacy == "private" && isFollowing == 0 && UserID  !=  id {
 
 		helper.RespondWithJSON(w, http.StatusUnauthorized, "errrrrrrrrrrrrorrororororroororo")
 
@@ -49,8 +49,8 @@ WHERE u.id = ?;
 
 	Fquery := `SELECT  u.id , u.nickname, u.image
 FROM followers f
-JOIN users u ON u.id = f.user_id
-WHERE f.follower_id = ?;
+JOIN users u ON u.id = f.follower_id
+WHERE f.user_id = ?;
 `
 	rows, err := repository.Db.Query(Fquery, id)
 	if err != nil {
