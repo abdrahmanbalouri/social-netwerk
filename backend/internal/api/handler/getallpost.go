@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"fmt"
 	"net/http"
 	"strconv"
 	"strings"
@@ -14,7 +15,6 @@ func AllpostsHandler(w http.ResponseWriter, r *http.Request) {
 		helper.RespondWithError(w, http.StatusMethodNotAllowed, "Method Not Allowed")
 		return
 	}
-
 	parts := strings.Split(r.URL.Path, "/")
 	if len(parts) < 4 { // [0]= "", [1]=api, [2]=Getcomments, [3]=postID, [4]=offset
 		helper.RespondWithError(w, http.StatusNotFound, "Post not found")
@@ -29,6 +29,7 @@ func AllpostsHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	posts, err := post.GetAllPosts(userId, r, offset)
+	fmt.Println("posts:", posts)
 	if err != nil {
 		helper.RespondWithError(w, http.StatusInternalServerError, "Failed to retrieve posts")
 		return

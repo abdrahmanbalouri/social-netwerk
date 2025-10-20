@@ -32,9 +32,8 @@ export default function Navbar({ onCreatePost }) {
     if (!connected) return; // wait for connection
 
     const handleNotification = (data) => {
-      console.log("Notification received:", data);
-      
-      if (data.from !== id) return; // don't notify if chatting with the sender
+      console.log("Notification received:11111111111111", data);
+    
       addnotf((prev) => prev + 1);
       notif(data.data || data);
       cheng(true);
