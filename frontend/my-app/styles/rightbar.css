@@ -12,24 +12,6 @@
   gap: 25px;
 }
 
-/* Custom scrollbar for rightBar */
-.rightBar::-webkit-scrollbar {
-  width: 6px;
-}
-
-.rightBar::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.rightBar::-webkit-scrollbar-thumb {
-  background: rgba(102, 126, 234, 0.3);
-  border-radius: 10px;
-}
-
-.rightBar::-webkit-scrollbar-thumb:hover {
-  background: rgba(102, 126, 234, 0.5);
-}
-
 
 
 .rightBar .item {
@@ -107,26 +89,6 @@
   overflow-y: auto;
 }
 
-/* Custom scrollbar for user list */
-.rightBar .item:last-child::-webkit-scrollbar {
-  width: 5px;
-}
-
-.rightBar .item:last-child::-webkit-scrollbar-track {
-  background: rgba(0, 0, 0, 0.02);
-  border-radius: 10px;
-}
-
-.rightBar .item:last-child::-webkit-scrollbar-thumb {
-  background: rgba(102, 126, 234, 0.3);
-  border-radius: 10px;
-}
-
-.rightBar .item:last-child::-webkit-scrollbar-thumb:hover {
-  background: rgba(102, 126, 234, 0.5);
-}
-
-
 
 .rightBar .user {
   display: flex;
@@ -153,16 +115,6 @@
   opacity: 0;
   transition: opacity 0.3s ease;
   border-radius: 0 3px 3px 0;
-}
-
-.rightBar .user:hover::before {
-  opacity: 1;
-}
-
-.rightBar .user:hover {
-  background: linear-gradient(90deg, rgba(102, 126, 234, 0.03) 0%, transparent 100%);
-  padding-left: 8px;
-  margin-left: -8px;
 }
 
 
@@ -193,11 +145,6 @@
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
-.rightBar .user:hover .userInfo img {
-  border-color: #667eea;
-  transform: scale(1.05);
-  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.25);
-}
 
 
 
@@ -235,8 +182,6 @@
   background-color: #95a5a6;
 }
 
-
-
 .rightBar .userInfo span {
   font-size: 14px;
   font-weight: 600;
@@ -245,33 +190,19 @@
   cursor: pointer;
 }
 
-.rightBar .userInfo span:hover {
-  color: #667eea;
-  transform: translateX(2px);
-}
-
 .rightBar .userLink {
   text-decoration: none;
   transition: all 0.2s ease;
 }
 
-
-
-.rightBar .userIcon {
-  width: 22px;
-  height: 22px;
+.rightBar .userIcon ,.rightBar .userLink i {
+  width: 35px;
+  height: 32px;
   color: #667eea;
   cursor: pointer;
   transition: all 0.3s ease;
   padding: 6px;
   border-radius: 8px;
-  background: rgba(102, 126, 234, 0.08);
-}
-
-.rightBar .userIcon:hover {
-  transform: scale(1.15) rotate(5deg);
-  background: rgba(102, 126, 234, 0.15);
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
 }
 
 
