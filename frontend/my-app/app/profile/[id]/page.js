@@ -633,7 +633,7 @@ export default function Profile() {
             <div className="profileContainer">
               <div className="uInfo">
 
-                {!theprofile.isFollowing && theprofile.privacy === "private" ? (
+                { Profile && Profile.id !== theprofile.id  &&!theprofile.isFollowing && theprofile.privacy === "private" ? (
                   <div className="left">
                     <p>
                       following
