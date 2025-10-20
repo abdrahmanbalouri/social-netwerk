@@ -34,8 +34,6 @@ export default function RightBar() {
     return () => removeListener("logout", handleLogout)
   })
   async function handleFollowRequest(userId, action) {
-    console.log("fezfzelkfjzelfjlezjflezjflez", userId, action);
-
     try {
       const res = await fetch("http://localhost:8080/api/followRequest/action", {
         method: "POST",
@@ -151,12 +149,14 @@ export default function RightBar() {
             <div key={user.id} className="user">
               <div className="userInfo">
                 <div className="userDetails">
-                  <img
-                    src={user?.image ? `/uploads/${user.image}` : "/uploads/default.png"}
-                    alt="user avatar"
-                  />
-                  <div className="online" />
                   <Link href={`/profile/${user.id}`} className="userLink">
+                    <img
+                      src={user?.image ? `/uploads/${user.image}` : "/uploads/default.png"}
+                      alt="user avatar"
+                    />
+                  </Link>
+                  <div className="online" />
+                  <Link href={`/profile/${user.id}`}>
                     <span>{user.nickname}</span>
                   </Link>
                 </div>
@@ -196,10 +196,12 @@ export default function RightBar() {
                 <div key={user.id} className="user">
                   <div className="userInfo">
                     <div className="userDetails">
-                      <img
-                        src={user?.image ? `/uploads/${user.image}` : "/uploads/default.png"}
-                        alt="user avatar"
-                      />
+                      <Link href={`/profile/${user.id}`}>
+                        <img
+                          src={user?.image ? `/uploads/${user.image}` : "/uploads/default.png"}
+                          alt="user avatar"
+                        />
+                      </Link>
                       <div className={onlineUsers.includes(user.id) ? "online" : "offline"} />
                       <Link href={`/profile/${user.id}`}>
                         <span>{user.nickname}</span>
