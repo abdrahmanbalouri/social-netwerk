@@ -228,10 +228,10 @@ export default function RightBar() {
                         alt="user avatar"
                       />
                       <span>{user.nickname}</span>
-                      <Link href={`/profile/${user.id}`} className="userLink">
-                        <PersonPinIcon />
-                      </Link>
                     </div>
+                    <Link href={`/profile/${user.id}`} className="userLink">
+                      <i className="fa-solid fa-user"></i>
+                    </Link>
                   </div>
                 </div>
               ))
