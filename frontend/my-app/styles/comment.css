@@ -1820,6 +1820,19 @@ body.cm-no-scroll {
     gap: var(--space-md);
   }
 }
+.cm-media {
+  max-width: 100%;
+  max-height: 300px;
+  margin-top: 10px;
+  border-radius: 8px;
+  display: block;
+}
+
+.cm-file {
+  margin-top: 5px;
+  font-size: 14px;
+}
+
 
 /* Very Small Devices */
 @media (max-width: 360px) {

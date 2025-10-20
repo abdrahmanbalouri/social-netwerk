@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"database/sql"
+	"fmt"
 	"net/http"
 	"strings"
 
@@ -17,11 +18,11 @@ func Getlastcommnet(w http.ResponseWriter, r *http.Request) {
 
 	parts := strings.Split(r.URL.Path, "/")
 	if len(parts) < 4 {
-		helper.RespondWithError(w, http.StatusNotFound, "coment not found ")
+		helper.RespondWithError(w, http.StatusNotFound, "Comment not found")
 		return
 	}
 
-	coomentId := parts[3]
+	commentId := parts[3]
 
 	row := repository.Db.QueryRow(`
 		SELECT 
@@ -31,11 +32,12 @@ func Getlastcommnet(w http.ResponseWriter, r *http.Request) {
 			c.content, 
 			c.created_at,
 			u.nickname,
-			u.image AS profile
+			u.image AS profile,
+			c.media_path
 		FROM comments c
 		JOIN users u ON c.user_id = u.id
 		WHERE c.id = ?
-	`, coomentId)
+	`, commentId)
 
 	var comment struct {
 		ID        string `json:"id"`
@@ -45,9 +47,10 @@ func Getlastcommnet(w http.ResponseWriter, r *http.Request) {
 		CreatedAt string `json:"created_at"`
 		Author    string `json:"author"`
 		Profile   string `json:"profile"`
+		MediaPath string `json:"media_path,omitempty"`
 	}
 
-	err := row.Scan(&comment.ID, &comment.PostID, &comment.UserID, &comment.Content, &comment.CreatedAt, &comment.Author, &comment.Profile)
+	err := row.Scan(&comment.ID, &comment.PostID, &comment.UserID, &comment.Content, &comment.CreatedAt, &comment.Author, &comment.Profile, &comment.MediaPath)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			helper.RespondWithError(w, http.StatusNotFound, "Comment not found")
@@ -56,6 +59,7 @@ func Getlastcommnet(w http.ResponseWriter, r *http.Request) {
 		helper.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
+	fmt.Println(comment.MediaPath)
 
 	helper.RespondWithJSON(w, http.StatusOK, comment)
 }
