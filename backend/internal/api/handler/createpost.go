@@ -12,7 +12,6 @@ import (
 	"social-network/internal/repository"
 	"social-network/internal/repository/middleware"
 
-
 	"github.com/google/uuid"
 )
 
@@ -45,15 +44,26 @@ func Createpost(w http.ResponseWriter, r *http.Request) {
 
 	// Handle image upload
 	var imagePath string
-	imageFile, _, err := r.FormFile("image")
+	imageFile, header, err := r.FormFile("image")
 	if err == nil {
 		defer imageFile.Close()
+		ext := strings.ToLower(filepath.Ext(header.Filename))
+		allowedExts := map[string]bool{
+			".jpg": true, ".jpeg": true, ".png": true, ".gif": true,
+			".mp4": true, ".mov": true, ".avi": true,
+		}
+		if !allowedExts[ext] {
+			helper.RespondWithError(w, http.StatusBadRequest, "Unsupported media format")
+			return
+		}
 		uploadDir := "../frontend/my-app/public/uploads"
 		if err := os.MkdirAll(uploadDir, os.ModePerm); err != nil {
 			helper.RespondWithError(w, http.StatusInternalServerError, "Failed to create upload directory")
 			return
 		}
-		imagePath = fmt.Sprintf("uploads/%s.jpg", uuid.New().String())
+		filname := fmt.Sprintf("%s%s", uuid.New().String(), ext)
+		imagePath = fmt.Sprintf("uploads/%s", filname)
+
 		out, err := os.Create(filepath.Join("../frontend/my-app/public", imagePath))
 		if err != nil {
 			helper.RespondWithError(w, http.StatusInternalServerError, "Failed to save image")
@@ -67,9 +77,9 @@ func Createpost(w http.ResponseWriter, r *http.Request) {
 	} else {
 		imagePath = ""
 	}
-
-	// Create post
+	fmt.Println(imagePath, "------------------+++++++++++++++")
 	postID := uuid.New().String()
+
 	_, err = repository.Db.Exec(`
 		INSERT INTO posts (id, user_id, title, content, image_path, visibility, canseperivite)
 		VALUES (?, ?, ?, ?, ?, ?, ?)`,
