@@ -4,13 +4,12 @@ import "../styles/comment.css"
 
 export default function Comment({ comments, isOpen, onClose, postId, onCommentChange, lodinggg, ongetcomment, post }) {
   const [commentContent, setCommentContent] = useState("")
+  const [selectedFile, setSelectedFile] = useState(null)
   const [loading, setLoading] = useState(false)
   const modalRef = useRef(null)
   const commentsContainerRef = useRef(null)
   const [scrollPos, setScrollPos] = useState(0)
   const commentRefs = useRef({})
-  console.log(post);
-  
 
   function scrollToComment(commentId) {
     const el = commentRefs.current[commentId]
@@ -18,6 +17,12 @@ export default function Comment({ comments, isOpen, onClose, postId, onCommentCh
       el.scrollIntoView({ behavior: "smooth", block: "start" })
     }
   }
+
+  useEffect(()=>{
+
+  console.log(comments);
+  
+  },[comments])
 
   useEffect(() => {
     if (!commentsContainerRef.current) return
@@ -40,29 +45,32 @@ export default function Comment({ comments, isOpen, onClose, postId, onCommentCh
 
   async function handlePostComment(e) {
     e.preventDefault()
-
-    if (!commentContent.trim()) return
+    if (!commentContent.trim() && !selectedFile) return
 
     try {
       setLoading(true)
+      const formData = new FormData()
+      formData.append("postId", postId)
+      formData.append("content", commentContent)
+      if (selectedFile) {
+        formData.append("media", selectedFile)
+      }
+
       const response = await fetch("http://localhost:8080/api/createcomment", {
         method: "POST",
         credentials: "include",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          postId: postId,
-          content: commentContent,
-        }),
+        body: formData,
       })
 
       if (!response.ok) {
         throw new Error("Failed to post comment")
       }
-      const res = await response.json()
+      
 
+      const res = await response.json()
       setCommentContent("")
+      setSelectedFile(null)
+
       if (onCommentChange) {
         onCommentChange(res.comment_id)
         commentsContainerRef.current.scrollTop = 0
@@ -97,9 +105,7 @@ export default function Comment({ comments, isOpen, onClose, postId, onCommentCh
                   src={`../${post.image_path}`}
                   alt="Post"
                   className="cm-img"
-                  onLoad={(e) => {
-                    e.target.classList.add("cm-loaded")
-                  }}
+                  onLoad={(e) => e.target.classList.add("cm-loaded")}
                 />
               </div>
             </div>
@@ -145,6 +151,17 @@ export default function Comment({ comments, isOpen, onClose, postId, onCommentCh
                           </span>
                         </div>
                         <p className="cm-msg">{comment.content}</p>
+
+                        {comment.media_path && (
+                          comment.media_path.endsWith(".mp4") || comment.media_path.endsWith(".webm") ? (
+                            <video controls className="cm-media">
+                              <source src={`../${comment.media_path}`} type="video/mp4" />
+                              Your browser does not support the video tag.
+                            </video>
+                          ) : (
+                            <img src={`../${comment.media_path}`} alt="Comment Media" className="cm-media" />
+                          )
+                        )}
                       </div>
                     </div>
                   ))}
@@ -159,7 +176,7 @@ export default function Comment({ comments, isOpen, onClose, postId, onCommentCh
             </div>
 
             <div className="cm-form-wrap">
-              <form onSubmit={handlePostComment} className="cm-form">
+              <form onSubmit={handlePostComment} className="cm-form" encType="multipart/form-data">
                 <div className="cm-input-wrap">
                   <textarea
                     className="cm-input"
@@ -167,10 +184,20 @@ export default function Comment({ comments, isOpen, onClose, postId, onCommentCh
                     value={commentContent}
                     onChange={(e) => setCommentContent(e.target.value)}
                     rows={1}
-                    required
+                    required={!selectedFile}
                     disabled={loading}
                   />
-                  <button type="submit" className="cm-btn" disabled={loading || !commentContent.trim()}>
+                  <input
+                    type="file"
+                    accept="image/*,video/*"
+                    onChange={(e) => setSelectedFile(e.target.files[0])}
+                    className="cm-file"
+                  />
+                  <button
+                    type="submit"
+                    className="cm-btn"
+                    disabled={loading || (!commentContent.trim() && !selectedFile)}
+                  >
                     {loading ? "..." : "Post"}
                   </button>
                 </div>
