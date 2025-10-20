@@ -7,19 +7,44 @@ import (
 	"net/http"
 	"time"
 
+	"social-network/internal/helper"
 	"social-network/internal/repository"
 )
 
 func GetStories(w http.ResponseWriter, r *http.Request) {
+	id, err := helper.AuthenticateUser(r)
+	if err != nil {
+		http.Error(w, "Unauthorized", http.StatusUnauthorized)
+		return
+	}
 	// Query with JOIN and expiration filter directly in SQL (SQLite DATETIME handling)
 	rows, err := repository.Db.Query(`
-        SELECT s.id, s.user_id, s.content, s.image_url, s.bg_color, s.created_at, s.expires_at,
-               u.nickname, u.image AS profile_image
+        SELECT 
+			s.id, 
+			s.user_id,
+			s.content, 
+			s.image_url, 
+			s.bg_color,
+			s.created_at,
+			s.expires_at,
+            u.nickname, 
+			u.image AS profile_image
         FROM stories s
         JOIN users u ON s.user_id = u.id
-        WHERE s.expires_at IS NULL OR DATETIME(s.expires_at) > CURRENT_TIMESTAMP
+        WHERE 
+			(s.expires_at IS NULL 
+			OR DATETIME(s.expires_at) > CURRENT_TIMESTAMP)
+			AND 
+			(u.privacy = 'public'
+			OR (u.privacy = 'private' AND EXISTS (
+				SELECT 1 FROM followers f 
+				WHERE f.user_id = s.user_id          
+				AND f.follower_id = ?
+			))
+				OR (s.user_id = ?)
+		)
         ORDER BY s.created_at ASC
-    `)
+    `,id, id)
 	if err != nil {
 		http.Error(w, "Failed to get stories", http.StatusInternalServerError)
 		return
