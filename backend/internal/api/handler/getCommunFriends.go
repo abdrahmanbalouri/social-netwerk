@@ -1,0 +1,50 @@
+package handlers
+
+import (
+	"fmt"
+	"net/http"
+
+	"social-network/internal/helper"
+	"social-network/internal/repository"
+	"social-network/internal/utils"
+)
+
+func GetCommunFriends(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("GetCommunFriends called")
+	if r.Method != "GET" {
+		helper.RespondWithError(w, http.StatusMethodNotAllowed, "Method Not Allowed")
+		return
+	}
+	userID, err := helper.AuthenticateUser(r)
+	if err != nil {
+		helper.RespondWithError(w, http.StatusUnauthorized, "Authentication required")
+		return
+	}
+
+	rows, err := repository.Db.Query(`
+		SELECT u.id, u.nickname, u.image
+		FROM users u
+		INNER JOIN followers f ON u.id = f.user_id
+	`, userID, userID)
+	if err != nil {
+		helper.RespondWithError(w, http.StatusInternalServerError, "Failed to fetch common friends")
+		return
+	}
+	defer rows.Close()
+
+	var friends []struct {
+		utils.User
+	}
+	for rows.Next() {
+		var friend struct {
+			utils.User
+		}
+		if err := rows.Scan(&friend.ID, &friend.Nickname, &friend.Image); err != nil {
+			helper.RespondWithError(w, http.StatusInternalServerError, "Failed to process common friends")
+			return
+		}
+		friends = append(friends, friend)
+	}
+
+	helper.RespondWithJSON(w, http.StatusOK, friends)
+}

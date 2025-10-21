@@ -1,1 +1,0 @@
-group button (in home page) ==> find search bar + all groups ==> by clicking on a group the posts should be fetched
