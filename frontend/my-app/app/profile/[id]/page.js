@@ -698,7 +698,8 @@ export default function Profile() {
                 </div>
 
                 {showPrivacy && (
-                  <div className="privacy-overlay" onClick={handleShowPrivacy} >
+                  <div className="privacy-overlay">
+                    <div onClick={handleShowPrivacy} className="privacy-backdrop"></div>
                     <ProfileCardEditor
                       handleShowPrivacy={handleShowPrivacy}
                       initialCover={theprofile.cover}
