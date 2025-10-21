@@ -5,34 +5,24 @@ import LeftBar from "../../components/LeftBar.js";
 import RightBar from "../../components/RightBar.js";
 import { useDarkMode } from "../../context/darkMod.js";
 import Link from "next/link.js";
-import "./games.css";
+import "../../styles/games.css";
+import { useWS } from "../../context/wsContext.js";
+import { middleware } from "../../middleware/middelware.js";
+import { useRouter } from "next/navigation";
 
 export default function Game() {
+  const router = useRouter();
+  const sendMessage = useWS()
+  // Authentication check
   useEffect(() => {
-
-    async function midle() {
-      try {
-        const response = await fetch("http://localhost:8080/api/me", {
-          credentials: "include",
-          method: "GET",
-        });
-
-        if (!response.ok) {
-          console.log(1111111111);
-          
-          router.replace("/login");
-          return null;
-        }
-      } catch (error) {
-        router.replace("/login");
-        return null;
-
+    const checkAuth = async () => {
+      const auth = await middleware();
+      if (!auth) {
+        router.push("/login");
+        sendMessage({ type: "logout" })
       }
     }
-    midle()
-
-
-
+    checkAuth();
   }, [])
   const { darkMode } = useDarkMode();
   const [showSidebar, setShowSidebar] = React.useState(true);
@@ -50,43 +40,43 @@ export default function Game() {
           <div className="games-list">
             <div className="game-card">
               <h3>Boomber man</h3>
-              <Link href="https://raji383.github.io/bomberman/">
+              <Link href="https://raji383.github.io/bomberman/" target="_blank">
                 <img src="/bomberman.png" alt="Boomber man" />
               </Link>
             </div>
             <div className="game-card">
               <h3>Arkanoid</h3>
-              <Link href="https://brick-breaker-abaid.netlify.app/">
+              <Link href="https://brick-breaker-abaid.netlify.app/" target="_blank">
                 <img src="/Arkanoid.png" alt="Arkanoid" />
               </Link>
             </div>
             <div className="game-card">
               <h3>super-mario</h3>
-              <Link href="https://raji383.github.io/super-mario/">
+              <Link href="https://raji383.github.io/super-mario/" target="_blank">
                 <img src="/super-mario.png" alt="Arkanoid" />
               </Link>
             </div>
             <div className="game-card">
               <h3>Raven</h3>
-              <Link href="https://raji383.github.io/Raven-game/">
+              <Link href="https://raji383.github.io/Raven-game/" target="_blank">
                 <img src="/Raven.png" alt="Arkanoid" />
               </Link>
             </div>
             <div className="game-card">
               <h3>shadow</h3>
-              <Link href="https://raji383.github.io/shadow-game/">
+              <Link href="https://raji383.github.io/shadow-game/" target="_blank">
                 <img src="/shadow.png" alt="Arkanoid" />
               </Link>
             </div>
             <div className="game-card">
               <h3>War-machine</h3>
-              <Link href="https://raji383.github.io/War-machine/">
+              <Link href="https://raji383.github.io/War-machine/" target="_blank">
                 <img src="/war.png" alt="Arkanoid" />
               </Link>
             </div>
             <div className="game-card">
               <h3>toad</h3>
-              <Link href="https://raji383.github.io/War-machine/">
+              <Link href="https://raji383.github.io/War-machine/" target="_blank">
                 <img src="/toad.png" alt="Arkanoid" />
               </Link>
             </div>

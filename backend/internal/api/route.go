@@ -15,7 +15,12 @@ func Routes(db *sql.DB) http.Handler {
 		w.WriteHeader(http.StatusNotFound)
 	})
 	mux.Handle("/uploads/", http.StripPrefix("/uploads/", http.FileServer(http.Dir("uploads"))))
+	mux.HandleFunc("/api/followers/", handlers.FollowersHandler)
+	mux.HandleFunc("/api/followRequest", handlers.FollowRequest)
 
+	mux.HandleFunc("/api/followRequest/action", handlers.FollowRequestAction)
+
+	mux.HandleFunc("/api/following/", handlers.FollowingHandler)
 	mux.HandleFunc("/api/register", handlers.RegisterHandler)
 	mux.HandleFunc("/api/login", handlers.LoginHandler)
 	mux.HandleFunc("/api/logout", handlers.LogoutHandler)
@@ -23,30 +28,28 @@ func Routes(db *sql.DB) http.Handler {
 	mux.HandleFunc("/api/profile", handlers.ProfileHandler)
 	mux.HandleFunc("/api/createpost", handlers.Createpost)
 	mux.HandleFunc("/api/Getpost/{id}", handlers.GetPostsHandler)
-	mux.HandleFunc("/api/Getallpost", handlers.AllpostsHandler)
+	mux.HandleFunc("/api/Getallpost/{id}", handlers.AllpostsHandler)
+	mux.HandleFunc("/api/getmypost/{id}/{offset}", handlers.Getmypost)
 	mux.HandleFunc("/api/GetUsersHandler", handlers.GetUsersHandler)
-	mux.HandleFunc("/api/Getcomments/{id}", handlers.GetCommentsHandler)
-	mux.HandleFunc("/api/gallery",handlers.GalleryHandler)
+	mux.HandleFunc("/api/communfriends", handlers.GetCommunFriends)
+	mux.HandleFunc("/api/Getcomments/{id}/{offset}", handlers.GetCommentsHandler)
+	mux.HandleFunc("/api/gallery", handlers.GalleryHandler)
 	mux.HandleFunc("/api/createcomment", handlers.CreateCommentHandler)
-	mux.HandleFunc("/api/editor",handlers.Editor)
-	mux.HandleFunc("/api/like/{id}",handlers.LikeHandler)
-	mux.HandleFunc("/api/follow",handlers.FollowHandler)
-	mux.HandleFunc("/api/groups/add", handlers.AddGroupHandler)
-	mux.HandleFunc("/invitations/respond", handlers.GroupInvitationResponse)
-	mux.HandleFunc("/group/invitation", handlers.GroupInvitationRequest)
-	mux.HandleFunc("/group/addPost/{id}", handlers.CreatePostGroup)
-	mux.HandleFunc("/group/fetchPosts/{id}", handlers.GetPostGroup)
-	mux.HandleFunc("/group/addComment", handlers.CreateCommentGroup)
-	mux.HandleFunc("/group/fetchComments", handlers.GetCommentGroup)
-	mux.HandleFunc("/group/like", handlers.LikesGroup)
-	mux.HandleFunc("/groups", handlers.GetAllGroups)
-	mux.HandleFunc("/myGroups", handlers.GetMyGroups)
+	mux.HandleFunc("/api/editor", handlers.Editor)
+	mux.HandleFunc("/api/like/{id}", handlers.LikeHandler)
+	mux.HandleFunc("/api/follow", handlers.FollowHandler)
+	mux.HandleFunc("/api/users/followers", handlers.Getfollowers)
+	mux.HandleFunc("/api/getlastcomment/{id}", handlers.Getlastcommnet)
+	mux.HandleFunc("/api/searchUser", handlers.SearchUserHandler)
+	mux.HandleFunc("/notifcation/{id}", handlers.Notifications)
+	mux.HandleFunc("/api/Getstories/{id}", handlers.GetStories)
+	mux.HandleFunc("/api/Createstories", handlers.CreateStories)
+	mux.HandleFunc("/api/getmessages", handlers.GetMessagesHandler)
+	mux.HandleFunc("/ws", handlers.Websocket)
+	mux.HandleFunc("/api/clearNotifications", handlers.ClearNotifications)
 
 	return mux
 }
-
-
-
 
 // {
 //     "title": "Group 1",

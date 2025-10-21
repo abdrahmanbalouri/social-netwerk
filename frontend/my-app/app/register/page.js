@@ -36,28 +36,34 @@ export default function SignupPage() {
 
   const handleSignup = async e => {
     e.preventDefault()
+
+    const formData = new FormData()
+    formData.append("email", form.email)
+    formData.append("password", form.password)
+    formData.append("firstName", form.firstName)
+    formData.append("lastName", form.lastName)
+    formData.append("dob", form.dob)
+    formData.append("nickname", form.nickname)
+    formData.append("aboutMe", form.aboutMe)
+    formData.append("avatar", form.avatar) 
+
     try {
-      const response = await fetch('http://localhost:8080/api/register ', {
+      const response = await fetch("http://localhost:8080/api/register", {
         method: "POST",
-       // credentials: "include",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
+        body: formData,
       })
 
       if (response.ok) {
-        router.push('/login')
-        
+        router.push("/login")
       } else {
-
-        const data = await response.json()
+        const data = await response.text()
         seterror(data)
       }
     } catch (error) {
-
-
-      seterror("Network error!", error)
+      seterror(error.message)
     }
   }
+
 
   return (
     <div className="containerregister">
