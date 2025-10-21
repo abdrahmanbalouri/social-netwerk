@@ -43,8 +43,7 @@ export default function Post({ post, onGetComments, ondolike }) {
 
 
         </div>
-
-        <div className="info">
+        <div className="infoo">
           <div className="item" onClick={() => ondolike(post.id)} >
             <i
               className={post.liked_by_user ? "fa-solid fa-heart" : "fa-regular fa-heart"}
