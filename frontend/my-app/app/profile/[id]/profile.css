@@ -12,51 +12,56 @@
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
 }
 
-
 .profile .images {
   width: 100%;
   height: 280px;
   position: relative;
-  overflow: hidden;
 }
 
+hr {
+  margin: 10px 0;
+  border: none;
+  height: 1px;
+  width: 100%;
+  background: linear-gradient(to right,
+      transparent,
+      #e0e0e0 20%,
+      #e0e0e0 80%,
+      transparent);
+}
 
 .profile .images .cover {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: all 0.5s ease;
 }
 
 .profile .images:hover .cover {
-  opacity: 0.7;
   transform: scale(1.05);
+  transition: all 0.5s;
 }
 
 .profile .images .profilePic {
   width: 160px;
   height: 160px;
   border-radius: 50%;
-  object-fit: cover;
   position: absolute;
   left: 50px;
   bottom: -50px;
-  z-index: 100;
+  z-index: 10;
 }
 
 
 
 .profile .profileContainer {
-  padding: 70px 50px 30px 50px;
+  padding: 50px 30px 20px 50px;
   z-index: 2;
 }
 
 
 .profile .profileContainer .uInfo {
-  min-height: auto;
   box-shadow: none;
   border-radius: 0;
-  background: transparent;
   color: var(--textColor);
   display: flex;
   align-items: flex-start;
@@ -115,10 +120,7 @@
   flex-wrap: wrap;
 }
 
-.profile .profileContainer .uInfo .center .left a {
-  text-decoration: none;
-  transition: all 0.3s ease;
-}
+
 
 .profile .profileContainer .uInfo .center .left p {
   display: flex;
@@ -127,7 +129,6 @@
   border: 1px solid #667eea;
   border-radius: 12px;
   gap: 8px;
-  transition: all 0.3s ease;
   cursor: pointer;
   font-size: 14px;
   color: white;
@@ -183,12 +184,7 @@
   margin-top: 8px;
 }
 
-.profile .profileContainer .uInfo .center button:hover {
-  background: #667eea;
-  color: white;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
-}
+
 
 .profile .profileContainer .uInfo .center button:active {
   transform: translateY(0);
@@ -213,7 +209,6 @@
   justify-content: center;
   background: rgba(102, 126, 234, 0.1);
   border-radius: 50%;
-  transition: all 0.3s ease;
   cursor: pointer;
   color: #667eea;
   font-size: 16px;
@@ -243,7 +238,6 @@
 
 i {
   cursor: pointer;
-  transition: all 0.3s ease;
 }
 
 
