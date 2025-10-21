@@ -12,12 +12,13 @@ export default function RightBar() {
   const [onlineUsers, setonlineUsers] = useState([])
   const [activeTab, setActiveTab] = useState("friends");
   const [followRequest, setFollowRequest] = useState([])
-  const { addListener, removeListener } = useWS();
+  const { sendMessage, addListener, removeListener } = useWS();
 
   useEffect(() => {
     const handleOlineUser = (data) => {
       setonlineUsers(data.users)
     }
+    sendMessage({ type: "online_list" })
     addListener("online_list", handleOlineUser)
     return () => removeListener("online_list", handleOlineUser)
   }, [addListener, removeListener])
