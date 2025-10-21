@@ -4,7 +4,6 @@ import (
 	"crypto/rand"
 	"encoding/hex"
 	"encoding/json"
-	"fmt"
 	"html"
 	"log"
 	"net/http"
@@ -42,7 +41,7 @@ func AuthenticateUser(r *http.Request) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	fmt.Println("Cookie is :", cookie)
+	// fmt.Println("Cookie is :", cookie)
 
 	var userID string
 
