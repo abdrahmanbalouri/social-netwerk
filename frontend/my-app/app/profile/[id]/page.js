@@ -625,11 +625,11 @@ export default function Profile() {
                   <div className="comb"><h1 className="nickname">{theprofile.nickname}</h1><h1 className="privacy">{theprofile.privacy}</h1></div>
                   {Profile && Profile.id !== theprofile.id && !theprofile.isFollowing && theprofile.privacy === "private" ? (
                     <div className="left">
-                      <p>
+                      <p className='disabled'>
                         following
                         <strong id="following">{theprofile.following} </strong>
                       </p>
-                      <p>
+                      <p className='disabled'>
                         followers
                         <strong id="followers"> {theprofile.followers}</strong>
                       </p>
@@ -650,7 +650,7 @@ export default function Profile() {
                       </Link>
                     </div>
                   )}
-                  <hr/>
+                  <hr />
                   <div className="info">
                     <div className="item">
                       <h3>About :</h3>
