@@ -10,7 +10,7 @@
   border: 1px solid rgba(82, 113, 255, 0.12);
   position: relative;
 
-  max-width: 600px;
+  max-width: 800px;
   max-height: 1000px;
   margin-left: auto;
   margin-right: auto;
@@ -168,7 +168,7 @@
 
 
 /* Info/Actions Section */
-.post .info {
+.post .infoo {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -178,7 +178,7 @@
     gap: 12px;
 }
 
-.post .info .item {
+.post .infoo .item {
     display: flex;
     align-items: center;
     gap: 8px;
@@ -195,7 +195,7 @@
     overflow: hidden;
 }
 
-.post .info .item::before {
+.post .infoo .item::before {
     content: '';
     position: absolute;
     top: 50%;
@@ -209,21 +209,21 @@
     z-index: 0;
 }
 
-.post .info .item:hover::before {
+.post .infoo .item:hover::before {
     width: 200px;
     height: 200px;
 }
 
-.post .info .item > * {
+.post .infoo .item > * {
     position: relative;
     z-index: 1;
 }
 
-.post .info .item:active {
+.post .infoo .item:active {
     transform: translateY(0);
 }
 
-.post .info .item i {
+.post .infoo .item i {
     font-size: 18px;
     transition: transform 0.3s ease;
 }
@@ -262,9 +262,6 @@ body {
 .feed {
   flex: 6;
 
-}
-.feed::-webkit-scrollbar {
-  width: 8px;
 }
 
 
