@@ -254,6 +254,8 @@ main {
   flex-shrink: 0;
 }
 
+
+
 .user-picker-item:hover .image-avatar {
   border-color: #667eea;
   transform: scale(1.05);
@@ -295,9 +297,17 @@ main {
 }
 
 @keyframes checkBounce {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.2); }
-  100% { transform: scale(1); }
+  0% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.2);
+  }
+
+  100% {
+    transform: scale(1);
+  }
 }
 
 .user-picker-item input[type="checkbox"]:checked::after {
@@ -342,7 +352,7 @@ main {
    LOADING & ERROR STATES
    ============================================ */
 
-.user-picker > p {
+.user-picker>p {
   text-align: center;
   padding: 32px 20px;
   color: var(--textColorSoft, #6c757d);
@@ -360,11 +370,11 @@ main {
 }
 
 /* Loading animation */
-.user-picker > p:not(.error) {
+.user-picker>p:not(.error) {
   position: relative;
 }
 
-.user-picker > p:not(.error)::after {
+.user-picker>p:not(.error)::after {
   content: '';
   position: absolute;
   bottom: 8px;
@@ -377,9 +387,17 @@ main {
 }
 
 @keyframes loading {
-  0% { width: 0px; }
-  50% { width: 60px; }
-  100% { width: 0px; }
+  0% {
+    width: 0px;
+  }
+
+  50% {
+    width: 60px;
+  }
+
+  100% {
+    width: 0px;
+  }
 }
 
 /* ============================================
