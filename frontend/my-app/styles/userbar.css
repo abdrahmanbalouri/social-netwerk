@@ -119,8 +119,21 @@
 }
 
 .userBar .online {
-    background: #42b72a;
+    background-color: #4caf50;
+    animation: onlinePulse 2s infinite;
     box-shadow: 0 0 8px rgba(66, 183, 42, 0.6);
+}
+
+@keyframes onlinePulse {
+
+    0%,
+    100% {
+        box-shadow: 0 0 0 0 rgba(76, 175, 80, 0.7);
+    }
+
+    50% {
+        box-shadow: 0 0 0 6px rgba(76, 175, 80, 0);
+    }
 }
 
 
