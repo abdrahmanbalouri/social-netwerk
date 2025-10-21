@@ -158,7 +158,6 @@ export default function RightBar() {
                       alt="user avatar"
                     />
                   </Link>
-                  <div className="online" />
                   <Link href={`/profile/${user.id}`}>
                     <span>{user.nickname}</span>
                   </Link>
