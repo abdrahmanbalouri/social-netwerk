@@ -7,11 +7,12 @@ import { useWS } from "../context/wsContext";
 export default function UserBar() {
     const [users, setusers] = useState([])
     const [onlineUsers, setonlineUsers] = useState([])
-    const { addListener, removeListener } = useWS();
+    const { sendMessage, addListener, removeListener } = useWS();
     useEffect(() => {
         const handleOlineUser = (data) => {
             setonlineUsers(data.users)
         }
+        sendMessage({ type: "online_list" })
         addListener("online_list", handleOlineUser)
         return () => removeListener("online_list", handleOlineUser)
     }, [addListener, removeListener])
