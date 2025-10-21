@@ -37,11 +37,7 @@ body {
   font-family: "Poppins", sans-serif;
 }
 
-/* Custom Scrollbar */
-*::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
-}
+
 
 *::-webkit-scrollbar {
   display: none;
@@ -219,27 +215,6 @@ main {
   border: 1px solid var(--border, #e1e4e8);
 }
 
-/* Custom Scrollbar */
-.user-picker::-webkit-scrollbar {
-  width: 6px;
-}
-
-.user-picker::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.user-picker::-webkit-scrollbar-thumb {
-  background: rgba(102, 126, 234, 0.3);
-  border-radius: 10px;
-}
-
-.user-picker::-webkit-scrollbar-thumb:hover {
-  background: rgba(102, 126, 234, 0.5);
-}
-
-/* ============================================
-   USER PICKER ITEM
-   ============================================ */
 
 .user-picker-item {
   display: flex;
@@ -537,12 +512,12 @@ main {
     font-size: 22px;
   }
 
-  .post .info {
+  .post .infoo {
     justify-content: space-around;
     gap: 8px;
   }
 
-  .post .info .item {
+  .post .infoo .item {
     padding: 8px 12px;
     font-size: 14px;
   }
@@ -634,12 +609,10 @@ a {
 }
 
 /* Info Section (Likes and Comments) */
-.info {
+.infoo {
   display: flex;
   justify-content: space-between;
-  padding: 8px 12px;
   border-top: 1px solid #e5e5e5;
-  /* Light separator */
 }
 
 /* Font Awesome Icons (Assuming Font Awesome is included) */
