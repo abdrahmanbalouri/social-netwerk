@@ -9,9 +9,8 @@ import (
 	migrate "github.com/rubenv/sql-migrate"
 )
 
-
-	
 var Db *sql.DB
+
 const dbPath = "internal/repository/forum.db"
 
 func OpenDb() (*sql.DB, error) {
@@ -19,8 +18,8 @@ func OpenDb() (*sql.DB, error) {
 	if err != nil {
 		return db, err
 	}
-   db.SetMaxOpenConns(10)
-		Db = db
+	db.SetMaxOpenConns(10)
+	Db = db
 
 	return db, nil
 }

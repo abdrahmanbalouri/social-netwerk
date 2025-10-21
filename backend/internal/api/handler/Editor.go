@@ -23,7 +23,7 @@ func Editor(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err := r.ParseMultipartForm(10 << 20) // 10MB max
+	err := r.ParseMultipartForm(10 << 20) // 10MB
 	if err != nil {
 		http.Error(w, "Error parsing form: "+err.Error(), http.StatusBadRequest)
 		return
@@ -38,6 +38,13 @@ func Editor(w http.ResponseWriter, r *http.Request) {
 	displayName := r.FormValue("displayName")
 	privacy := r.FormValue("privacy")
 
+	var oldCover, oldAvatar string
+	err = repository.Db.QueryRow("SELECT cover, image FROM users WHERE id = ?", userid).Scan(&oldCover, &oldAvatar)
+	if err != nil {
+		http.Error(w, "DB fetch error: "+err.Error(), http.StatusInternalServerError)
+		return
+	}
+
 	coverFile, coverHeader, err := r.FormFile("cover")
 	var coverFilename string
 	if err == nil {
@@ -48,36 +55,34 @@ func Editor(w http.ResponseWriter, r *http.Request) {
 		io.Copy(out, coverFile)
 		coverFilename = coverHeader.Filename
 	} else {
-		coverFilename = "" // أو خليه بنفس القيمة القديمة فالـ DB
+		coverFilename = oldCover
 	}
 
 	avatarFile, avatarHeader, err := r.FormFile("avatar")
 	var avatarFilename string
 	if err == nil {
 		defer avatarFile.Close()
-		avatarPath := "../frontend/my-app/public/" + avatarHeader.Filename
+		avatarPath := "../frontend/my-app/public/uploads/" + avatarHeader.Filename
 		out, _ := os.Create(avatarPath)
 		defer out.Close()
 		io.Copy(out, avatarFile)
 		avatarFilename = avatarHeader.Filename
 	} else {
-		avatarFilename = "default.png"
+		avatarFilename = oldAvatar
 	}
 
-	// Update DB
 	_, err = repository.Db.Exec(`
-	UPDATE users
-	SET about = ?, privacy = ?, cover = ?, image = ?
-	WHERE id = ?`,
+		UPDATE users
+		SET about = ?, privacy = ?, cover = ?, image = ?
+		WHERE id = ?`,
 		displayName,
 		privacy,
 		coverFilename,
 		avatarFilename,
 		userid,
 	)
-
 	if err != nil {
-		http.Error(w, "DB error: "+err.Error(), http.StatusInternalServerError)
+		http.Error(w, "DB update error: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
 
