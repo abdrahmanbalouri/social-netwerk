@@ -9,7 +9,6 @@ import { useParams, useRouter } from 'next/navigation.js';
 import Post from '../../../components/Post.js';
 import Comment from '../../../components/coment.js';
 import { useProfile } from '../../../context/profile.js';
-import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
 import ProfileCardEditor from '../../../components/ProfileCardEditor.js';
 import { useWS } from "../../../context/wsContext.js";
 import Link from 'next/link';
@@ -654,7 +653,7 @@ export default function Profile() {
                   <hr/>
                   <div className="info">
                     <div className="item">
-                      <h3>About</h3>
+                      <h3>About :</h3>
                       <span>{theprofile.about}</span>
                     </div>
                   </div>
