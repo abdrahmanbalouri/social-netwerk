@@ -9,13 +9,10 @@ import { useParams, useRouter } from 'next/navigation.js';
 import Post from '../../../components/Post.js';
 import Comment from '../../../components/coment.js';
 import { useProfile } from '../../../context/profile.js';
-import LanguageIcon from "@mui/icons-material/Language";
 import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
-import MoreVertIcon from "@mui/icons-material/MoreVert";
 import ProfileCardEditor from '../../../components/ProfileCardEditor.js';
 import { useWS } from "../../../context/wsContext.js";
 import Link from 'next/link';
-import "../../../styles/scroll.css";
 import { middleware } from '../../../middleware/middelware.js';
 
 export default function Profile() {
@@ -89,6 +86,7 @@ export default function Profile() {
     loadProfile();
 
   }, []);
+  console.log("ededed", theprofile);
 
 
   async function followUser() {
@@ -549,18 +547,9 @@ export default function Profile() {
             <div className="images">
               <div
                 className="cover"
-                style={{ width: "100%", height: 300, background: "#eee" }}
               />
               <div
                 className="profilePic"
-                style={{
-                  width: 200,
-                  height: 200,
-                  background: "#ccc",
-                  borderRadius: "50%",
-                  margin: "0 auto",
-                  marginTop: -100,
-                }}
               />
             </div>
             <div className="profileContainer">
@@ -570,7 +559,7 @@ export default function Profile() {
                 </div>
               </div>
             </div>
-            <div className="posts" style={{ marginTop: 20 }}>
+            <div className="posts">
               {posts.length === 0 ? (
                 <p>No posts available</p>
               ) : (
@@ -633,41 +622,39 @@ export default function Profile() {
 
             <div className="profileContainer">
               <div className="uInfo">
-
-                { Profile && Profile.id !== theprofile.id  &&!theprofile.isFollowing && theprofile.privacy === "private" ? (
-                  <div className="left">
-                    <p>
-                      following
-                      <strong id="following">{theprofile.following} </strong>
-                    </p>
-                    <p>
-                      followers
-                      <strong id="followers"> {theprofile.followers}</strong>
-                    </p>
-                  </div>
-
-                ) : (
-                  <div className="left">
-                    <Link href={`/follow/${theprofile.id}?tab=following`}>
-
-                      <p>
-                        following <strong id="following">{theprofile.following}</strong>
-                      </p>
-                    </Link>
-                    <Link href={`/follow/${theprofile.id}?tab=followers`}>
-                      <p>
-                        followers <strong id="followers">{theprofile.followers}</strong>
-                      </p>
-                    </Link>
-                  </div>
-                )}
-
-
                 <div className="center">
-                  <span className="nickname">{theprofile.nickname}</span>
+                  <div className="comb"><h1 className="nickname">{theprofile.nickname}</h1><h1 className="privacy">{theprofile.privacy}</h1></div>
+                  {Profile && Profile.id !== theprofile.id && !theprofile.isFollowing && theprofile.privacy === "private" ? (
+                    <div className="left">
+                      <p>
+                        following
+                        <strong id="following">{theprofile.following} </strong>
+                      </p>
+                      <p>
+                        followers
+                        <strong id="followers"> {theprofile.followers}</strong>
+                      </p>
+                    </div>
+
+                  ) : (
+                    <div className="left">
+                      <Link href={`/follow/${theprofile.id}?tab=following`}>
+
+                        <p>
+                          following <strong id="following">{theprofile.following}</strong>
+                        </p>
+                      </Link>
+                      <Link href={`/follow/${theprofile.id}?tab=followers`}>
+                        <p>
+                          followers <strong id="followers">{theprofile.followers}</strong>
+                        </p>
+                      </Link>
+                    </div>
+                  )}
+                  <hr/>
                   <div className="info">
                     <div className="item">
-                      <LanguageIcon />
+                      <h3>About</h3>
                       <span>{theprofile.about}</span>
                     </div>
                   </div>
@@ -699,18 +686,15 @@ export default function Profile() {
                       }}
                     >
                       {PrFollow()}
-                    </button> 
+                    </button>
                   )}
                 </div>
 
                 <div className="right">
                   {Profile && Profile.id !== theprofile.id ? (
-                    <Link href={Profile.privacy  ? `/chat/${theprofile.id}` : '#'} >
-                      <EmailOutlinedIcon />
-                    </Link>
-
+                    ""
                   ) : (
-                    <MoreVertIcon onClick={handleShowPrivacy} />
+                    <i className="fa-solid fa-pen" onClick={handleShowPrivacy}></i>
                   )}
                 </div>
 
