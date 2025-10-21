@@ -39,23 +39,6 @@
     overflow-y: auto;
 }
 
-/* Custom Scrollbar */
-.userBar .usrs::-webkit-scrollbar {
-    width: 6px;
-}
-
-.userBar .usrs::-webkit-scrollbar-track {
-    background: transparent;
-}
-
-.userBar .usrs::-webkit-scrollbar-thumb {
-    background: #ccd0d5;
-    border-radius: 10px;
-}
-
-.userBar .usrs::-webkit-scrollbar-thumb:hover {
-    background: #1877f2;
-}
 
 /* Individual User Item */
 .userBar .user {
