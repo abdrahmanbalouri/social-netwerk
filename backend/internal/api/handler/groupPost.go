@@ -128,7 +128,7 @@ func CreatePostGroup(w http.ResponseWriter, r *http.Request) {
 	postID := helper.GenerateUUID()
 	createdAt := time.Now().UTC()
 	_, err = repository.Db.Exec(`
-        INSERT INTO posts (id, user_id, group_id, title, content, image_path, created_at)
+        INSERT INTO group_posts (id, user_id, group_id, title, content, image_path, created_at)
         VALUES (?, ?, ?, ?, ?, ?, ?)`,
 		postID, userID, GrpID, postData.Title, postData.Content, imagePath, createdAt,
 	)
@@ -179,26 +179,26 @@ func GetPostGroup(w http.ResponseWriter, r *http.Request) {
 	// query = `SELECT id, title, content, image_path, created_at, user_id FROM posts WHERE group_id = ?`
 	query = `
 	SELECT 
-    p.id, 
-    p.user_id, 
-    p.title, 
-    p.content, 
-    p.image_path, 
-    p.created_at, 
+    gp.id, 
+    gp.user_id, 
+    gp.title, 
+    gp.content, 
+    gp.image_path, 
+    gp.created_at, 
     u.nickname,
     u.image AS profile,
     COUNT(DISTINCT l.id) AS like_count,
     COUNT(DISTINCT CASE WHEN l.user_id = ? THEN l.id END) AS liked_by_user,
     COUNT(DISTINCT c.id) AS comments_count
-	FROM posts p
-	JOIN users u ON p.user_id = u.id
-	LEFT JOIN likes l ON p.id = l.liked_item_id AND l.liked_item_type = 'post'
-	LEFT JOIN comments c ON p.id = c.post_id
-	WHERE p.group_id = ?
+	FROM group_posts gp
+	JOIN users u ON gp.user_id = u.id
+	LEFT JOIN likes l ON gp.id = l.liked_item_id AND l.liked_item_type = 'post'
+	LEFT JOIN comments c ON gp.id = c.post_id
+	WHERE gp.group_id = ?
 	GROUP BY 
-    p.id, p.user_id, p.title, p.content, p.image_path, p.created_at, 
+    gp.id, gp.user_id, gp.title, gp.content, gp.image_path, gp.created_at, 
     u.nickname, u.image
-	ORDER BY p.created_at DESC;
+	ORDER BY gp.created_at DESC;
 `
 	rows, err := repository.Db.Query(query, userID, GrpId)
 	if err != nil {
