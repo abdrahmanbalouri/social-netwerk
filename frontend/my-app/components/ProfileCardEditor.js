@@ -1,18 +1,18 @@
-import React, { useRef, useState } from 'react';
-import './ProfileCardEditor.css';
+import { useRef, useState } from "react";
+import "../styles/ProfileCardEditor.css";
 
 export default function ProfileCardEditor({
-    showPrivacy,
-    initialCover = '',
-    initialAvatar = '',
-    initialPrivacy = 'public',
-    onSave = (state) => console.log('saved', state),
-
+    handleShowPrivacy,
+    initialCover = "",
+    initialAvatar = "",
+    initialAbout = "about",
+    initialPrivacy = "public",
+    onSave = (state) => console.log("saved", state),
 }) {
-    const [coverPreview, setCoverPreview] = useState(initialCover);
-    const [avatarPreview, setAvatarPreview] = useState(initialAvatar);
+    const [coverPreview, setCoverPreview] = useState("");
+    const [avatarPreview, setAvatarPreview] = useState("");
     const [privacy, setPrivacy] = useState(initialPrivacy);
-    const [displayName, setDisplayName] = useState('about');
+    const [displayName, setDisplayName] = useState(initialAbout);
     const coverInputRef = useRef(null);
     const avatarInputRef = useRef(null);
     const [saving, setSaving] = useState(false);
@@ -35,26 +35,36 @@ export default function ProfileCardEditor({
     }
 
     function clearCover() {
-        setCoverPreview('');
+        setCoverPreview("");
         if (coverInputRef.current) coverInputRef.current.value = null;
     }
 
     function clearAvatar() {
-        setAvatarPreview('');
+        setAvatarPreview("");
         if (avatarInputRef.current) avatarInputRef.current.value = null;
     }
 
     async function handleSave() {
         setSaving(true);
         const formData = new FormData();
-        formData.append("displayName", displayName);
-        formData.append("privacy", privacy);
+        
+        formData.append("displayName", displayName || initialAbout);
+        formData.append("privacy", privacy || initialPrivacy);
 
-        if (coverInputRef.current?.files[0]) {
+        if (coverInputRef.current.files[0]) {
             formData.append("cover", coverInputRef.current.files[0]);
+            console.log(coverInputRef.current.files[0]);
+            
+
+        } else if (initialCover) {
+            
+            formData.append("existingCover", initialCover);
         }
+
         if (avatarInputRef.current?.files[0]) {
             formData.append("avatar", avatarInputRef.current.files[0]);
+        } else if (initialAvatar) {
+            formData.append("existingAvatar", initialAvatar);
         }
 
         try {
@@ -64,27 +74,28 @@ export default function ProfileCardEditor({
                 body: formData,
             });
 
-            onSave({ displayName, privacy });
-            handleShowPrivacy()
+            onSave(formData);
+            handleShowPrivacy();
         } finally {
             setSaving(false);
         }
     }
-    function handleShowPrivacy() {
-        
-        showPrivacy = false
 
-    }
 
     return (
         <div className="profile-card">
             {/* Cover area */}
             <div className="cover">
-                {coverPreview ? (
-                    <img src={coverPreview} alt="cover" />
-                ) : (
-                    <div className="placeholder">Cover Image</div>
-                )}
+                <img
+                    src={
+                        coverPreview
+                            ? coverPreview
+                            : initialCover
+                                ? `/uploads/${initialCover}`
+                                : "https://images.pexels.com/photos/13440765/pexels-photo-13440765.jpeg"
+                    }
+                    alt="cover"
+                />
 
                 <div className="cover-actions">
                     <label className="btn">
@@ -107,11 +118,16 @@ export default function ProfileCardEditor({
             <div className="body">
                 <div className="avatar-section">
                     <div className="avatar-wrapper">
-                        {avatarPreview ? (
-                            <img src={avatarPreview} alt="avatar" className="avatar" />
-                        ) : (
-                            <div className="placeholder">Avatar</div>
-                        )}
+                        <img
+                            src={
+                                avatarPreview
+                                    ? avatarPreview
+                                    : initialAvatar
+                                        ? `/uploads/${initialAvatar}`
+                                        : "/uploads/default.png"
+                            }
+                            className="avatar"
+                        />
 
                         <div className="avatar-actions">
                             <label className="btn small">
@@ -135,7 +151,7 @@ export default function ProfileCardEditor({
                             value={displayName}
                             onChange={(e) => setDisplayName(e.target.value)}
                             className="display-name"
-                            aria-label="Display Name"
+                            aria-label="About"
                         />
                         <p className="subtext">Short bio or user title</p>
                     </div>
@@ -150,28 +166,17 @@ export default function ProfileCardEditor({
                             className="select"
                         >
                             <option value="public">Public</option>
-                            <option value="friends">Friends</option>
                             <option value="private">Private</option>
                         </select>
                     </label>
 
-                    
-
                     <div className="actions">
                         <button
-                            onClick={() => {
-                                setCoverPreview(initialCover);
-                                setAvatarPreview(initialAvatar);
-                                setPrivacy(initialPrivacy);
-                            }}
-                            className="btn"
+                            onClick={handleSave}
+                            className="btn primary"
+                            disabled={saving}
                         >
-                            Cancel
-                        </button>
-
-                        <button onClick={handleSave} className="btn primary" disabled={saving}>
-                            {saving ? 'Saving...' : 'Save changes'}
-
+                            {saving ? "Saving..." : "Save changes"}
                         </button>
                     </div>
                 </div>

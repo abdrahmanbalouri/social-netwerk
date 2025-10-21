@@ -1,0 +1,241 @@
+/* UserBar Container */
+.userBar {
+    position: sticky;
+    right: 20px;
+    top: 70px;
+    /* Adjust based on your navbar height */
+    width: 400px;
+    height: calc(100vh - 90px);
+    background: linear-gradient(to bottom, #ffffff 0%, #f8f9fa 100%);
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.05);
+    z-index: 100;
+    overflow: hidden;
+    border-radius: 12px;
+}
+
+/* Users Container */
+.userBar .usrs {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    padding: 20px 16px;
+}
+
+/* Title */
+.userBar .usrs>span {
+    font-size: 16px;
+    font-weight: 700;
+    color: #0070f3;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 12px 8px;
+    margin-bottom: 12px;
+    text-align: center;
+    border-bottom: 2px solid #e4e6eb;
+}
+
+/* Users List - Scrollable */
+.userBar .usrs {
+    overflow-y: auto;
+}
+
+/* Custom Scrollbar */
+.userBar .usrs::-webkit-scrollbar {
+    width: 6px;
+}
+
+.userBar .usrs::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.userBar .usrs::-webkit-scrollbar-thumb {
+    background: #ccd0d5;
+    border-radius: 10px;
+}
+
+.userBar .usrs::-webkit-scrollbar-thumb:hover {
+    background: #1877f2;
+}
+
+/* Individual User Item */
+.userBar .user {
+    margin-bottom: 4px;
+}
+
+.userBar .userInfo {
+    width: 100%;
+}
+
+
+
+.userBar .userDetails {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    position: relative;
+    transition: all 0.2s ease;
+    background: #ffffff;
+    border: 1px solid transparent;
+}
+
+.userBar .userDetails:hover {
+    background: linear-gradient(135deg, #f0f2f5 0%, #e4e6eb 100%);
+    border-color: #1877f2;
+    transform: translateX(-4px);
+    box-shadow: 0 2px 8px rgba(24, 119, 242, 0.15);
+}
+
+/* User Avatar */
+.userBar .userDetails img {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #e4e6eb;
+    transition: border-color 0.2s;
+}
+
+.userBar .userDetails:hover img {
+    border-color: #1877f2;
+}
+
+/* Online Status Indicator */
+.userBar .online,
+.userBar .offline {
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    bottom: 12px;
+    left: 42px;
+    border: 1px solid #ffffff;
+}
+
+.userBar .offline {
+    background: gray;
+    box-shadow: 0 0 8px rgba(128, 128, 128, 0.6);
+}
+
+.userBar .online {
+    background: #42b72a;
+    box-shadow: 0 0 8px rgba(66, 183, 42, 0.6);
+}
+
+
+/* User Name */
+.userBar .userDetails span {
+    font-size: 14px;
+    font-weight: 600;
+    color: #1c1e21;
+    transition: color 0.2s;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    flex: 1;
+}
+
+.userBar .userDetails:hover span {
+    color: #1877f2;
+}
+
+/* No Users Message */
+.userBar .usrs h1 {
+    font-size: 14px;
+    font-weight: 400;
+    color: #8a8d91;
+    text-align: center;
+    padding: 40px 20px;
+    margin: 0;
+    background: #f8f9fa;
+    border-radius: 12px;
+    border: 1px dashed #ccd0d5;
+}
+
+/* Active State (when user is selected) */
+.userBar .userDetails.active {
+    background: linear-gradient(135deg, #1877f2 0%, #0c63d4 100%);
+    border-color: #0c63d4;
+}
+
+.userBar .userDetails.active span {
+    color: #ffffff;
+}
+
+.userBar .userDetails.active img {
+    border-color: #ffffff;
+}
+
+/* Responsive */
+@media (max-width: 1200px) {
+    .userBar {
+        width: 260px;
+    }
+
+    .userBar .userDetails {
+        padding: 8px 10px;
+    }
+
+    .userBar .userDetails img {
+        width: 38px;
+        height: 38px;
+    }
+
+    .userBar .online {
+        width: 10px;
+        height: 10px;
+        left: 38px;
+    }
+}
+
+@media (max-width: 992px) {
+    .userBar {
+        display: none;
+    }
+}
+
+/* Loading State */
+.userBar .user.loading .userDetails {
+    opacity: 0.6;
+    cursor: wait;
+    background: #f0f2f5;
+}
+
+/* Add subtle entrance animation */
+.userBar .user {
+    animation: slideIn 0.3s ease forwards;
+    opacity: 0;
+}
+
+.userBar .user:nth-child(1) {
+    animation-delay: 0.05s;
+}
+
+.userBar .user:nth-child(2) {
+    animation-delay: 0.1s;
+}
+
+.userBar .user:nth-child(3) {
+    animation-delay: 0.15s;
+}
+
+.userBar .user:nth-child(4) {
+    animation-delay: 0.2s;
+}
+
+.userBar .user:nth-child(5) {
+    animation-delay: 0.25s;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateX(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}

@@ -1,29 +1,12 @@
-/* 🎨 Themes */
-.theme-light .profile {
-  --textColor: #000;
-  --bg: white;
-  --logo: darkblue;
-  --bgSoft: #f6f3f3;
-  --textColorSoft: #555;
-  --border: lightgray;
-}
-
-.theme-dark .profile {
-  --textColor: whitesmoke;
-  --bg: #222;
-  --logo: white;
-  --bgSoft: #333;
-  --textColorSoft: lightgray;
-  --border: #444;
-}
-
 .content {
   justify-content: space-between;
   gap: 2rem;
   padding: 20px;
   display: flex;
 }
-
+.main-section {
+  flex: 8;
+}
 /* 📌 Profile */
 .profile {
   flex: 6;
@@ -163,42 +146,6 @@
   gap: 10px;
 }
 
-
-
-
-/* Error message */
-.error2 {
-  color: red;
-  font-size: 0.9rem;
-  margin-bottom: 10px;
-}
-
-/* Post title */
-#popup-post-title {
-  font-size: 1.25rem;
-  font-weight: bold;
-  margin-bottom: 15px;
-}
-
-
-
-/* Comment form */
-.form-group textarea {
-  width: 100%;
-  padding: 10px;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-  resize: vertical;
-  min-height: 80px;
-}
-
-.form-group textarea:focus {
-  outline: none;
-  border-color: #2563eb;
-  /* blue */
-  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
-}
-
 /* Submit button */
 button[type="submit"] {
   background-color: #2563eb;
@@ -237,27 +184,4 @@ button[type="submit"]:hover {
     transform: translateY(0);
     opacity: 1;
   }
-}
-
-.theme-dark .container {
-  background-color: var(--bg-dark);
-  color: var(--text-dark);
-}
-
-.theme-dark .post {
-  background-color: var(--bg-dark);
-  color: var(--text-dark);
-}
-
-.theme-dark span {
-  color: var(--text-dark);
-}
-
-.container .userInfo img {
-  object-fit: cover;
-  border-radius: 50%;
-  width: 40px;
-  height: 40px;
-
-
 }

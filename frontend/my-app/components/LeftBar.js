@@ -3,16 +3,19 @@
 import { useRouter } from 'next/navigation';
 import { useProfile } from '../context/profile';
 import Link from 'next/link';
+import { useWS } from "../context/wsContext.js";
+import "../styles/leftbar.css"
 
 
 export default function LeftBar({ showSidebar }) {
   const router = useRouter();
   const { Profile } = useProfile();
-
+  const { sendMessage } = useWS();
   async function handleLogout(e) {
     e?.preventDefault?.();
+    sendMessage({ type: "logout" })
     try {
-      await fetch('/api/logout', { method: 'POST', credentials: 'include' });
+      await fetch('http://localhost:8080/api/logout', { method: 'POST', credentials: 'include' });
     } catch (err) {
       // ignore network errors here; still redirect
       console.error('Logout failed', err);
@@ -39,68 +42,76 @@ export default function LeftBar({ showSidebar }) {
 
   return (
     <div className="leftBar">
-      <div className="container">
-        <div className="menu">
-          <div className="user">
-            <img
-              src={Profile?.image ? `/uploads/${Profile.image}` : '/uploads/default.png'}
-              alt="user avatar"
-            />
-            <span>{Profile?.nickname ?? 'user name'}</span>
-          </div>
+      <div className="menu">
+        <div className="user">
+          <img
+            src={Profile?.image ? `/uploads/${Profile.image}` : '/uploads/default.png'}
+            alt="user avatar"
+          />
+          <span>{Profile?.nickname ?? 'user name'}</span>
+        </div>
+        <Link href={`/follow/${Profile?.id}?tab=following`}  >
           <div className="item">
             <img src="/icone/1.png" alt="" />
             <span>following</span>
           </div>
+        </Link>
+        <Link href={`/follow/${Profile?.id}?tab=followers`} >
           <div className="item">
+
             <img src="/icone/1.png" alt="" />
+
             <span>followers</span>
           </div>
+        </Link>
+        <Link href='/groups'>
           <div className="item">
             <img src="/icone/2.png" alt="" />
-            <Link href={"/groups"}> Groups</Link>
-            {/* <span>Groups</span> */}
+            <span>Groups</span>
           </div>
+        </Link>
+        <Link href='/watch'>
           <div className="item">
-            <Link href={'/watch'}>
-              <img src="/icone/4.png" alt="" />
-            </Link>
-              <span>Watch</span>
+            <img src="/icone/4.png" alt="" />
+            <span>Watch</span>
           </div>
+        </Link>
 
+      </div>
+      <hr />
+      <div className="menu">
+        <span>Your shortcuts</span>
+        <div className="item">
+          <img src="/icone/6.png" alt="" />
+          <span>Events</span>
         </div>
-        <hr />
-        <div className="menu">
-          <span>Your shortcuts</span>
+        <Link href='/games'>
           <div className="item">
-            <img src="/icone/6.png" alt="" />
-            <span>Events</span>
-          </div>
-          <div className="item">
-            <Link href={'/games'}>
-              <img src="/icone/7.png" alt="" />
-            </Link>
+            <img src="/icone/7.png" alt="" />
             <span>Gaming</span>
           </div>
+        </Link>
+        <Link href='/Gallery'>
           <div className="item">
-            <Link href={'/Gallery'}>
-              <img src="/icone/8.png" alt="" />
-            </Link>
+            <img src="/icone/8.png" alt="" />
             <span>Gallery</span>
           </div>
+        </Link>
+        <Link href="/chat/0">
           <div className="item">
             <img src="/icone/10.png" alt="" />
             <span>Messages</span>
           </div>
-        </div>
-        <hr />
+        </Link>
+      </div>
 
-        <div style={{ display: 'flex', justifyContent: 'center' }}>
-          <button onClick={handleLogout} style={logoutStyle} aria-label="Logout">
-            <i className="fa-solid fa-right-from-bracket" />
-            <span>Logout</span>
-          </button>
-        </div>
+      <hr />
+
+      <div>
+        <button onClick={handleLogout} style={logoutStyle} aria-label="Logout">
+          <i className="fa-solid fa-right-from-bracket" />
+          <span>Logout</span>
+        </button>
       </div>
     </div>
   );
