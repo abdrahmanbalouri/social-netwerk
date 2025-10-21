@@ -3,6 +3,7 @@ import "../styles/createGroup.css"
 import { createGroup } from '../app/groups/page';
 
 export function CreateGroupForm({ users, onSubmit, onCancel }) {
+    console.log("useeeeers are :", users);
     const [groupTitle, setGroupTitle] = useState('');
     const [groupDescription, setGroupDescription] = useState('');
     const [searchQuery, setSearchQuery] = useState('');
@@ -43,6 +44,7 @@ export function CreateGroupForm({ users, onSubmit, onCancel }) {
         };
 
         onSubmit(groupData);
+        onSubmit(selectedUsers);
 
         // Reset form after submission
         setGroupTitle('');
@@ -169,6 +171,7 @@ export function CreateGroupForm({ users, onSubmit, onCancel }) {
 export function GroupCreationTrigger() {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [showNoGroups, setShowNoGroups] = useState(true);
+    const [userList, setUserList] = useState([]);
 
     const handlePostClick = () => {
         setShowNoGroups(false);
@@ -178,8 +181,18 @@ export function GroupCreationTrigger() {
         setIsModalOpen(false);
         setShowNoGroups(true);
     };
-
-    const userList = []
+    useEffect(() => {
+        fetch('http://localhost:8080/api/followers/', {
+            method: 'GET',
+            credentials: 'include',
+        })
+        .then(res => res.json())
+        .then(data => setUserList(data))
+        .catch (error => {
+            console.error("Failed to fetch users when creating a grouup:", error);
+        })
+    }, [])
+    console.log("usssssseeers are :", userList);
     return (
         <>
             <div className="create-post-container">
