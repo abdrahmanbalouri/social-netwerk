@@ -237,19 +237,17 @@ hr {
 
 
 .privacy-overlay {
+  width: 100vw;
+  height: 100vh;
   position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.288);
-  backdrop-filter: blur(8px);
+  background: rgba(0, 0, 0, 0.603);
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 1000000000;
-}
-.privacy-backdrop{
-  position: fixed;
+  z-index: 1000;
   inset: 0;
 }
+
 
 
 i {
