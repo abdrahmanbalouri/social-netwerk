@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"fmt"
 	"net/http"
 
 	"social-network/internal/helper"
@@ -20,6 +19,7 @@ func ProfileHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Authentication required", http.StatusUnauthorized)
 		return
 	}
+
 	if targetUserID == "0" || targetUserID == "" {
 		targetUserID = currentUserID
 	}
@@ -39,7 +39,7 @@ SELECT
     END AS is_following
 FROM users u
 LEFT JOIN followers f 
-    ON f.user_id = ? AND f.follower_id = u.id
+    ON f.user_id = u.id AND f.follower_id = ?
 WHERE u.id = ?;
 `
 
@@ -67,27 +67,30 @@ WHERE u.id = ?;
 		&user.IsFollowing,
 	)
 	if err != nil {
-		fmt.Println("err", err)
 		http.Error(w, "User not found", http.StatusNotFound)
 		return
 	}
-	fmt.Println("user", user.IsFollowing)
 
-	var followers int
-
-	errr := repository.Db.QueryRow(`SELECT COUNT(*) FROM followers WHERE user_id = ?  `, targetUserID).Scan(&followers)
-	if errr != nil {
-		fmt.Println(errr)
+	var followers, following int
+	if err = repository.Db.QueryRow(`SELECT COUNT(*) FROM followers WHERE user_id = ?`, targetUserID).Scan(&followers); err != nil {
+		http.Error(w, "Failed to count followers", http.StatusInternalServerError)
+		return
+	}
+	if err = repository.Db.QueryRow(`SELECT COUNT(*) FROM followers WHERE follower_id = ?`, targetUserID).Scan(&following); err != nil {
+		http.Error(w, "Failed to count following", http.StatusInternalServerError)
 		return
 	}
 
-	var following int
-
-	errr = repository.Db.QueryRow(`SELECT COUNT(*) FROM followers WHERE follower_id = ?  `, targetUserID).Scan(&following)
-	if errr != nil {
-		fmt.Println(errr)
+	var isPending bool
+	if err = repository.Db.QueryRow(`
+		SELECT EXISTS(
+			SELECT 1 FROM follow_requests 
+			WHERE user_id = ? AND follower_id = ?
+		)`, targetUserID, currentUserID).Scan(&isPending); err != nil {
+		http.Error(w, "Failed to check pending status", http.StatusInternalServerError)
 		return
 	}
+
 	profileData := map[string]interface{}{
 		"id":          user.ID,
 		"nickname":    user.Nickname,
@@ -97,6 +100,7 @@ WHERE u.id = ?;
 		"image":       user.Image,
 		"cover":       user.Cover,
 		"isFollowing": user.IsFollowing,
+		"isPending":   isPending,
 		"following":   following,
 		"followers":   followers,
 	}

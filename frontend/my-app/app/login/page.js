@@ -10,17 +10,23 @@ export default function Login() {
   const [err, setErr] = useState("");
 
   async function submit(e) {
-    e.preventDefault();
-    const res = await fetch("http://localhost:8080/api/login", {
-      method: "POST",
-      credentials: "include",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(form),
-    });
+    try {
+
+      e.preventDefault();
+      const res = await fetch("http://localhost:8080/api/login", {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      });
 
 
-    if (!res.ok) return setErr(await res.text());
-    window.location.href = "/home";
+      if (!res.ok) return setErr(await res.text());
+      window.location.href = "/home";
+    }catch (error) {
+      setErr(error.message);
+      console.log("Login error:", error);
+    }
   }
 
   return (

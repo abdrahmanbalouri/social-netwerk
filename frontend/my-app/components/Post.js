@@ -1,5 +1,7 @@
 // Post.js
 import Link from 'next/link';
+import "../styles/post.css"
+
 
 export default function Post({ post, onGetComments, ondolike }) {
   
@@ -19,10 +21,11 @@ export default function Post({ post, onGetComments, ondolike }) {
             </div>
           </div>
         </div>
-        <div className="content">
+        <div className="content1">
           <h3>
             <p style={{ color: "#5271ff" }}>{post.title}</p>
-            {post.content}
+
+          <strong className ="content2">{post.content}</strong>
           </h3>
           {post.image_path && <img src={`/${post.image_path}`} alt="Post content" />}
         </div>
@@ -34,7 +37,12 @@ export default function Post({ post, onGetComments, ondolike }) {
             />
             {post.like || 0} Likes
           </div>
-          <div className="item" onClick={() => onGetComments(post)}>
+          <div className="item" onClick={() => { onGetComments(post)
+
+            
+          }
+        
+        }>
             <i className="fa-solid fa-comment"></i> {post.comments_count || 0} Comments
           </div>
         </div>
