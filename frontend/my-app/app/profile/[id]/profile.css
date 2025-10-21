@@ -246,6 +246,10 @@ hr {
   justify-content: center;
   z-index: 1000000000;
 }
+.privacy-backdrop{
+  position: fixed;
+  inset: 0;
+}
 
 
 i {
