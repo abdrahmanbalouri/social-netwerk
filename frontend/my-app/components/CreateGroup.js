@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import "../styles/createGroup.css"
+import "../styles/groupstyle.css"
 import { createGroup } from '../app/groups/page';
 
 export function CreateGroupForm({ users, onSubmit, onCancel }) {
@@ -120,7 +120,7 @@ export function CreateGroupForm({ users, onSubmit, onCancel }) {
                                 id="inviteUsers"
                                 type="text"
                                 value={searchQuery}
-                                onClick={() => setShowSuggestions(prev => !prev)} 
+                                onClick={() => setShowSuggestions(prev => !prev)}
                                 onChange={(e) => setSearchQuery(e.target.value)}
                                 placeholder="Search users to invite..."
                                 className="form-input search-input"
@@ -192,13 +192,13 @@ export function GroupCreationTrigger() {
                     credentials: 'include',
                 });
                 const userData = await resUser.json();
-    
+
                 const resFollowers = await fetch(`http://localhost:8080/api/followers?id=${userData.user_id}`, {
                     method: 'GET',
                     credentials: 'include',
                 });
                 const followersData = await resFollowers.json();
-    
+
                 setUserList(followersData);
             } catch (error) {
                 console.error("Failed to fetch users when creating a group:", error);
@@ -207,26 +207,23 @@ export function GroupCreationTrigger() {
 
         fetchData();
     }, []);
-    
+
 
     console.log("usssssseeers are :", userList);
     return (
-        <>
-            <div className="create-post-container">
-                <div className="create-post-card">
-                    <div className="create-post-header">
-                        <div className="user-avatar">
-                            <span>User</span>
-                        </div>
-                        <input
-                            type="text"
-                            placeholder="DO you want to create a group ? just click here !"
-                            className="post-input"
-                            onClick={handlePostClick}
-                            readOnly
-                        />
-                    </div>
+
+        <div className="create-post-container">
+            <div className="create-post-header">
+                <div className="user-avatar">
+                    <span>User</span>
                 </div>
+                <input
+                    type="text"
+                    placeholder="DO you want to create a group ? just click here !"
+                    className="post-input"
+                    onClick={handlePostClick}
+                    readOnly
+                />
             </div>
             {isModalOpen && (
                 <CreateGroupForm
@@ -236,12 +233,11 @@ export function GroupCreationTrigger() {
                 />
             )}
             {/* {showNoGroups && (
-                <div className="no-groups">
-                    You don’t have any groups yet. Click above to create one!
-                </div>
-            )} */}
-
-        </>
+                    <div className="no-groups">
+                        You don’t have any groups yet. Click above to create one!
+                    </div>
+                )} */}
+        </div>
     )
 }
 
