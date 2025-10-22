@@ -6,7 +6,7 @@
   flex-direction: column;
 }
 
-.profile  {
+.profile {
   width: 90%;
   max-width: 800px;
   background-color: var(--bg);
@@ -16,10 +16,11 @@
   margin-bottom: 30px;
   border: 1px solid var(--border);
 }
-.feed{
 
+.feed {
   width: 100%;
 }
+
 .profile:hover {
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
 }
