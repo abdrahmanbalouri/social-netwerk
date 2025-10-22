@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import "../styles/createPostGroup.css"
 import { CreatePost } from '../app/groups/[id]/page.js';
+import "../styles/groupstyle.css"
 import { useParams } from "next/navigation";
 
 
