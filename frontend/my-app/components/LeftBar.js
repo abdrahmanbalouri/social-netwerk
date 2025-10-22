@@ -41,7 +41,7 @@ export default function LeftBar({ showSidebar }) {
   };
 
   return (
-    <div className="leftBar">
+    <div className="leftBar" id="leftBar" style={{ display: showSidebar ? 'block' : 'none' }}>
       <div className="menu">
         <div className="user">
           <img
