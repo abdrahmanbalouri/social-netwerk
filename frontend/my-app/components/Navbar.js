@@ -98,7 +98,7 @@ export default function Navbar({ onCreatePost }) {
   return (
     <div className="navbar">
       <div className="left">
-        <i class="fa-solid fa-bars" id="menu" onClick={disply}></i>
+        <i className="fa-solid fa-bars" id="menu" onClick={disply}></i>
         <Link href="/home">
           <span>Social-Network</span>
         </Link>
