@@ -234,7 +234,7 @@ export default function Comment({ comments, isOpen, onClose, postId, onCommentCh
 
                       {comment.media_path && (
                         comment.media_path.endsWith(".mp4") || comment.media_path.endsWith(".webm") ? (
-                          <video controls className="cm-media">
+                          <video controls className="cm-media" loop autoPlay>
                             <source src={`../${comment.media_path}`} type="video/mp4" />
                             Your browser does not support the video tag.
                           </video>

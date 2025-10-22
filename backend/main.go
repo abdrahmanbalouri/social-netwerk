@@ -2,7 +2,6 @@ package main
 
 import (
 	"database/sql"
-	"fmt"
 	"log"
 	"net/http"
 
@@ -58,7 +57,7 @@ func main() {
 		Handler: handler,
 	}
 
-	var rr []string
+	/* var rr []string
 	row, _ := repository.Db.Query(`select id from users where id !=  '847334d1-e080-4536-bdb4-256708383ef0'`)
 
 	for row.Next() {
@@ -73,7 +72,7 @@ func main() {
 			fmt.Println("erfref", err)
 			continue
 		}
-	}
+	} */
 
 	log.Println("http://localhost:8080/")
 	err = server.ListenAndServe()
