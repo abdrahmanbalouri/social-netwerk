@@ -1,17 +1,28 @@
 .leftBar {
+  /* configurable widths for easy tweaks */
+  --leftbar-width: 280px;
+  margin: 0 20px;
   position: sticky;
   left: 0;
-  top: 70px;
-  width: 280px;
-  height: calc(100vh - 90px);
+  top: var(--leftbar-top, 70px);
+  width: var(--leftbar-width);
+  height: calc(100vh - (var(--leftbar-top, 70px) + 20px));
   overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  /* smooth scrolling on iOS/touch */
   background-color: var(--bg);
   box-shadow: 2px 0 10px rgba(0, 0, 0, 0.05);
   padding: 10px;
   border-radius: 12px;
   z-index: 100;
+  transition: width 200ms ease, transform 200ms ease, opacity 150ms ease;
 }
 
+
+
+.span {
+  display: block;
+}
 
 .leftBar .menu {
   display: flex;
@@ -62,7 +73,9 @@
   padding: 12px;
   border-radius: 8px;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: background 200ms ease, transform 200ms ease;
+  min-height: 44px;
+  /* better hit target */
 }
 
 .leftBar .menu .item:hover {
@@ -122,7 +135,7 @@ button[aria-label="Logout"] {
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: transform 150ms ease, box-shadow 150ms ease;
   box-shadow: 0 4px 12px rgba(238, 90, 111, 0.3);
   width: 100%;
   justify-content: center;
@@ -142,25 +155,51 @@ button[aria-label="Logout"] i {
   font-size: 16px;
 }
 
-/* Responsive */
-@media (max-width: 992px) {
+@media (max-width: 1000px) {
+
+  /* collapse to icon-only left bar */
   .leftBar {
-    width: 240px;
+    --leftbar-width: 72px;
+    width: var(--leftbar-width);
+    margin: 0 10px;
+  }
+
+  .leftBar .menu .item {
+    justify-content: center;
+    padding: 10px 8px;
+  }
+
+  /* only hide labels inside menu items and user name - keep structural spans (like section headers) visible */
+  .leftBar .menu .item span,
+  .leftBar .menu .user span,
+  button[aria-label="Logout"] span {
+    display: none;
+  }
+
+  /* make section heading compact and centered */
+  .leftBar .menu>span {
+    text-align: center;
+    font-size: 11px;
+    padding: 8px 4px;
   }
 }
 
+@media (min-width: 768px) {
+  #leftBar {
+    display: block;
+  }
+
+}
+
+/* small screens: hide by default (app can provide alternative nav) */
 @media (max-width: 768px) {
   .leftBar {
     display: none;
   }
+
 }
 
-.leftBar .menu {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-  margin-bottom: 20px;
-}
+/* (duplicate removed) */
 
 @media (max-height: 870px) {
   .leftBar .menu {
