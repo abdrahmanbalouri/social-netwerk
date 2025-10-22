@@ -3,9 +3,8 @@ import Navbar from '../../components/Navbar.js';
 import { useEffect, useState } from "react";
 import "./page.css"
 import { useRouter } from 'next/navigation'
-
-import Link from 'next/link'
-import styles from './page.css';
+import { GroupCreationTrigger } from '../../components/CreateGroup.js';
+import { GroupsTabs } from '../../components/groupTabs.js';
 
 
 export default function () {
@@ -18,29 +17,7 @@ export default function () {
     )
 }
 
-function GroupsTabs() {
-    const [activeTab, setActiveTab] = useState('my-groups');
-    return (
-        <>
-            <div className='tabs-container '>
-                <button className={activeTab === 'my-groups' ? 'tab-button active' : 'tab-button'}
-                    onClick={() => setActiveTab('my-groups')}>My Groups</button>
-                <button className={activeTab === 'all-groups' ? 'tab-button active' : 'tab-button'}
-                    onClick={() => setActiveTab('all-groups')}>All Groups</button>
-            </div>
-
-            {/* <div className="group-container"> */}
-            {activeTab === 'my-groups' ? (
-                <MyGroups />
-            ) : (
-                <AllGroups />
-            )}
-            {/* </div> */}
-        </>
-    );
-}
-
-function AllGroups() {
+export function AllGroups() {
     const [group, setGroup] = useState(null);
     const [loading, setLoading] = useState(true);
 
@@ -62,9 +39,8 @@ function AllGroups() {
             });
     }, [])
     if (!group) {
-        return <div>No group data available.</div>;
+        return <div>You don’t have any groups yet. Go create One ! </div>;
     }
-    console.log("heeey: ", group)
     return (
         <div className="group-container">
             {group.map(grp => (
@@ -82,18 +58,15 @@ function AllGroups() {
     )
 }
 
-
-function MyGroups() {
+export function MyGroups() {
     const [group, setGroup] = useState(null);
     const [loading, setLoading] = useState(true);
     const router = useRouter()
+    
     const handleShow = (group) => {
-        console.log("grouuuuuup is :", group);
-        localStorage.setItem('selectedGroup', JSON.stringify(group))
-        router.push('/groups/posts')
-    }
-
-
+        router.push(`/groups/${group}`);
+    };
+    
 
     useEffect(() => {
         fetch('http://localhost:8080/myGroups', {
@@ -112,10 +85,15 @@ function MyGroups() {
             });
     }, [])
     if (!group) {
-        return <div>No group data available.</div>;
+        return (
+            <div>
+                <GroupCreationTrigger />
+            </div>
+        )
     }
     return (
         <div className="group-container">
+            <GroupCreationTrigger />
             {group.map(grp => (
                 <div key={grp.ID} className="group-card">
                     <div className="group-content">
@@ -129,4 +107,22 @@ function MyGroups() {
             ))}
         </div>
     )
+}
+
+export function createGroup(formData) {
+    return fetch('http://localhost:8080/api/groups/add', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify(formData),
+    })
+        .then(res => {
+            if (!res.ok) throw new Error('Failed to create group');
+            return res.json();
+        })
+        .then(data => data)
+        .catch(error => {
+            console.error('Failed to create new group:', error);
+            throw error;
+        });
 }
