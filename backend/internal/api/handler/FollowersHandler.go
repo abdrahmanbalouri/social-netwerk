@@ -9,14 +9,12 @@ import (
 )
 
 func FollowersHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("followeeeeerrs habdleeeeeeer")
 	UserID, err := helper.AuthenticateUser(r)
 	if err != nil {
-		http.Error(w, "Unauthorized: "+err.Error(), http.StatusUnauthorized)
+		http.Error(w, "Unauthorized: "+ err.Error(), http.StatusUnauthorized)
 		return
 	}
 
-	fmt.Println("11111111")
 	id := r.URL.Query().Get("id")
 	if id == "" {
 		http.Error(w, "Missing user ID", http.StatusBadRequest)
@@ -42,7 +40,6 @@ WHERE u.id = ?;
 		fmt.Println("errrrrrrrrrrrrrrrrrrrrrrrrrrrrr", err)
 		return
 	}
-	fmt.Println("2222222222")
 	if privacy == "private" && isFollowing == 0 && UserID != id {
 		helper.RespondWithJSON(w, http.StatusUnauthorized, "errrrrrrrrrrrrorrororororroororo")
 		return
@@ -60,12 +57,11 @@ WHERE u.id = ?;
 	}
 	defer rows.Close()
 
-	fmt.Println("33333333")
 	var followers []map[string]interface{}
 	for rows.Next() {
-		fmt.Println("5555555")
 		var username, profilePicture, idU string
 		if err := rows.Scan(&idU, &username, &profilePicture); err != nil {
+			fmt.Println("hna 4")
 			http.Error(w, "Database error: "+err.Error(), http.StatusInternalServerError)
 			return
 		}
@@ -76,8 +72,6 @@ WHERE u.id = ?;
 		}
 		followers = append(followers, follower)
 	}
-
-	fmt.Println("folloooooooowers aaaaarrrrrrreeeee :", followers)
 
 	helper.RespondWithJSON(w, http.StatusOK, followers)
 }
