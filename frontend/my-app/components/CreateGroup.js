@@ -8,20 +8,20 @@ export function CreateGroupForm({ users, onSubmit, onCancel }) {
     const [groupDescription, setGroupDescription] = useState('');
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedUsers, setSelectedUsers] = useState([]);
-    const [filteredUsers, setFilteredUsers] = useState([]);
+    const [showSuggestions, setShowSuggestions] = useState(false);
 
     // Filter users based on search query
-    useEffect(() => {
-        if (searchQuery.trim()) {
-            const filtered = users.filter(user =>
-                user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                user.username.toLowerCase().includes(searchQuery.toLowerCase())
-            );
-            setFilteredUsers(filtered);
-        } else {
-            setFilteredUsers([]);
-        }
-    }, [searchQuery, users]);
+    // useEffect(() => {
+    //     if (searchQuery.trim()) {
+    //         const filtered = users.filter(user =>
+    //             user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    //             user.username.toLowerCase().includes(searchQuery.toLowerCase())
+    //         );
+    //         setFilteredUsers(filtered);
+    //     } else {
+    //         setFilteredUsers([]);
+    //     }
+    // }, [searchQuery, users]);
 
     const handleUserSelect = (user) => {
         if (!selectedUsers.find(u => u.id === user.id)) {
@@ -53,6 +53,8 @@ export function CreateGroupForm({ users, onSubmit, onCancel }) {
         setSearchQuery('');
     };
 
+    console.log("filterd users areeeee :", users);
+
     return (
         <div className="create-group-form-container">
             <div className="create-group-form-card">
@@ -83,6 +85,7 @@ export function CreateGroupForm({ users, onSubmit, onCancel }) {
                             placeholder="What's your group about?"
                             className="form-textarea"
                             rows="4"
+                            required
                         />
                     </div>
 
@@ -96,7 +99,7 @@ export function CreateGroupForm({ users, onSubmit, onCancel }) {
                                 {selectedUsers.map(user => (
                                     <div key={user.id} className="selected-user-tag">
                                         <span className="user-avatar-small">
-                                            {user.name.charAt(0).toUpperCase()}
+                                            {user.nickname.charAt(0).toUpperCase()}
                                         </span>
                                         <span>{user.name}</span>
                                         <button
@@ -117,26 +120,26 @@ export function CreateGroupForm({ users, onSubmit, onCancel }) {
                                 id="inviteUsers"
                                 type="text"
                                 value={searchQuery}
+                                onClick={() => setShowSuggestions(prev => !prev)} 
                                 onChange={(e) => setSearchQuery(e.target.value)}
                                 placeholder="Search users to invite..."
                                 className="form-input search-input"
                             />
 
                             {/* User Suggestions */}
-                            {filteredUsers.length > 0 && (
+                            {showSuggestions && users.length > 0 && (
                                 <div className="user-suggestions">
-                                    {filteredUsers.map(user => (
+                                    {users.map(user => (
                                         <div
                                             key={user.id}
                                             onClick={() => handleUserSelect(user)}
                                             className="user-suggestion-item"
                                         >
                                             <div className="user-avatar-small">
-                                                {user.name.charAt(0).toUpperCase()}
+                                                {user.nickname.charAt(0).toUpperCase()}
                                             </div>
                                             <div className="user-info">
-                                                <div className="user-name">{user.name}</div>
-                                                <div className="user-username">@{user.username}</div>
+                                                <div className="user-name">{user.nickname}</div>
                                             </div>
                                         </div>
                                     ))}
@@ -172,6 +175,7 @@ export function GroupCreationTrigger() {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [showNoGroups, setShowNoGroups] = useState(true);
     const [userList, setUserList] = useState([]);
+    const [userID, setUserID] = useState('')
 
     const handlePostClick = () => {
         setShowNoGroups(false);
@@ -182,16 +186,29 @@ export function GroupCreationTrigger() {
         setShowNoGroups(true);
     };
     useEffect(() => {
-        fetch('http://localhost:8080/api/followers/', {
-            method: 'GET',
-            credentials: 'include',
-        })
-        .then(res => res.json())
-        .then(data => setUserList(data))
-        .catch (error => {
-            console.error("Failed to fetch users when creating a grouup:", error);
-        })
-    }, [])
+        const fetchData = async () => {
+            try {
+                const resUser = await fetch('http://localhost:8080/api/me', {
+                    credentials: 'include',
+                });
+                const userData = await resUser.json();
+    
+                const resFollowers = await fetch(`http://localhost:8080/api/followers?id=${userData.user_id}`, {
+                    method: 'GET',
+                    credentials: 'include',
+                });
+                const followersData = await resFollowers.json();
+    
+                setUserList(followersData);
+            } catch (error) {
+                console.error("Failed to fetch users when creating a group:", error);
+            }
+        };
+
+        fetchData();
+    }, []);
+    
+
     console.log("usssssseeers are :", userList);
     return (
         <>
