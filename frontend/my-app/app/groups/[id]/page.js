@@ -1,5 +1,6 @@
 "use client";
 import Navbar from "../../../components/Navbar.js"
+import { GroupPostChat } from "../../../components/groupPostCat.js";
 import Post from "../../../components/Post.js";
 import { useEffect, useState } from "react";
 import "../../../styles/groupstyle.css"
@@ -16,15 +17,17 @@ export default function () {
             <Navbar />
             <main className="content">
                 <LeftBar showSidebar={true} />
-                <AllPosts />
+                {/* <AllPosts /> */}
                 <RightBar />
             </main>
+            <GroupPostChat />
+            {/* <AllPosts /> */}
             {/* <CreatePost /> */}
         </>
     )
 }
 
-function AllPosts() {
+export function AllPosts() {
     const [posts, setPost] = useState([]);
     const [loading, setLoading] = useState(true);
     const params = useParams();
