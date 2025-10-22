@@ -441,8 +441,6 @@ export default function Home() {
         {/* Feed Section */}
         <section className="feed"
           onScroll={(e) => setscroolHome(e.target.scrollTop)}
-          style={{ height: "100vh", overflowY: "auto" }}
-
           ref={modalRefhome}
         >
           <Stories />
