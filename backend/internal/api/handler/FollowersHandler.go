@@ -11,7 +11,7 @@ import (
 func FollowersHandler(w http.ResponseWriter, r *http.Request) {
 	UserID, err := helper.AuthenticateUser(r)
 	if err != nil {
-		http.Error(w, "Unauthorized: "+err.Error(), http.StatusUnauthorized)
+		http.Error(w, "Unauthorized: "+ err.Error(), http.StatusUnauthorized)
 		return
 	}
 
@@ -40,18 +40,16 @@ WHERE u.id = ?;
 		fmt.Println("errrrrrrrrrrrrrrrrrrrrrrrrrrrrr", err)
 		return
 	}
-	if privacy == "private" && isFollowing == 0 && UserID  !=  id {
-
+	if privacy == "private" && isFollowing == 0 && UserID != id {
 		helper.RespondWithJSON(w, http.StatusUnauthorized, "errrrrrrrrrrrrorrororororroororo")
-
 		return
 	}
 
 	Fquery := `SELECT  u.id , u.nickname, u.image
-FROM followers f
-JOIN users u ON u.id = f.follower_id
-WHERE f.user_id = ?;
-`
+	FROM followers f
+	JOIN users u ON u.id = f.follower_id
+	WHERE f.user_id = ?;
+	`
 	rows, err := repository.Db.Query(Fquery, id)
 	if err != nil {
 		http.Error(w, "Database error: "+err.Error(), http.StatusInternalServerError)
@@ -63,6 +61,7 @@ WHERE f.user_id = ?;
 	for rows.Next() {
 		var username, profilePicture, idU string
 		if err := rows.Scan(&idU, &username, &profilePicture); err != nil {
+			fmt.Println("hna 4")
 			http.Error(w, "Database error: "+err.Error(), http.StatusInternalServerError)
 			return
 		}
