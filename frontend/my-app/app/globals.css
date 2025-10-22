@@ -11,7 +11,6 @@
   --logo: #5271ff;
   --bgSoft: #f6f3f3;
   --textColorSoft: #555;
-  --border: #3b3a3a;
 }
 
 /* 🎨 Themes */
@@ -47,7 +46,6 @@ body {
 
 main {
   background: var(--bgSoft);
-  min-height: 100vh;
 }
 
 /* ==================== Modal styles ==================== */
