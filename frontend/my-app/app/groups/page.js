@@ -1,5 +1,6 @@
 "use client"
 import Navbar from '../../components/Navbar.js';
+import LeftBar from "../../components/LeftBar";
 import { useEffect, useState } from "react";
 import "./page.css"
 import { useRouter } from 'next/navigation'
@@ -11,6 +12,7 @@ export default function () {
     return (
         <>
             <Navbar />
+            <LeftBar />
             {/* <AllGroups /> */}
             <GroupsTabs />
         </>
