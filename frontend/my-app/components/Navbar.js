@@ -33,7 +33,7 @@ export default function Navbar({ onCreatePost }) {
 
     const handleNotification = (data) => {
       console.log("Notification received:11111111111111", data);
-    
+
       addnotf((prev) => prev + 1);
       notif(data.data || data);
       cheng(true);
@@ -83,14 +83,22 @@ export default function Navbar({ onCreatePost }) {
       } catch (err) {
         console.error(err);
       }
-    }, 300); 
+    }, 300);
 
     return () => clearTimeout(delay);
   }, [searchTerm]);
-
+  const disply = () => {
+    const sideBar = document.getElementById("leftBar");
+    if (sideBar.style.display === "block") {
+      sideBar.style.display = "none";
+    } else {
+      sideBar.style.display = "block";
+    }
+  };
   return (
     <div className="navbar">
       <div className="left">
+        <i class="fa-solid fa-bars" id="menu" onClick={disply}></i>
         <Link href="/home">
           <span>Social-Network</span>
         </Link>
@@ -106,7 +114,7 @@ export default function Navbar({ onCreatePost }) {
             onBlur={() => setTimeout(() => setShowResults(false), 150)}
           />
 
-{showResults && Array.isArray(searchResults) && searchResults.length > 0 && (
+          {showResults && Array.isArray(searchResults) && searchResults.length > 0 && (
             <div className="search-results" >
               {searchResults.map((user) => (
                 <div
@@ -126,7 +134,7 @@ export default function Navbar({ onCreatePost }) {
           )}
         </div>
       </div>
-      {showNotbar  && <NOtBar notData={notData} />}
+      {showNotbar && <NOtBar notData={notData} />}
       {show && <Notification data={data} />}
 
       <div className="right">
