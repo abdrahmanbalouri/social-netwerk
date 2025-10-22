@@ -10,7 +10,7 @@
   border: 1px solid rgba(82, 113, 255, 0.12);
   position: relative;
 
-  max-width: 600px;
+  max-width: 800px;
   max-height: 1000px;
   margin-left: auto;
   margin-right: auto;
@@ -68,6 +68,48 @@
     cursor: pointer;
     display: inline-block;
 }
+/* 🖼️ Image style */
+.post-media-image {
+  width: 100%;
+  max-height: 480px;
+  border-radius: 18px;
+  margin-top: 16px;
+  align-self: center;
+  object-fit: cover;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+  border: 1px solid rgba(82, 113, 255, 0.1);
+}
+.post-media-wrapper {
+  width: 100%;
+  max-height: 100%;
+  margin-top: 16px;
+  border-radius: 16px;
+  background-color: #000;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.post-media-video {
+  width: 100%;
+  max-height: 480px;
+  object-fit: contain;
+  border-radius: 16px;
+  background-color: #000;
+  border: 1px solid rgba(82, 113, 255, 0.1);
+  overflow: hidden; 
+}
+
+
+
+
+.post-media-video:focus {
+  outline: none;
+}
+
 
 
 .post .details .date {
@@ -126,7 +168,7 @@
 
 
 /* Info/Actions Section */
-.post .info {
+.post .infoo {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -136,7 +178,7 @@
     gap: 12px;
 }
 
-.post .info .item {
+.post .infoo .item {
     display: flex;
     align-items: center;
     gap: 8px;
@@ -153,7 +195,7 @@
     overflow: hidden;
 }
 
-.post .info .item::before {
+.post .infoo .item::before {
     content: '';
     position: absolute;
     top: 50%;
@@ -167,21 +209,21 @@
     z-index: 0;
 }
 
-.post .info .item:hover::before {
+.post .infoo .item:hover::before {
     width: 200px;
     height: 200px;
 }
 
-.post .info .item > * {
+.post .infoo .item > * {
     position: relative;
     z-index: 1;
 }
 
-.post .info .item:active {
+.post .infoo .item:active {
     transform: translateY(0);
 }
 
-.post .info .item i {
+.post .infoo .item i {
     font-size: 18px;
     transition: transform 0.3s ease;
 }
@@ -220,9 +262,6 @@ body {
 .feed {
   flex: 6;
 
-}
-.feed::-webkit-scrollbar {
-  width: 8px;
 }
 
 
