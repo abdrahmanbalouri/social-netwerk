@@ -1,5 +1,6 @@
 "use client"
 import Navbar from '../../components/Navbar.js';
+import LeftBar from "../../components/LeftBar";
 import { useEffect, useState } from "react";
 import "../../styles/groupstyle.css"
 import { useRouter } from 'next/navigation'
@@ -13,6 +14,7 @@ export default function () {
     return (
         <>
             <Navbar />
+            <LeftBar />
             {/* <AllGroups /> */}
             <main className="content" id='contentgroups'>
                 <LeftBar showSidebar={true} />
