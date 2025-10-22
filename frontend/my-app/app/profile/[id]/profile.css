@@ -1,5 +1,14 @@
-.profile {
-  width: 800px;
+.main-section {
+  flex: 8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.profile  {
+  width: 90%;
+  max-width: 800px;
   background-color: var(--bg);
   border-radius: 24px;
   overflow: hidden;
@@ -7,7 +16,10 @@
   margin-bottom: 30px;
   border: 1px solid var(--border);
 }
+.feed{
 
+  width: 100%;
+}
 .profile:hover {
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
 }
@@ -133,21 +145,11 @@ hr {
 
 
 .profile .profileContainer .uInfo .center .left p.disabled {
-  background-color: #a5b4fc;
-  border: 1px solid #a5b4fc;
-  color: #e0e0e0;
   cursor: not-allowed;
   opacity: 0.6;
-  font-weight: 600;
-  transition: none;
-  box-shadow: none;
 }
 
-.profile .profileContainer .uInfo .center .left p.disabled:hover {
-  background-color: #a5b4fc;
-  transform: none;
-  opacity: 0.6;
-}
+
 
 
 

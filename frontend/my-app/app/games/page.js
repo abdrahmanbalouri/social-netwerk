@@ -76,7 +76,7 @@ export default function Game() {
             </div>
             <div className="game-card">
               <h3>toad</h3>
-              <Link href="https://raji383.github.io/War-machine/" target="_blank">
+              <Link href="https://raji383.github.io/egg-game/" target="_blank">
                 <img src="/toad.png" alt="Arkanoid" />
               </Link>
             </div>
