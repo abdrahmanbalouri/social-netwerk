@@ -4,7 +4,6 @@ import (
 	"crypto/rand"
 	"encoding/hex"
 	"encoding/json"
-	"fmt"
 	"html"
 	"log"
 	"net/http"
@@ -29,7 +28,7 @@ func RespondWithError(w http.ResponseWriter, code int, message string) {
 
 func RespondWithJSON(w http.ResponseWriter, code int, payload interface{}) {
 	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(code)
+	// w.WriteHeader(code)
 	json.NewEncoder(w).Encode(payload)
 }
 
@@ -42,7 +41,7 @@ func AuthenticateUser(r *http.Request) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	fmt.Println("Cookie is :", cookie)
+	// fmt.Println("Cookie is :", cookie)
 
 	var userID string
 
