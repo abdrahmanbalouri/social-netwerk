@@ -1,4 +1,8 @@
 /*nav bar*/
+#menu {
+  display: none;
+}
+
 .navbar {
   display: flex;
   align-items: center;
@@ -48,7 +52,7 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  border: 2px solid  rgba(102, 126, 234, 0.3);
+  border: 2px solid rgba(102, 126, 234, 0.3);
   background: var(--bg);
   border-radius: 25px;
   padding: 7px 20px;
@@ -364,5 +368,8 @@
   .navbar .right {
     display: none;
   }
-}
 
+  #menu {
+    display: block;
+  }
+}
