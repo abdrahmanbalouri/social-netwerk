@@ -18,9 +18,9 @@ export default function () {
             <main className="content">
                 <LeftBar showSidebar={true} />
                 {/* <AllPosts /> */}
+                <GroupPostChat />
                 <RightBar />
             </main>
-            <GroupPostChat />
             {/* <AllPosts /> */}
             {/* <CreatePost /> */}
         </>
