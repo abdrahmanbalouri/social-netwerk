@@ -45,6 +45,16 @@ func Routes(db *sql.DB) http.Handler {
 	mux.HandleFunc("/api/getmessages", handlers.GetMessagesHandler)
 	mux.HandleFunc("/ws", handlers.Websocket)
 	mux.HandleFunc("/api/clearNotifications", handlers.ClearNotifications)
+	mux.HandleFunc("/myGroups", handlers.GetMyGroups)
+	mux.HandleFunc("/groups", handlers.GetAllGroups)
+	mux.HandleFunc("/group/like", handlers.LikesGroup)
+	mux.HandleFunc("/group/fetchComments", handlers.GetCommentGroup)
+	mux.HandleFunc("/api/groups/add", handlers.AddGroupHandler)
+	mux.HandleFunc("/invitations/respond", handlers.GroupInvitationResponse)
+	mux.HandleFunc("/group/invitation", handlers.GroupInvitationRequest)
+	mux.HandleFunc("/group/addPost/{id}", handlers.CreatePostGroup)
+	mux.HandleFunc("/group/fetchPosts/{id}", handlers.GetPostGroup)
+	mux.HandleFunc("/group/addComment", handlers.CreateCommentGroup)
 
 	return mux
 }
