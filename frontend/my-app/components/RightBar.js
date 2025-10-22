@@ -3,28 +3,30 @@
 import { useEffect, useState } from "react";
 import Link from 'next/link';
 import ChatIcon from '@mui/icons-material/Chat';
-import PersonPinIcon from '@mui/icons-material/PersonPin';
 import "../styles/rightbar.css"
 import { useWS } from "../context/wsContext";
+
 export default function RightBar() {
   const [friends, setFriends] = useState([])
   const [users, setusers] = useState([])
   const [onlineUsers, setonlineUsers] = useState([])
   const [activeTab, setActiveTab] = useState("friends");
   const [followRequest, setFollowRequest] = useState([])
-  const { addListener, removeListener } = useWS();
+  const { sendMessage, addListener, removeListener } = useWS();
+
   useEffect(() => {
     const handleOlineUser = (data) => {
-      console.log("online users updated:", data.users);
       setonlineUsers(data.users)
     }
+    sendMessage({ type: "online_list" })
     addListener("online_list", handleOlineUser)
     return () => removeListener("online_list", handleOlineUser)
-  })
+  }, [addListener, removeListener])
+
   useEffect(() => {
     const handleLogout = (data) => {
       let useroff = data.userID
-      let arr = users.filter((id) => {
+      let arr = onlineUsers.filter((id) => {
         return id !== useroff
       })
       setonlineUsers([...arr])
@@ -32,10 +34,9 @@ export default function RightBar() {
 
     addListener("logout", handleLogout)
     return () => removeListener("logout", handleLogout)
-  })
-  async function handleFollowRequest(userId, action) {
-    console.log("fezfzelkfjzelfjlezjflezjflez", userId, action);
+  }, [addListener, removeListener])
 
+  async function handleFollowRequest(userId, action) {
     try {
       const res = await fetch("http://localhost:8080/api/followRequest/action", {
         method: "POST",
@@ -151,12 +152,13 @@ export default function RightBar() {
             <div key={user.id} className="user">
               <div className="userInfo">
                 <div className="userDetails">
-                  <img
-                    src={user?.image ? `/uploads/${user.image}` : "/uploads/default.png"}
-                    alt="user avatar"
-                  />
-                  <div className="online" />
                   <Link href={`/profile/${user.id}`} className="userLink">
+                    <img
+                      src={user?.image ? `/uploads/${user.image}` : "/uploads/default.png"}
+                      alt="user avatar"
+                    />
+                  </Link>
+                  <Link href={`/profile/${user.id}`}>
                     <span>{user.nickname}</span>
                   </Link>
                 </div>
@@ -192,14 +194,17 @@ export default function RightBar() {
             {!friends ? (
               <p>No friends yet</p>
             ) : (
+              
               friends.map((user) => (
                 <div key={user.id} className="user">
                   <div className="userInfo">
                     <div className="userDetails">
-                      <img
-                        src={user?.image ? `/uploads/${user.image}` : "/uploads/default.png"}
-                        alt="user avatar"
-                      />
+                      <Link href={`/profile/${user.id}`}>
+                        <img
+                          src={user?.image ? `/uploads/${user.image}` : "/uploads/default.png"}
+                          alt="user avatar"
+                        />
+                      </Link>
                       <div className={onlineUsers.includes(user.id) ? "online" : "offline"} />
                       <Link href={`/profile/${user.id}`}>
                         <span>{user.nickname}</span>
@@ -223,11 +228,15 @@ export default function RightBar() {
                 <div key={user.id} className="user">
                   <div className="userInfo">
                     <div className="userDetails">
-                      <img
-                        src={user?.image ? `/uploads/${user.image}` : "/uploads/default.png"}
-                        alt="user avatar"
-                      />
-                      <span>{user.nickname}</span>
+                      <Link href={`/profile/${user.id}`} className="userLink">
+                        <img
+                          src={user?.image ? `/uploads/${user.image}` : "/uploads/default.png"}
+                          alt="user avatar"
+                        />
+                      </Link>
+                      <Link href={`/profile/${user.id}`} className="userLink">
+                        <span>{user.nickname}</span>
+                      </Link>
                     </div>
                     <Link href={`/profile/${user.id}`} className="userLink">
                       <i className="fa-solid fa-user"></i>
