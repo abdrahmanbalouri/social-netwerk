@@ -8,7 +8,7 @@
     width: 100%;
 }
 
-.tab-button {
+.tab-button-group {
     padding: 12px 24px;
     font-size: 16px;
     font-weight: 500;
@@ -20,21 +20,21 @@
     border-bottom: 3px solid transparent;
 }
 
-.tab-button:hover {
+.tab-button-group:hover {
     background-color: #e0e0e0;
     color: #333;
 }
 
-.tab-button.active {
+.tab-button-group.active {
     background-color: white;
     color: #0070f3;
     border-bottom: 3px solid #0070f3;
 }
 
-.tab-button:first-child {
+.tab-button-group:first-child {
     border-radius: 8px 0 0 0;
 }
 
-.tab-button:last-child {
+.tab-button-group:last-child {
     border-radius: 0 8px 0 0;
 }
