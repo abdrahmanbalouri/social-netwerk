@@ -2,9 +2,11 @@
 import Navbar from "../../../components/Navbar.js"
 import Post from "../../../components/Post.js";
 import { useEffect, useState } from "react";
-import "./page.css"
+import "../../../styles/groupstyle.css"
 import { useParams } from "next/navigation";
 import { PostCreationTrigger } from "../../../components/cretaePostGroup.js"
+import LeftBar from "../../../components/LeftBar.js";
+import RightBar from "../../../components/RightBar.js";
 // import {CreatePost} from ""
 
 
@@ -12,7 +14,11 @@ export default function () {
     return (
         <>
             <Navbar />
-            <AllPosts />
+            <main className="content">
+                <LeftBar showSidebar={true} />
+                <AllPosts />
+                <RightBar />
+            </main>
             {/* <CreatePost /> */}
         </>
     )
@@ -58,7 +64,7 @@ function AllPosts() {
 
     console.log("posts are :", posts);
     return (
-        <>
+        <div>
             <PostCreationTrigger />
             <div className="posts-list">
                 {posts.map((post) => (
@@ -70,7 +76,7 @@ function AllPosts() {
                     />
                 ))}
             </div>
-        </>
+        </div>
     )
 }
 
@@ -89,7 +95,7 @@ export async function CreatePost(groupId, formData) {
     console.log("grouuup id is :", groupId);
 
     const data = new FormData();
-    data.append("postData", JSON.stringify(formData)); 
+    data.append("postData", JSON.stringify(formData));
 
     const res = await fetch(`http://localhost:8080/group/addPost/${groupId}`, {
         method: "POST",
