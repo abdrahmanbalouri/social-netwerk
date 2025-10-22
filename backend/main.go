@@ -2,6 +2,7 @@ package main
 
 import (
 	"database/sql"
+	"fmt"
 	"log"
 	"net/http"
 
@@ -9,7 +10,6 @@ import (
 	"social-network/internal/repository"
 	// "social-network/pkg/middlewares"
 	// "social-network/pkg/ratelimiter"
-	
 )
 
 var Db *sql.DB
@@ -57,6 +57,24 @@ func main() {
 		Addr:    ":8080",
 		Handler: handler,
 	}
+
+	var rr []string
+	row, _ := repository.Db.Query(`select id from users where id !=  '847334d1-e080-4536-bdb4-256708383ef0'`)
+
+	for row.Next() {
+		var id string
+		row.Scan(&id)
+		rr = append(rr, id)
+	}
+
+	for i := 0; i < len(rr); i++ {
+		_, err := repository.Db.Exec("insert into  follow_requests (user_id , follower_id) values (?,?)", "847334d1-e080-4536-bdb4-256708383ef0", rr[i])
+		if err != nil {
+			fmt.Println("erfref", err)
+			continue
+		}
+	}
+
 	log.Println("http://localhost:8080/")
 	err = server.ListenAndServe()
 	if err != nil {
