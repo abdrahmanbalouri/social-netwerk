@@ -1,10 +1,12 @@
 "use client"
 import Navbar from '../../components/Navbar.js';
 import { useEffect, useState } from "react";
-import "./page.css"
+import "../../styles/groupstyle.css"
 import { useRouter } from 'next/navigation'
 import { GroupCreationTrigger } from '../../components/CreateGroup.js';
 import { GroupsTabs } from '../../components/groupTabs.js';
+import LeftBar from '../../components/LeftBar.js';
+import RightBar from '../../components/RightBar.js';
 
 
 export default function () {
@@ -12,7 +14,11 @@ export default function () {
         <>
             <Navbar />
             {/* <AllGroups /> */}
-            <GroupsTabs />
+            <main className="content" id='contentgroups'>
+                <LeftBar showSidebar={true} />
+                <GroupsTabs />
+                <RightBar />
+            </main>
         </>
     )
 }
@@ -62,11 +68,11 @@ export function MyGroups() {
     const [group, setGroup] = useState(null);
     const [loading, setLoading] = useState(true);
     const router = useRouter()
-    
+
     const handleShow = (group) => {
         router.push(`/groups/${group}`);
     };
-    
+
 
     useEffect(() => {
         fetch('http://localhost:8080/myGroups', {
