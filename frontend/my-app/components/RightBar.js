@@ -154,7 +154,7 @@ export default function RightBar() {
                 <div className="userDetails">
                   <Link href={`/profile/${user.id}`} className="userLink">
                     <img
-                      src={user?.image ? `/uploads/${user.image}` : "/uploads/default.png"}
+                      src={user?.image ? `/uploads/${user.image}` : "/assets/default.png"}
                       alt="user avatar"
                     />
                   </Link>
@@ -201,7 +201,7 @@ export default function RightBar() {
                     <div className="userDetails">
                       <Link href={`/profile/${user.id}`}>
                         <img
-                          src={user?.image ? `/uploads/${user.image}` : "/uploads/default.png"}
+                          src={user?.image ? `/uploads/${user.image}` : "/assets/default.png"}
                           alt="user avatar"
                         />
                       </Link>
@@ -230,7 +230,7 @@ export default function RightBar() {
                     <div className="userDetails">
                       <Link href={`/profile/${user.id}`} className="userLink">
                         <img
-                          src={user?.image ? `/uploads/${user.image}` : "/uploads/default.png"}
+                          src={user?.image ? `/uploads/${user.image}` : "/assets/default.png"}
                           alt="user avatar"
                         />
                       </Link>
