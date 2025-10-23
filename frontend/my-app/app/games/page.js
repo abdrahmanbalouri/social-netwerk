@@ -41,43 +41,43 @@ export default function Game() {
             <div className="game-card">
               <h3>Boomber man</h3>
               <Link href="https://raji383.github.io/bomberman/" target="_blank">
-                <img src="/bomberman.png" alt="Boomber man" />
+                <img src="/assets/bomberman.png" alt="Boomber man" />
               </Link>
             </div>
             <div className="game-card">
               <h3>Arkanoid</h3>
               <Link href="https://brick-breaker-abaid.netlify.app/" target="_blank">
-                <img src="/Arkanoid.png" alt="Arkanoid" />
+                <img src="/assets/Arkanoid.png" alt="Arkanoid" />
               </Link>
             </div>
             <div className="game-card">
               <h3>super-mario</h3>
               <Link href="https://raji383.github.io/super-mario/" target="_blank">
-                <img src="/super-mario.png" alt="Arkanoid" />
+                <img src="/assets/super-mario.png" alt="Arkanoid" />
               </Link>
             </div>
             <div className="game-card">
               <h3>Raven</h3>
               <Link href="https://raji383.github.io/Raven-game/" target="_blank">
-                <img src="/Raven.png" alt="Arkanoid" />
+                <img src="/assets/Raven.png" alt="Arkanoid" />
               </Link>
             </div>
             <div className="game-card">
               <h3>shadow</h3>
               <Link href="https://raji383.github.io/shadow-game/" target="_blank">
-                <img src="/shadow.png" alt="Arkanoid" />
+                <img src="/assets/shadow.png" alt="Arkanoid" />
               </Link>
             </div>
             <div className="game-card">
               <h3>War-machine</h3>
               <Link href="https://raji383.github.io/War-machine/" target="_blank">
-                <img src="/war.png" alt="Arkanoid" />
+                <img src="/assets/war.png" alt="Arkanoid" />
               </Link>
             </div>
             <div className="game-card">
               <h3>toad</h3>
               <Link href="https://raji383.github.io/egg-game/" target="_blank">
-                <img src="/toad.png" alt="Arkanoid" />
+                <img src="/assets/toad.png" alt="Arkanoid" />
               </Link>
             </div>
           </div>

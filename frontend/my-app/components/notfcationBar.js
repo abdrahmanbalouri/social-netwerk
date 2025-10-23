@@ -64,7 +64,7 @@ export default function NotBar({ notData }) {
                                 >
                                     <div className="notification-avatar">
                                         <img
-                                            src={noti?.photo ? `/uploads/${noti.photo}` : "/uploads/default.png"}
+                                            src={noti?.photo ? `/uploads/${noti.photo}` : "/assets/default.png"}
                                             alt="user avatar"
                                             style={{
                                                 width: '100%',
