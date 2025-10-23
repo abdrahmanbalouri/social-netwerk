@@ -328,9 +328,7 @@
     width: 200px;
   }
 
-  .navbar .right .user {
-    display: none;
-  }
+  
 
   .navbar .right {
     gap: 20px;
