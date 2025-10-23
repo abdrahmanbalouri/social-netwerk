@@ -14,7 +14,7 @@ export default function () {
     const { darkMode } = useDarkMode();
 
     return (
-        <div className={darkMode ? 'theme-dark' : 'theme-light'}>
+        <div id="div" className={darkMode ? 'theme-dark' : 'theme-light'}>
             <Navbar />
             {/* main content area */}
             <main className="content" id="contentgroups">

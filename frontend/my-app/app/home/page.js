@@ -424,7 +424,7 @@ export default function Home() {
 
 
   return (
-    <div className={darkMode ? 'theme-dark' : 'theme-light'}>
+    <div id="div" className={darkMode ? 'theme-dark' : 'theme-light'}>
       {/* Navbar */}
       <Navbar
         onLogout={logout}
