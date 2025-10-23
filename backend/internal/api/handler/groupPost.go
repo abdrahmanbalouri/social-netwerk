@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"strings"
 	"time"
 
 	"social-network/internal/helper"
@@ -65,6 +66,12 @@ func CreatePostGroup(w http.ResponseWriter, r *http.Request) {
 		helper.RespondWithError(w, http.StatusBadRequest, "Missing JSON form field")
 		return
 	}
+	parts := strings.Split(r.URL.Path, "/")
+	if len(parts) < 4 {
+		helper.RespondWithError(w, http.StatusNotFound, "Group not found")
+		return
+	}
+	GrpID := parts[3]
 	var postData PostData
 	err = json.Unmarshal([]byte(data), &postData)
 	if err != nil {
@@ -75,7 +82,7 @@ func CreatePostGroup(w http.ResponseWriter, r *http.Request) {
 	// check for membership of the user
 	var isMember bool
 	query := `SELECT EXISTS (SELECT 1 FROM group_members WHERE user_id = ? AND group_id = ?)`
-	err = repository.Db.QueryRow(query, userID, postData.GrpID).Scan(&isMember)
+	err = repository.Db.QueryRow(query, userID, GrpID).Scan(&isMember)
 	if err != nil {
 		fmt.Println("Failed to check group membership")
 		helper.RespondWithError(w, http.StatusInternalServerError, "Failed to check group membership")
@@ -121,9 +128,9 @@ func CreatePostGroup(w http.ResponseWriter, r *http.Request) {
 	postID := helper.GenerateUUID()
 	createdAt := time.Now().UTC()
 	_, err = repository.Db.Exec(`
-        INSERT INTO posts (id, user_id, group_id, title, content, image_path, created_at)
+        INSERT INTO group_posts (id, user_id, group_id, title, content, image_path, created_at)
         VALUES (?, ?, ?, ?, ?, ?, ?)`,
-		postID, userID, postData.GrpID, postData.Title, postData.Content, imagePath, createdAt,
+		postID, userID, GrpID, postData.Title, postData.Content, imagePath, createdAt,
 	)
 	if err != nil {
 		fmt.Println("Failed to create post (groups)")
@@ -138,15 +145,16 @@ func CreatePostGroup(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetPostGroup(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodPost {
+	if r.Method != http.MethodGet {
 		helper.RespondWithError(w, http.StatusMethodNotAllowed, "Method not allowed")
 		return
 	}
-	var newPost FetchPost
-	if err := json.NewDecoder(r.Body).Decode(&newPost); err != nil {
-		helper.RespondWithError(w, http.StatusBadRequest, "Invalid request format")
+	parts := strings.Split(r.URL.Path, "/")
+	if len(parts) < 4 {
+		helper.RespondWithError(w, http.StatusNotFound, "Group not found")
 		return
 	}
+	GrpId := parts[3]
 
 	// Get user ID
 	userID, err := helper.AuthenticateUser(r)
@@ -157,9 +165,6 @@ func GetPostGroup(w http.ResponseWriter, r *http.Request) {
 
 	// Check for user's membership
 	var isMember bool
-	fmt.Println("user id is :", userID)
-	GrpId := newPost.GrpID[1 : len(newPost.GrpID)-1]
-	fmt.Println("group id is :", GrpId)
 	query := `SELECT EXISTS (SELECT 1 FROM group_members WHERE user_id = ? AND group_id = ?)`
 	if err := repository.Db.QueryRow(query, userID, GrpId).Scan(&isMember); err != nil {
 		helper.RespondWithError(w, http.StatusInternalServerError, "Failed to check group membership")
@@ -174,26 +179,26 @@ func GetPostGroup(w http.ResponseWriter, r *http.Request) {
 	// query = `SELECT id, title, content, image_path, created_at, user_id FROM posts WHERE group_id = ?`
 	query = `
 	SELECT 
-    p.id, 
-    p.user_id, 
-    p.title, 
-    p.content, 
-    p.image_path, 
-    p.created_at, 
+    gp.id, 
+    gp.user_id, 
+    gp.title, 
+    gp.content, 
+    gp.image_path, 
+    gp.created_at, 
     u.nickname,
     u.image AS profile,
     COUNT(DISTINCT l.id) AS like_count,
     COUNT(DISTINCT CASE WHEN l.user_id = ? THEN l.id END) AS liked_by_user,
     COUNT(DISTINCT c.id) AS comments_count
-	FROM posts p
-	JOIN users u ON p.user_id = u.id
-	LEFT JOIN likes l ON p.id = l.liked_item_id AND l.liked_item_type = 'post'
-	LEFT JOIN comments c ON p.id = c.post_id
-	WHERE p.group_id = ?
+	FROM group_posts gp
+	JOIN users u ON gp.user_id = u.id
+	LEFT JOIN likes l ON gp.id = l.liked_item_id AND l.liked_item_type = 'post'
+	LEFT JOIN comments c ON gp.id = c.post_id
+	WHERE gp.group_id = ?
 	GROUP BY 
-    p.id, p.user_id, p.title, p.content, p.image_path, p.created_at, 
+    gp.id, gp.user_id, gp.title, gp.content, gp.image_path, gp.created_at, 
     u.nickname, u.image
-	ORDER BY p.created_at DESC;
+	ORDER BY gp.created_at DESC;
 `
 	rows, err := repository.Db.Query(query, userID, GrpId)
 	if err != nil {
@@ -206,7 +211,7 @@ func GetPostGroup(w http.ResponseWriter, r *http.Request) {
 	var postsJson []Post
 	for rows.Next() {
 		var p Post
-		err := rows.Scan(&p.ID,&p.UserID, &p.Title, &p.Content, &p.ImagePath, &p.CreatedAt, &p.Author, &p.Profile, &p.Like, &p.LikedByUSer, &p.CommentCount)
+		err := rows.Scan(&p.ID, &p.UserID, &p.Title, &p.Content, &p.ImagePath, &p.CreatedAt, &p.Author, &p.Profile, &p.Like, &p.LikedByUSer, &p.CommentCount)
 		if err != nil {
 			fmt.Println("heeeere :", err)
 			helper.RespondWithError(w, http.StatusInternalServerError, "Failed to scan posts")
