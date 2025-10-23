@@ -3,25 +3,12 @@ import "../styles/groupstyle.css"
 import { createGroup } from '../app/groups/page';
 
 export function CreateGroupForm({ users, onSubmit, onCancel }) {
-    console.log("useeeeers are :", users);
+    console.log("USERRRS ARE :", users);
     const [groupTitle, setGroupTitle] = useState('');
     const [groupDescription, setGroupDescription] = useState('');
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedUsers, setSelectedUsers] = useState([]);
     const [showSuggestions, setShowSuggestions] = useState(false);
-
-    // Filter users based on search query
-    // useEffect(() => {
-    //     if (searchQuery.trim()) {
-    //         const filtered = users.filter(user =>
-    //             user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    //             user.username.toLowerCase().includes(searchQuery.toLowerCase())
-    //         );
-    //         setFilteredUsers(filtered);
-    //     } else {
-    //         setFilteredUsers([]);
-    //     }
-    // }, [searchQuery, users]);
 
     const handleUserSelect = (user) => {
         if (!selectedUsers.find(u => u.id === user.id)) {
@@ -52,8 +39,6 @@ export function CreateGroupForm({ users, onSubmit, onCancel }) {
         setSelectedUsers([]);
         setSearchQuery('');
     };
-
-    console.log("filterd users areeeee :", users);
 
     return (
         <div className="create-group-form-container">
@@ -127,7 +112,7 @@ export function CreateGroupForm({ users, onSubmit, onCancel }) {
                             />
 
                             {/* User Suggestions */}
-                            {showSuggestions && users.length > 0 && (
+                            {showSuggestions && users != null && (
                                 <div className="user-suggestions">
                                     {users.map(user => (
                                         <div
@@ -185,6 +170,14 @@ export function GroupCreationTrigger() {
         setIsModalOpen(false);
         setShowNoGroups(true);
     };
+    const handleSubmit = async (groupData) => {
+        try {
+            await createGroup(groupData);
+            setIsModalOpen(false);
+        } catch (error) {
+            console.error("Error creating group:", error);
+        }
+    };
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -209,7 +202,6 @@ export function GroupCreationTrigger() {
     }, []);
 
 
-    console.log("usssssseeers are :", userList);
     return (
 
         <div className="create-post-container">
@@ -228,7 +220,7 @@ export function GroupCreationTrigger() {
             {isModalOpen && (
                 <CreateGroupForm
                     users={userList}
-                    onSubmit={createGroup}
+                    onSubmit={handleSubmit}
                     onCancel={handleCancel}
                 />
             )}
@@ -240,4 +232,3 @@ export function GroupCreationTrigger() {
         </div>
     )
 }
-
