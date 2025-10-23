@@ -82,7 +82,7 @@ export default function Gallery() {
               {images.length === 0 ? (
                 <div
                   className="gallery-item"
-                  style={{ backgroundImage: `url(/uploads/default.png)` }}
+                  style={{ backgroundImage: `url(/assets/default.png)` }}
                 ></div>
               ) : (
                 images.map((img, index) => (

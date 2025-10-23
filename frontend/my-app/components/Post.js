@@ -4,6 +4,7 @@ import "../styles/post.css"
 
 
 export default function Post({ post, onGetComments, ondolike }) {
+console.log("dsdsdsdsd",post);
 
 
 
@@ -12,7 +13,7 @@ export default function Post({ post, onGetComments, ondolike }) {
       <div className="container">
         <div className="user">
           <div className="userInfo">
-            <img src={`/uploads/${post.profile}` || '/avatar.png'} alt="user" />
+            <img src={post?.profile ? `/uploads/${post.profile}` : '/assets/default.png'} alt="user" />
             <div className="details">
               <Link href={`/profile/${post.user_id}`} style={{ textDecoration: "none", color: "inherit" }}>
                 <span className="name">{post.author}</span>
