@@ -94,7 +94,7 @@ export default function FollowPage() {
               <div className="itemUsers"> {followers?.map((user) => (
                 <div key={user.id} className="userDiv">
                   <div className="userInfos">
-                    <img src={user?.image ? `/uploads/${user.image}` : "/uploads/default.png"} alt="user avatar" />
+                    <img src={user?.image ? `/uploads/${user.image}` : "/assets/default.png"} alt="user avatar" />
 
                     <div className="onlin" />
                     <Link href={`/profile/${user.id}`} >
@@ -109,7 +109,7 @@ export default function FollowPage() {
                 {following?.map((user) => (
                   <div key={user.id} className="userDiv">
                     <div className="userInfos">
-                      <img src={user?.image ? `/uploads/${user.image}` : "/uploads/default.png"} alt="user avatar" />
+                      <img src={user?.image ? `/uploads/${user.image}` : "/assets/default.png"} alt="user avatar" />
 
                       <div className="onlin" />
                       <Link href={`/profile/${user.id}`} >

@@ -65,7 +65,7 @@ export default function UserBar() {
                                 <Link href={`/chat/${user.id}`}>
                                     <div className="userDetails">
                                         <img
-                                            src={user?.image ? `/uploads/${user.image}` : "/uploads/default.png"}
+                                            src={user?.image ? `/uploads/${user.image}` : "/assets/default.png"}
                                             alt="user avatar"
                                         />
                                         <div className={onlineUsers.includes(user.id) ? "online" : "offline"} />
