@@ -122,7 +122,7 @@ export default function Navbar({ onCreatePost }) {
                   onClick={() => router.push(`/profile/${user.id}`)}
                 >
                   <img
-                    src={`/uploads/${user.image || "default.png"}`}
+                    src={`${user?.image ? `/uploads/${user.image}` : "/assets/default.png"}`}
                     alt=""
                     width="35"
                     height="35"
@@ -155,7 +155,7 @@ export default function Navbar({ onCreatePost }) {
             src={
               Profile?.image
                 ? `/uploads/${Profile.image}`
-                : "/uploads/default.png"
+                : "/assets/default.png"
             }
             alt="user avatar"
           />
