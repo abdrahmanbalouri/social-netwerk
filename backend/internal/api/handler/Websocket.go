@@ -50,7 +50,7 @@ func BrodcastOnlineListe() {
 		"type":  "online_list",
 		"users": GetOnlineUsers(),
 	}
-	fmt.Printf("msg: %v\n", msg)
+	// fmt.Printf("msg: %v\n", msg)
 	for _, client := range Clients {
 		for _, conn := range client {
 			if err := conn.WriteJSON(msg); err != nil {
@@ -79,7 +79,7 @@ func Websocket(w http.ResponseWriter, r *http.Request) {
 	Clients[currentUserID] = append(Clients[currentUserID], conn)
 	ClientsMutex.Unlock()
 
-	fmt.Printf("Clients: %v\n", Clients)
+	// fmt.Printf("Clients: %v\n", Clients)
 	BrodcastOnlineListe()
 	// Listen for incoming messages
 	Loop(conn, currentUserID)
@@ -107,7 +107,7 @@ func Websocket(w http.ResponseWriter, r *http.Request) {
 }
 
 func Loop(conn *websocket.Conn, currentUserID string) {
-	fmt.Println("WebSocket connected for user:", currentUserID)
+	// fmt.Println("WebSocket connected for user:", currentUserID)
 	for {
 		var msg Message
 		if err := conn.ReadJSON(&msg); err != nil {
