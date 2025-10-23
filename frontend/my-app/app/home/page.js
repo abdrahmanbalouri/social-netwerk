@@ -539,7 +539,7 @@ export default function Home() {
                     followers.map((follower) => (
                       <label key={follower.id} className="user-picker-item">
                         <img
-                          src={`/uploads/${follower.image}` || "/default-avatar.png"}
+                          src={follower?.image ? `/uploads/${follower.image}` : "/assets/default.png"}
                           alt={follower.nickname}
                           className="image-avatar"
                         />
