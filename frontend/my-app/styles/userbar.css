@@ -6,11 +6,12 @@
     /* Adjust based on your navbar height */
     width: 400px;
     height: calc(100vh - 90px);
-    background: linear-gradient(to bottom, #ffffff 0%, #f8f9fa 100%);
+    background: var(--bg);
     box-shadow: 2px 0 10px rgba(0, 0, 0, 0.05);
     z-index: 100;
     overflow: hidden;
     border-radius: 12px;
+    color: var(--textColor);
 }
 
 /* Users Container */
@@ -59,8 +60,8 @@
     border-radius: 10px;
     position: relative;
     transition: all 0.2s ease;
-    background: #ffffff;
-    border: 1px solid transparent;
+    background: var(--bg);
+    border: 1px solid var(--border);
 }
 
 .userBar .userDetails:hover {
@@ -124,7 +125,7 @@
 .userBar .userDetails span {
     font-size: 14px;
     font-weight: 600;
-    color: #1c1e21;
+    color: var(--textColor);
     transition: color 0.2s;
     white-space: nowrap;
     overflow: hidden;
