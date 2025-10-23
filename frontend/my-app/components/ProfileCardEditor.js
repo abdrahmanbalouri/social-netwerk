@@ -99,7 +99,7 @@ export default function ProfileCardEditor({
 
                 <div className="cover-actions">
                     <label className="btn">
-                        Change
+                        <i className="fa-solid fa-pen-to-square"></i>
                         <input
                             ref={coverInputRef}
                             type="file"
@@ -109,7 +109,7 @@ export default function ProfileCardEditor({
                         />
                     </label>
                     <button onClick={clearCover} type="button" className="btn">
-                        Remove
+                        <i className="fa-solid fa-trash"></i>
                     </button>
                 </div>
             </div>
@@ -124,14 +124,14 @@ export default function ProfileCardEditor({
                                     ? avatarPreview
                                     : initialAvatar
                                         ? `/uploads/${initialAvatar}`
-                                        : "/uploads/default.png"
+                                        : "/assets/default.png"
                             }
                             className="avatar"
                         />
 
                         <div className="avatar-actions">
                             <label className="btn small">
-                                Upload
+                                <i className="fa-solid fa-pen-to-square"></i>
                                 <input
                                     ref={avatarInputRef}
                                     type="file"
@@ -141,7 +141,7 @@ export default function ProfileCardEditor({
                                 />
                             </label>
                             <button onClick={clearAvatar} className="btn small">
-                                Remove
+                                <i className="fa-solid fa-trash"></i>
                             </button>
                         </div>
                     </div>

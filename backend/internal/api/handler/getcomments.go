@@ -18,7 +18,7 @@ func GetCommentsHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	parts := strings.Split(r.URL.Path, "/")
-	if len(parts) < 5 { // [0]= "", [1]=api, [2]=Getcomments, [3]=postID, [4]=offset
+	if len(parts) < 5 {
 		helper.RespondWithError(w, http.StatusNotFound, "Post not found")
 		return
 	}
@@ -36,22 +36,12 @@ func GetCommentsHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// can, err := helper.CanViewComments(userID, postID)
-	// if err != nil {
-	// 	helper.RespondWithError(w, http.StatusInternalServerError, "Error checking permissions")
-	// 	return
-	// }
-	// if !can {
-	// 	helper.RespondWithError(w, http.StatusForbidden, "You do not have permission to view comments on this post")
-	// 	return
-	// }
-
 	rows, err := repository.Db.Query(`
-        SELECT c.id, c.content, c.created_at, u.nickname
+        SELECT c.id, c.content, c.created_at, u.nickname, c.media_path
         FROM comments c
         JOIN users u ON c.user_id = u.id
         WHERE c.post_id = ?
-        ORDER BY c.created_at desc
+        ORDER BY c.created_at DESC
         LIMIT 10 OFFSET ?`, postID, offset)
 	if err != nil {
 		helper.RespondWithError(w, http.StatusInternalServerError, "Failed to fetch comments")
@@ -64,12 +54,13 @@ func GetCommentsHandler(w http.ResponseWriter, r *http.Request) {
 		Content   string    `json:"content"`
 		CreatedAt time.Time `json:"created_at"`
 		Author    string    `json:"author"`
+		MediaPath string    `json:"media_path,omitempty"`
 	}
 
 	var comments []Comment
 	for rows.Next() {
 		var comment Comment
-		err := rows.Scan(&comment.ID, &comment.Content, &comment.CreatedAt, &comment.Author)
+		err := rows.Scan(&comment.ID, &comment.Content, &comment.CreatedAt, &comment.Author, &comment.MediaPath)
 		if err != nil {
 			helper.RespondWithError(w, http.StatusInternalServerError, "Failed to process comments")
 			return

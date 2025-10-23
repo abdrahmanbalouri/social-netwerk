@@ -1,18 +1,10 @@
 .game-container {
+  background-color: var(--bg);
+  color: var(--text-primary);
   flex: 1;
-  padding: 40px 20px;
-  min-height: 100vh;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
   transition: background 0.3s, color 0.3s;
-}
-
-.theme-dark .game-container {
-  background: #0f172a;
-  color: #e2e8f0;
-}
-
-.theme-light .game-container {
-  background: #f8fafc;
-  color: #1e293b;
 }
 
 .game-title {
