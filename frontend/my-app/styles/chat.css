@@ -386,7 +386,7 @@
 
 .no-chat-header h2 {
   font-size: 36px;
-  color: black;
+  color: var(--textColor);
   font-weight: 700;
   margin: 0 0 16px 0;
   letter-spacing: -0.5px;
@@ -395,7 +395,7 @@
 
 .no-chat-header h4 {
   font-size: 18px;
-  color: black;
+  color: var(--textColor);
   font-weight: 400;
   line-height: 1.6;
   margin: 0;
