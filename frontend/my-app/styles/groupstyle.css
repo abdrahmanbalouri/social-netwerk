@@ -126,7 +126,7 @@
     box-shadow: 0 8px 16px rgba(102, 126, 234, 0.4);
 }
 
-.create-post-container {
+.create-group-container {
     margin-bottom: 24px;
     background: white;
     border-radius: 16px;
@@ -135,7 +135,7 @@
     border: 1px solid #e2e8f0;
 }
 
-.create-post-header {
+.create-group-header {
     display: flex;
     align-items: center;
     gap: 16px;
@@ -155,7 +155,7 @@
     flex-shrink: 0;
 }
 
-.post-input {
+.group-input {
     flex: 1;
     padding: 14px 20px;
     border: 2px solid #e2e8f0;
@@ -167,12 +167,12 @@
     transition: all 0.3s ease;
 }
 
-.post-input:hover {
+.group-input:hover {
     border-color: #cbd5e0;
     background: white;
 }
 
-.post-input:focus {
+.group-input:focus {
     outline: none;
     border-color: #667eea;
     background: white;
