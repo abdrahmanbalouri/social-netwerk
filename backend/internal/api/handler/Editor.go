@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"fmt"
 	"io"
 	"net/http"
 	"os"
@@ -47,9 +48,16 @@ func Editor(w http.ResponseWriter, r *http.Request) {
 
 	coverFile, coverHeader, err := r.FormFile("cover")
 	var coverFilename string
+	uploadDir := "../frontend/my-app/public/uploads"
 	if err == nil {
+
 		defer coverFile.Close()
 		coverPath := "../frontend/my-app/public/uploads/" + coverHeader.Filename
+		err = os.MkdirAll(uploadDir, os.ModePerm)
+		if err != nil {
+			fmt.Println("Error creating directory:", err)
+			return
+		}
 		out, _ := os.Create(coverPath)
 		defer out.Close()
 		io.Copy(out, coverFile)
@@ -63,6 +71,11 @@ func Editor(w http.ResponseWriter, r *http.Request) {
 	if err == nil {
 		defer avatarFile.Close()
 		avatarPath := "../frontend/my-app/public/uploads/" + avatarHeader.Filename
+		err = os.MkdirAll(uploadDir, os.ModePerm)
+		if err != nil {
+			fmt.Println("Error creating directory:", err)
+			return
+		}
 		out, _ := os.Create(avatarPath)
 		defer out.Close()
 		io.Copy(out, avatarFile)
