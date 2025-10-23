@@ -1,40 +1,3 @@
-:root {
-  --bg-primary: #ffffff;
-  --bg-secondary: #f0f2f5;
-  --bg-chat: rgb(245 245 245);
-  --text-primary: #050505;
-  --text-secondary: #65676b;
-  --border-color: #e4e6eb;
-  --message-sent: linear-gradient(135deg, #0084ff 0%, #0063cc 100%);
-  --message-received: #e4e6eb;
-  --message-sent-text: #ffffff;
-  --message-received-text: #050505;
-  --input-bg: #f0f2f5;
-  --hover-bg: #e4e6eb;
-  --emoji-bg: #ffffff;
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.08);
-  --shadow-md: 0 2px 8px rgba(0, 0, 0, 0.1);
-  --online-dot: #42b72a;
-}
-
-.theme-dark {
-  --bg-primary: #242526;
-  --bg-secondary: #18191a;
-  --bg-chat: #18191a;
-  --text-primary: #e4e6eb;
-  --text-secondary: #b0b3b8;
-  --border-color: #3a3b3c;
-  --message-sent: linear-gradient(135deg, #0084ff 0%, #0063cc 100%);
-  --message-received: #3a3b3c;
-  --message-sent-text: #ffffff;
-  --message-received-text: #e4e6eb;
-  --input-bg: #3a3b3c;
-  --hover-bg: #4e4f50;
-  --emoji-bg: #242526;
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
-  --shadow-md: 0 2px 8px rgba(0, 0, 0, 0.4);
-}
-
 .chat-container {
   position: sticky;
   top: 70px;
@@ -57,7 +20,7 @@
   border-top-right-radius: 12px;
   position: relative;
   transition: all 0.2s ease;
-  background: #ffffff;
+  background: var(--bg-primary);
   border: 1px solid transparent;
 }
 
@@ -93,7 +56,7 @@
 .username {
   font-size: 14px;
   font-weight: 600;
-  color: #1c1e21;
+  color: var(--text-primary);
   transition: color 0.2s;
   white-space: nowrap;
   overflow: hidden;
