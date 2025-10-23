@@ -12,8 +12,8 @@
   display: flex;
   overflow-x: auto;
   padding: 16px 12px;
-  background: #fafafa;
-  border-bottom: 1px solid #dbdbdb;
+  background: var(--bg);
+  border-bottom: 1px solid var(--border);
   gap: 16px;
   justify-content: flex-start;
   max-width: 800px;
@@ -92,8 +92,8 @@
 /* Add Button - Blue circle */
 .story-add-btn.add-more {
   position: absolute;
-  bottom: 22px;
-  right: 0;
+  bottom: 30px;
+  right: 5px;
   background: #0095f6;
   color: white;
   border: 2px solid white;

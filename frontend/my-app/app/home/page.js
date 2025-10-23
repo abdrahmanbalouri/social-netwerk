@@ -11,6 +11,7 @@ import Comment from '../../components/coment.js';
 import Post from '../../components/Post.js';
 import { middleware } from "../../middleware/middelware.js";
 import { useWS } from "../../context/wsContext.js";
+import CreatePost from "../../components/createPost.js";
 
 export default function Home() {
   // State management
@@ -427,7 +428,6 @@ export default function Home() {
       {/* Navbar */}
       <Navbar
         onLogout={logout}
-        onCreatePost={() => setShowModal(true)}
         showSidebar={showSidebar}
         onToggleSidebar={() => setShowSidebar(!showSidebar)}
       />
@@ -444,6 +444,7 @@ export default function Home() {
           ref={modalRefhome}
         >
           <Stories />
+          <CreatePost onCreatePost={() => setShowModal(true)} />
           {!posts ? (
             <p>No posts available</p>
           ) : (
@@ -539,7 +540,7 @@ export default function Home() {
                     followers.map((follower) => (
                       <label key={follower.id} className="user-picker-item">
                         <img
-                          src={`/uploads/${follower.image}` || "/default-avatar.png"}
+                          src={follower?.image ? `/uploads/${follower.image}` : "/assets/default.png"}
                           alt={follower.nickname}
                           className="image-avatar"
                         />
