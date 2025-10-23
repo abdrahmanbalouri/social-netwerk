@@ -7,20 +7,22 @@ import { GroupCreationTrigger } from '../../components/CreateGroup.js';
 import { GroupsTabs } from '../../components/groupTabs.js';
 import LeftBar from '../../components/LeftBar.js';
 import RightBar from '../../components/RightBar.js';
+import { useDarkMode } from '../../context/darkMod.js';
 
 
 export default function () {
+    const { darkMode } = useDarkMode();
+
     return (
-        <>
+        <div className={darkMode ? 'theme-dark' : 'theme-light'}>
             <Navbar />
-            <LeftBar />
-            {/* <AllGroups /> */}
-            <main className="content" id='contentgroups'>
+            {/* main content area */}
+            <main className="content" id="contentgroups">
                 <LeftBar showSidebar={true} />
                 <GroupsTabs />
                 <RightBar />
             </main>
-        </>
+        </div>
     )
 }
 
