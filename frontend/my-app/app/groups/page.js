@@ -8,7 +8,6 @@ import { GroupsTabs } from '../../components/groupTabs.js';
 import LeftBar from '../../components/LeftBar.js';
 import RightBar from '../../components/RightBar.js';
 
-
 export default function () {
     return (
         <>
