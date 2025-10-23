@@ -1,4 +1,3 @@
-import { log } from "util";
 import "../styles/cratepost.css";
 const CreatePost = ({ onCreatePost }) => {
     return (
