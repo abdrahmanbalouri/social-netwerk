@@ -127,7 +127,7 @@ export function CreateGroupForm({ users, onSubmit, onCancel }) {
                             />
 
                             {/* User Suggestions */}
-                            {showSuggestions && users.length > 0 && (
+                            {showSuggestions && users?.length > 0 && (
                                 <div className="user-suggestions">
                                     {users.map(user => (
                                         <div
