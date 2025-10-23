@@ -22,11 +22,14 @@ func GetCommunFriends(w http.ResponseWriter, r *http.Request) {
 	}
 
 	rows, err := repository.Db.Query(`
-		SELECT u.id, u.nickname, u.image
-		FROM users u
-		INNER JOIN followers f ON u.id = f.user_id
+	SELECT DISTINCT u.id, u.nickname, u.image
+	FROM users u
+	INNER JOIN followers f 
+	ON (u.id = f.follower_id OR u.id = f.user_id)
+	WHERE (f.user_id = ? OR f.follower_id = ?);
 	`, userID, userID)
 	if err != nil {
+		fmt.Println("Error querying common friends:", err)
 		helper.RespondWithError(w, http.StatusInternalServerError, "Failed to fetch common friends")
 		return
 	}
@@ -43,7 +46,9 @@ func GetCommunFriends(w http.ResponseWriter, r *http.Request) {
 			helper.RespondWithError(w, http.StatusInternalServerError, "Failed to process common friends")
 			return
 		}
-		friends = append(friends, friend)
+		if userID != friend.ID {
+			friends = append(friends, friend)
+		}
 	}
 
 	helper.RespondWithJSON(w, http.StatusOK, friends)

@@ -11,6 +11,7 @@ import Comment from '../../components/coment.js';
 import Post from '../../components/Post.js';
 import { middleware } from "../../middleware/middelware.js";
 import { useWS } from "../../context/wsContext.js";
+import CreatePost from "../../components/createPost.js";
 
 export default function Home() {
   // State management
@@ -300,7 +301,6 @@ export default function Home() {
 
   async function GetComments(post) {
     setLoadingcomment(true)
-    console.log(post, "--------------------------++++++++++++++++++++");
 
     try {
       setSelectedPost({
@@ -310,7 +310,7 @@ export default function Home() {
         content: post.content,
         author: post.author
       });
-
+      setShowComments(true);
       // Fetch comments
       const res = await fetch(`http://localhost:8080/api/Getcomments/${post.id}/${offsetcomment.current}`, {
         method: "GET",
@@ -321,23 +321,10 @@ export default function Home() {
         return false
       }
       const data = await res.json();
-      let comments = [];
-      if (Array.isArray(data)) {
-        comments = data;
-      } else if (data && typeof data === 'object' && data.comments && Array.isArray(data.comments)) {
-        comments = data.comments;
-      } else if (data && typeof data === 'object') {
-        comments = [data];
-      }
-      comments = comments.map(comment => ({
-        id: comment.id || Math.random(),
-        author: comment.author || comment.username || "Anonymous",
-        content: comment.content || comment.text || "",
-        created_at: comment.created_at || comment.createdAt || new Date().toISOString()
-      }));
-      setShowComments(true);
 
-      if (comments.length == 0) {
+
+
+      if (data.length == 0) {
         return false
       } else {
         offsetcomment.current += 10
@@ -345,8 +332,8 @@ export default function Home() {
       }
 
 
-      setComment([...comment, ...comments]);
-      return comments[0].id
+      setComment([...comment, ...data]);
+      return data[0].id
 
     } catch (err) {
       return false
@@ -441,7 +428,6 @@ export default function Home() {
       {/* Navbar */}
       <Navbar
         onLogout={logout}
-        onCreatePost={() => setShowModal(true)}
         showSidebar={showSidebar}
         onToggleSidebar={() => setShowSidebar(!showSidebar)}
       />
@@ -455,11 +441,10 @@ export default function Home() {
         {/* Feed Section */}
         <section className="feed"
           onScroll={(e) => setscroolHome(e.target.scrollTop)}
-          style={{ height: "100vh", overflowY: "auto" }}
-
           ref={modalRefhome}
         >
           <Stories />
+          <CreatePost onCreatePost={() => setShowModal(true)} />
           {!posts ? (
             <p>No posts available</p>
           ) : (
@@ -520,7 +505,8 @@ export default function Home() {
                 type="file"
                 className="input"
                 onChange={handleImageChange}
-                accept="image/*"
+                accept="image/*,video/*"
+
               />
               <textarea
                 placeholder="What's on your mind?"
@@ -554,7 +540,7 @@ export default function Home() {
                     followers.map((follower) => (
                       <label key={follower.id} className="user-picker-item">
                         <img
-                          src={`/uploads/${follower.image}` || "/default-avatar.png"}
+                          src={follower?.image ? `/uploads/${follower.image}` : "/assets/default.png"}
                           alt={follower.nickname}
                           className="image-avatar"
                         />
