@@ -537,7 +537,6 @@ export default function Profile() {
     return (
       <div className={darkMode ? "theme-dark" : "theme-light"}>
         <Navbar
-          onCreatePost={() => setShowModal(true)}
           onToggleSidebar={() => setShowSidebar(!showSidebar)}
         />
         <main className="content">
@@ -582,7 +581,6 @@ export default function Profile() {
     <div className={darkMode ? "theme-dark" : "theme-light"}>
       {/* Navbar */}
       <Navbar
-        onCreatePost={() => setShowModal(true)}
         onToggleSidebar={() => setShowSidebar(!showSidebar)}
       />
 
