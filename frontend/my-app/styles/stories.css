@@ -12,8 +12,8 @@
   display: flex;
   overflow-x: auto;
   padding: 16px 12px;
-  background: #fafafa;
-  border-bottom: 1px solid #dbdbdb;
+  background: var(--bg);
+  border-bottom: 1px solid var(--border);
   gap: 16px;
   justify-content: flex-start;
   max-width: 800px;
