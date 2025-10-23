@@ -49,7 +49,7 @@ export default function ChatPage() {
         <div className={darkMode ? 'theme-dark' : 'theme-light'}>
             <Navbar />
             <main className="content">
-                <LeftBar />
+                <LeftBar showSidebar={true} />
                 {user ? <ChatBox user={user} /> : <p className="loading">Loading user...</p>}
                 <UserBar />
             </main>

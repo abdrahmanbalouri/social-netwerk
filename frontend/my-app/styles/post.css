@@ -1,52 +1,58 @@
 .post {
-  background: linear-gradient(135deg, #ffffff 0%, #f8faff 100%);
+  background: var(--bg);
   border-radius: 24px;
-  box-shadow: 
-      0 4px 20px rgba(82, 113, 255, 0.08),
-      0 2px 8px rgba(0, 0, 0, 0.04);
+  box-shadow:
+    0 4px 20px rgba(82, 113, 255, 0.08),
+    0 2px 8px rgba(0, 0, 0, 0.04);
   margin-bottom: 28px;
   overflow: hidden;
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  border: 1px solid rgba(82, 113, 255, 0.12);
+  border: 1px solid var(--border);
   position: relative;
 
-  max-width: 600px;
+  max-width: 800px;
   max-height: 1000px;
   margin-left: auto;
   margin-right: auto;
 }
 
 @keyframes shimmer {
-    0% { background-position: -200% 0; }
-    100% { background-position: 200% 0; }
+  0% {
+    background-position: -200% 0;
+  }
+
+  100% {
+    background-position: 200% 0;
+  }
 }
+
 .post .container {
-    padding: 20px;
+  padding: 20px;
 }
 
 /* User Info Section */
 .post .user {
-    margin-bottom: 14px;
+  margin-bottom: 14px;
 }
 
 .post .userInfo {
-    display: flex;
-    align-items: center;
-    gap: 12px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
 
 .post .userInfo img {
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 3px solid transparent;
-    background: 
-        linear-gradient(#ffffff, #ffffff) padding-box,
-        linear-gradient(135deg, #5271ff, #7c3aed) border-box;
-    box-shadow: 0 4px 12px rgba(82, 113, 255, 0.2);
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    cursor: pointer;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid transparent;
+  background:
+    linear-gradient(#ffffff, #ffffff) padding-box,
+    linear-gradient(135deg, #5271ff, #7c3aed) border-box;
+  box-shadow: 0 4px 12px rgba(82, 113, 255, 0.2);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
 }
 
 
@@ -57,137 +63,181 @@
 }
 
 .post .details .name {
-    font-size: 17px;
-    font-weight: 700;
-    background: linear-gradient(135deg, #1e293b, #5271ff);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    transition: all 0.3s ease;
-    text-decoration: none;
-    cursor: pointer;
-    display: inline-block;
+  font-size: 17px;
+  font-weight: 700;
+  background: linear-gradient(135deg, #1e293b, #5271ff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  cursor: pointer;
+  display: inline-block;
+}
+
+/* 🖼️ Image style */
+.post-media-image {
+  width: 100%;
+  max-height: 480px;
+  border-radius: 18px;
+  margin-top: 16px;
+  align-self: center;
+  object-fit: cover;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+  border: 1px solid rgba(82, 113, 255, 0.1);
+}
+
+.post-media-wrapper {
+  width: 100%;
+  max-height: 100%;
+  margin-top: 16px;
+  border-radius: 16px;
+  background-color: var(--bg);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.post-media-video {
+  width: 100%;
+  max-height: 480px;
+  object-fit: contain;
+  border-radius: 16px;
+  background-color: var(--bg);
+  border: 1px solid rgba(82, 113, 255, 0.1);
+  overflow: hidden;
 }
 
 
+
+
+.post-media-video:focus {
+  outline: none;
+}
+
+
+
 .post .details .date {
-    font-size: 13px;
-    color: #64748b;
-    font-weight: 500;
+  font-size: 13px;
+  color: #64748b;
+  font-weight: 500;
 }
 
 /* Content Section */
 .post .content1 {
-    display: flex;
-    flex-direction: column;
+  display: flex;
+  flex-direction: column;
 }
 
 .post .content1 h3 {
-    font-size: 17px;
-    font-weight: 400;
-    line-height: 1.7;
-    color: #334155;
-    word-wrap: break-word;
-    margin: 0;
+  font-size: 17px;
+  font-weight: 400;
+  line-height: 1.7;
+  color: #334155;
+  word-wrap: break-word;
+  margin: 0;
 }
 
 .post .content1 h3 p {
-    font-size: 22px;
-    font-weight: 700;
-    margin: 10px 0;
-    background: linear-gradient(135deg, #5271ff, #7c3aed);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    letter-spacing: -0.02em;
-    line-height: 1.3;
+  font-size: 22px;
+  font-weight: 700;
+  margin: 10px 0;
+  background: linear-gradient(135deg, #5271ff, #7c3aed);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: -0.02em;
+  line-height: 1.3;
 }
 
 .post .content1 .content2 {
-    font-size: 16px;
-    color: #475569;
-    font-weight: 500;
-    line-height: 1.8;
-    margin-top: 6px;
+  font-size: 16px;
+  color: #475569;
+  font-weight: 500;
+  line-height: 1.8;
+  margin-top: 6px;
 }
 
 .post .content1 img {
-    width: 100%;
-    max-height: 480px;
-    border-radius: 18px;
-    margin-top: 16px;
-    align-self: center;
-    object-fit: cover;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    cursor: pointer;
-    border: 1px solid rgba(82, 113, 255, 0.1);
+  width: 100%;
+  max-height: 480px;
+  border-radius: 18px;
+  margin-top: 16px;
+  align-self: center;
+  object-fit: cover;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+  border: 1px solid rgba(82, 113, 255, 0.1);
 }
 
 
 /* Info/Actions Section */
-.post .info {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding-top: 18px;
-    border-top: 2px solid rgba(82, 113, 255, 0.1);
-    margin-top: auto;
-    gap: 12px;
+.post .infoo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 18px;
+  border-top: 2px solid rgba(82, 113, 255, 0.1);
+  margin-top: 10px;
+  gap: 12px;
 }
 
-.post .info .item {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 15px;
-    color: #475569;
-    cursor: pointer;
-    padding: 11px 18px;
-    border-radius: 14px;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    font-weight: 600;
-    background: linear-gradient(135deg, #f8fafc, #f1f5f9);
-    border: 2px solid transparent;
-    position: relative;
-    overflow: hidden;
+.post .infoo .item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 15px;
+  color: #475569;
+  cursor: pointer;
+  padding: 11px 18px;
+  border-radius: 14px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  font-weight: 600;
+  background: transparent;
+  border: 2px solid transparent;
+  position: relative;
+  overflow: hidden;
 }
 
-.post .info .item::before {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 0;
-    height: 0;
-    border-radius: 50%;
-    background: rgba(82, 113, 255, 0.1);
-    transform: translate(-50%, -50%);
-    transition: width 0.4s ease, height 0.4s ease;
-    z-index: 0;
+.post .infoo .item::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(82, 113, 255, 0.1);
+  transform: translate(-50%, -50%);
+  transition: width 0.4s ease, height 0.4s ease;
+  z-index: 0;
 }
 
-.post .info .item:hover::before {
-    width: 200px;
-    height: 200px;
+.post .infoo .item:hover::before {
+  width: 200px;
+  height: 200px;
 }
 
-.post .info .item > * {
-    position: relative;
-    z-index: 1;
+.post .infoo .item>* {
+  position: relative;
+  z-index: 1;
 }
 
-.post .info .item:active {
-    transform: translateY(0);
+.post .infoo .item:active {
+  transform: translateY(0);
 }
 
-.post .info .item i {
-    font-size: 18px;
-    transition: transform 0.3s ease;
+.post .infoo .item i {
+  font-size: 18px;
+  transition: transform 0.3s ease;
 }
 
 .fa-heart.fa-solid {
-    color: #ff4757;
+  color: #ff4757;
 }
 
 
@@ -214,26 +264,13 @@ body {
 .content1 {
   display: flex;
   justify-content: space-between;
-  padding: 20px;
+  padding: 5px;
 }
 
 .feed {
   flex: 6;
-
-}
-.feed::-webkit-scrollbar {
-  width: 8px;
 }
 
-
-
-
-
-.input {
-  background: var(--bg);
-  color: var(--text);
-  border: 1px solid var(--border);
-}
 
 /* Utility classes */
 .text-bold {
@@ -349,156 +386,3 @@ body {
     margin: auto;
   }
 }
-tainer .user .userInfo .details .name {
-  font-weight: 500;
-}
-
-
-
-
-
-
-/* ==================== Modal styles ==================== */
-
-
-
-
-
-
-/* 🎨 Themes */
-.theme-light .post {
-  --textColor: #000;
-  --bg: white;
-  --logo: darkblue;
-  --bgSoft: #f6f3f3;
-  --textColorSoft: #555;
-  --border: lightgray;
-}
-
-.theme-dark .post {
-  --textColor: whitesmoke;
-  --bg: #222;
-  --logo: white;
-  --bgSoft: #333;
-  --textColorSoft: lightgray;
-  --border: #444;
-}
-
-
-.modal-content .modal-close {
-  position: absolute;
-  right: 12px;
-  top: 12px;
-  background: transparent;
-  border: none;
-  font-size: 18px;
-  cursor: pointer;
-  color: var(--text);
-}
-
-@media (max-width: 420px) {
-  .modal-content {
-    width: calc(100% - 2rem);
-    border-radius: 8px;
-    padding: 1rem;
-  }
-}
-
-.sr-only {
-  position: absolute !important;
-  height: 1px;
-  width: 1px;
-  overflow: hidden;
-  clip: rect(1px, 1px, 1px, 1px);
-  white-space: nowrap;
-  border: 0;
-  padding: 0;
-  margin: -1px;
-}
-
-/* Error message */
-.error2 {
-  color: red;
-  font-size: 0.9rem;
-  margin-bottom: 10px;
-}
-
-
-
-
-/* Comment form */
-.form-group textarea {
-  width: 100%;
-  padding: 10px;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-  resize: vertical;
-  min-height: 80px;
-}
-
-.form-group textarea:focus {
-  outline: none;
-  border-color: #2563eb; /* blue */
-  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
-}
-
-/* Submit button */
-
-
-/* Modal Content */
-.modal-content {
-  background: #fff; /* White background like FB */
-  border-radius: 8px;
-  max-width: 500px;
-  width: 90%;
-  max-height: 80vh;
-  overflow-y: auto;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-  display: flex;
-  flex-direction: column;
-}
-
-/* Modal Header */
-
-
-/* Comments Section */
-
-
-
-/* Responsive Design */
-@media (max-width: 600px) {
-  .modal-content {
-    width: 95%;
-    max-height: 90vh;
-  }
-
-  .modal-title {
-    font-size: 16px;
-  }
-
-  .post-title {
-    font-size: 14px;
-  }
-
-  .comment-textarea {
-    font-size: 13px;
-  }
-
-  .post-comment-btn {
-    font-size: 13px;
-    padding: 6px 12px;
-  }
-}
-
-/* Animations */
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-@keyframes slideDown {
-  from { transform: translateY(-20px); opacity: 0; }
-  to { transform: translateY(0); opacity: 1; }
-}
-
-/* Dark Mode */

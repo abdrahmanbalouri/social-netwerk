@@ -266,7 +266,7 @@ const Stories = () => {
         >
           <div className="story-image-wrapper">
             <img
-              src={Profile?.image ? `/uploads/${Profile.image}` : "/avatar.png"}
+              src={Profile?.image ? `/uploads/${Profile.image}` : "/assets/default.png"}
               alt="Your avatar"
               className="profile-img"
             />
@@ -296,7 +296,7 @@ const Stories = () => {
         >
           <div className="story-image-wrapper">
             <img
-              src={group.user.profile ? `/uploads/${group.user.profile}` : "/avatar.png"}
+              src={group?.user?.profile ? `/uploads/${group.user.profile}` : "/assets/default.png"}
               alt={group.user.nickname}
               className="profile-img"
             />
