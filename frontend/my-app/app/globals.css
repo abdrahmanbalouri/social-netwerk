@@ -74,6 +74,7 @@ body {
 
 main {
   background: var(--bgSoft);
+  min-height: 100vh;
 }
 
 /* Modal Overlay */
