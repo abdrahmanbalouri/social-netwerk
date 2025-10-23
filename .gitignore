@@ -1,2 +1,2 @@
 *.db
-/uploads
+frontend/my-app/public/uploads/
