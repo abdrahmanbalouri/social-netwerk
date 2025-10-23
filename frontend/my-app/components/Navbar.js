@@ -10,7 +10,7 @@ import Notification from "./notofication.js";
 import NOtBar from "./notfcationBar.js"
 import "../styles/navbar.css";
 
-export default function Navbar({ onCreatePost }) {
+export default function Navbar() {
   const router = useRouter();
   const { darkMode, toggle } = useDarkMode();
   const { Profile } = useProfile();
@@ -148,7 +148,6 @@ export default function Navbar({ onCreatePost }) {
           {cont > 0 && <span className="notif-count">{cont}</span>}
         </div>
 
-        <i className="fa-solid fa-plus" onClick={onCreatePost}></i>
 
         <div className="user" onClick={() => router.push("/profile/0")}>
           <img
