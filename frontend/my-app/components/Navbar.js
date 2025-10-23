@@ -10,7 +10,7 @@ import Notification from "./notofication.js";
 import NOtBar from "./notfcationBar.js"
 import "../styles/navbar.css";
 
-export default function Navbar({ onCreatePost }) {
+export default function Navbar() {
   const router = useRouter();
   const { darkMode, toggle } = useDarkMode();
   const { Profile } = useProfile();
@@ -33,7 +33,7 @@ export default function Navbar({ onCreatePost }) {
 
     const handleNotification = (data) => {
       console.log("Notification received:11111111111111", data);
-    
+
       addnotf((prev) => prev + 1);
       notif(data.data || data);
       cheng(true);
@@ -83,14 +83,22 @@ export default function Navbar({ onCreatePost }) {
       } catch (err) {
         console.error(err);
       }
-    }, 300); 
+    }, 300);
 
     return () => clearTimeout(delay);
   }, [searchTerm]);
-
+  const disply = () => {
+    const sideBar = document.getElementById("leftBar");
+    if (sideBar.style.display === "block") {
+      sideBar.style.display = "none";
+    } else {
+      sideBar.style.display = "block";
+    }
+  };
   return (
     <div className="navbar">
       <div className="left">
+        <i className="fa-solid fa-bars" id="menu" onClick={disply}></i>
         <Link href="/home">
           <span>Social-Network</span>
         </Link>
@@ -106,7 +114,7 @@ export default function Navbar({ onCreatePost }) {
             onBlur={() => setTimeout(() => setShowResults(false), 150)}
           />
 
-{showResults && Array.isArray(searchResults) && searchResults.length > 0 && (
+          {showResults && Array.isArray(searchResults) && searchResults.length > 0 && (
             <div className="search-results" >
               {searchResults.map((user) => (
                 <div
@@ -114,7 +122,7 @@ export default function Navbar({ onCreatePost }) {
                   onClick={() => router.push(`/profile/${user.id}`)}
                 >
                   <img
-                    src={`/uploads/${user.image || "default.png"}`}
+                    src={`${user?.image ? `/uploads/${user.image}` : "/assets/default.png"}`}
                     alt=""
                     width="35"
                     height="35"
@@ -126,7 +134,7 @@ export default function Navbar({ onCreatePost }) {
           )}
         </div>
       </div>
-      {showNotbar  && <NOtBar notData={notData} />}
+      {showNotbar && <NOtBar notData={notData} />}
       {show && <Notification data={data} />}
 
       <div className="right">
@@ -140,14 +148,13 @@ export default function Navbar({ onCreatePost }) {
           {cont > 0 && <span className="notif-count">{cont}</span>}
         </div>
 
-        <i className="fa-solid fa-plus" onClick={onCreatePost}></i>
 
         <div className="user" onClick={() => router.push("/profile/0")}>
           <img
             src={
               Profile?.image
                 ? `/uploads/${Profile.image}`
-                : "/uploads/default.png"
+                : "/assets/default.png"
             }
             alt="user avatar"
           />
