@@ -1,27 +1,27 @@
 import "../styles/cratepost.css";
 const CreatePost = ({ onCreatePost }) => {
     return (
-        <div class="create-post-wrapper" onClick={onCreatePost}>
-            <div class="create-post-container">
-                <div class="create-post-header">
-                    <div class="post-icon">
-                        <i class="fa-solid fa-pen"></i>
+        <div className="create-post-wrapper" onClick={onCreatePost}>
+            <div className="create-post-container">
+                <div className="create-post-header">
+                    <div className="post-icon">
+                        <i className="fa-solid fa-pen"></i>
                     </div>
-                    <div class="post-input-wrapper">
-                        <input type="text" class="post-input" placeholder="What's on your mind, Nicolas?" readonly />
+                    <div className="post-input-wrapper">
+                        <input type="text" className="post-input" placeholder="What's on your mind, Nicolas?" readOnly />
                     </div>
                 </div>
-                <div class="post-divider">
+                <div className="post-divider">
                 </div>
-                <div class="post-actions">
-                    <button class="action-button photo">
-                        <i class="fa-solid fa-image"></i>
+                <div className="post-actions">
+                    <button className="action-button photo">
+                        <i className="fa-solid fa-image"></i>
                         <span>Photo/Video</span> </button>
-                    <button class="action-button video">
-                        <i class="fa-solid fa-video"></i>
+                    <button className="action-button video">
+                        <i className="fa-solid fa-video"></i>
                         <span>Live Video</span> </button>
-                    <button class="action-button feeling">
-                        <i class="fa-solid fa-face-smile"></i>
+                    <button className="action-button feeling">
+                        <i className="fa-solid fa-face-smile"></i>
                         <span>Feeling</span>
                     </button>
                 </div>
