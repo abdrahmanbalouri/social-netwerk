@@ -72,8 +72,8 @@ export default function FollowPage() {
             <button
               onClick={() => handleTabChange("followers")}
               style={{
-                backgroundColor: tab === "followers" ? "blue" : "white",
-                color: tab === "followers" ? "white" : "black",
+                backgroundColor: tab === "followers" ? "blue" : "var(--bg)",
+                color: tab === "followers" ? "var(--textColor)" : "var(--textColor)",
               }}
             >
               Followers
@@ -81,8 +81,8 @@ export default function FollowPage() {
             <button
               onClick={() => handleTabChange("following")}
               style={{
-                backgroundColor: tab === "following" ? "blue" : "white",
-                color: tab === "following" ? "white" : "black",
+                backgroundColor: tab === "following" ? "blue" : "var(--bg)",
+                color: tab === "following" ? "var(--textColor)" : "var(--textColor)",
               }}
             >
               Following

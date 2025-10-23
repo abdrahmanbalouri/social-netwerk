@@ -94,6 +94,14 @@ export default function Navbar() {
     } else {
       sideBar.style.display = "block";
     }
+    window.addEventListener('resize', (e) => {
+      if (window.innerWidth > 768) {
+        sideBar.style.display = 'block';
+      } else {
+        sideBar.style.display = 'none';
+      }
+    })
+
   };
   return (
     <div className="navbar">
