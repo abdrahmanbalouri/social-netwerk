@@ -8,12 +8,15 @@ import { useParams } from "next/navigation";
 import { PostCreationTrigger } from "../../../components/cretaePostGroup.js"
 import LeftBar from "../../../components/LeftBar.js";
 import RightBar from "../../../components/RightBar.js";
+import { useDarkMode } from "../../../context/darkMod.js";
 // import {CreatePost} from ""
 
 
 export default function () {
+    const { darkMode } = useDarkMode();
+
     return (
-        <>
+        <div className={darkMode ? "theme-dark" : "theme-light"}>
             <Navbar />
             <main className="content">
                 <LeftBar showSidebar={true} />
@@ -23,7 +26,7 @@ export default function () {
             </main>
             {/* <AllPosts /> */}
             {/* <CreatePost /> */}
-        </>
+        </div>
     )
 }
 
