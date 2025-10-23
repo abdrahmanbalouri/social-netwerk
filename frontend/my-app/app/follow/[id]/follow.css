@@ -9,10 +9,6 @@
   padding-bottom: 0;
 }
 
-/* Tab Content */
-.tabContent {
-  animation: fadeIn 0.4s ease-in;
-}
 
 /* Item Users Container */
 .itemUsers {
@@ -27,9 +23,7 @@
   border-bottom: 1px solid #efefef;
 }
 
-.userDiv:hover {
-  background: #fafafa;
-}
+
 
 .userDiv:last-child {
   border-bottom: none;
@@ -65,16 +59,14 @@
 
 /* Username Link */
 .userInfos a {
+  color: var(--textColor);
   text-decoration: none;
-  color: #262626;
   font-weight: 600;
   font-size: 14px;
   transition: color 0.1s ease;
 }
 
-.userInfos a:hover {
-  color: #737373;
-}
+
 
 .userInfos span {
   display: block;
@@ -117,27 +109,13 @@
   outline: none;
 }
 
-.tabButtons button:hover {
-  color: #262626;
-  opacity: 0.9;
-  transform: translateY(-2px);
-}
+
 
 .tabButtons button:active {
   transform: translateY(0);
 }
 
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
 
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
 
 .tabContent ul {
   list-style: none;
@@ -156,10 +134,6 @@
   color: #374151;
 }
 
-.tabContent ul li:hover {
-  background-color: #f9fafb;
-  cursor: pointer;
-}
 
 .tabContent ul li:last-child {
   border-bottom: none;
