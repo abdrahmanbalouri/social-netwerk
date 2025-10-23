@@ -8,7 +8,7 @@ const CreatePost = ({ onCreatePost }) => {
                         <i class="fa-solid fa-pen"></i>
                     </div>
                     <div class="post-input-wrapper">
-                        <input type="text" class="post-input" placeholder="What's on your mind, Nicolas?" readonly />
+                        <input type="text" class="post-input" placeholder="What's on your mind, Nicolas?" readOnly />
                     </div>
                 </div>
                 <div class="post-divider">
