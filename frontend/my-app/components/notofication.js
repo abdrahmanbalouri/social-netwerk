@@ -15,7 +15,7 @@ console.log("Notification data:", data);
             <Link href={`/profile/${data.from}`} >
             <div className="notification-container">
                 <div className="notification-media">
-                    <img src={data?.photo ? `/uploads/${data.photo}` : "/uploads/default.png"} alt="" className="notification-user-avatar" />
+                    <img src={data?.photo ? `/uploads/${data.photo}` : "/assets/default.png"} alt="" className="notification-user-avatar" />
                     <i className="fa fa-thumbs-up notification-reaction"></i>
                 </div>
                 <div className="notification-content">

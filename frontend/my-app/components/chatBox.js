@@ -152,7 +152,7 @@ export default function ChatBox({ user }) {
         <Link href={`/profile/${user.id}`}>
           <img
             src={
-              user?.image ? `/uploads/${user.image}` : "/uploads/default.png"
+              user?.image ? `/uploads/${user.image}` : "/assets/default.png"
             }
             alt="user avatar"
           />

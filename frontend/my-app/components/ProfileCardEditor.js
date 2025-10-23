@@ -124,7 +124,7 @@ export default function ProfileCardEditor({
                                     ? avatarPreview
                                     : initialAvatar
                                         ? `/uploads/${initialAvatar}`
-                                        : "/uploads/default.png"
+                                        : "/assets/default.png"
                             }
                             className="avatar"
                         />

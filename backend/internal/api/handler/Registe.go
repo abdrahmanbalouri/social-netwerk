@@ -51,13 +51,28 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 	file, handler, err := r.FormFile("avatar")
 	if err == nil {
 		defer file.Close()
-		filePath := fmt.Sprintf("../frontend/my-app/public/uploads/%s", handler.Filename)
-		dst, _ := os.Create(filePath)
+		uploadDir := "../frontend/my-app/public/uploads"
+		err = os.MkdirAll(uploadDir, os.ModePerm)
+		if err != nil {
+			fmt.Println("Error creating directory:", err)
+			return
+		}
+		filePath := fmt.Sprintf("%s/%s", uploadDir, handler.Filename)
+		dst, err := os.Create(filePath)
+		if err != nil {
+			fmt.Println("Error creating file:", err)
+			return
+		}
 		defer dst.Close()
-		io.Copy(dst, file)
+		_, err = io.Copy(dst, file)
+		if err != nil {
+			fmt.Println("Error copying file:", err)
+			return
+		}
 		userInformation.Image = handler.Filename
+
 	} else {
-		fmt.Println("err", err)
+		fmt.Println("Error reading form file:", err)
 	}
 
 	dobStr := r.FormValue("dob")
@@ -124,9 +139,6 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 		html.EscapeString(userInformation.Email),
 		hashedPassword,
 		func() string {
-			if userInformation.Image == "" {
-				return "default.png"
-			}
 			return userInformation.Image
 		}(),
 		func() string {
