@@ -48,6 +48,7 @@ export default function Home() {
       if (!auth) {
         router.push("/login");
         sendMessage({ type: "logout" })
+        
       }
     }
     checkAuth();

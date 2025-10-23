@@ -1,5 +1,4 @@
 .leftBar {
-  /* configurable widths for easy tweaks */
   --leftbar-width: 280px;
   margin: 0 20px;
   position: sticky;
@@ -9,7 +8,6 @@
   height: calc(100vh - (var(--leftbar-top, 70px) + 20px));
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
-  /* smooth scrolling on iOS/touch */
   background-color: var(--bg);
   box-shadow: 2px 0 10px rgba(0, 0, 0, 0.05);
   padding: 10px;
