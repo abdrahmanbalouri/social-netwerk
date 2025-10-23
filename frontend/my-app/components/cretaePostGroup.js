@@ -97,6 +97,7 @@ export function PostCreationTrigger() {
         try {
             await CreatePost(id, formData);
             setIsModalOpen(false);
+            setShowForm(false)
         } catch (err) {
             console.error("Error creating post:", err);
         }
@@ -105,7 +106,7 @@ export function PostCreationTrigger() {
 
     const userList = []
     return (
-        <>
+        <div>
             <div className="create-post-container">
                 <div className="create-post-card">
                     <div className="create-post-header">
@@ -130,7 +131,7 @@ export function PostCreationTrigger() {
                 />
             )}
 
-        </>
+        </div>
     )
 }
 
