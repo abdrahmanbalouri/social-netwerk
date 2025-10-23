@@ -610,9 +610,9 @@ export default function Profile() {
               />
               <img
                 src={
-                  theprofile.image
+                  theprofile?.image
                     ? `/uploads/${theprofile.image}`
-                    : "/uploads/default.png"
+                    : "/assets/default.png"
                 }
                 alt="profile picture"
                 className="profilePic"
@@ -812,7 +812,7 @@ export default function Profile() {
                       followers.map((follower) => (
                         <label key={follower.id} className="user-picker-item">
                           <img
-                            src={`/uploads/${follower.image}` || "/default-avatar.png"}
+                            src={follower?.image ? `/uploads/${follower.image}` : "/assets/default.png"}
                             alt={follower.nickname}
                             className="image-avatar"
                           />
