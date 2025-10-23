@@ -47,17 +47,17 @@ export default function ProfileCardEditor({
     async function handleSave() {
         setSaving(true);
         const formData = new FormData();
-        
+
         formData.append("displayName", displayName || initialAbout);
         formData.append("privacy", privacy || initialPrivacy);
 
         if (coverInputRef.current.files[0]) {
             formData.append("cover", coverInputRef.current.files[0]);
             console.log(coverInputRef.current.files[0]);
-            
+
 
         } else if (initialCover) {
-            
+
             formData.append("existingCover", initialCover);
         }
 
@@ -152,8 +152,9 @@ export default function ProfileCardEditor({
                             onChange={(e) => setDisplayName(e.target.value)}
                             className="display-name"
                             aria-label="About"
+                            id="rr"
                         />
-                        <p className="subtext">Short bio or user title</p>
+                        <p className="subtext">Update your Short bio <i className="fa-solid fa-arrow-up"></i></p>
                     </div>
                 </div>
 
