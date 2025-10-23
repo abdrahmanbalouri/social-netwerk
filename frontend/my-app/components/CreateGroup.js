@@ -212,15 +212,15 @@ export function GroupCreationTrigger() {
     console.log("usssssseeers are :", userList);
     return (
 
-        <div className="create-post-container">
-            <div className="create-post-header">
+        <div className="create-group-container">
+            <div className="create-group-header">
                 <div className="user-avatar">
                     <span>User</span>
                 </div>
                 <input
                     type="text"
                     placeholder="DO you want to create a group ? just click here !"
-                    className="post-input"
+                    className="group-input"
                     onClick={handlePostClick}
                     readOnly
                 />
