@@ -40,7 +40,7 @@ func Routes(db *sql.DB) http.Handler {
 	mux.HandleFunc("/api/getlastcomment/{id}", handlers.Getlastcommnet)
 	mux.HandleFunc("/api/searchUser", handlers.SearchUserHandler)
 	mux.HandleFunc("/notifcation/{id}", handlers.Notifications)
-	mux.HandleFunc("/api/Getstories/{id}", handlers.GetStories)
+	mux.HandleFunc("/api/Getstories", handlers.GetStories)
 	mux.HandleFunc("/api/Createstories", handlers.CreateStories)
 	mux.HandleFunc("/api/getmessages", handlers.GetMessagesHandler)
 	mux.HandleFunc("/ws", handlers.Websocket)
