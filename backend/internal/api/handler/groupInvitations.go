@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strings"
 	"time"
 
 	"social-network/internal/helper"
@@ -16,7 +17,7 @@ type GroupResponse struct {
 	Response string `json:"response"`
 }
 type GroupInvitation struct {
-	GroupID      string   `json:"groupID"`
+	// GroupID      string   `json:"groupID"`
 	InvitedUsers []string `json:"invitedUsers"`
 }
 
@@ -100,11 +101,18 @@ func GroupInvitationRequest(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var newInvitation GroupInvitation
-	if err := json.NewDecoder(r.Body).Decode(&newInvitation); err != nil {
-		helper.RespondWithError(w, http.StatusBadRequest, "Invalid request format")
+	parts := strings.Split(r.URL.Path, "/")
+	if len(parts) < 4 {
+		helper.RespondWithError(w, http.StatusNotFound, "Group not found")
 		return
 	}
+	GrpId := parts[3]
+
+	var newInvitation GroupInvitation
+	// if err := json.NewDecoder(r.Body).Decode(&newInvitation); err != nil {
+	// 	helper.RespondWithError(w, http.StatusBadRequest, "Invalid request format")
+	// 	return
+	// }
 
 	// find the user id
 	userID, IDerr := helper.AuthenticateUser(r)
@@ -123,7 +131,7 @@ func GroupInvitationRequest(w http.ResponseWriter, r *http.Request) {
 	// check if the user is a member of that group
 	var isMember bool
 	query := `SELECT EXISTS (SELECT 1 FROM group_members WHERE user_id = ? AND group_id = ?)`
-	if err := tx.QueryRow(query, userID, newInvitation.GroupID).Scan(&isMember); err != nil {
+	if err := tx.QueryRow(query, userID, GrpId).Scan(&isMember); err != nil {
 		helper.RespondWithError(w, http.StatusInternalServerError, "Failed to check group membership")
 		return
 	}
@@ -152,7 +160,7 @@ func GroupInvitationRequest(w http.ResponseWriter, r *http.Request) {
         UNION ALL
         SELECT 1 FROM group_invitations WHERE user_id = ? AND group_id = ?
     )`
-		err = tx.QueryRow(query, invitedUserID, newInvitation.GroupID, invitedUserID, newInvitation.GroupID).Scan(&exists)
+		err = tx.QueryRow(query, invitedUserID, GrpId, invitedUserID, GrpId).Scan(&exists)
 		if err != nil {
 			helper.RespondWithError(w, http.StatusInternalServerError, "Error checking for existing membership or invitation")
 			return
@@ -164,7 +172,7 @@ func GroupInvitationRequest(w http.ResponseWriter, r *http.Request) {
 		rowId := helper.GenerateUUID()
 		createdAt := time.Now().UTC()
 		query = `INSERT INTO group_invitations (id, group_id, user_id, invited_by_user_id, status, created_at) VALUES (?, ?, ?, ?, ?, ?)`
-		_, err = tx.Exec(query, rowId, newInvitation.GroupID, invitedUserID, userID, "pending", createdAt)
+		_, err = tx.Exec(query, rowId, GrpId, invitedUserID, userID, "pending", createdAt)
 		if err != nil {
 			helper.RespondWithError(w, http.StatusInternalServerError, "Error sending the invitation")
 			return
