@@ -115,29 +115,28 @@ func CreateGroupHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	fmt.Println("333333")
-	var createdGroup struct {
-		ID          string `json:"id"`
-		Title       string `json:"title"`
-		Description string `json:"description"`
-		AdminID     string `json:"admin_id"`
-		AdminName   string `json:"admin_name"`
-		CreatedAt   string `json:"created_at"`
-		MemberCount int    `json:"member_count"`
-	}
+	// var createdGroup struct {
+	// 	ID          string `json:"id"`
+	// 	Title       string `json:"title"`
+	// 	Description string `json:"description"`
+	// 	AdminID     string `json:"admin_id"`
+	// 	AdminName   string `json:"admin_name"`
+	// 	CreatedAt   string `json:"created_at"`
+	// 	MemberCount int    `json:"member_count"`
+	// }
+	var createdGroup Group
 
 	queryGetGroup := `
 	SELECT 
-		g.id, g.title, g.description, g.admin_id, u.nickname AS admin_name, g.created_at,
-		(SELECT COUNT(*) FROM group_members WHERE group_id = g.id) AS member_count
-	FROM groups g
-	JOIN users u ON g.admin_id = u.id
-	WHERE g.id = ?
-	`
+		g.id, g.title, g.description 
+	FROM groups g 
+	ORDER BY g.created_at DESC
+	LIMIT 1
+`
 
 	err = repository.Db.QueryRow(queryGetGroup, grpID).Scan(
 		&createdGroup.ID, &createdGroup.Title, &createdGroup.Description,
-		&createdGroup.AdminID, &createdGroup.AdminName, &createdGroup.CreatedAt,
-		&createdGroup.MemberCount,
+		
 	)
 	if err != nil {
 		fmt.Println("Failed to fetch created group:", err)
