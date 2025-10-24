@@ -32,7 +32,6 @@ export default function Navbar() {
     if (!connected) return; // wait for connection
 
     const handleNotification = (data) => {
-      console.log("Notification received:11111111111111", data);
 
       addnotf((prev) => prev + 1);
       notif(data.data || data);
