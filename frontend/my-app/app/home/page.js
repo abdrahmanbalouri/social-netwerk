@@ -206,13 +206,17 @@ export default function Home() {
 
       if (!res.ok) {
         return false
+      }else{
+        
+        const data = await res.json();
+        
+        setPosts([...data]);
+
       }
 
-      const data = await res.json();
 
 
 
-      setPosts([...data]);
       return true
     } catch (err) {
       console.error("Error fetching posts:", err);

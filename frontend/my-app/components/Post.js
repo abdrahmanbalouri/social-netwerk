@@ -4,7 +4,6 @@ import "../styles/post.css"
 
 
 export default function Post({ post, onGetComments, ondolike }) {
-console.log("dsdsdsdsd",post);
 
 
 
