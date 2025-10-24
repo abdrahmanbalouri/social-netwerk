@@ -6,7 +6,7 @@ import { useProfile } from "../context/profile";
 import { useWS } from "../context/wsContext.js";
 import { useState, useEffect } from "react";
 import { useChat } from "../context/chatContext.js";
-import Notification from "./notofication.js";
+// transient toast notification moved to GlobalNotification
 import NOtBar from "./notfcationBar.js"
 import "../styles/navbar.css";
 
@@ -23,8 +23,7 @@ export default function Navbar() {
   const [notData, setnot] = useState({})
 
   const [cont, addnotf] = useState(0);
-  const [data, notif] = useState({});
-  const [show, cheng] = useState(false);
+  // notification transient data is handled globally by GlobalNotification
   const { addListener, removeListener, connected } = useWS();
   const { activeChatID } = useChat();
   const id = useParams().id
@@ -32,12 +31,10 @@ export default function Navbar() {
     if (!connected) return; // wait for connection
 
     const handleNotification = (data) => {
-      console.log("Notification received:11111111111111", data);
-
+      console.log("Notification received in Navbar (counter):", data);
+      // update unread count and stored notification list for drop-down
       addnotf((prev) => prev + 1);
-      notif(data.data || data);
-      cheng(true);
-      setTimeout(() => cheng(false), 4000);
+      setnot(data.data || data);
     };
 
     addListener("notification", handleNotification);
@@ -143,7 +140,6 @@ export default function Navbar() {
         </div>
       </div>
       {showNotbar && <NOtBar notData={notData} />}
-      {show && <Notification data={data} />}
 
       <div className="right">
         <i

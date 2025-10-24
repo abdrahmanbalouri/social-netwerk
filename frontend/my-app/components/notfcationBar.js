@@ -43,7 +43,8 @@ export default function NotBar({ notData }) {
                 <div className="dropdown-title">
                     Notifications
                 </div>
-                <div className="dropdown-tabs">                    </div>
+                <div className="dropdown-tabs">
+                </div>
             </div>
 
             <div className="notifications-list" id="notificationsList">
@@ -59,7 +60,6 @@ export default function NotBar({ notData }) {
                             <div
                                 key={noti.id || index}
                                 className={`notification-item ${!noti.isRead ? 'unread' : ''}`}
-                                onClick={() => markAsRead(index)}
                             >
                                 <div className="notification-avatar">
                                     <img
