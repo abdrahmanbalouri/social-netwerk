@@ -48,7 +48,7 @@ export function WSProvider({ children }) {
       socket.onmessage = (event) => {
         try {
           const data = JSON.parse(event.data);
-          console.log("📩 Received:", data);
+          // console.log("📩 Received:", data);
 
           // 🔥 Handle online user updates
           // if (data.type === "online_list") {
@@ -64,7 +64,7 @@ export function WSProvider({ children }) {
           // }
 
           // 🔥 Trigger any custom listeners
-          console.log("listeenenn-------", listeners.current);
+          // console.log("listeenenn-------", listeners.current);
           if (listeners.current[data.type]) {
 
             listeners.current[data.type].forEach((cb) => cb(data));

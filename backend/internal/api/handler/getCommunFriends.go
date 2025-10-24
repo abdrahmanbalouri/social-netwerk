@@ -10,7 +10,7 @@ import (
 )
 
 func GetCommunFriends(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("GetCommunFriends called")
+	// fmt.Println("GetCommunFriends called")
 	if r.Method != "GET" {
 		helper.RespondWithError(w, http.StatusMethodNotAllowed, "Method Not Allowed")
 		return
