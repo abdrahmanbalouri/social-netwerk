@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"fmt"
 	"net/http"
 	"strconv"
 	"strings"
@@ -29,7 +28,7 @@ func AllpostsHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	posts, err := post.GetAllPosts(userId, r, offset)
-	fmt.Println("posts:", posts)
+	// fmt.Println("posts:", posts)
 	if err != nil {
 		helper.RespondWithError(w, http.StatusInternalServerError, "Failed to retrieve posts")
 		return
