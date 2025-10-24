@@ -1,8 +1,9 @@
 "use client"
 import Navbar from '../../components/Navbar.js';
+import { GroupCard } from '../../components/groupCard.js';
 import { useEffect, useState } from "react";
 import "../../styles/groupstyle.css"
-import { useRouter } from 'next/navigation'
+import { useRouter, useSelectedLayoutSegments } from 'next/navigation'
 import { GroupCreationTrigger } from '../../components/CreateGroup.js';
 import { GroupsTabs } from '../../components/groupTabs.js';
 import LeftBar from '../../components/LeftBar.js';
@@ -35,7 +36,7 @@ export function AllGroups() {
         })
             .then(res => res.json())
             .then(data => {
-                console.log("data is :", data);
+                console.log("All the groups are :", data);
                 setGroup(data);
                 setLoading(false);
             })
@@ -65,6 +66,7 @@ export function AllGroups() {
 }
 
 export function MyGroups() {
+    console.log("MyGroups rendered");
     const [group, setGroup] = useState(null);
     const [loading, setLoading] = useState(true);
     const router = useRouter()
@@ -81,7 +83,7 @@ export function MyGroups() {
         })
             .then(res => res.json())
             .then(data => {
-                console.log("data is :", data);
+                // console.log("data is :", data);
                 setGroup(data);
                 setLoading(false);
             })
@@ -101,32 +103,31 @@ export function MyGroups() {
         <div className="group-container">
             <GroupCreationTrigger />
             {group.map(grp => (
-                <div key={grp.ID} className="group-card">
-                    <div className="group-content">
-                        <h2 className="group-title">{grp.Title}</h2>
-                        <p className="group-description">{grp.Description}</p>
-                    </div>
-                    <div className="group-footer">
-                        <button onClick={() => handleShow(grp.ID)}>Show</button>
-                    </div>
-                </div>
+                <GroupCard
+                    key={grp.ID}
+                    group={grp}
+                    onShow={handleShow}
+                />
             ))}
         </div>
     )
 }
 
 export function createGroup(formData) {
+    console.log("inside Create Group function");
     return fetch('http://localhost:8080/api/groups/add', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
         body: JSON.stringify(formData),
     })
-        .then(res => {
+        .then(async res => {
             if (!res.ok) throw new Error('Failed to create group');
-            return res.json();
+            const groupIS = await res.json()
+            console.log("new group is :", groupIS);
+            return groupIS
         })
-        .then(data => data)
+        .then(createdGroup => { return createdGroup })
         .catch(error => {
             console.error('Failed to create new group:', error);
             throw error;
