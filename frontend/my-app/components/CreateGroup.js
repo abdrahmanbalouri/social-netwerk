@@ -4,7 +4,6 @@ import { createGroup } from '../app/groups/page';
 import { GroupCard } from './groupCard';
 
 export function CreateGroupForm({ users, onSubmit, onCancel }) {
-    // console.log("USERRRS ARE :", users);
     console.log("insife CreateGroupform ");
     const [groupTitle, setGroupTitle] = useState('');
     const [groupDescription, setGroupDescription] = useState('');
@@ -159,13 +158,10 @@ export function CreateGroupForm({ users, onSubmit, onCancel }) {
 }
 
 export function GroupCreationTrigger({setGroup}) {
-    console.log("inside GroupCreationTrigger");
+    // console.log("inside GroupCreationTrigger");
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [showNoGroups, setShowNoGroups] = useState(true);
     const [userList, setUserList] = useState([]);
-    // const [groups, setGroups] = useState([]);
-    // const [groups, setGroups] = useState([]);
-    // const [userID, setUserID] = useState('')
 
     const handlePostClick = () => {
         setShowNoGroups(false);
@@ -177,22 +173,20 @@ export function GroupCreationTrigger({setGroup}) {
     };
 
     const handleSubmit = async (groupData) => {
-        // console.log("inside handleSubmit of GroupCreationTrigggggggger");
         try {
             const newGroup = await createGroup(groupData);
             console.log("NEWWWW GROUUUP IS :", newGroup);
             const DoNothing = (newGroup) => {
                 console.log("wast handleShow li f GroupCreationTrigger");
             };
-            if (newGroup){
                 setGroup(prev => {
-                    const exists = prev.some(g => g.group_id === newGroup.group_id);
+                    console.log("groups before are :", prev);
+                    // console.log("groups before are :", prev);
+                    const exists = prev.some(g => g.ID === newGroup.ID);
                     const temp = [newGroup, ...prev]
-                    console.log("hawaa :", temp);
-
+                    console.log("groups after are :", temp);
                     return exists ? prev : [newGroup, ...prev];
                 })
-            }
         } catch (error) {
             console.error("Error creating group:", error);
         } finally{
@@ -240,13 +234,6 @@ export function GroupCreationTrigger({setGroup}) {
                     onCancel={handleCancel}
                 />
             )}
-            {/* {groups.map((grp) => (
-                <GroupCard
-                    key={grp.ID}
-                    group={grp}
-                    onShow={() => console.log("Show group:", grp.ID)}
-                />
-            ))} */}
         </div>
     )
 }
