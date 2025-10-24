@@ -68,7 +68,9 @@ export function AllPosts() {
     console.log("posts are :", posts);
     return (
         <div>
-            <PostCreationTrigger />
+            <PostCreationTrigger
+            setPost = {setPost}
+            />
             <div className="posts-list">
                 {posts.map((post) => (
                     <Post
