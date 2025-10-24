@@ -1,143 +1,333 @@
+/* Modern Notification Styles */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
 body {
     background-color: #F0F2F5;
-    font-family: "Arial";
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 }
 
 strong {
     font-weight: 600;
 }
 
+/* Main notification container */
 .notification {
-    position: absolute;
+    position: fixed;
     width: 360px;
-    padding: 15px;
-    background-color: white;
+    padding: 16px;
+    background-color: #FFFFFF;
     border-radius: 16px;
-    bottom: -90vh;
-    left: 15px;
-    transform: translateY(100%); /* start off-screen */
-    animation: slideUp 300ms ease-out forwards;
-    z-index: 1000;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12), 0 2px 8px rgba(0, 0, 0, 0.08);
+    bottom: 20px;
+    left: 20px;
+    transform: translateY(calc(100% + 20px));
+    animation: slideUp 400ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    z-index: 9999;
+    transition: box-shadow 0.3s ease, transform 0.3s ease;
 }
 
+.notification:hover {
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.16), 0 4px 12px rgba(0, 0, 0, 0.12);
+    transform: translateY(0) scale(1.02);
+}
+
+/* Header section */
 .notification-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 15px;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #E4E6EB;
 }
 
 .notification-title {
-    font-size: 16px;
-    font-weight: 500;
+    font-size: 17px;
+    font-weight: 600;
+    color: #050505;
     text-transform: capitalize;
+    letter-spacing: -0.01em;
 }
 
 .notification-close {
     cursor: pointer;
-    width: 30px;
-    height: 30px;
-    border-radius: 30px;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     background-color: #F0F2F5;
     font-size: 14px;
+    color: #65676B;
+    transition: all 0.2s ease;
 }
 
+.notification-close:hover {
+    background-color: #E4E6EB;
+    transform: rotate(90deg);
+    color: #050505;
+}
+
+.notification-close:active {
+    transform: rotate(90deg) scale(0.95);
+}
+
+/* Content container */
 .notification-container {
     display: flex;
     align-items: flex-start;
     position: relative;
+    padding: 12px;
+    border-radius: 12px;
+    transition: background-color 0.2s ease;
+    text-decoration: none;
+    color: inherit;
 }
 
+.notification-container:hover {
+    background-color: #F7F8FA;
+}
+
+/* Avatar and reaction badge */
 .notification-media {
     position: relative;
+    flex-shrink: 0;
 }
 
 .notification-user-avatar {
-    width: 60px;
-    height: 60px;
-    border-radius: 60px;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
     object-fit: cover;
+    border: 2px solid #FFFFFF;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .notification-reaction {
-    width: 30px;
-    height: 30px;
+    width: 28px;
+    height: 28px;
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: 30px;
-    color: white;
-    background-image: linear-gradient(45deg, #0070E1, #14ABFE);
-    font-size: 14px;
+    border-radius: 50%;
+    color: #FFFFFF;
+    background: linear-gradient(135deg, #1877F2 0%, #0C5BBF 100%);
+    font-size: 13px;
     position: absolute;
-    bottom: 0;
-    right: 0;
+    bottom: -2px;
+    right: -2px;
+    border: 2px solid #FFFFFF;
+    box-shadow: 0 2px 6px rgba(24, 119, 242, 0.3);
+    animation: reactionPop 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55) 0.3s backwards;
 }
 
+/* Content section */
 .notification-content {
-    width: calc(100% - 60px);
-    padding-left: 20px;
-    line-height: 1.2;
+    flex: 1;
+    padding-left: 12px;
+    padding-right: 24px;
+    min-width: 0;
 }
 
 .notification-text {
-    margin-bottom: 5px;
+    margin-bottom: 6px;
+    font-size: 15px;
+    line-height: 1.4;
+    color: #050505;
     display: -webkit-box;
     -webkit-line-clamp: 3;
     -webkit-box-orient: vertical;
     overflow: hidden;
     text-overflow: ellipsis;
-    padding-right: 50px;
+    word-break: break-word;
+}
+
+.notification-text strong {
+    color: #050505;
+    font-weight: 600;
 }
 
 .notification-timer {
-    color: #1876F2;
+    color: #1877F2;
     font-weight: 600;
-    font-size: 14px;
+    font-size: 13px;
+    display: inline-block;
+    transition: color 0.2s ease;
 }
 
+.notification-container:hover .notification-timer {
+    color: #0C5BBF;
+}
+
+/* Unread status indicator */
 .notification-status {
     position: absolute;
-    right: 15px;
+    right: 12px;
     top: 50%;
     transform: translateY(-50%);
-    width: 15px;
-    height: 15px;
-    background-color: #1876F2;
+    width: 12px;
+    height: 12px;
+    background-color: #1877F2;
     border-radius: 50%;
+    box-shadow: 0 0 0 3px rgba(24, 119, 242, 0.2);
+    animation: statusPulse 2s ease-in-out infinite;
 }
 
+/* Animations */
 @keyframes slideUp {
     from {
-        transform: translateY(100%);
+        transform: translateY(calc(100% + 20px));
+        opacity: 0;
     }
 
     to {
         transform: translateY(0);
+        opacity: 1;
     }
 }
 
-/* responsive */
-@media (max-width: 420px) {
+@keyframes reactionPop {
+    0% {
+        transform: scale(0) rotate(-45deg);
+        opacity: 0;
+    }
+
+    50% {
+        transform: scale(1.2) rotate(10deg);
+    }
+
+    100% {
+        transform: scale(1) rotate(0deg);
+        opacity: 1;
+    }
+}
+
+@keyframes statusPulse {
+
+    0%,
+    100% {
+        box-shadow: 0 0 0 3px rgba(24, 119, 242, 0.2);
+        opacity: 1;
+    }
+
+    50% {
+        box-shadow: 0 0 0 6px rgba(24, 119, 242, 0.1);
+        opacity: 0.8;
+    }
+}
+
+/* Responsive Design */
+@media (max-width: 480px) {
     .notification {
-        left: 15px;
-        right: 15px;
+        left: 12px;
+        right: 12px;
         width: auto;
-        padding: 12px;
-        border-radius: 12px;
+        bottom: 12px;
+        padding: 14px;
+        border-radius: 14px;
+    }
+
+    .notification-header {
+        margin-bottom: 12px;
+        padding-bottom: 10px;
+    }
+
+    .notification-title {
+        font-size: 16px;
+    }
+
+    .notification-close {
+        width: 32px;
+        height: 32px;
+        font-size: 13px;
     }
 
     .notification-user-avatar {
-        width: 50px;
-        height: 50px;
-        border-radius: 50px;
+        width: 48px;
+        height: 48px;
+    }
+
+    .notification-reaction {
+        width: 24px;
+        height: 24px;
+        font-size: 12px;
     }
 
     .notification-content {
-        width: calc(100% - 50px);
-        padding-left: 12px;
+        padding-left: 10px;
+        padding-right: 20px;
+    }
+
+    .notification-text {
+        font-size: 14px;
+    }
+
+    .notification-timer {
+        font-size: 12px;
+    }
+
+    .notification-status {
+        width: 10px;
+        height: 10px;
+        right: 10px;
     }
 }
+
+@media (max-width: 380px) {
+    .notification {
+        left: 8px;
+        right: 8px;
+        bottom: 8px;
+        padding: 12px;
+    }
+
+    .notification-container {
+        padding: 8px;
+    }
+}
+
+/* App-controlled dark mode: prefer this when component receives .theme-dark */
+.notification.theme-dark {
+    background-color: #242526;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6);
+    color: #E4E6EB;
+}
+
+.notification.theme-dark .notification-header {
+    border-bottom-color: #3A3B3C;
+}
+
+.notification.theme-dark .notification-title {
+    color: #E4E6EB;
+}
+
+.notification.theme-dark .notification-close {
+    background-color: #3A3B3C;
+    color: #B0B3B8;
+}
+
+.notification.theme-dark .notification-close:hover {
+    background-color: #4E4F50;
+    color: #E4E6EB;
+}
+
+.notification.theme-dark .notification-container:hover {
+    background-color: #2C2D2E;
+}
+
+.notification.theme-dark .notification-text {
+    color: #E4E6EB;
+}
+
+.notification.theme-dark .notification-text strong {
+    color: #E4E6EB;
+}
+
+/* keep prefers-color-scheme as fallback when no explicit theme class is present */
+
