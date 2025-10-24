@@ -146,36 +146,40 @@ func GroupInvitationRequest(w http.ResponseWriter, r *http.Request) {
 	}
 
 	for _, user := range newInvitation.InvitedUsers {
-		// get the user's id
-		// var invitedUserID string
-		// query = `SELECT id FROM users WHERE nickname = ?`
-		// err = tx.QueryRow(query, user).Scan(&invitedUserID)
-		// if err != nil {
-		// 	if err == sql.ErrNoRows {
-		// 		continue
-		// 	}
-		// 	helper.RespondWithError(w, http.StatusInternalServerError, "Error finding the invited user")
-		// 	return
-		// }
 		// check if this user is already in the group or has a pending invit
-		var exists bool
+		var exists1, exists2 bool
 		query = `SELECT EXISTS (
         SELECT 1 FROM group_members WHERE user_id = ? AND group_id = ?
         UNION ALL
         SELECT 1 FROM group_invitations WHERE user_id = ? AND group_id = ?
     )`
-		err = tx.QueryRow(query, user, GrpId, user, GrpId).Scan(&exists)
+		err = tx.QueryRow(query, user, GrpId, user, GrpId).Scan(&exists1)
 		if err != nil {
 			helper.RespondWithError(w, http.StatusInternalServerError, "Error checking for existing membership or invitation")
 			return
 		}
 
-		if exists {
+		if exists1 {
 			continue
+		} else {
+			query = `SELECT EXISTS (
+				SELECT 1
+				FROM users
+				WHERE id = $1
+			);`
+			err = tx.QueryRow(query, user).Scan(&exists2)
+			if err != nil {
+				fmt.Println("Database error is :", err)
+				helper.RespondWithError(w, http.StatusInternalServerError, "Database error")
+				return
+			}
+
+			if !exists2 {
+				helper.RespondWithError(w, http.StatusBadRequest, "The invited user isn't a user of our website")
+				return
+			}
 		}
-		fmt.Println("User iiiis : ", user)
-		fmt.Println("UserId is : ", userID)
-		fmt.Println("groupId is : ", GrpId)
+
 		rowId := helper.GenerateUUID()
 		createdAt := time.Now().UTC()
 		query = `INSERT INTO group_invitations (id, group_id, user_id, invited_by_user_id, status, created_at) VALUES (?, ?, ?, ?, ?, ?)`
