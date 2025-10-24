@@ -98,6 +98,7 @@ export function MyGroups() {
             </div>
         )
     }
+    console.log("groups after are :", group);
     return (
         <div className="group-container">
             <GroupCreationTrigger
