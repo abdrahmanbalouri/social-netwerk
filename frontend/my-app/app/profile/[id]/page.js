@@ -70,7 +70,7 @@ export default function Profile() {
       );
       if (res.ok) {
         const json = await res.json();
-        console.log("khoya", json);
+        console.log("profile daaaataa", json);
 
 
         setProfile(json);
@@ -85,7 +85,7 @@ export default function Profile() {
     loadProfile();
 
   }, []);
-  console.log("ededed", theprofile);
+ 
 
 
   async function followUser() {
@@ -105,9 +105,11 @@ export default function Profile() {
         let followw = await res.json();
 
 
+console.log("folllllow data " ,  followw);
 
         setProfile((prevProfile) => ({
           ...prevProfile,
+          privacy:  followw.privacy,
           followers: followw.followers,
           following: followw.following,
           isFollowing: followw.isFollowed,
@@ -278,7 +280,6 @@ export default function Profile() {
       } else {
         return false
       }
-      console.log(data.length);
 
       setPosts([...posts, ...data]);
       return data[0].id
@@ -398,7 +399,6 @@ export default function Profile() {
 
   async function GetComments(post) {
     setLoadingcomment(true)
-    console.log(post, "--------------------------++++++++++++++++++++");
 
     try {
       setSelectedPost({
@@ -590,7 +590,6 @@ export default function Profile() {
         <div className="main-section"
           onScroll={(e) => {
             setscroolHome(e.target.scrollTop)
-            console.log(scroollhome);
 
           }}
           ref={modalRefhome}>
