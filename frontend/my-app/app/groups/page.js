@@ -94,7 +94,7 @@ export function MyGroups() {
     if (!group) {
         return (
             <div>
-                <GroupCreationTrigger setGroup={setGroup}/>
+                <GroupCreationTrigger setGroup={setGroup} />
             </div>
         )
     }
@@ -124,18 +124,27 @@ export function createGroup(formData) {
         body: JSON.stringify(formData),
     })
         .then(async res => {
+            console.log("form data ha s: ", formData);
             if (!res.ok) throw new Error('Failed to create group');
             // console.log("result :", res);
             // console.log("result  :",await res.text());
             const groupIS = await res.json()
             // console.log("new group is :", groupIS);
-            // const SendInvitations = await fetch(`http://localhost:8080/group/invitation/${groupIS.ID}`,{
-            //     method: 'Post',
-            //     credentials: 'include',
-            //     // body: {
-            //     //     "invitedUsers": 
-            //     // }
-            // })
+            const SendInvitations = await fetch(
+                `http://localhost:8080/group/invitation/${groupIS.ID}`,
+                {
+                    method: 'POST',
+                    credentials: 'include',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        invitedUsers: formData.invitedUsers,
+                    }),
+                }
+            );
+
+            console.log("SendInvitations ::", await SendInvitations.json());
             return groupIS
         })
         // .then(createdGroup => { return createdGroup })
