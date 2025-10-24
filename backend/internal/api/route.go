@@ -1,13 +1,12 @@
 package api
 
 import (
-	"database/sql"
 	"net/http"
 
 	handlers "social-network/internal/api/handler"
 )
 
-func Routes(db *sql.DB) http.Handler {
+func Routes() http.Handler {
 	mux := http.NewServeMux()
 
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
