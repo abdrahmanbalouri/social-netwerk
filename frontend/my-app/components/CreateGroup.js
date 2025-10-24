@@ -3,7 +3,6 @@ import "../styles/groupstyle.css"
 import { createGroup } from '../app/groups/page';
 
 export function CreateGroupForm({ users, onSubmit, onCancel }) {
-    console.log("useeeeers are :", users);
     const [groupTitle, setGroupTitle] = useState('');
     const [groupDescription, setGroupDescription] = useState('');
     const [searchQuery, setSearchQuery] = useState('');
@@ -53,7 +52,6 @@ export function CreateGroupForm({ users, onSubmit, onCancel }) {
         setSearchQuery('');
     };
 
-    console.log("filterd users areeeee :", users);
 
     return (
         <div className="create-group-form-container">
@@ -209,7 +207,6 @@ export function GroupCreationTrigger() {
     }, []);
 
 
-    console.log("usssssseeers are :", userList);
     return (
 
         <div className="create-group-container">

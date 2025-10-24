@@ -38,7 +38,6 @@ export function AllGroups() {
         })
             .then(res => res.json())
             .then(data => {
-                console.log("data is :", data);
                 setGroup(data);
                 setLoading(false);
             })
@@ -84,7 +83,6 @@ export function MyGroups() {
         })
             .then(res => res.json())
             .then(data => {
-                console.log("data is :", data);
                 setGroup(data);
                 setLoading(false);
             })

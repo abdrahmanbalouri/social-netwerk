@@ -16,7 +16,7 @@ export function GroupPostChat() {
             {activeTab === 'posts' ? (
                 <AllPosts />
             ) : (
-                console.log("hhhhhhhhh")
+                <dibv>hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh</dibv>
             )}
             {/* </div> */}
         </div>
