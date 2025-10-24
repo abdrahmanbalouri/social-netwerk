@@ -33,7 +33,7 @@ func GetPostByUserHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	posts, err := GetAllPostsByuser(userId, r, offset)
-	fmt.Println("posts:", posts)
+	// fmt.Println("posts:", posts)
 	if err != nil {
 		helper.RespondWithError(w, http.StatusInternalServerError, "Failed to retrieve posts")
 		return
