@@ -48,7 +48,7 @@ export function AllPosts() {
                 return res.json();
             })
             .then(data => {
-                setPost(data);
+                setPost(data || []);
                 setLoading(false);
             })
             .catch(error => {
@@ -56,21 +56,23 @@ export function AllPosts() {
                 setLoading(false);
             });
     }, [grpID]);
-    if (!posts) {
-        return (
-            <div>
-                <PostCreationTrigger />
-                <div>There is no post yeeeeeet.</div>
-            </div>
-        );
-    }
+    // if (!posts) {
+    //     return (
+    //         <div>
+    //             <PostCreationTrigger setPost = {setPost}/>
+    //             <div>There is no post yeeeeeet.</div>
+    //         </div>
+    //     );
+    // }
 
     console.log("posts are :", posts);
     return (
         <div>
-            <PostCreationTrigger
-            setPost = {setPost}
-            />
+        <PostCreationTrigger setPost={setPost} />
+        
+        {posts.length === 0 ? (
+            <div>There is no post yeeeeeet.</div>
+        ) : (
             <div className="posts-list">
                 {posts.map((post) => (
                     <Post
@@ -81,7 +83,8 @@ export function AllPosts() {
                     />
                 ))}
             </div>
-        </div>
+        )}
+    </div>
     )
 }
 
