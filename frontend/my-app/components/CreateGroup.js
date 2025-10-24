@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react';
 import "../styles/groupstyle.css"
 import { createGroup } from '../app/groups/page';
+import { GroupCard } from './groupCard';
 
 export function CreateGroupForm({ users, onSubmit, onCancel }) {
-    console.log("USERRRS ARE :", users);
+    // console.log("USERRRS ARE :", users);
+    console.log("insife CreateGroupform ");
     const [groupTitle, setGroupTitle] = useState('');
     const [groupDescription, setGroupDescription] = useState('');
     const [searchQuery, setSearchQuery] = useState('');
@@ -157,10 +159,13 @@ export function CreateGroupForm({ users, onSubmit, onCancel }) {
 }
 
 export function GroupCreationTrigger() {
+    console.log("inside GroupCreationTrigger");
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [showNoGroups, setShowNoGroups] = useState(true);
     const [userList, setUserList] = useState([]);
-    const [userID, setUserID] = useState('')
+    const [groups, setGroups] = useState([]);
+    // const [groups, setGroups] = useState([]);
+    // const [userID, setUserID] = useState('')
 
     const handlePostClick = () => {
         setShowNoGroups(false);
@@ -171,9 +176,18 @@ export function GroupCreationTrigger() {
         setShowNoGroups(true);
     };
     const handleSubmit = async (groupData) => {
+        console.log("inside handleSubmit of GroupCreationTrigggggggger");
         try {
-            await createGroup(groupData);
+            const newGroup = await createGroup(groupData);
+            // console.log("NEWWWW GROUUUP IS :", newGroup);
+            const DoNothing = (newGroup) => {
+                console.log("wast handleShow li f GroupCreationTrigger");
+            };
             setIsModalOpen(false);
+            setGroups(prev => {
+                const exists = prev.some(g => g.group_id === newGroup.group_id);
+                return exists ? prev : [newGroup, ...prev];
+            })
         } catch (error) {
             console.error("Error creating group:", error);
         }
@@ -185,25 +199,20 @@ export function GroupCreationTrigger() {
                     credentials: 'include',
                 });
                 const userData = await resUser.json();
-
                 const resFollowers = await fetch(`http://localhost:8080/api/followers?id=${userData.user_id}`, {
                     method: 'GET',
                     credentials: 'include',
                 });
                 const followersData = await resFollowers.json();
-
                 setUserList(followersData);
             } catch (error) {
                 console.error("Failed to fetch users when creating a group:", error);
             }
         };
-
         fetchData();
     }, []);
 
-
     return (
-
         <div className="create-post-container">
             <div className="create-post-header">
                 <div className="user-avatar">
@@ -224,11 +233,13 @@ export function GroupCreationTrigger() {
                     onCancel={handleCancel}
                 />
             )}
-            {/* {showNoGroups && (
-                    <div className="no-groups">
-                        You don’t have any groups yet. Click above to create one!
-                    </div>
-                )} */}
+            {groups.map((grp) => (
+                <GroupCard
+                    key={grp.ID}
+                    group={grp}
+                    onShow={() => console.log("Show group:", grp.ID)}
+                />
+            ))}
         </div>
     )
 }

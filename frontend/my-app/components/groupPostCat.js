@@ -1,4 +1,4 @@
-import "../styles/groupTabs.css"
+import "../styles/groupstyle.css"
 import {useState} from 'react'
 import { AllPosts } from "../app/groups/[id]/page";
 
