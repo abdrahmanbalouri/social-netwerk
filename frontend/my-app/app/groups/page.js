@@ -101,7 +101,9 @@ export function MyGroups() {
     }
     return (
         <div className="group-container">
-            <GroupCreationTrigger />
+            <GroupCreationTrigger
+                setGroup={setGroup}
+            />
             {group.map(grp => (
                 <GroupCard
                     key={grp.ID}
@@ -123,11 +125,20 @@ export function createGroup(formData) {
     })
         .then(async res => {
             if (!res.ok) throw new Error('Failed to create group');
+            // console.log("result :", res);
+            // console.log("result  :",await res.text());
             const groupIS = await res.json()
-            console.log("new group is :", groupIS);
+            // console.log("new group is :", groupIS);
+            // const SendInvitations = await fetch(`http://localhost:8080/group/invitation/${groupIS.ID}`,{
+            //     method: 'Post',
+            //     credentials: 'include',
+            //     // body: {
+            //     //     "invitedUsers": 
+            //     // }
+            // })
             return groupIS
         })
-        .then(createdGroup => { return createdGroup })
+        // .then(createdGroup => { return createdGroup })
         .catch(error => {
             console.error('Failed to create new group:', error);
             throw error;
