@@ -3,7 +3,6 @@ import "../styles/notifaction.css";
 
 export default function Notification({ data }) {
 
-console.log("Notification data:", data);
 
     return (
         <div className="notification">
