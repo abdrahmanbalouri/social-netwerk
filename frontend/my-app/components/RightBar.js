@@ -81,7 +81,6 @@ export default function RightBar() {
         const data = await res.json();
 
 
-        console.log(data);
 
         setFollowRequest(data);
       } catch (err) {
