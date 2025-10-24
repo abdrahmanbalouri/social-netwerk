@@ -175,16 +175,12 @@ export function GroupCreationTrigger({setGroup}) {
     const handleSubmit = async (groupData) => {
         try {
             const newGroup = await createGroup(groupData);
-            console.log("NEWWWW GROUUUP IS :", newGroup);
-            const DoNothing = (newGroup) => {
-                console.log("wast handleShow li f GroupCreationTrigger");
-            };
                 setGroup(prev => {
                     console.log("groups before are :", prev);
                     // console.log("groups before are :", prev);
                     const exists = prev.some(g => g.ID === newGroup.ID);
                     const temp = [newGroup, ...prev]
-                    console.log("groups after are :", temp);
+                    // console.log("groups after are :", temp);
                     return exists ? prev : [newGroup, ...prev];
                 })
         } catch (error) {

@@ -153,18 +153,19 @@ func CreatePostGroup(w http.ResponseWriter, r *http.Request) {
 	}
 
 	queryNewPost := `
-	SELECT 
-		gp.id, gp.user_id, gp.title, gp.content, gp.image_path, gp.created_at,
-		u.nickname, u.image AS profile,
-		COUNT(DISTINCT l.id) AS like_count,
-		COUNT(DISTINCT CASE WHEN l.user_id = ? THEN l.id END) AS liked_by_user,
-		COUNT(DISTINCT c.id) AS comments_count
-	FROM group_posts gp
-	JOIN users u ON gp.user_id = u.id
-	LEFT JOIN likes l ON gp.id = l.liked_item_id AND l.liked_item_type = 'post'
-	LEFT JOIN comments c ON gp.id = c.post_id
-	WHERE gp.id = ?
-	GROUP BY gp.id, gp.user_id, gp.title, gp.content, gp.image_path, gp.created_at, u.nickname, u.image;
+	SELECT  
+	gp.id, gp.user_id, gp.title, gp.content, gp.image_path, gp.created_at, 
+	u.nickname, u.image AS profile, 
+	COUNT(DISTINCT l.id) AS like_count, 
+	COUNT(DISTINCT CASE WHEN l.user_id = ? THEN l.id END) AS liked_by_user, 
+	COUNT(DISTINCT c.id) AS comments_count 
+	FROM group_posts gp 
+	JOIN users u ON gp.user_id = u.id 
+	LEFT JOIN likes l ON gp.id = l.liked_item_id AND l.liked_item_type = 'post' 
+	LEFT JOIN comments c ON gp.id = c.post_id 
+	GROUP BY gp.id, gp.user_id, gp.title, gp.content, gp.image_path, gp.created_at, u.nickname, u.image
+	ORDER BY gp.created_at DESC
+	LIMIT 1;
 	`
 
 	err = repository.Db.QueryRow(queryNewPost, userID, postID).Scan(
