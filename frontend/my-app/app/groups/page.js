@@ -67,7 +67,7 @@ export function AllGroups() {
 
 export function MyGroups() {
     console.log("MyGroups rendered");
-    const [group, setGroup] = useState(null);
+    const [group, setGroup] = useState([]);
     const [loading, setLoading] = useState(true);
     const router = useRouter()
 
@@ -83,8 +83,7 @@ export function MyGroups() {
         })
             .then(res => res.json())
             .then(data => {
-                // console.log("data is :", data);
-                setGroup(data);
+                setGroup(data || []);
                 setLoading(false);
             })
             .catch(error => {
@@ -95,7 +94,7 @@ export function MyGroups() {
     if (!group) {
         return (
             <div>
-                <GroupCreationTrigger />
+                <GroupCreationTrigger setGroup={setGroup}/>
             </div>
         )
     }
