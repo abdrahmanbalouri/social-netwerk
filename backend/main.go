@@ -47,7 +47,7 @@ func main() {
 		panic("Migration failed: " + err.Error())
 	}
 
-	baseHandler := api.Routes(db)
+	baseHandler := api.Routes()
 
 	// Wrap the API routes with CORS
 	handler := enableCORS(baseHandler)
