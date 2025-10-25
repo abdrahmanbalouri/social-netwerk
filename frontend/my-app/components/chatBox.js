@@ -17,22 +17,6 @@ export default function ChatBox({ user }) {
   const { activeChatID, setActiveChatID } = useChat();
   const [onlineUsers, setonlineUsers] = useState([])
   const { sendMessage, addListener, removeListener } = useWS();
-  const id = useParams().id;
-  if (id == "0" || !id) {
-    return (
-      <div className="no-chat-selected">
-        <div className="no-chat-header">
-          <h2>Select a chat to start messaging</h2>
-          <br />
-          <h4>No chat selected</h4>
-        </div>
-      </div>
-    );
-  }
-  if (!user) {
-    return <div className="loading">Loading user...</div>;
-  }
-
   setTimeout(() => {
     inputRef.current?.focus();
   }, 0);
@@ -134,7 +118,7 @@ export default function ChatBox({ user }) {
     setInput("");
     setShowEmojis(false);
   };
-
+id
   const addEmoji = (emoji) => {
     const cursorPos = inputRef.current.selectionStart;
     const newText = input.slice(0, cursorPos) + input.slice(cursorPos) + emoji;
