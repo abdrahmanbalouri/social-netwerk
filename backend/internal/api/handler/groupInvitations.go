@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strings"
 	"time"
 
 	"social-network/internal/helper"
@@ -16,7 +17,7 @@ type GroupResponse struct {
 	Response string `json:"response"`
 }
 type GroupInvitation struct {
-	GroupID      string   `json:"groupID"`
+	// GroupID      string   `json:"groupID"`
 	InvitedUsers []string `json:"invitedUsers"`
 }
 
@@ -95,17 +96,28 @@ func GroupInvitationResponse(w http.ResponseWriter, r *http.Request) {
 }
 
 func GroupInvitationRequest(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("Dkhal l group invitation-----------")
 	if r.Method != http.MethodPost {
 		helper.RespondWithError(w, http.StatusMethodNotAllowed, "Method not allowed")
 		return
 	}
 
+	parts := strings.Split(r.URL.Path, "/")
+	if len(parts) < 4 {
+		helper.RespondWithError(w, http.StatusNotFound, "Group not found")
+		return
+	}
+	GrpId := parts[3]
+
 	var newInvitation GroupInvitation
+	// fmt.Println("Body is :", json.NewDecoder(r.Body))
 	if err := json.NewDecoder(r.Body).Decode(&newInvitation); err != nil {
+		fmt.Println("Invalid request format : ", err)
 		helper.RespondWithError(w, http.StatusBadRequest, "Invalid request format")
 		return
 	}
 
+	fmt.Println("new invitation has :", newInvitation)
 	// find the user id
 	userID, IDerr := helper.AuthenticateUser(r)
 	if IDerr != nil {
@@ -123,7 +135,7 @@ func GroupInvitationRequest(w http.ResponseWriter, r *http.Request) {
 	// check if the user is a member of that group
 	var isMember bool
 	query := `SELECT EXISTS (SELECT 1 FROM group_members WHERE user_id = ? AND group_id = ?)`
-	if err := tx.QueryRow(query, userID, newInvitation.GroupID).Scan(&isMember); err != nil {
+	if err := tx.QueryRow(query, userID, GrpId).Scan(&isMember); err != nil {
 		helper.RespondWithError(w, http.StatusInternalServerError, "Failed to check group membership")
 		return
 	}
@@ -134,37 +146,44 @@ func GroupInvitationRequest(w http.ResponseWriter, r *http.Request) {
 	}
 
 	for _, user := range newInvitation.InvitedUsers {
-		// get the user's id
-		var invitedUserID string
-		query = `SELECT id FROM users WHERE nickname = ?`
-		err = tx.QueryRow(query, user).Scan(&invitedUserID)
-		if err != nil {
-			if err == sql.ErrNoRows {
-				continue
-			}
-			helper.RespondWithError(w, http.StatusInternalServerError, "Error finding the invited user")
-			return
-		}
 		// check if this user is already in the group or has a pending invit
-		var exists bool
+		var exists1, exists2 bool
 		query = `SELECT EXISTS (
         SELECT 1 FROM group_members WHERE user_id = ? AND group_id = ?
         UNION ALL
         SELECT 1 FROM group_invitations WHERE user_id = ? AND group_id = ?
     )`
-		err = tx.QueryRow(query, invitedUserID, newInvitation.GroupID, invitedUserID, newInvitation.GroupID).Scan(&exists)
+		err = tx.QueryRow(query, user, GrpId, user, GrpId).Scan(&exists1)
 		if err != nil {
 			helper.RespondWithError(w, http.StatusInternalServerError, "Error checking for existing membership or invitation")
 			return
 		}
 
-		if exists {
+		if exists1 {
 			continue
+		} else {
+			query = `SELECT EXISTS (
+				SELECT 1
+				FROM users
+				WHERE id = $1
+			);`
+			err = tx.QueryRow(query, user).Scan(&exists2)
+			if err != nil {
+				fmt.Println("Database error is :", err)
+				helper.RespondWithError(w, http.StatusInternalServerError, "Database error")
+				return
+			}
+
+			if !exists2 {
+				helper.RespondWithError(w, http.StatusBadRequest, "The invited user isn't a user of our website")
+				return
+			}
 		}
+
 		rowId := helper.GenerateUUID()
 		createdAt := time.Now().UTC()
 		query = `INSERT INTO group_invitations (id, group_id, user_id, invited_by_user_id, status, created_at) VALUES (?, ?, ?, ?, ?, ?)`
-		_, err = tx.Exec(query, rowId, newInvitation.GroupID, invitedUserID, userID, "pending", createdAt)
+		_, err = tx.Exec(query, rowId, GrpId, user, userID, "pending", createdAt)
 		if err != nil {
 			helper.RespondWithError(w, http.StatusInternalServerError, "Error sending the invitation")
 			return
@@ -179,5 +198,6 @@ func GroupInvitationRequest(w http.ResponseWriter, r *http.Request) {
 	response := map[string]string{
 		"message": "Invitation successfully processed",
 	}
+	fmt.Println("everything went good ----")
 	helper.RespondWithJSON(w, http.StatusOK, response)
 }
