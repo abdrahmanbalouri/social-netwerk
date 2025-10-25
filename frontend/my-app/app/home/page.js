@@ -203,13 +203,12 @@ export default function Home() {
         method: "GET",
         credentials: "include",
       });
-
       if (!res.ok) {
         return false
       }
-
+      
       const data = await res.json();
-
+      
 
 
       setPosts([...data]);
