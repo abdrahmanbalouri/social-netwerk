@@ -85,7 +85,7 @@ export default function Profile() {
     loadProfile();
 
   }, []);
- 
+
 
 
   async function followUser() {
@@ -105,11 +105,11 @@ export default function Profile() {
         let followw = await res.json();
 
 
-console.log("folllllow data " ,  followw);
+        console.log("folllllow data ", followw);
 
         setProfile((prevProfile) => ({
           ...prevProfile,
-          privacy:  followw.privacy,
+          privacy: followw.privacy,
           followers: followw.followers,
           following: followw.following,
           isFollowing: followw.isFollowed,
@@ -180,26 +180,25 @@ console.log("folllllow data " ,  followw);
         : [...prevSelected, userId]
     );
   }
-  useEffect(() => {
-    if (!modalRefhome.current) return;
+useEffect(() => {
+  console.log(scroollhome, "-----++++----++++---++++--+++");
 
-    const modal = modalRefhome.current;
+  const reachedBottom =
+    window.innerHeight + window.scrollY >= document.body.scrollHeight - 20;
 
-    const reachedBottom =
-      modal.scrollHeight > modal.clientHeight + 10 &&
-      modal.scrollTop + modal.clientHeight >= modal.scrollHeight - 50;
+  console.log(reachedBottom);
 
-    async function handlescrollhome() {
-      let b = await fetchingposts();
-      if (b) {
-        scrollToPost(b)
-      }
-
+  async function handlescrollhome() {
+    let b = await fetchingposts();
+    if (b) {
+      scrollToPost(b);
     }
-    if (reachedBottom && !loading) {
-      handlescrollhome()
-    }
-  }, [scroollhome]);
+  }
+
+  if (reachedBottom && !loading) {
+    handlescrollhome();
+  }
+}, [scroollhome]);
 
   const fetchFollowers = async () => {
     setLoadingFollowers(true);
@@ -274,8 +273,10 @@ console.log("folllllow data " ,  followw);
       }
 
       const data = await res.json();
+      console.log(data);
 
-      if (data.length !== 0) {
+
+      if (data) {
         offsetpsot.current += 10
       } else {
         return false
@@ -303,9 +304,8 @@ console.log("folllllow data " ,  followw);
       }
 
       const data = await res.json();
+      if (!data) return
 
-
-      if (data.length == 0) return
       setPosts([...data]);
       return true
     } catch (err) {
@@ -429,7 +429,7 @@ console.log("folllllow data " ,  followw);
       }
       comments = comments.map(comment => ({
         id: comment.id || Math.random(),
-        author: comment.first_name +" " +comment.last_name || "Anonymous",
+        author: comment.first_name + " " + comment.last_name || "Anonymous",
         content: comment.content || comment.text || "",
         created_at: comment.created_at || comment.createdAt || new Date().toISOString()
       }));
@@ -511,6 +511,15 @@ console.log("folllllow data " ,  followw);
     setSelectedPost(null);
     setComment([]);
   }
+useEffect(() => {
+  const handleScroll = () => {
+    setscroolHome(window.scrollY);
+  };
+
+  window.addEventListener("scroll", handleScroll);
+
+  return () => window.removeEventListener("scroll", handleScroll);
+}, []);
 
   // Loading state
   if (loading && posts.length === 0) {
@@ -587,12 +596,11 @@ console.log("folllllow data " ,  followw);
       <main className="content">
         <LeftBar showSidebar={showSidebar} />
 
-        <div className="main-section"
-          onScroll={(e) => {
-            setscroolHome(e.target.scrollTop)
-
-          }}
-          ref={modalRefhome}>
+        <div
+          className="main-section"
+          onScroll={(e) => setscroolHome(window.scrollY)} 
+          ref={modalRefhome}
+        >
           {/* ===== Profile Section ===== */}
           <div className="profile">
             <div className="images">
@@ -619,7 +627,7 @@ console.log("folllllow data " ,  followw);
             <div className="profileContainer">
               <div className="uInfo">
                 <div className="center">
-                  <div className="comb"><h1 className="nickname">{theprofile.first_name +" "+theprofile.last_name}</h1><h1 className="privacy">{theprofile.privacy}</h1></div>
+                  <div className="comb"><h1 className="nickname">{theprofile.first_name + " " + theprofile.last_name}</h1><h1 className="privacy">{theprofile.privacy}</h1></div>
                   {Profile && Profile.id !== theprofile.id && !theprofile.isFollowing && theprofile.privacy === "private" ? (
                     <div className="left">
                       <p className='disabled'>
@@ -813,7 +821,7 @@ console.log("folllllow data " ,  followw);
                             alt={follower.nickname}
                             className="image-avatar"
                           />
-                          <span>{follower.first_name +" "+follower.last_name}</span>
+                          <span>{follower.first_name + " " + follower.last_name}</span>
                           <input
                             type="checkbox"
                             checked={selectedUsers.includes(follower.id)}
