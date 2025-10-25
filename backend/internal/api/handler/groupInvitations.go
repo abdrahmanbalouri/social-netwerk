@@ -146,6 +146,19 @@ func GroupInvitationRequest(w http.ResponseWriter, r *http.Request) {
 	}
 
 	for _, user := range newInvitation.InvitedUsers {
+		// get the user's id
+		var invitedUserID string
+
+		// bdelt     nicknamme bfirst naaaame  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+		query = `SELECT id FROM users WHERE nickname = ?`
+		err = tx.QueryRow(query, user).Scan(&invitedUserID)
+		if err != nil {
+			if err == sql.ErrNoRows {
+				continue
+			}
+			helper.RespondWithError(w, http.StatusInternalServerError, "Error finding the invited user")
+			return
+		}
 		// check if this user is already in the group or has a pending invit
 		var exists1, exists2 bool
 		query = `SELECT EXISTS (

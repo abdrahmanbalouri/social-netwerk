@@ -17,7 +17,7 @@ func Getfollowers(w http.ResponseWriter, r *http.Request) {
 	var users []struct {
 		utils.User
 	}
-	Fquery := `SELECT  u.id , u.nickname, u.image
+	Fquery := `SELECT  u.id , u.first_name,u.last_name, u.image
 FROM followers f
 JOIN users u ON u.id = f.follower_id
 WHERE f.user_id = ?;
@@ -31,7 +31,7 @@ WHERE f.user_id = ?;
 
 	for rows.Next() {
 		var user utils.User
-		if err := rows.Scan(&user.ID, &user.Nickname, &user.Image); err != nil {
+		if err := rows.Scan(&user.ID, &user.First_name,&user.Last_name, &user.Image); err != nil {
 			helper.RespondWithError(w, http.StatusInternalServerError, "Database scan error")
 			return
 		}
