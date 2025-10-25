@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Navbar from "../../../components/Navbar";
 import LeftBar from "../../../components/LeftBar";
@@ -9,13 +9,41 @@ import { useDarkMode } from "../../../context/darkMod.js";
 import ChatBox from "../../../components/chatBox.js";
 import { middleware } from "../../../middleware/middelware.js";
 import { useWS } from "../../../context/wsContext.js";
+import { useProfile } from "../../../context/profile.js";
 
 export default function ChatPage() {
     const router = useRouter();
     const { darkMode } = useDarkMode();
-    const { id } = useParams();
+    let { id } = useParams();
     const [user, setUser] = useState(null);
-    const sendMessage = useWS()
+    const { sendMessage } = useWS()
+    useEffect(() => {
+        async function fetchusers() {
+            try {
+                const res = await fetch("http://localhost:8080/api/communfriends", {
+                    method: "GET",
+                    credentials: "include",
+                });
+                if (!res.ok) {
+                    throw new Error("Failed to fetch posts");
+                }
+                const data = await res.json() || [];
+
+                return data.map((user) => user.id);
+
+            } catch (err) {
+                console.error(err);
+                return [];
+            }
+        }
+        fetchusers().then((data) => {
+            if (!data.includes(id) && id !== 0) {
+                id = 0;
+                router.push("/chat/0");
+            }
+        })
+    }, []);
+
     // Authentication check
     useEffect(() => {
         const checkAuth = async () => {
@@ -27,6 +55,13 @@ export default function ChatPage() {
         }
         checkAuth();
     }, [])
+    useEffect(() => {
+
+
+
+    }, []);
+
+
     useEffect(() => {
         async function fetchUser() {
             try {
