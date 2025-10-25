@@ -27,14 +27,14 @@ func AllpostsHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil || offset < 0 {
 		offset = 0
 	}
+	fmt.Println(offset,"------------------------")
 
 	posts, err := post.GetAllPosts(userId, r, offset)
-	fmt.Println("posts:", posts)
-	if err != nil {
-		helper.RespondWithError(w, http.StatusInternalServerError, "Failed to retrieve posts")
+	if posts == nil {
+    helper.RespondWithJSON(w, http.StatusOK, posts)
 		return
 	}
-	if posts == nil {
+	if err != nil {
 		helper.RespondWithError(w, http.StatusInternalServerError, "Failed to retrieve posts")
 		return
 	}
