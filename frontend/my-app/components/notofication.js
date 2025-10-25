@@ -1,11 +1,15 @@
 import Link from "next/link";
 import "../styles/notifaction.css";
+import { useDarkMode } from "../context/darkMod";
 
 export default function Notification({ data }) {
 
+    const { darkMode } = useDarkMode();
+
+    console.log("Notification data:", data, "darkMode:", darkMode);
 
     return (
-        <div className="notification">
+        <div className={`notification ${darkMode ? 'theme-dark' : 'theme-light'}`}>
             <div className="notification-header">
                 <h3 className="notification-title">New notification</h3>
                 <i className="fa fa-times notification-close"></i>
