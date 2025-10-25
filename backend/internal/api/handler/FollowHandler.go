@@ -64,6 +64,7 @@ func FollowHandler(w http.ResponseWriter, r *http.Request) {
 				"following":  following,
 				"isFollowed": false,
 				"isPending":  false,
+				"privacy":    privacy,
 			})
 			return
 		}
@@ -109,6 +110,7 @@ func FollowHandler(w http.ResponseWriter, r *http.Request) {
 			"following":  following,
 			"isFollowed": false,
 			"isPending":  isPending,
+			"privacy":    privacy,
 		})
 		return
 	}
@@ -140,5 +142,6 @@ func FollowHandler(w http.ResponseWriter, r *http.Request) {
 		"following":  following,
 		"isFollowed": isFollowed,
 		"isPending":  false,
+		"privacy":    privacy,
 	})
 }
