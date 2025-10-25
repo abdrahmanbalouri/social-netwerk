@@ -406,7 +406,7 @@ console.log("folllllow data " ,  followw);
         title: post.title || post.post_title || "Post",
         image_path: post.image_path,
         content: post.content,
-        author: post.author
+        author: post.first_name + " " + post.last_name
       });
 
       // Fetch comments
@@ -429,7 +429,7 @@ console.log("folllllow data " ,  followw);
       }
       comments = comments.map(comment => ({
         id: comment.id || Math.random(),
-        author: comment.author || comment.username || "Anonymous",
+        author: comment.first_name +" " +comment.last_name || "Anonymous",
         content: comment.content || comment.text || "",
         created_at: comment.created_at || comment.createdAt || new Date().toISOString()
       }));
@@ -619,7 +619,7 @@ console.log("folllllow data " ,  followw);
             <div className="profileContainer">
               <div className="uInfo">
                 <div className="center">
-                  <div className="comb"><h1 className="nickname">{theprofile.nickname}</h1><h1 className="privacy">{theprofile.privacy}</h1></div>
+                  <div className="comb"><h1 className="nickname">{theprofile.first_name +" "+theprofile.last_name}</h1><h1 className="privacy">{theprofile.privacy}</h1></div>
                   {Profile && Profile.id !== theprofile.id && !theprofile.isFollowing && theprofile.privacy === "private" ? (
                     <div className="left">
                       <p className='disabled'>
@@ -813,7 +813,7 @@ console.log("folllllow data " ,  followw);
                             alt={follower.nickname}
                             className="image-avatar"
                           />
-                          <span>{follower.nickname}</span>
+                          <span>{follower.first_name +" "+follower.last_name}</span>
                           <input
                             type="checkbox"
                             checked={selectedUsers.includes(follower.id)}

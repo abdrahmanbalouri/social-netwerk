@@ -136,6 +136,8 @@ func GroupInvitationRequest(w http.ResponseWriter, r *http.Request) {
 	for _, user := range newInvitation.InvitedUsers {
 		// get the user's id
 		var invitedUserID string
+
+		// bdelt     nicknamme bfirst naaaame  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 		query = `SELECT id FROM users WHERE nickname = ?`
 		err = tx.QueryRow(query, user).Scan(&invitedUserID)
 		if err != nil {
