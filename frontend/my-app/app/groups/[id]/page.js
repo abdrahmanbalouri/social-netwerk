@@ -68,7 +68,6 @@ export function AllPosts() {
         );
     }
 
-    console.log("posts are :", posts);
     return (
         <div>
             <PostCreationTrigger />
@@ -98,7 +97,6 @@ function AddLike() {
 }
 
 export async function CreatePost(groupId, formData) {
-    console.log("grouuup id is :", groupId);
 
     const data = new FormData();
     data.append("postData", JSON.stringify(formData));

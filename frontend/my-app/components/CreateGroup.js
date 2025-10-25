@@ -3,7 +3,6 @@ import "../styles/groupstyle.css"
 import { createGroup } from '../app/groups/page';
 
 export function CreateGroupForm({ users, onSubmit, onCancel }) {
-    console.log("useeeeers are :", users);
     const [groupTitle, setGroupTitle] = useState('');
     const [groupDescription, setGroupDescription] = useState('');
     const [searchQuery, setSearchQuery] = useState('');
@@ -53,7 +52,6 @@ export function CreateGroupForm({ users, onSubmit, onCancel }) {
         setSearchQuery('');
     };
 
-    console.log("filterd users areeeee :", users);
 
     return (
         <div className="create-group-form-container">
@@ -209,18 +207,17 @@ export function GroupCreationTrigger() {
     }, []);
 
 
-    console.log("usssssseeers are :", userList);
     return (
 
-        <div className="create-post-container">
-            <div className="create-post-header">
+        <div className="create-group-container">
+            <div className="create-group-header">
                 <div className="user-avatar">
                     <span>User</span>
                 </div>
                 <input
                     type="text"
                     placeholder="DO you want to create a group ? just click here !"
-                    className="post-input"
+                    className="group-input"
                     onClick={handlePostClick}
                     readOnly
                 />
