@@ -31,7 +31,7 @@ func GetAllPosts(authUserID string, r *http.Request, ofseet int) ([]map[string]i
     p.visibility,
     p.canseperivite,
     p.created_at, 
-    u.nickname,
+   u.first_name,u.last_name,
     u.privacy,
     u.image AS profile,
     COUNT(DISTINCT l.id) AS like_count,
@@ -59,7 +59,7 @@ WHERE
         WHERE af.allowed_user_id = ? 
           AND af.user_id = p.user_id
     ))
-GROUP BY p.id, p.user_id, p.title, p.content, p.image_path, p.created_at, u.nickname, u.image
+GROUP BY p.id, p.user_id, p.title, p.content, p.image_path, p.created_at,  u.first_name,u.last_name, u.image
 ORDER BY p.created_at DESC
 LIMIT ? OFFSET ?;
 `, userId, userId, userId, userId, userId, limit, ofseet)
@@ -82,14 +82,15 @@ LIMIT ? OFFSET ?;
 			canseperivite string
 			createdAt     string
 			privacy       string
-			nickname      string
+			first_name string
+			last_name string
 			profile       sql.NullString
 			likeCount     int
 			likedByUser   int
 			commentsCount int
 		)
 
-		err := rows.Scan(&id, &userID, &title, &content, &imagePath, &visibility, &canseperivite, &createdAt, &nickname, &privacy, &profile, &likeCount, &likedByUser, &commentsCount)
+		err := rows.Scan(&id, &userID, &title, &content, &imagePath, &visibility, &canseperivite, &createdAt, &first_name,&last_name, &privacy, &profile, &likeCount, &likedByUser, &commentsCount)
 		if err != nil {
 			return nil, fmt.Errorf("scan error: %v", err)
 		}
@@ -104,7 +105,9 @@ LIMIT ? OFFSET ?;
 			"canseperivite":  canseperivite,
 			"privacy":        privacy,
 			"created_at":     createdAt,
-			"author":         nickname,
+			"first_name":         first_name,
+			"last_name":         last_name,
+
 			"profile":        NilIfEmpty(profile),
 			"like":           likeCount,
 			"liked_by_user":  likedByUser > 0,

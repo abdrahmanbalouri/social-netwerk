@@ -14,7 +14,7 @@ func FollowRequest(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	Fquery := `SELECT  u.id , u.nickname, u.image
+	Fquery := `SELECT  u.id , u.first_name ,u.last_name, u.image
 FROM users u 
 join    follow_requests   f  on  f.follower_id = u.id  where user_id =   ? 
 `
@@ -28,14 +28,15 @@ join    follow_requests   f  on  f.follower_id = u.id  where user_id =   ?
 
 	var followRequest []map[string]interface{}
 	for rows.Next() {
-		var username, profilePicture, idU string
-		if err := rows.Scan(&idU, &username, &profilePicture); err != nil {
+		var first_name ,last_name, profilePicture, idU string
+		if err := rows.Scan(&idU, &first_name,&last_name, &profilePicture); err != nil {
 			http.Error(w, "Database error: "+err.Error(), http.StatusInternalServerError)
 			return
 		}
 		follower := map[string]interface{}{
 			"id":       idU,
-			"nickname": username,
+			"first_name": first_name,
+			"last_name": last_name,
 			"image":    profilePicture,
 		}
 		followRequest = append(followRequest, follower)
