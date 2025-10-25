@@ -97,7 +97,6 @@ export default function ChatBox({ user }) {
 
   useEffect(() => {
     const handleIncomingMessage = (data) => {
-      console.log("Received message:", data);
 
       if (data.from === user.id || data.to === user.id) {
         setMessages((prev) => [

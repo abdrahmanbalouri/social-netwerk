@@ -27,7 +27,6 @@ const Stories = () => {
 
       if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
       const data = await res.json();
-      console.log("Fetched stories:", data);
 
       setStories(Array.isArray(data) ? data : []);
     } catch (err) {

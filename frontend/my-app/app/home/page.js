@@ -48,6 +48,7 @@ export default function Home() {
       if (!auth) {
         router.push("/login");
         sendMessage({ type: "logout" })
+        
       }
     }
     checkAuth();
@@ -205,13 +206,17 @@ export default function Home() {
 
       if (!res.ok) {
         return false
+      }else{
+        
+        const data = await res.json();
+        
+        setPosts([...data]);
+
       }
 
-      const data = await res.json();
 
 
 
-      setPosts([...data]);
       return true
     } catch (err) {
       console.error("Error fetching posts:", err);
@@ -424,7 +429,7 @@ export default function Home() {
 
 
   return (
-    <div className={darkMode ? 'theme-dark' : 'theme-light'}>
+    <div id="div" className={darkMode ? 'theme-dark' : 'theme-light'}>
       {/* Navbar */}
       <Navbar
         onLogout={logout}

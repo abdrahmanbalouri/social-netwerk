@@ -7,8 +7,8 @@ const CreatePost = ({ onCreatePost }) => {
                     <div className="post-icon">
                         <i className="fa-solid fa-pen"></i>
                     </div>
-                    <div class="post-input-wrapper">
-                        <input type="text" class="post-input" placeholder="What's on your mind, Nicolas?" readOnly />
+                    <div className="post-input-wrapper">
+                        <input type="text" className="post-input" placeholder="What's on your mind, Nicolas?" readOnly />
                     </div>
                 </div>
                 <div className="post-divider">

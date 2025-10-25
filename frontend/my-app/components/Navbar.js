@@ -32,7 +32,6 @@ export default function Navbar() {
     if (!connected) return; // wait for connection
 
     const handleNotification = (data) => {
-      console.log("Notification received:11111111111111", data);
 
       addnotf((prev) => prev + 1);
       notif(data.data || data);
@@ -94,6 +93,14 @@ export default function Navbar() {
     } else {
       sideBar.style.display = "block";
     }
+    window.addEventListener('resize', (e) => {
+      if (window.innerWidth > 768) {
+        sideBar.style.display = 'block';
+      } else {
+        sideBar.style.display = 'none';
+      }
+    })
+
   };
   return (
     <div className="navbar">
