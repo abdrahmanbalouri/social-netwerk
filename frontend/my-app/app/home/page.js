@@ -48,7 +48,7 @@ export default function Home() {
       if (!auth) {
         router.push("/login");
         sendMessage({ type: "logout" })
-        
+
       }
     }
     checkAuth();
@@ -68,25 +68,35 @@ export default function Home() {
     );
   }
   useEffect(() => {
-    if (!modalRefhome.current) return;
-
-    const modal = modalRefhome.current;
+    console.log(offsetpsot.current);
+    
 
     const reachedBottom =
-      modal.scrollHeight > modal.clientHeight + 10 &&
-      modal.scrollTop + modal.clientHeight >= modal.scrollHeight - 50;
+      window.innerHeight + window.scrollY >= document.body.scrollHeight - 20;
+
+    console.log(reachedBottom);
 
     async function handlescrollhome() {
+      
       let b = await fetchingposts();
       if (b) {
-        scrollToPost(b)
+        scrollToPost(b);
       }
-
     }
+
     if (reachedBottom && !loading) {
-      handlescrollhome()
+      handlescrollhome();
     }
   }, [scroollhome]);
+  useEffect(() => {
+    const handleScroll = () => {
+      setscroolHome(window.scrollY);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
   async function logout(e) {
     e.preventDefault();
 
@@ -165,8 +175,8 @@ export default function Home() {
   }
   async function fetchingposts() {
     if (!boleanofset.current) {
-      offsetpsot.current += 10
-      boleanofset.current = true
+    offsetpsot.current += 10
+      boleanofset.current = true  
     }
     try {
       setLoading(true);
@@ -180,8 +190,9 @@ export default function Home() {
       }
 
       const data = await res.json();
+      
 
-      if (data.length !== 0) {
+      if (data) {
         offsetpsot.current += 10
       } else {
         return false
@@ -206,10 +217,11 @@ export default function Home() {
 
       if (!res.ok) {
         return false
-      }else{
-        
+      } else {
+
         const data = await res.json();
-        
+        if(!data) return
+
         setPosts([...data]);
 
       }
@@ -313,7 +325,7 @@ export default function Home() {
         title: post.title || post.post_title || "Post",
         image_path: post.image_path,
         content: post.content,
-        author: post.first_name + " "  +  post.last_name
+        author: post.first_name + " " + post.last_name
       });
       setShowComments(true);
       // Fetch comments
@@ -546,7 +558,7 @@ export default function Home() {
                       <label key={follower.id} className="user-picker-item">
                         <img
                           src={follower?.image ? `/uploads/${follower.image}` : "/assets/default.png"}
-                          alt={follower.first_name }
+                          alt={follower.first_name}
                           className="image-avatar"
                         />
                         <input
@@ -554,7 +566,7 @@ export default function Home() {
                           checked={selectedUsers.includes(follower.id)}
                           onChange={() => handleUserSelect(follower.id)}
                         />
-                        <span>{user.first_name +" "+user.last_name}</span>
+                        <span>{user.first_name + " " + user.last_name}</span>
                       </label>
                     ))
                   ) : (
