@@ -313,7 +313,7 @@ export default function Home() {
         title: post.title || post.post_title || "Post",
         image_path: post.image_path,
         content: post.content,
-        author: post.author
+        author: post.first_name + " "  +  post.last_name
       });
       setShowComments(true);
       // Fetch comments
@@ -546,7 +546,7 @@ export default function Home() {
                       <label key={follower.id} className="user-picker-item">
                         <img
                           src={follower?.image ? `/uploads/${follower.image}` : "/assets/default.png"}
-                          alt={follower.nickname}
+                          alt={follower.first_name }
                           className="image-avatar"
                         />
                         <input
@@ -554,7 +554,7 @@ export default function Home() {
                           checked={selectedUsers.includes(follower.id)}
                           onChange={() => handleUserSelect(follower.id)}
                         />
-                        <span>{follower.nickname}</span>
+                        <span>{user.first_name +" "+user.last_name}</span>
                       </label>
                     ))
                   ) : (
