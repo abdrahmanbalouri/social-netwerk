@@ -27,7 +27,7 @@ func GetStories(w http.ResponseWriter, r *http.Request) {
 			s.bg_color,
 			s.created_at,
 			s.expires_at,
-            u.nickname, 
+            u.first_name, u.last_name, 
 			u.image AS profile_image
         FROM stories s
         JOIN users u ON s.user_id = u.id
@@ -57,10 +57,10 @@ func GetStories(w http.ResponseWriter, r *http.Request) {
 			id, userID             string
 			content, imageURL, bg  sql.NullString
 			createdAt, expiresAt   sql.NullString
-			nickname, profileImage sql.NullString
+			first_name , last_name, profileImage sql.NullString
 		)
 
-		err := rows.Scan(&id, &userID, &content, &imageURL, &bg, &createdAt, &expiresAt, &nickname, &profileImage)
+		err := rows.Scan(&id, &userID, &content, &imageURL, &bg, &createdAt, &expiresAt, &first_name , &last_name, &profileImage)
 		if err != nil {
 			// Log error if needed, but continue to next row
 			fmt.Println("Scan error:", err)
@@ -75,7 +75,9 @@ func GetStories(w http.ResponseWriter, r *http.Request) {
 			"bg_color":   getNullString(bg),
 			"created_at": getNullString(createdAt),
 			"expires_at": getNullString(expiresAt),
-			"nickname":   getNullString(nickname),
+			"first_name":   getNullString(first_name),
+			"last_name":   getNullString(last_name),
+
 			"profile":    getNullString(profileImage),
 		}
 
