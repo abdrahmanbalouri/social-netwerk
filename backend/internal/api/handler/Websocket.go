@@ -31,8 +31,10 @@ type Message struct {
 	SubType        string `json:"subType"`
 	ReceiverId     string `json:"receiverId"`
 	MessageContent string `json:"messageContent"`
-	Name           string `json:"name"`
-	Photo          string `json:"photo"`
+	First_name     string `json:"first_name"`
+	Last_name      string `json:"last_name"`
+
+	Photo string `json:"photo"`
 }
 
 func GetOnlineUsers() []string {
@@ -115,11 +117,13 @@ func Loop(conn *websocket.Conn, currentUserID string) {
 			break
 		}
 
-		var nickname string
-		err := repository.Db.QueryRow(`SELECT nickname FROM users WHERE id = ?`, currentUserID).Scan(&nickname)
+		var first_name, last_name string
+		err := repository.Db.QueryRow(`SELECT first_name , last_name FROM users WHERE id = ?`, currentUserID).Scan(&first_name, last_name)
 		if err != nil {
-			log.Println("DB error getting sender nickname:", err)
-			nickname = "Unknown"
+			log.Println("DB error getting sender firsy_name && last_name:", err)
+			first_name = "Unknown"
+			last_name = "Unknown"
+
 		}
 		switch msg.Type {
 		case "logout":
@@ -184,7 +188,7 @@ func Loop(conn *websocket.Conn, currentUserID string) {
 				"subType": "message",
 				"from":    currentUserID,
 				"content": "sent you a message",
-				"name":    nickname,
+				"name":    first_name + " " + last_name,
 				"time":    time.Now().Format(time.RFC3339),
 			})
 
@@ -193,10 +197,10 @@ func Loop(conn *websocket.Conn, currentUserID string) {
 		// ===============================
 		case "follow":
 			var followID int
-			var name, photo, pryvsi string
+			var first_name, last_name, photo, pryvsi string
 
-			err = repository.Db.QueryRow(`SELECT nickname, image FROM users WHERE id = ?`, currentUserID).Scan(&name, &photo)
-			_=repository.Db.QueryRow(`SELECT privacy FROM users WHERE id = ?`, msg.ReceiverId).Scan(&pryvsi)
+			err = repository.Db.QueryRow(`SELECT first_name , last_name, image FROM users WHERE id = ?`, currentUserID).Scan(&first_name, &last_name, &photo)
+			_ = repository.Db.QueryRow(`SELECT privacy FROM users WHERE id = ?`, msg.ReceiverId).Scan(&pryvsi)
 			if err != nil {
 				log.Println("DB error getting user info:", err)
 				continue
@@ -207,17 +211,20 @@ func Loop(conn *websocket.Conn, currentUserID string) {
 			fmt.Println("followID:", followID)
 			if followID != 0 {
 				msg.SubType = "unfollow"
-				msg.Name = name
+				msg.First_name = first_name
+				msg.Last_name = last_name
+
 				msg.Photo = photo
 				msg.MessageContent = "has unfollowed you"
 			} else if followID == 0 && pryvsi == "public" {
 				msg.SubType = "follow"
-				msg.Name = name
+				msg.First_name = first_name
+				msg.Last_name = last_name
 				msg.Photo = photo
 				msg.MessageContent = "has following you"
 				q := `INSERT INTO notifications ( sender_id, receiver_id, type, message, created_at) VALUES (?, ?, ?, ?, ?) `
 				_, _ = repository.Db.Exec(q, currentUserID, msg.ReceiverId, msg.Type, msg.MessageContent, time.Now().Unix())
-			}else{
+			} else {
 				continue
 			}
 
@@ -226,7 +233,9 @@ func Loop(conn *websocket.Conn, currentUserID string) {
 				"type":    "notification",
 				"subType": msg.SubType,
 				"from":    currentUserID,
-				"name":    msg.Name,
+				"first_name":    msg.First_name,
+				"last_name":    msg.Last_name,
+
 				"photo":   msg.Photo,
 				"content": msg.MessageContent,
 				"time":    time.Now().Format(time.RFC3339),

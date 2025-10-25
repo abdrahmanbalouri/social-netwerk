@@ -223,7 +223,7 @@ func GetAllPostsGroup(w http.ResponseWriter, r *http.Request) {
     gp.content, 
     gp.image_path, 
     gp.created_at, 
-    u.nickname,
+  u.first_name,u.last_name,
     u.image AS profile,
     COUNT(DISTINCT l.id) AS like_count,
     COUNT(DISTINCT CASE WHEN l.user_id = ? THEN l.id END) AS liked_by_user,
@@ -235,7 +235,7 @@ func GetAllPostsGroup(w http.ResponseWriter, r *http.Request) {
 	WHERE gp.group_id = ?
 	GROUP BY 
     gp.id, gp.user_id, gp.title, gp.content, gp.image_path, gp.created_at, 
-    u.nickname, u.image
+     u.first_name,u.last_name, u.image
 	ORDER BY gp.created_at DESC;
 `
 	rows, err := repository.Db.Query(query, userID, GrpId)

@@ -98,7 +98,7 @@ export default function FollowPage() {
 
                     <div className="onlin" />
                     <Link href={`/profile/${user.id}`} >
-                      <span>{user.nickname}</span>
+                      <span>{user.first_name +" "+user.last_name}</span>
                     </Link>
                   </div>
                 </div>
@@ -113,7 +113,7 @@ export default function FollowPage() {
 
                       <div className="onlin" />
                       <Link href={`/profile/${user.id}`} >
-                        <span>{user.nickname}</span>
+                        <span>{user.first_name +" "+user.last_name}</span>
                       </Link>
                     </div>
                   </div>
