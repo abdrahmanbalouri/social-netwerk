@@ -1,20 +1,15 @@
-.notification_dd {
-    position: absolute;
-    top: 4vh;
-    right: 10vw;
-}
+
 
 .dropdown-menu {
+    background-color: var(--bgSoft);
     position: absolute;
-    top: calc(100% + 10px);
-    left: 50%;
+    top: 48px;
+    right: -50px;
     transform: translateX(-50%);
-    width: 360px;
-    background: white;
+    width: 320px;
     border-radius: 8px;
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
     opacity: 0;
-    max-height: 0;
     overflow: hidden;
     transition: all 0.3s ease;
     z-index: 1000;
