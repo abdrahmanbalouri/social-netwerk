@@ -158,7 +158,7 @@ export default function ChatBox({ user }) {
         </Link>
         <div className="onlinee">
           <Link href={`/profile/${user.id}`}>
-            <span className="username">{user.nickname}</span>
+            <span className="username">{user.first_name +" "+ user.last_name}</span>
           </Link>
           <span className={onlineUsers.includes(user.id) ? "on" : "off"}>
             {onlineUsers.includes(user.id) ? "online" : "offline"}

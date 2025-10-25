@@ -158,7 +158,7 @@ export default function RightBar() {
                     />
                   </Link>
                   <Link href={`/profile/${user.id}`}>
-                    <span>{user.nickname}</span>
+                    <span>{user.first_name +" "+ user.last_name}</span>
                   </Link>
                 </div>
 
@@ -206,7 +206,7 @@ export default function RightBar() {
                       </Link>
                       <div className={onlineUsers.includes(user.id) ? "online" : "offline"} />
                       <Link href={`/profile/${user.id}`}>
-                        <span>{user.nickname}</span>
+                        <span>{user.first_name +" " +user.last_name}</span>
                       </Link>
                     </div>
                     <div className="">
@@ -234,7 +234,7 @@ export default function RightBar() {
                         />
                       </Link>
                       <Link href={`/profile/${user.id}`} className="userLink">
-                        <span>{user.nickname}</span>
+                        <span>{user.first_name +" " +user.last_name}</span>
                       </Link>
                     </div>
                     <Link href={`/profile/${user.id}`} className="userLink">
