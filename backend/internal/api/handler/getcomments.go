@@ -38,7 +38,7 @@ func GetCommentsHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	rows, err := repository.Db.Query(`
-        SELECT c.id, c.content, c.created_at, u.nickname, c.media_path
+        SELECT c.id, c.content, c.created_at, u.first_name , u.last_name, c.media_path
         FROM comments c
         JOIN users u ON c.user_id = u.id
         WHERE c.post_id = ?
@@ -54,14 +54,16 @@ func GetCommentsHandler(w http.ResponseWriter, r *http.Request) {
 		ID        string    `json:"id"`
 		Content   string    `json:"content"`
 		CreatedAt time.Time `json:"created_at"`
-		Author    string    `json:"author"`
+
+		First_name    string    `json:"first_name"`
+		Last_name    string    `json:"last_name"`
 		MediaPath string    `json:"media_path,omitempty"`
 	}
 
 	var comments []Comment
 	for rows.Next() {
 		var comment Comment
-		err := rows.Scan(&comment.ID, &comment.Content, &comment.CreatedAt, &comment.Author, &comment.MediaPath)
+		err := rows.Scan(&comment.ID, &comment.Content, &comment.CreatedAt, &comment.First_name,&comment.Last_name, &comment.MediaPath)
 		if err != nil {
 			helper.RespondWithError(w, http.StatusInternalServerError, "Failed to process comments")
 			return
