@@ -16,9 +16,7 @@ export function CreatePostForm({ onSubmit, onCancel }) {
             title: PostTitle,
             description: PostDescription,
         };
-
         onSubmit(postData);
-
         // Reset form after submission
         setPostTitle('');
         setPostDescription('');
@@ -81,22 +79,29 @@ export function CreatePostForm({ onSubmit, onCancel }) {
     );
 }
 
-export function PostCreationTrigger() {
+export function PostCreationTrigger({setPost}) {
     const [isModalOpen, setIsModalOpen] = useState(false);
+    // const [posts, setPost] = useState([])
     const { id } = useParams();
 
     const handlePostClick = () => {
-        // setShowNoGroups(false);
         setIsModalOpen(true);
     };
     const handleCancel = () => {
         setIsModalOpen(false);
-        // setShowNoGroups(true);
     };
     const handleSubmit = async (formData) => {
         try {
-            await CreatePost(id, formData);
+            const newpost = await CreatePost(id, formData);
             setIsModalOpen(false);
+            // setShowForm(false)
+            setPost(prev => {
+                console.log("posts before are :", prev);
+                const exists = prev.some(p => p.id === newpost.id);
+                const temp = [newpost, ...prev]
+                console.log("posts after are :", temp);
+                return exists ? prev : [newpost, ...prev];
+            })
         } catch (err) {
             console.error("Error creating post:", err);
         }
@@ -105,7 +110,7 @@ export function PostCreationTrigger() {
 
     const userList = []
     return (
-        <>
+        <div>
             <div className="create-post-container">
                 <div className="create-post-card">
                     <div className="create-post-header">
@@ -130,7 +135,7 @@ export function PostCreationTrigger() {
                 />
             )}
 
-        </>
+        </div>
     )
 }
 

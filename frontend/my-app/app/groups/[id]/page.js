@@ -4,6 +4,7 @@ import { GroupPostChat } from "../../../components/groupPostCat.js";
 import Post from "../../../components/Post.js";
 import { useEffect, useState } from "react";
 import "../../../styles/groupstyle.css"
+import "../../../styles/grouppage.css"
 import { useParams } from "next/navigation";
 import { PostCreationTrigger } from "../../../components/cretaePostGroup.js"
 import LeftBar from "../../../components/LeftBar.js";
@@ -51,7 +52,7 @@ export function AllPosts() {
                 return res.json();
             })
             .then(data => {
-                setPost(data);
+                setPost(data || []);
                 setLoading(false);
             })
             .catch(error => {
@@ -59,19 +60,85 @@ export function AllPosts() {
                 setLoading(false);
             });
     }, [grpID]);
-    if (!posts) {
+    // if (!posts) {
+    //     return (
+    //         <div>
+    //             <PostCreationTrigger setPost = {setPost}/>
+    //             <div>There is no post yeeeeeet.</div>
+    //         </div>
+    //     );
+    // }
+
+    return (
+        <div>
+        <PostCreationTrigger setPost={setPost} />
+        
+        {posts.length === 0 ? (
+            <div>There is no post yeeeeeet.</div>
+        ) : (
+            <div className="posts-list">
+                {posts.map((post) => (
+                    <Post
+                        key={post.id}
+                        post={post}
+                        onGetComments={GetComments}
+                        ondolike={AddLike}
+                    />
+                ))}
+            </div>
+        )}
+    </div>
+    )
+}
+
+export function LastPost() {
+    const [posts, setPosts] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const params = useParams();
+    const grpID = params.id;
+
+    useEffect(() => {
+        if (!grpID) {
+            setLoading(false);
+            return;
+        }
+
+        fetch(`http://localhost:8080/group/fetchPost/${grpID}`, {
+            method: 'GET',
+            credentials: 'include',
+        })
+            .then(res => {
+                if (!res.ok) throw new Error('Failed to fetch last post');
+                return res.json();
+            })
+            .then(data => {
+                setPosts(data);
+                setLoading(false);
+            })
+            .catch(error => {
+                console.error("Failed to fetch last post:", error);
+                setLoading(false);
+            });
+    }, [grpID]);
+
+    if (loading) {
+        return <div>Loading...</div>;
+    }
+
+    if (!posts || posts.length === 0) {
         return (
-            <>
-                <PostCreationTrigger />
-                <div>There is no post yeeeeeet.</div>
-            </>
+            <div>
+                <PostCreationTrigger setPosts={setPosts} />
+                <div>There is no post yet.</div>
+            </div>
         );
     }
 
-    console.log("posts are :", posts);
+    console.log("posts are:", posts);
+
     return (
         <div>
-            <PostCreationTrigger />
+            <PostCreationTrigger setPosts={setPosts} />
             <div className="posts-list">
                 {posts.map((post) => (
                     <Post
@@ -83,8 +150,9 @@ export function AllPosts() {
                 ))}
             </div>
         </div>
-    )
+    );
 }
+
 
 function GetComments(post) {
     // setSelectedPost({
@@ -98,7 +166,6 @@ function AddLike() {
 }
 
 export async function CreatePost(groupId, formData) {
-    console.log("grouuup id is :", groupId);
 
     const data = new FormData();
     data.append("postData", JSON.stringify(formData));
@@ -112,6 +179,7 @@ export async function CreatePost(groupId, formData) {
     const text = await res.text();
 
     if (!res.ok) throw new Error("Failed to create a post for groups");
+
 
     return JSON.parse(text);
 }

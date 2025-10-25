@@ -18,7 +18,7 @@ func GetUsersHandler(w http.ResponseWriter, r *http.Request) {
 		helper.RespondWithError(w, http.StatusUnauthorized, "Authentication required")
 		return
 	}
-	rows, err := repository.Db.Query("SELECT id, nickname, image  FROM users")
+	rows, err := repository.Db.Query("SELECT id, first_name , last_name, image  FROM users")
 	if err != nil {
 		helper.RespondWithError(w, http.StatusInternalServerError, "Failed to fetch users")
 		return
@@ -32,7 +32,7 @@ func GetUsersHandler(w http.ResponseWriter, r *http.Request) {
 		var user struct {
 			utils.User
 		}
-		if err := rows.Scan(&user.ID, &user.Nickname, &user.Image); err != nil {
+		if err := rows.Scan(&user.ID, &user.First_name , &user.Last_name, &user.Image); err != nil {
 			helper.RespondWithError(w, http.StatusInternalServerError, "Failed to process users")
 			return
 		}

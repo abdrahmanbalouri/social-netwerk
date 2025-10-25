@@ -22,7 +22,6 @@ export function WSProvider({ children }) {
   useEffect(() => {
     function connect() {
       if (ws.current) {
-        console.log("Closing old WebSocket");
         ws.current.close();
       }
 
@@ -30,12 +29,10 @@ export function WSProvider({ children }) {
       ws.current = socket;
 
       socket.onopen = () => {
-        console.log("✅ WebSocket connected");
         setConnected(true);
       };
 
       socket.onclose = () => {
-        console.log("🔁 WebSocket closed. Reconnecting in 3s...");
         setConnected(false);
         reconnectTimeout.current = setTimeout(connect, 3000);
       };
@@ -48,7 +45,7 @@ export function WSProvider({ children }) {
       socket.onmessage = (event) => {
         try {
           const data = JSON.parse(event.data);
-          console.log("📩 Received:", data);
+          // console.log("📩 Received:", data);
 
           // 🔥 Handle online user updates
           // if (data.type === "online_list") {
@@ -64,7 +61,7 @@ export function WSProvider({ children }) {
           // }
 
           // 🔥 Trigger any custom listeners
-          console.log("listeenenn-------", listeners.current);
+          // console.log("listeenenn-------", listeners.current);
           if (listeners.current[data.type]) {
 
             listeners.current[data.type].forEach((cb) => cb(data));

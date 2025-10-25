@@ -46,13 +46,15 @@ func GetMessagesHandler(w http.ResponseWriter, r *http.Request) {
 		SenderId   string `json:"senderId"`
 		ReceiverId string `json:"receiverId"`
 		CreatedAt  string `json:"createdAt"`
-		Username   string `json:"username"`
+		First_name   string `json:"first_name"`
+		Last_name   string `json:"last_name"`
+
 	}
 
 	var messages []Message
 	for rows.Next() {
 		var msg Message
-		err = repository.Db.QueryRow("SELECT nickname FROM users WHERE id = ?", currentUserID).Scan(&msg.Username)
+		err = repository.Db.QueryRow("SELECT first_name , last_name FROM users WHERE id = ?", currentUserID).Scan(&msg.First_name , &msg.Last_name)
 		if err != nil {
 			http.Error(w, "Database error: "+err.Error(), http.StatusInternalServerError)
 			return

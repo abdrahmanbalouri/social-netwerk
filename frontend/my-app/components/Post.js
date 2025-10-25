@@ -4,7 +4,6 @@ import "../styles/post.css"
 
 
 export default function Post({ post, onGetComments, ondolike }) {
-console.log("dsdsdsdsd",post);
 
 
 
@@ -16,7 +15,7 @@ console.log("dsdsdsdsd",post);
             <img src={post?.profile ? `/uploads/${post.profile}` : '/assets/default.png'} alt="user" />
             <div className="details">
               <Link href={`/profile/${post.user_id}`} style={{ textDecoration: "none", color: "inherit" }}>
-                <span className="name">{post.author}</span>
+                <span className="name">{post.first_name +" "+ post.last_name}</span>
               </Link>
               <span className="date">{new Date(post.created_at).toLocaleString()}</span>
             </div>

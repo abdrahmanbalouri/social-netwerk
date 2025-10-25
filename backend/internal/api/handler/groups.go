@@ -23,7 +23,8 @@ type Group struct {
 	Description string
 }
 
-func AddGroupHandler(w http.ResponseWriter, r *http.Request) {
+func CreateGroupHandler(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("11111")
 	if r.Method != http.MethodPost {
 		helper.RespondWithError(w, http.StatusMethodNotAllowed, "Method not allowed")
 		return
@@ -31,6 +32,7 @@ func AddGroupHandler(w http.ResponseWriter, r *http.Request) {
 
 	var newGroup GroupRequest
 	if err := json.NewDecoder(r.Body).Decode(&newGroup); err != nil {
+		
 		helper.RespondWithError(w, http.StatusBadRequest, "Invalid request format")
 		return
 	}
@@ -68,6 +70,7 @@ func AddGroupHandler(w http.ResponseWriter, r *http.Request) {
 
 	grpID := helper.GenerateUUID()
 
+	fmt.Println("22222")
 	// Insert new group
 	query1 := `INSERT INTO groups (id, title, description, admin_id) VALUES (?, ?, ?, ?)`
 	if _, err := tx.Exec(query1, grpID, newGroup.Title, newGroup.Description, adminID); err != nil {
@@ -111,11 +114,38 @@ func AddGroupHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	response := map[string]string{
-		"message":  "Group and invitations created successfully",
-		"group_id": grpID.String(),
+	fmt.Println("333333")
+	// var createdGroup struct {
+	// 	ID          string `json:"id"`
+	// 	Title       string `json:"title"`
+	// 	Description string `json:"description"`
+	// 	AdminID     string `json:"admin_id"`
+	// 	AdminName   string `json:"admin_name"`
+	// 	CreatedAt   string `json:"created_at"`
+	// 	MemberCount int    `json:"member_count"`
+	// }
+	var createdGroup Group
+
+	queryGetGroup := `
+	SELECT 
+		g.id, g.title, g.description 
+	FROM groups g 
+	ORDER BY g.created_at DESC
+	LIMIT 1
+`
+
+	err = repository.Db.QueryRow(queryGetGroup, grpID).Scan(
+		&createdGroup.ID, &createdGroup.Title, &createdGroup.Description,
+		
+	)
+	if err != nil {
+		fmt.Println("Failed to fetch created group:", err)
+		helper.RespondWithError(w, http.StatusInternalServerError, "Group created but failed to fetch it")
+		return
 	}
-	helper.RespondWithJSON(w, http.StatusCreated, response)
+	fmt.Println("Created groups is :::", createdGroup)
+
+	helper.RespondWithJSON(w, http.StatusCreated, createdGroup)
 }
 
 func GetAllGroups(w http.ResponseWriter, r *http.Request) {
@@ -130,7 +160,7 @@ func GetAllGroups(w http.ResponseWriter, r *http.Request) {
 		helper.RespondWithError(w, http.StatusUnauthorized, "No valid session found")
 		return
 	}
-	fmt.Println("session is :::", c)
+	// fmt.Println("session is :::", c)
 	var userID string
 	if err := repository.Db.QueryRow("SELECT user_id FROM sessions WHERE token = ?", c.Value).Scan(&userID); err != nil {
 		if err == sql.ErrNoRows {
@@ -187,7 +217,7 @@ func GetMyGroups(w http.ResponseWriter, r *http.Request) {
 		helper.RespondWithError(w, http.StatusUnauthorized, "No valid session found")
 		return
 	}
-	fmt.Println("session is :::", c)
+	// fmt.Println("session is :::", c)
 	var userID string
 	if err := repository.Db.QueryRow("SELECT user_id FROM sessions WHERE token = ?", c.Value).Scan(&userID); err != nil {
 		if err == sql.ErrNoRows {

@@ -48,7 +48,7 @@ export default function LeftBar({ showSidebar }) {
             src={Profile?.image ? `/uploads/${Profile.image}` : '/assets/default.png'}
             alt="user avatar"
           />
-          <span>{Profile?.nickname ?? 'user name'}</span>
+          <span>{Profile?.first_name +" "+ Profile?.last_name ?? 'user name'}</span>
         </div>
         <Link href={`/follow/${Profile?.id}?tab=following`}  >
           <div className="item">

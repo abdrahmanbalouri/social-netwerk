@@ -31,7 +31,9 @@ func Getlastcommnet(w http.ResponseWriter, r *http.Request) {
 			c.user_id, 
 			c.content, 
 			c.created_at,
-			u.nickname,
+			u.first_name,
+			
+			u.last_name,
 			u.image AS profile,
 			c.media_path
 		FROM comments c
@@ -45,12 +47,13 @@ func Getlastcommnet(w http.ResponseWriter, r *http.Request) {
 		UserID    string `json:"user_id"`
 		Content   string `json:"content"`
 		CreatedAt string `json:"created_at"`
-		Author    string `json:"author"`
+		First_name    string `json:"first_name"`
+		Last_name    string `json:"last_name"`
 		Profile   string `json:"profile"`
 		MediaPath string `json:"media_path,omitempty"`
 	}
 
-	err := row.Scan(&comment.ID, &comment.PostID, &comment.UserID, &comment.Content, &comment.CreatedAt, &comment.Author, &comment.Profile, &comment.MediaPath)
+	err := row.Scan(&comment.ID, &comment.PostID, &comment.UserID, &comment.Content, &comment.CreatedAt, &comment.First_name,&comment.Last_name, &comment.Profile, &comment.MediaPath)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			helper.RespondWithError(w, http.StatusNotFound, "Comment not found")

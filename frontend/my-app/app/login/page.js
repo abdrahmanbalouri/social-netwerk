@@ -25,7 +25,6 @@ export default function Login() {
       window.location.href = "/home";
     }catch (error) {
       setErr(error.message);
-      console.log("Login error:", error);
     }
   }
 

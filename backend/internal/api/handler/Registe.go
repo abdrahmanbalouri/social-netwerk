@@ -20,6 +20,7 @@ import (
 
 type User struct {
 	Nickname  string `json:"nickname"`
+	
 	DateBirth int64  `json:"dob"`
 	FirstName string `json:"firstName"`
 	LastName  string `json:"lastName"`
@@ -86,7 +87,7 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	var exists int
 	err = repository.Db.QueryRow(
-		"SELECT COUNT(*) FROM users WHERE email = ? OR nickname = ?",
+		`SELECT COUNT(*) FROM users WHERE ( email = ? OR nickname = ? ) AND nickname != "" `,
 		html.EscapeString(userInformation.Email),
 		html.EscapeString(userInformation.Nickname),
 	).Scan(&exists)
@@ -113,7 +114,7 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if len(strings.TrimSpace(userInformation.Nickname)) == 0 ||
+	if 
 		len(strings.TrimSpace(userInformation.FirstName)) == 0 ||
 		len(strings.TrimSpace(userInformation.LastName)) == 0 ||
 		userInformation.Email == "" || userInformation.Password == "" {
