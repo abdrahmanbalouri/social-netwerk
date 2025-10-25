@@ -50,7 +50,9 @@ const Stories = () => {
         grouped[s.user_id] = {
           user: {
             id: s.user_id,
-            nickname: s.nickname,
+          //  nickname: s.nickname,
+          first_name  : first_name,
+          last_name :  last_name,
             profile: s.profile,
           },
           stories: [],
@@ -300,7 +302,7 @@ const Stories = () => {
               className="profile-img"
             />
           </div>
-          <span className="story-label">{group.user.nickname}</span>
+          <span className="story-label">{group.user.first_name + " "  + group.user.first_name  }</span>
         </div>
       ))}
 
@@ -403,7 +405,7 @@ const Stories = () => {
                 alt={currentGroup.user.nickname}
                 className="story-user-avatar"
               />
-              <span className="story-user-name">{currentGroup.user.nickname}</span>
+              <span className="story-user-name">{currentGroup.user.first_name + " " +currentGroup.user.last_name  }</span>
               <span className="story-time">
                 {new Date(currentStory.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
               </span>
