@@ -32,7 +32,7 @@ export default function UserBar() {
     useEffect(() => {
         async function fetchusers() {
             try {
-                const res = await fetch("http://localhost:8080/api/GetUsersHandler", {
+                const res = await fetch("http://localhost:8080/api/communfriends", {
                     method: "GET",
                     credentials: "include",
                 });
