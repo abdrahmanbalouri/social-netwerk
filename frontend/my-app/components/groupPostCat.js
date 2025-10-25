@@ -1,3 +1,4 @@
+import "../styles/groupstyle.css"
 import {useState} from 'react'
 import { AllPosts } from "../app/groups/[id]/page";
 
@@ -12,7 +13,6 @@ export function GroupPostChat() {
                     onClick={() => setActiveTab('chat')}>Chat</button>
             </div>
 
-            {/* <div className="group-container"> */}
             {activeTab === 'posts' ? (
                 <AllPosts />
             ) : (
