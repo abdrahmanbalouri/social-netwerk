@@ -193,9 +193,10 @@ func Loop(conn *websocket.Conn, currentUserID string) {
 		// ===============================
 		case "follow":
 			var followID int
-			var name, photo string
+			var name, photo, pryvsi string
 
-			err := repository.Db.QueryRow(`SELECT nickname, image FROM users WHERE id = ?`, currentUserID).Scan(&name, &photo)
+			err = repository.Db.QueryRow(`SELECT nickname, image FROM users WHERE id = ?`, currentUserID).Scan(&name, &photo)
+			_=repository.Db.QueryRow(`SELECT privacy FROM users WHERE id = ?`, msg.ReceiverId).Scan(&pryvsi)
 			if err != nil {
 				log.Println("DB error getting user info:", err)
 				continue
@@ -209,13 +210,15 @@ func Loop(conn *websocket.Conn, currentUserID string) {
 				msg.Name = name
 				msg.Photo = photo
 				msg.MessageContent = "has unfollowed you"
-			} else {
+			} else if followID == 0 && pryvsi == "public" {
 				msg.SubType = "follow"
 				msg.Name = name
 				msg.Photo = photo
 				msg.MessageContent = "has following you"
 				q := `INSERT INTO notifications ( sender_id, receiver_id, type, message, created_at) VALUES (?, ?, ?, ?, ?) `
 				_, _ = repository.Db.Exec(q, currentUserID, msg.ReceiverId, msg.Type, msg.MessageContent, time.Now().Unix())
+			}else{
+				continue
 			}
 
 			// Notify all connected users (except current user)
