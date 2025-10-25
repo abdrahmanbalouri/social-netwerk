@@ -2,9 +2,7 @@ import Link from "next/link";
 import "../styles/notifaction.css";
 
 export default function Notification({ data }) {
-    if (!data) return null;
 
-console.log("Notification data:", data);
 
     return (
         <div className="notification">

@@ -103,9 +103,9 @@ export default function Comment({ comments, isOpen, onClose, postId, onCommentCh
     }
   }, [])
 
-  useEffect(()=>{
+ /*  useEffect(()=>{
     console.log(comments);
-  },[comments])
+  },[comments]) */
 
   useEffect(() => {
     if (!commentsContainerRef.current) return
