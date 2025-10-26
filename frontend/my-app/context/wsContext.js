@@ -6,7 +6,6 @@ const WSContext = createContext(null);
 export function WSProvider({ children }) {
   const [connected, setConnected] = useState(false);
   const ws = useRef(null);
-  const reconnectTimeout = useRef(null);
   const listeners = useRef({});
 
   const addListener = (type, callback) => {
@@ -35,9 +34,7 @@ export function WSProvider({ children }) {
       };
 
       socket.onclose = () => {
-        console.log("🔁 WebSocket closed. Reconnecting in 3s...");
         setConnected(false);
-        reconnectTimeout.current = setTimeout(connect, 3000);
       };
 
       socket.onerror = (error) => {
@@ -49,20 +46,6 @@ export function WSProvider({ children }) {
         try {
           const data = JSON.parse(event.data);
           console.log("📩 Received:", data);
-
-          // 🔥 Handle online user updates
-          // if (data.type === "online_list") {
-          //   setOnlineUsers(data.users);
-          // } else if (data.type === "status") {
-          //   setOnlineUsers((prev) => {
-          //     if (data.online) {
-          //       return prev.includes(data.userID) ? prev : [...prev, data.userID];
-          //     } else {
-          //       return prev.filter((id) => id !== data.userID);
-          //     }
-          //   });
-          // }
-
           // 🔥 Trigger any custom listeners
           console.log("listeenenn-------", listeners.current);
           if (listeners.current[data.type]) {
@@ -80,7 +63,6 @@ export function WSProvider({ children }) {
     connect();
 
     return () => {
-      clearTimeout(reconnectTimeout.current);
       ws.current?.close();
     };
   }, []);
