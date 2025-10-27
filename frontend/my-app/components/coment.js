@@ -219,7 +219,7 @@ export default function Comment({ comments, isOpen, onClose, postId, onCommentCh
                     className="cm-item"
                     ref={(el) => (commentRefs.current[comment.id] = el)}
                   >
-                    <div className="cm-avatar cm-avatar-sm">{comment.first_name + " " + comment.last_name?.charAt(0) || "U"}</div>
+                    <div className="cm-avatar cm-avatar-sm">{comment.first_name?.charAt(0) || "U"}</div>
                     <div className="cm-text">
                       <div className="cm-meta">
                         <span className="cm-name">{comment.first_name +" "+comment.last_name }</span>
