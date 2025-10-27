@@ -14,7 +14,7 @@ export default function ChatBox({ user }) {
   const [showEmojis, setShowEmojis] = useState(false);
   const inputRef = useRef(null);
   const chatEndRef = useRef(null);
-  const { activeChatID, setActiveChatID } = useChat();
+  const { setActiveChatID } = useChat();
   const [onlineUsers, setonlineUsers] = useState([])
   const { sendMessage, addListener, removeListener } = useWS();
   const id = useParams().id;
@@ -29,14 +29,10 @@ export default function ChatBox({ user }) {
       </div>
     );
   }
-  if (!user) {
-    return <div className="loading">Loading user...</div>;
-  }
-
   setTimeout(() => {
     inputRef.current?.focus();
   }, 0);
-  
+
   useEffect(() => {
     setActiveChatID(user.id);
     return () => setActiveChatID(null);
@@ -133,7 +129,7 @@ export default function ChatBox({ user }) {
     setInput("");
     setShowEmojis(false);
   };
-
+  id
   const addEmoji = (emoji) => {
     const cursorPos = inputRef.current.selectionStart;
     const newText = input.slice(0, cursorPos) + input.slice(cursorPos) + emoji;
