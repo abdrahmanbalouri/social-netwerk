@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"database/sql"
-	"fmt"
 	"log"
 	"net/http"
 	"sync"
@@ -52,12 +51,13 @@ func BrodcastOnlineListe() {
 		"type":  "online_list",
 		"users": GetOnlineUsers(),
 	}
-	// fmt.Printf("msg: %v\n", msg)
 	for _, client := range Clients {
 		for _, conn := range client {
 			if err := conn.WriteJSON(msg); err != nil {
 				log.Println("WebSocket write error:", err)
-				conn.Close()
+				if err := conn.Close(); err != nil {
+					log.Println("WebSocket close error:", err)
+				}
 			}
 		}
 	}
@@ -81,7 +81,6 @@ func Websocket(w http.ResponseWriter, r *http.Request) {
 	Clients[currentUserID] = append(Clients[currentUserID], conn)
 	ClientsMutex.Unlock()
 
-	// fmt.Printf("Clients: %v\n", Clients)
 	BrodcastOnlineListe()
 	// Listen for incoming messages
 	Loop(conn, currentUserID)
@@ -100,16 +99,16 @@ func Websocket(w http.ResponseWriter, r *http.Request) {
 			if len(Clients[currentUserID]) == 0 {
 				delete(Clients, currentUserID)
 				BrodcastOnlineStatus(currentUserID, false)
-				conn.Close()
+				if err := conn.Close(); err != nil {
+					log.Println("WebSocket close error:", err)
+				}
 			}
 		}
 		ClientsMutex.Unlock()
-		fmt.Println("------------------------")
 	}()
 }
 
 func Loop(conn *websocket.Conn, currentUserID string) {
-	// fmt.Println("WebSocket connected for user:", currentUserID)
 	for {
 		var msg Message
 		if err := conn.ReadJSON(&msg); err != nil {
@@ -142,8 +141,10 @@ func Loop(conn *websocket.Conn, currentUserID string) {
 			// ✅ Vérifie ghir wach receiver kayn
 			var exist int
 			err := repository.Db.QueryRow(`
-			SELECT 1 FROM users WHERE id = ?
-		`, msg.ReceiverId).Scan(&exist)
+				SELECT 1 FROM followers
+				WHERE (user_id = ? AND follower_id = ?) OR (user_id = ? AND follower_id = ?)
+			`, currentUserID, msg.ReceiverId, msg.ReceiverId, currentUserID).Scan(&exist)
+
 			if err == sql.ErrNoRows {
 				log.Println("Recipient user not found")
 				continue
@@ -151,14 +152,19 @@ func Loop(conn *websocket.Conn, currentUserID string) {
 				log.Println("DB error:", err)
 				continue
 			}
+			if exist == 0 {
+				log.Println("Users are not connected as followers")
+				continue
+			}
+
 			q := `INSERT INTO notifications ( sender_id, receiver_id, type, message, created_at) VALUES (?, ?, ?, ?, ?) `
 			_, _ = repository.Db.Exec(q, currentUserID, msg.ReceiverId, msg.Type, "Send you a message", time.Now().Unix())
 
 			// ✅ Insert message direct sans check dyal follows
 			_, err = repository.Db.Exec(`
-        INSERT INTO messages (sender_id, receiver_id, content)
-        VALUES (?, ?, ?)
-    `, currentUserID, msg.ReceiverId, msg.MessageContent)
+				INSERT INTO messages (sender_id, receiver_id, content)
+				VALUES (?, ?, ?)
+			`, currentUserID, msg.ReceiverId, msg.MessageContent)
 			if err != nil {
 				log.Println("DB error inserting message:", err)
 				continue
@@ -208,7 +214,6 @@ func Loop(conn *websocket.Conn, currentUserID string) {
 
 			query := `SELECT id FROM followers WHERE user_id = ? AND follower_id = ?`
 			_ = repository.Db.QueryRow(query, msg.ReceiverId, currentUserID).Scan(&followID)
-			fmt.Println("followID:", followID)
 			if followID != 0 {
 				msg.SubType = "unfollow"
 				msg.First_name = first_name
@@ -267,7 +272,9 @@ func BrodcastOnlineStatus(userID string, online bool) {
 		for _, conn := range conns {
 			if err := conn.WriteJSON(message); err != nil {
 				log.Println("WebSocket write error:", err)
-				conn.Close()
+				if err := conn.Close(); err != nil {
+					log.Println("WebSocket close error:", err)
+				}
 			}
 		}
 	}
@@ -286,7 +293,9 @@ func sendToUser(userID string, message map[string]any) {
 	for _, conn := range conns {
 		if err := conn.WriteJSON(message); err != nil {
 			log.Println("WebSocket write error:", err)
-			conn.Close()
+			if err := conn.Close(); err != nil {
+				log.Println("WebSocket close error:", err)
+			}
 		}
 	}
 }

@@ -129,11 +129,8 @@ export default function Home() {
 
         throw new Error('Failed to fetch followers');
       }
-      let data = await response.json();
+      let data = await response.json() || [];
 
-      if (!data) {
-        data = []
-      }
       setFollowers(data);
     } catch (err) {
       setError(err.message);
@@ -189,8 +186,7 @@ export default function Home() {
         return false
       }
 
-      const data = await res.json();
-      
+      const data = await res.json() || [];
 
       if (data) {
         offsetpsot.current += 10
@@ -214,7 +210,6 @@ export default function Home() {
         method: "GET",
         credentials: "include",
       });
-
       if (!res.ok) {
         return false
       } else {
@@ -225,8 +220,9 @@ export default function Home() {
         setPosts([...data]);
 
       }
-
-
+      
+      const data = await res.json() || [];
+      
 
 
       return true
@@ -337,7 +333,7 @@ export default function Home() {
       if (!res.ok) {
         return false
       }
-      const data = await res.json();
+      const data = await res.json() || [];
 
 
 
