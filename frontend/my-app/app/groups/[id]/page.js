@@ -4,6 +4,7 @@ import { GroupPostChat } from "../../../components/groupPostCat.js";
 import Post from "../../../components/Post.js";
 import { useEffect, useState } from "react";
 import "../../../styles/groupstyle.css"
+import "../../../styles/group.css"
 import { useParams } from "next/navigation";
 import { PostCreationTrigger } from "../../../components/cretaePostGroup.js"
 import LeftBar from "../../../components/LeftBar.js";
