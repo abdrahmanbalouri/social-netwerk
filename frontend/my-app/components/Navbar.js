@@ -132,7 +132,7 @@ export default function Navbar() {
                     width="35"
                     height="35"
                   />
-                  <span>{user.nickname || `${user.first_name} ${user.last_name}`}</span>
+                  <span>{`${user.first_name} ${user.last_name}`}</span>
                 </div>
               ))}
             </div>

@@ -214,14 +214,14 @@ export default function Home() {
         return false
       } else {
 
-        const data = await res.json();
+        const data = await res.json() || [];
         if(!data) return
 
         setPosts([...data]);
 
       }
       
-      const data = await res.json() || [];
+      
       
 
 
