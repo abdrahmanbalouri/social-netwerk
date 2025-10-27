@@ -1,0 +1,192 @@
+ * {
+     margin: 0;
+     padding: 0;
+     box-sizing: border-box;
+ }
+
+
+
+ .create-post-form-container {
+    position: absolute;
+     width: 100%;
+     max-width: 600px;
+     animation: fadeInUp 0.6s ease-out;
+     z-index: 1000;
+ }
+
+ @keyframes fadeInUp {
+     from {
+         opacity: 0;
+         transform: translateY(30px);
+     }
+
+     to {
+         opacity: 1;
+         transform: translateY(0);
+     }
+ }
+
+ .create-post-form-card {
+     background: rgba(255, 255, 255, 0.95);
+     backdrop-filter: blur(10px);
+     border-radius: 20px;
+     padding: 40px;
+     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+     transition: transform 0.3s ease;
+ }
+
+ .create-post-form-card:hover {
+     transform: translateY(-5px);
+ }
+
+ .form-title {
+     font-size: 32px;
+     font-weight: 700;
+     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+     -webkit-background-clip: text;
+     -webkit-text-fill-color: transparent;
+     background-clip: text;
+     margin-bottom: 30px;
+     text-align: center;
+ }
+
+ .form-field {
+     margin-bottom: 25px;
+ }
+
+ .form-label {
+     display: block;
+     font-size: 14px;
+     font-weight: 600;
+     color: #333;
+     margin-bottom: 8px;
+     transition: color 0.3s ease;
+ }
+
+ .form-input,
+ .form-textarea {
+     width: 100%;
+     padding: 14px 18px;
+     border: 2px solid #e0e0e0;
+     border-radius: 12px;
+     font-size: 15px;
+     font-family: inherit;
+     transition: all 0.3s ease;
+     background: #fff;
+ }
+
+ .form-input:focus,
+ .form-textarea:focus {
+     outline: none;
+     border-color: #667eea;
+     box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+     transform: translateY(-2px);
+ }
+
+ .form-input:focus+.form-label,
+ .form-textarea:focus+.form-label {
+     color: #667eea;
+ }
+
+ .form-textarea {
+     resize: vertical;
+     min-height: 120px;
+ }
+
+ .form-input::placeholder,
+ .form-textarea::placeholder {
+     color: #999;
+ }
+
+ .form-actions {
+     display: flex;
+     gap: 15px;
+     margin-top: 35px;
+ }
+
+ .cancel-post-btn,
+ .submit-post-btn {
+     flex: 1;
+     padding: 14px 28px;
+     border: none;
+     border-radius: 12px;
+     font-size: 16px;
+     font-weight: 600;
+     cursor: pointer;
+     transition: all 0.3s ease;
+     position: relative;
+     overflow: hidden;
+ }
+
+ .cancel-post-btn {
+     background: #f5f5f5;
+     color: #666;
+ }
+
+ .cancel-post-btn:hover {
+     background: #e0e0e0;
+     transform: translateY(-2px);
+     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+ }
+
+ .submit-post-btn {
+     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+     color: white;
+     box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+ }
+
+ .submit-post-btn:hover:not(:disabled) {
+     transform: translateY(-2px);
+     box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
+ }
+
+ .submit-post-btn:disabled {
+     background: #ccc;
+     cursor: not-allowed;
+     box-shadow: none;
+ }
+
+ .submit-post-btn:active:not(:disabled) {
+     transform: translateY(0);
+ }
+
+ /* Character counter */
+ .char-counter {
+     font-size: 12px;
+     color: #999;
+     text-align: right;
+     margin-top: 5px;
+ }
+
+ /* Icon animation */
+ @keyframes spin {
+     from {
+         transform: rotate(0deg);
+     }
+
+     to {
+         transform: rotate(360deg);
+     }
+ }
+
+ .submit-post-btn.loading::after {
+     content: "⏳";
+     position: absolute;
+     right: 15px;
+     animation: spin 1s linear infinite;
+ }
+
+ /* Responsive */
+ @media (max-width: 600px) {
+     .create-post-form-card {
+         padding: 25px;
+     }
+
+     .form-title {
+         font-size: 26px;
+     }
+
+     .form-actions {
+         flex-direction: column;
+     }
+ }
