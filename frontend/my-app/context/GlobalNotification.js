@@ -2,26 +2,23 @@
 import { useEffect, useState } from "react";
 import { useWS } from "./wsContext";
 import Notification from "../components/notofication";
-import { useDarkMode } from "./darkMod";
-import { usePathname } from "next/navigation"; 
+import { usePathname } from "next/navigation";
 export default function GlobalNotification() {
   const { addListener, removeListener, connected } = useWS();
-  const { darkMode } = useDarkMode();
   const [toast, setToast] = useState(null);
-  const pathname = usePathname(); 
+  const pathname = usePathname();
 
   useEffect(() => {
     if (!connected) return;
 
     const handle = (data) => {
       const payload = data.data || data;
-console.log("Notification received in GlobalNotification:", payload);
 
-      if (payload.type!=="message"||pathname !== `/chat/${payload.from}`) {
+      if (pathname !== `/chat/${payload.from}`) {
         setToast(payload);
       }
 
-      setTimeout(() => setToast(null), 4500); 
+      setTimeout(() => setToast(null), 4500);
     };
 
     addListener("notification", handle);
