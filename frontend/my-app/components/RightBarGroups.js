@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import Link from 'next/link';
-import ChatIcon from '@mui/icons-material/Chat';
 import PersonAddAltIcon from "@mui/icons-material/PersonAddAlt";
 
 import "../styles/rightbar.css"
@@ -17,10 +16,10 @@ export default function RightBarGroup({ onClick }) {
     const [activeTab, setActiveTab] = useState("friends");
     const [followRequest, setFollowRequest] = useState([])
     const { sendMessage, addListener, removeListener } = useWS();
-
     useEffect(() => {
         const handleOlineUser = (data) => {
             setonlineUsers(data.users)
+
         }
         sendMessage({ type: "online_list" })
         addListener("online_list", handleOlineUser)
@@ -200,6 +199,7 @@ export default function RightBarGroup({ onClick }) {
                                         </div>
                                         <div onClick={() => {
                                             onClick(user.id, grpID)
+                                            sendMessage({ type: "invite_to_group", ReceiverId: user.id, groupID: grpID })
                                         }}>
                                             <PersonAddAltIcon className="userIcon" />
                                         </div>

@@ -32,8 +32,8 @@ type Message struct {
 	MessageContent string `json:"messageContent"`
 	First_name     string `json:"first_name"`
 	Last_name      string `json:"last_name"`
-
-	Photo string `json:"photo"`
+	GroupID        string `json:"groupID"`
+	Photo          string `json:"photo"`
 }
 
 func GetOnlineUsers() []string {
@@ -235,16 +235,39 @@ func Loop(conn *websocket.Conn, currentUserID string) {
 
 			// Notify all connected users (except current user)
 			BrodcastNotification(msg.ReceiverId, map[string]any{
-				"type":    "notification",
-				"subType": msg.SubType,
-				"from":    currentUserID,
-				"first_name":    msg.First_name,
-				"last_name":    msg.Last_name,
+				"type":       "notification",
+				"subType":    msg.SubType,
+				"from":       currentUserID,
+				"first_name": msg.First_name,
+				"last_name":  msg.Last_name,
 
 				"photo":   msg.Photo,
 				"content": msg.MessageContent,
 				"time":    time.Now().Format(time.RFC3339),
 			})
+		case "invite_to_group":
+			var first_name, last_name, photo string
+
+			err = repository.Db.QueryRow(`SELECT first_name , last_name, image FROM users WHERE id = ?`, currentUserID).Scan(&first_name, &last_name, &photo)
+			if err != nil {
+				log.Println("DB error getting user info:", err)
+				continue
+			}
+			msg.MessageContent="has invited you to join a group"
+			q := `INSERT INTO notifications ( sender_id, receiver_id, type, message, created_at) VALUES (?, ?, ?, ?, ?) `
+			_, _ = repository.Db.Exec(q, currentUserID, msg.ReceiverId, msg.Type, msg.MessageContent, time.Now().Unix())
+			// Notify the invited user
+			BrodcastNotification(msg.ReceiverId, map[string]any{
+				"type":       "notification",
+				"subType":    "group_invite",
+				"from":       currentUserID,
+				"first_name": first_name,
+				"last_name":  last_name,
+				"photo":      photo,
+				"content":    msg.MessageContent,
+				"time":       time.Now().Format(time.RFC3339),
+			})
+
 		default:
 			log.Println("Unknown message type:", msg.Type)
 		}
