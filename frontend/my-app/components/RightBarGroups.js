@@ -3,6 +3,8 @@
 import { useEffect, useState } from "react";
 import Link from 'next/link';
 import ChatIcon from '@mui/icons-material/Chat';
+import PersonAddAltIcon from "@mui/icons-material/PersonAddAlt";
+
 import "../styles/rightbar.css"
 import { useWS } from "../context/wsContext";
 import { useParams } from "next/navigation";
@@ -187,20 +189,19 @@ export default function RightBarGroup({ onClick }) {
                                         <div className="userDetails">
                                             <Link href={`/profile/${user.id}`}>
                                                 <img
-                                                    src={user?.image ? `/uploads/${user.image}` : "/uploads/default.png"}
+                                                    src={user?.image ? `/uploads/${user.image}` : "/assets/default.png"}
                                                     alt="user avatar"
                                                 />
                                             </Link>
                                             <div className={onlineUsers.includes(user.id) ? "online" : "offline"} />
                                             <Link href={`/profile/${user.id}`}>
-                                                <span>{user.nickname}</span>
+                                                <span>{user.first_name + " " + user.last_name}</span>
                                             </Link>
                                         </div>
                                         <div onClick={() => {
-                                            console.log("user IDIDIDID  is : ", user.id);
                                             onClick(user.id, grpID)
                                         }}>
-                                            <ChatIcon className="userIcon" />
+                                            <PersonAddAltIcon className="userIcon" />
                                         </div>
                                     </div>
                                 </div>
