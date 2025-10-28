@@ -40,7 +40,8 @@ func Createpost(w http.ResponseWriter, r *http.Request) {
 		helper.RespondWithError(w, http.StatusBadRequest, "title bitwen 2 and  20")
 		return 
 	}
-	if visibility == "private" && allowedUsers == "" {
+	users := len(strings.Split(allowedUsers, ","))
+	if visibility == "private" && users == 1 {
 		fmt.Println("123456789")
 		helper.RespondWithError(w, http.StatusBadRequest, "Allowed users must be provided for private posts")
 		return

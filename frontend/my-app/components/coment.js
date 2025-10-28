@@ -2,7 +2,7 @@
 import { useState, useEffect, useRef } from "react"
 import "../styles/comment.css"
 
-export default function Comment({ comments, isOpen, onClose, postId, onCommentChange, lodinggg, ongetcomment, post }) {
+export default function Comment({ comments, isOpen, onClose, postId, onCommentChange, lodinggg, ongetcomment, post ,showToast}) {
   const [commentContent, setCommentContent] = useState("")
   const [selectedFile, setSelectedFile] = useState(null)
   const [loading, setLoading] = useState(false)
@@ -168,11 +168,11 @@ export default function Comment({ comments, isOpen, onClose, postId, onCommentCh
         body: formData,
       })
 
-      if (!response.ok) {
-        throw new Error("Failed to post comment")
-      }
       
       const res = await response.json()
+      if(res.e){
+        throw new Error(res.e)
+      }
       setCommentContent("")
       setSelectedFile(null)
       
@@ -185,8 +185,7 @@ export default function Comment({ comments, isOpen, onClose, postId, onCommentCh
         commentsContainerRef.current.scrollTop = 0
       }
     } catch (err) {
-      console.error("Error posting comment:", err)
-      alert("Failed to post comment. Please try again.")
+       showToast(err.message)
     } finally {
       setLoading(false)
     }

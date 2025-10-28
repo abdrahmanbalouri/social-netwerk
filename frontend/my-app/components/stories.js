@@ -35,8 +35,6 @@ const Stories = () => {
       });
 
       const response = await res.json()
-      console.log(response);
-
       if (response.error) {
         //showToast(response.error);
         return
