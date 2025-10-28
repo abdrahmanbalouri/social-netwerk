@@ -2,7 +2,7 @@
 import { useState, useEffect, useRef } from "react"
 import "../styles/comment.css"
 
-export default function Comment({ comments, isOpen, onClose, postId, onCommentChange, lodinggg, ongetcomment, post ,showToast}) {
+export default function Comment({ comments, isOpen, onClose, postId, onCommentChange, lodinggg, ongetcomment, post, showToast }) {
   const [commentContent, setCommentContent] = useState("")
   const [selectedFile, setSelectedFile] = useState(null)
   const [loading, setLoading] = useState(false)
@@ -103,9 +103,7 @@ export default function Comment({ comments, isOpen, onClose, postId, onCommentCh
     }
   }, [])
 
- /*  useEffect(()=>{
-    console.log(comments);
-  },[comments]) */
+
 
   useEffect(() => {
     if (!commentsContainerRef.current) return
@@ -168,14 +166,20 @@ export default function Comment({ comments, isOpen, onClose, postId, onCommentCh
         body: formData,
       })
 
-      
+
       const res = await response.json()
-      if(res.e){
-        throw new Error(res.e)
+      if (res.err) {
+
+        showToast(res.error)
+        setCommentContent("")
+        setSelectedFile(null)
+        return
       }
+      console.log(333333);
+
       setCommentContent("")
       setSelectedFile(null)
-      
+
       if (fileInputRef.current) {
         fileInputRef.current.value = ''
       }
@@ -185,7 +189,7 @@ export default function Comment({ comments, isOpen, onClose, postId, onCommentCh
         commentsContainerRef.current.scrollTop = 0
       }
     } catch (err) {
-       showToast(err.message)
+
     } finally {
       setLoading(false)
     }
@@ -221,7 +225,7 @@ export default function Comment({ comments, isOpen, onClose, postId, onCommentCh
                     <div className="cm-avatar cm-avatar-sm">{comment.first_name?.charAt(0) || "U"}</div>
                     <div className="cm-text">
                       <div className="cm-meta">
-                        <span className="cm-name">{comment.first_name +" "+comment.last_name }</span>
+                        <span className="cm-name">{comment.first_name + " " + comment.last_name}</span>
                         <span className="cm-time">
                           {new Date(comment.created_at).toLocaleTimeString([], {
                             hour: "2-digit",
@@ -270,7 +274,7 @@ export default function Comment({ comments, isOpen, onClose, postId, onCommentCh
                   required={!selectedFile}
                   disabled={loading}
                 />
-                
+
                 {/* Bouton emoji */}
                 <button
                   type="button"
@@ -279,7 +283,7 @@ export default function Comment({ comments, isOpen, onClose, postId, onCommentCh
                 >
                   😊
                 </button>
-                
+
                 {/* Input file */}
                 <input
                   type="file"
@@ -289,13 +293,13 @@ export default function Comment({ comments, isOpen, onClose, postId, onCommentCh
                   id="comment-file"
                   ref={fileInputRef}
                 />
-                <label 
-                  htmlFor="comment-file" 
+                <label
+                  htmlFor="comment-file"
                   className={`cm-file-label ${selectedFile ? 'has-file' : ''}`}
                 >
                   {selectedFile && <span className="cm-file-selected"></span>}
                 </label>
-                
+
                 <button
                   type="submit"
                   className="cm-btn"
@@ -304,21 +308,21 @@ export default function Comment({ comments, isOpen, onClose, postId, onCommentCh
                   {loading ? "..." : "Post"}
                 </button>
               </div>
-              
+
               {/* Picker d'emojis avec catégories */}
               {showEmojis && (
                 <div className="cm-emoji-picker" ref={emojiRef}>
                   <div className="cm-emoji-header">
                     <span>Emojis</span>
-                    <button 
-                      type="button" 
+                    <button
+                      type="button"
                       className="cm-emoji-close"
                       onClick={() => setShowEmojis(false)}
                     >
                       ×
                     </button>
                   </div>
-                  
+
                   {/* Navigation des catégories */}
                   <div className="cm-emoji-categories">
                     {Object.keys(emojiCategories).map(category => (
@@ -332,7 +336,7 @@ export default function Comment({ comments, isOpen, onClose, postId, onCommentCh
                       </button>
                     ))}
                   </div>
-                  
+
                   {/* Grille d'emojis */}
                   <div className="cm-emoji-grid">
                     {emojiCategories[activeCategory].map((emoji, index) => (
@@ -348,30 +352,30 @@ export default function Comment({ comments, isOpen, onClose, postId, onCommentCh
                   </div>
                 </div>
               )}
-              
+
               {/* Preview du fichier sélectionné */}
               {selectedFile && (
                 <div className="cm-file-preview">
                   {selectedFile.type.startsWith('image/') ? (
-                    <img 
-                      src={URL.createObjectURL(selectedFile)} 
-                      alt="Preview" 
+                    <img
+                      src={URL.createObjectURL(selectedFile)}
+                      alt="Preview"
                     />
                   ) : selectedFile.type.startsWith('video/') ? (
                     <video>
                       <source src={URL.createObjectURL(selectedFile)} type={selectedFile.type} />
                     </video>
                   ) : null}
-                  
+
                   <div className="cm-file-info">
                     <div className="cm-file-name">{selectedFile.name}</div>
                     <div className="cm-file-size">
                       {(selectedFile.size / 1024 / 1024).toFixed(2)} MB
                     </div>
                   </div>
-                  
-                  <button 
-                    type="button" 
+
+                  <button
+                    type="button"
                     className="cm-file-remove"
                     onClick={handleRemoveFile}
                   >
