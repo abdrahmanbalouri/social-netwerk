@@ -1,14 +1,15 @@
 "use client"
 import Navbar from '../../components/Navbar.js';
+import { GroupCard } from '../../components/groupCard.js';
 import { useEffect, useState } from "react";
 import "../../styles/groupstyle.css"
-import { useRouter } from 'next/navigation'
+import { useRouter, useSelectedLayoutSegments } from 'next/navigation'
 import { GroupCreationTrigger } from '../../components/CreateGroup.js';
 import { GroupsTabs } from '../../components/groupTabs.js';
 import LeftBar from '../../components/LeftBar.js';
 import RightBar from '../../components/RightBar.js';
 import { useDarkMode } from '../../context/darkMod.js';
-
+// import RightBarGroup from '../../components/RightBarGroups.js';
 
 export default function () {
     const { darkMode } = useDarkMode();
@@ -38,6 +39,7 @@ export function AllGroups() {
         })
             .then(res => res.json())
             .then(data => {
+                console.log("All the groups are :", data);
                 setGroup(data);
                 setLoading(false);
             })
@@ -67,7 +69,8 @@ export function AllGroups() {
 }
 
 export function MyGroups() {
-    const [group, setGroup] = useState(null);
+    console.log("MyGroups rendered");
+    const [group, setGroup] = useState([]);
     const [loading, setLoading] = useState(true);
     const router = useRouter()
 
@@ -83,7 +86,7 @@ export function MyGroups() {
         })
             .then(res => res.json())
             .then(data => {
-                setGroup(data);
+                setGroup(data || []);
                 setLoading(false);
             })
             .catch(error => {
@@ -94,40 +97,60 @@ export function MyGroups() {
     if (!group) {
         return (
             <div>
-                <GroupCreationTrigger />
+                <GroupCreationTrigger setGroup={setGroup} />
             </div>
         )
     }
+    console.log("groups after are :", group);
     return (
         <div className="group-container">
-            <GroupCreationTrigger />
+            <GroupCreationTrigger
+                setGroup={setGroup}
+            />
             {group.map(grp => (
-                <div key={grp.ID} className="group-card">
-                    <div className="group-content">
-                        <h2 className="group-title">{grp.Title}</h2>
-                        <p className="group-description">{grp.Description}</p>
-                    </div>
-                    <div className="group-footer">
-                        <button onClick={() => handleShow(grp.ID)}>Show</button>
-                    </div>
-                </div>
+                <GroupCard
+                    key={grp.ID}
+                    group={grp}
+                    onShow={handleShow}
+                />
             ))}
         </div>
     )
 }
 
 export function createGroup(formData) {
+    console.log("inside Create Group function");
     return fetch('http://localhost:8080/api/groups/add', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
         body: JSON.stringify(formData),
     })
-        .then(res => {
+        .then(async res => {
+            console.log("form data ha s: ", formData);
             if (!res.ok) throw new Error('Failed to create group');
-            return res.json();
+            // console.log("result :", res);
+            // console.log("result  :",await res.text());
+            const groupIS = await res.json()
+            // console.log("new group is :", groupIS);
+            const SendInvitations = await fetch(
+                `http://localhost:8080/group/invitation/${groupIS.ID}`,
+                {
+                    method: 'POST',
+                    credentials: 'include',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        invitedUsers: formData.invitedUsers,
+                    }),
+                }
+            );
+
+            console.log("SendInvitations ::", await SendInvitations.json());
+            return groupIS
         })
-        .then(data => data)
+        // .then(createdGroup => { return createdGroup })
         .catch(error => {
             console.error('Failed to create new group:', error);
             throw error;
