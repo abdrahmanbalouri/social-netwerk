@@ -1,136 +1,132 @@
-import { useState } from 'react';
-import { CreatePost } from '../app/groups/[id]/page.js';
-import "../styles/groupstyle.css"
+import { useState } from "react";
+import { CreatePost } from "../app/groups/[id]/page.js";
+import "../styles/groupstyle.css";
 import { useParams } from "next/navigation";
 
-
 export function CreatePostForm({ onSubmit, onCancel }) {
-    const [PostTitle, setPostTitle] = useState('');
-    const [PostDescription, setPostDescription] = useState('');
-    const [searchQuery, setSearchQuery] = useState('');
+  const [PostTitle, setPostTitle] = useState("");
+  const [PostDescription, setPostDescription] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
+  const handleSubmit = (e) => {
+    e.preventDefault();
 
-        const postData = {
-            title: PostTitle,
-            description: PostDescription,
-        };
-
-        onSubmit(postData);
-
-        // Reset form after submission
-        setPostTitle('');
-        setPostDescription('');
-        setSearchQuery('');
+    const postData = {
+      title: PostTitle,
+      description: PostDescription,
     };
 
-    return (
-        <div className="create-post-form-container">
-            <div className="create-post-form-card">
-                <h1 className="form-title">Create a New post</h1>
+    onSubmit(postData);
 
-                <form onSubmit={handleSubmit}>
-                    {/* post Title */}
-                    <div className="form-field">
-                        <label htmlFor="groupTitle" className="form-label">post Title</label>
-                        <input
-                            id="postTitle"
-                            type="text"
-                            value={PostTitle}
-                            onChange={(e) => setPostTitle(e.target.value)}
-                            placeholder="Enter post title"
-                            className="form-input"
-                            required
-                        />
-                    </div>
+    // Reset form after submission
+    setPostTitle("");
+    setPostDescription("");
+    setSearchQuery("");
+  };
 
-                    {/* post Description */}
-                    <div className="form-field">
-                        <label htmlFor="groupDescription" className="form-label">Description</label>
-                        <textarea
-                            id="postDescription"
-                            value={PostDescription}
-                            onChange={(e) => setPostDescription(e.target.value)}
-                            placeholder="What's your post about?"
-                            className="form-textarea"
-                            rows="4"
-                        />
-                    </div>
-
-                    {/* Submit Button */}
-                    <div className="form-actions">
-                        <button
-                            type="button"
-                            className="cancel-post-btn"
-                            onClick={onCancel}
-                        >
-                            Cancel
-                        </button>
-                        <button
-                            type="submit"
-                            className="submit-post-btn"
-                            disabled={!PostTitle.trim()}
-                        >
-                            Create post
-                        </button>
-                    </div>
-                </form>
-            </div>
+  return (
+    <div className="modal-overlay">
+      <div className="modal-content">
+        <div className="modal-header">
+          <h1 className="modal-title">Create a New Post</h1>
         </div>
-    );
+
+        <form onSubmit={handleSubmit}>
+          {/* post Title */}
+          <div className="modal-form">
+            <div className="form-group">
+              <label htmlFor="postTitle" className="form-label">
+                Post Title
+              </label>
+              <input
+                id="postTitle"
+                type="text"
+                value={PostTitle}
+                onChange={(e) => setPostTitle(e.target.value)}
+                placeholder="Enter post title"
+                className="form-input"
+                required
+                autoFocus
+              />
+            </div>
+
+            {/* post Description */}
+            <div className="form-group">
+              <label htmlFor="postContent" className="form-label">
+                Content
+              </label>
+              <textarea
+                id="postDescription"
+                value={PostDescription}
+                onChange={(e) => setPostDescription(e.target.value)}
+                placeholder="What's on your mind?"
+                className="form-textarea"
+                required
+              />
+            </div>
+          </div>
+          {/* Submit Button */}
+          <div className="modal-actions">
+            <button type="button" className="cancel-button" onClick={onCancel}>
+              Cancel
+            </button>
+            <button
+              type="submit"
+              className="submit-button"
+              disabled={!PostTitle.trim()}
+            >
+              Create post
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
 }
 
 export function PostCreationTrigger() {
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const { id } = useParams();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const { id } = useParams();
 
-    const handlePostClick = () => {
-        // setShowNoGroups(false);
-        setIsModalOpen(true);
-    };
-    const handleCancel = () => {
-        setIsModalOpen(false);
-        // setShowNoGroups(true);
-    };
-    const handleSubmit = async (formData) => {
-        try {
-            await CreatePost(id, formData);
-            setIsModalOpen(false);
-        } catch (err) {
-            console.error("Error creating post:", err);
-        }
-    };
+  const handlePostClick = () => {
+    // setShowNoGroups(false);
+    setIsModalOpen(true);
+  };
+  const handleCancel = () => {
+    setIsModalOpen(false);
+    // setShowNoGroups(true);
+  };
+  const handleSubmit = async (formData) => {
+    try {
+      await CreatePost(id, formData);
+      setIsModalOpen(false);
+    } catch (err) {
+      console.error("Error creating post:", err);
+    }
+  };
 
-
-    const userList = []
-    return (
-        <>
-            <div className="create-post-container">
-                <div className="create-post-card">
-                    <div className="create-post-header">
-                        <div className="user-avatar">
-                            <span>User</span>
-                        </div>
-                        <input
-                            type="text"
-                            placeholder="Do you want to create a post? Just click here!"
-                            className="post-input"
-                            onClick={handlePostClick}
-                            readOnly
-                        />
-                    </div>
-                </div>
-            </div>
-            {isModalOpen && (
-                <CreatePostForm
-                    users={userList}
-                    onSubmit={handleSubmit}
-                    onCancel={handleCancel}
-                />
-            )}
-
-        </>
-    )
+  const userList = [];
+  return (
+    <>
+      <div className="create-card">
+        <div className="create-card-inner">
+          <div className="avatar">U</div>
+          <input
+            type="text"
+            placeholder="What's on your mind?"
+            className="create-input"
+            onClick={handlePostClick}
+            readOnly
+          />
+        </div>
+      </div>
+      {isModalOpen && (
+        <CreatePostForm
+          users={userList}
+          onSubmit={handleSubmit}
+          onCancel={handleCancel}
+        />
+      )}
+    </>
+  );
 }
-
