@@ -32,15 +32,20 @@ func Createpost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	title := strings.TrimSpace(r.FormValue("title"))
-	content := strings.TrimSpace(r.FormValue("content"))
+	title := helper.Skip(strings.TrimSpace(r.FormValue("title")))
+	content := helper.Skip(strings.TrimSpace(r.FormValue("content")))
 	visibility := strings.TrimSpace(r.FormValue("visibility"))
 	allowedUsers := strings.TrimSpace(r.FormValue("allowed_users"))
-
+	if len(title) <= 2 || len(title) > 20 {
+		helper.RespondWithError(w, http.StatusBadRequest, "title bitwen 2 and  20")
+		return 
+	}
 	if visibility == "private" && allowedUsers == "" {
+		fmt.Println("123456789")
 		helper.RespondWithError(w, http.StatusBadRequest, "Allowed users must be provided for private posts")
 		return
 	}
+	fmt.Println(visibility,allowedUsers)
 
 	// Handle image upload
 	var imagePath string
@@ -77,7 +82,6 @@ func Createpost(w http.ResponseWriter, r *http.Request) {
 	} else {
 		imagePath = ""
 	}
-	fmt.Println(imagePath, "------------------+++++++++++++++")
 	postID := uuid.New().String()
 
 	_, err = repository.Db.Exec(`
