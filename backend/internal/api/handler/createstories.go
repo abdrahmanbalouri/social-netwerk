@@ -6,16 +6,17 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"strings"
 	"time"
 
 	"social-network/internal/helper"
 	"social-network/internal/repository"
 
-	"github.com/google/uuid" 
+	"github.com/google/uuid"
 )
 
 type StoryRequest struct {
-	Content string `json:"content"` 
+	Content string `json:"content"`
 	BgColor string `json:"bg_color"`
 }
 
@@ -32,7 +33,7 @@ func CreateStories(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Limit upload size (5 MB max)
-	const maxUploadSize = 5 << 20 
+	const maxUploadSize = 5 << 20
 	r.Body = http.MaxBytesReader(w, r.Body, maxUploadSize)
 	if err := r.ParseMultipartForm(maxUploadSize); err != nil {
 		helper.RespondWithError(w, http.StatusBadRequest, "File too large or invalid form")
@@ -45,13 +46,19 @@ func CreateStories(w http.ResponseWriter, r *http.Request) {
 	if bgColor == "" {
 		bgColor = "#000000"
 	}
+	content = strings.TrimSpace(content)
 
 	if content == "" && imgErr != nil {
 		helper.RespondWithError(w, http.StatusBadRequest, "Either content or image must be provided")
 		return
 	}
+	if len(content) > 20 {
+		helper.RespondWithError(w, http.StatusBadRequest, "content to large the top is 20")
+		return
 
-	var imagePath string 
+	}
+
+	var imagePath string
 
 	if imgErr == nil {
 		defer imageFile.Close()
@@ -80,7 +87,7 @@ func CreateStories(w http.ResponseWriter, r *http.Request) {
 			ext = ".jpg" // fallback
 		}
 		filename := uuid.New().String() + ext
-		imagePath = "/uploads/stories/" + filename 
+		imagePath = "/uploads/stories/" + filename
 
 		// Full server path
 		serverPath := filepath.Join(uploadDir, filename)
@@ -123,4 +130,3 @@ func CreateStories(w http.ResponseWriter, r *http.Request) {
 		"created_at": time.Now().Format("2006-01-02 15:04:05"),
 	})
 }
-
