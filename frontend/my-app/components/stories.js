@@ -27,6 +27,8 @@ const Stories = () => {
 
       if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
       const data = await res.json();
+      console.log(data);
+      
 
       setStories(Array.isArray(data) ? data : []);
     } catch (err) {
@@ -51,9 +53,9 @@ const Stories = () => {
           user: {
             id: s.user_id,
           //  nickname: s.nickname,
-          first_name  : first_name,
-          last_name :  last_name,
-            profile: s.profile,
+          first_name  : s.first_name,
+          last_name :  s.last_name,
+           profile: s.profile,
           },
           stories: [],
         };
