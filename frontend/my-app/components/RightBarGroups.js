@@ -69,7 +69,7 @@ export default function RightBarGroup({ onClick }) {
     useEffect(() => {
         async function fetchFollowRequest() {
             try {
-                const res = await fetch("http://localhost:8080/api/followRequest", {
+                const res = await fetch("http://localhost:8080/api/groupeInvitation", {
                     method: "GET",
                     credentials: "include",
                 });
@@ -140,28 +140,28 @@ export default function RightBarGroup({ onClick }) {
     return (
         <div className="rightBar">
             <div className="item">
-                <span>Follow requests</span>
+                <span>Groupe Invitation </span>
                 {!followRequest || followRequest.length === 0 ? (
-                    <h1>no users for now</h1>
+                    <h1>no Invitation for now</h1>
                 ) : (
-                    followRequest.map((user) => (
-                        <div key={user.id} className="user">
+                    followRequest.map((group) => (
+                        <div key={group.id} className="user">
                             <div className="userInfo">
                                 <div className="userDetails">
-                                    <Link href={`/profile/${user.id}`} className="userLink">
-                                        <img
-                                            src={user?.image ? `/uploads/${user.image}` : "/uploads/default.png"}
-                                            alt="user avatar"
-                                        />
-                                    </Link>
-                                    <Link href={`/profile/${user.id}`}>
-                                        <span>{user.nickname}</span>
-                                    </Link>
+                                    {/*  <Link href={`/profile/${group.id}`} className="userLink">  */}
+                                  {/*   <img
+                                        src={group?.image ? `/uploads/${group.image}` : "/uploads/default.png"}
+                                        alt="user avatar"
+                                    /> */}
+                                    {/*</Link>*/}
+                                    {/* <Link href={`/profile/${group.id}`}> */}
+                                    <span>{group.title}</span>
+                                    {/* </Link> */}
                                 </div>
 
                                 <div className="buttons">
-                                    <button onClick={() => { handleFollowRequest(user.id, "accept") }} >accept</button>
-                                    <button onClick={() => { handleFollowRequest(user.id, "reject") }} >reject</button>
+                                    <button onClick={() => { handleFollowRequest(group.id, "accept") }} >accept</button>
+                                    <button onClick={() => { handleFollowRequest(group.id, "reject") }} >reject</button>
                                 </div>
                             </div>
                         </div>
