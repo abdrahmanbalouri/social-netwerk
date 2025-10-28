@@ -6,9 +6,9 @@ export function GroupPostChat() {
     return (
         <div>
             <div className='tabs-container '>
-                <button className={activeTab === 'posts' ? 'tab-button-group active' : 'tab-button-group'}
+                <button className={activeTab === 'posts' ? 'group-tab-button-group active' : 'group-tab-button-group'}
                     onClick={() => setActiveTab('posts')}>Posts</button>
-                <button className={activeTab === 'chat' ? 'tab-button-group active' : 'tab-button-group'}
+                <button className={activeTab === 'chat' ? 'group-tab-button-group active' : 'group-tab-button-group'}
                     onClick={() => setActiveTab('chat')}>Chat</button>
             </div>
 
