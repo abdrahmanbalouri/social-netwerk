@@ -41,6 +41,14 @@ export default function Home() {
   const router = useRouter();
   const { darkMode } = useDarkMode();
   const sendMessage = useWS()
+  const [toast, setToast] = useState(null);
+
+  const showToast = (message, type = "error", duration = 3000) => {
+    setToast({ message, type });
+    setTimeout(() => {
+      setToast(null);
+    }, duration);
+  };
   // Authentication check
   useEffect(() => {
     const checkAuth = async () => {
@@ -69,7 +77,7 @@ export default function Home() {
   }
   useEffect(() => {
     console.log(offsetpsot.current);
-    
+
 
     const reachedBottom =
       window.innerHeight + window.scrollY >= document.body.scrollHeight - 20;
@@ -77,7 +85,7 @@ export default function Home() {
     console.log(reachedBottom);
 
     async function handlescrollhome() {
-      
+
       let b = await fetchingposts();
       if (b) {
         scrollToPost(b);
@@ -172,8 +180,8 @@ export default function Home() {
   }
   async function fetchingposts() {
     if (!boleanofset.current) {
-    offsetpsot.current += 10
-      boleanofset.current = true  
+      offsetpsot.current += 10
+      boleanofset.current = true
     }
     try {
       setLoading(true);
@@ -215,14 +223,14 @@ export default function Home() {
       } else {
 
         const data = await res.json() || [];
-        if(!data) return
+        if (!data) return
 
         setPosts([...data]);
 
       }
-      
-      
-      
+
+
+
 
 
       return true
@@ -261,13 +269,12 @@ export default function Home() {
         body: formData,
       });
 
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error("Create post error:", errorText);
-        throw new Error('Failed to create post');
-      }
-
+     
       const res = await response.json();
+      if(res.error){
+        showToast(res.error)
+        return
+      }
 
 
       // Fetch the newly created post
@@ -280,8 +287,7 @@ export default function Home() {
       offsetpsot.current++
 
     } catch (err) {
-      console.error("Error creating post:", err);
-      alert("Failed to create post. Please try again.");
+    //  console.error("Error creating post:", err);
     } finally {
       setLoading(false);
       // Reset form
@@ -371,8 +377,11 @@ export default function Home() {
         credentials: "include",
       });
 
-      if (res.ok) {
         const data = await res.json();
+        if (data.error){
+          showToast(data.error)
+          return
+        }
 
         let newcomment = [];
 
@@ -400,7 +409,7 @@ export default function Home() {
             break
           }
         }
-      }
+      
     } catch (err) {
       console.error("Error refreshing comments:", err);
     }
@@ -444,6 +453,12 @@ export default function Home() {
         showSidebar={showSidebar}
         onToggleSidebar={() => setShowSidebar(!showSidebar)}
       />
+      {toast && (
+        <div className={`toast ${toast.type}`}>
+          <span>{toast.message}</span>
+          <button onClick={() => setToast(null)} className="toast-close">×</button>
+        </div>
+      )}
 
       {/* Main Content */}
       <main className="content">
