@@ -27,11 +27,11 @@ func AllpostsHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil || offset < 0 {
 		offset = 0
 	}
-	fmt.Println(offset,"------------------------")
+	fmt.Println(offset, "------------------------")
 
 	posts, err := post.GetAllPosts(userId, r, offset)
 	if posts == nil {
-    helper.RespondWithJSON(w, http.StatusOK, posts)
+		helper.RespondWithJSON(w, http.StatusOK, posts)
 		return
 	}
 	if err != nil {
