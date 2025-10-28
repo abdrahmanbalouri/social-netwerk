@@ -152,6 +152,8 @@ export default function RightBarGroup({ onClick }) {
                                         src={group?.image ? `/uploads/${group.image}` : "/uploads/default.png"}
                                         alt="user avatar"
                                     /> */}
+                                                              <i className="fa-solid fa-people-group"></i>
+
                                     {/*</Link>*/}
                                     {/* <Link href={`/profile/${group.id}`}> */}
                                     <span>{group.title}</span>
