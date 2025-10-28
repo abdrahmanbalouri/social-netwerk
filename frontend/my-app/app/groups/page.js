@@ -8,6 +8,7 @@ import { GroupCreationTrigger } from '../../components/CreateGroup.js';
 import { GroupsTabs } from '../../components/groupTabs.js';
 import LeftBar from '../../components/LeftBar.js';
 import RightBar from '../../components/RightBar.js';
+// import RightBarGroup from '../../components/RightBarGroups.js';
 
 export default function () {
     return (

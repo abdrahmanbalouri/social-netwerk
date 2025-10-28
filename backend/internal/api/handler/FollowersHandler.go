@@ -9,7 +9,6 @@ import (
 )
 
 func FollowersHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("Yousraaaaaaa")
 	UserID, err := helper.AuthenticateUser(r)
 	if err != nil {
 		http.Error(w, "Unauthorized: "+ err.Error(), http.StatusUnauthorized)
