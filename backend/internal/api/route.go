@@ -16,6 +16,8 @@ func Routes() http.Handler {
 	mux.Handle("/uploads/", http.StripPrefix("/uploads/", http.FileServer(http.Dir("uploads"))))
 	mux.HandleFunc("/api/followers/", handlers.FollowersHandler)
 	mux.HandleFunc("/api/followRequest", handlers.FollowRequest)
+	mux.HandleFunc("/api/groupeInvitation", handlers.GroupeInvitation)
+
 	mux.HandleFunc("/api/followRequest/action", handlers.FollowRequestAction)
 	mux.HandleFunc("/api/following/", handlers.FollowingHandler)
 	mux.HandleFunc("/api/register", handlers.RegisterHandler)
