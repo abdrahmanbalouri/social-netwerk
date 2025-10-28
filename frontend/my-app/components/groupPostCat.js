@@ -12,7 +12,6 @@ export function GroupPostChat() {
                     onClick={() => setActiveTab('chat')}>Chat</button>
             </div>
 
-            {/* <div className="group-container"> */}
             {activeTab === 'posts' ? (
                 <AllPosts />
             ) : (

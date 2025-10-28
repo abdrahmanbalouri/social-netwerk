@@ -1,26 +1,15 @@
 import { useState, useEffect } from 'react';
 import "../styles/groupstyle.css"
 import { createGroup } from '../app/groups/page';
+import { GroupCard } from './groupCard';
 
 export function CreateGroupForm({ users, onSubmit, onCancel }) {
+    console.log("insife CreateGroupform ");
     const [groupTitle, setGroupTitle] = useState('');
     const [groupDescription, setGroupDescription] = useState('');
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedUsers, setSelectedUsers] = useState([]);
     const [showSuggestions, setShowSuggestions] = useState(false);
-
-    // Filter users based on search query
-    // useEffect(() => {
-    //     if (searchQuery.trim()) {
-    //         const filtered = users.filter(user =>
-    //             user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    //             user.username.toLowerCase().includes(searchQuery.toLowerCase())
-    //         );
-    //         setFilteredUsers(filtered);
-    //     } else {
-    //         setFilteredUsers([]);
-    //     }
-    // }, [searchQuery, users]);
 
     const handleUserSelect = (user) => {
         if (!selectedUsers.find(u => u.id === user.id)) {
@@ -43,7 +32,7 @@ export function CreateGroupForm({ users, onSubmit, onCancel }) {
         };
 
         onSubmit(groupData);
-        onSubmit(selectedUsers);
+        // onSubmit(selectedUsers);
 
         // Reset form after submission
         setGroupTitle('');
@@ -51,7 +40,6 @@ export function CreateGroupForm({ users, onSubmit, onCancel }) {
         setSelectedUsers([]);
         setSearchQuery('');
     };
-
 
     return (
         <div className="create-group-form-container">
@@ -125,7 +113,7 @@ export function CreateGroupForm({ users, onSubmit, onCancel }) {
                             />
 
                             {/* User Suggestions */}
-                            {showSuggestions && users?.length > 0 && (
+                            {showSuggestions && users != null && (
                                 <div className="user-suggestions">
                                     {users.map(user => (
                                         <div
@@ -169,11 +157,11 @@ export function CreateGroupForm({ users, onSubmit, onCancel }) {
     );
 }
 
-export function GroupCreationTrigger() {
+export function GroupCreationTrigger({setGroup}) {
+    // console.log("inside GroupCreationTrigger");
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [showNoGroups, setShowNoGroups] = useState(true);
     const [userList, setUserList] = useState([]);
-    const [userID, setUserID] = useState('')
 
     const handlePostClick = () => {
         setShowNoGroups(false);
@@ -183,6 +171,21 @@ export function GroupCreationTrigger() {
         setIsModalOpen(false);
         setShowNoGroups(true);
     };
+
+    const handleSubmit = async (groupData) => {
+        try {
+            const newGroup = await createGroup(groupData);
+                setGroup(prev => {
+                    console.log("groups before are :", prev);
+                    const exists = prev.some(g => g.ID === newGroup.ID);
+                    return exists ? prev : [newGroup, ...prev];
+                })
+        } catch (error) {
+            console.error("Error creating group:", error);
+        } finally{
+            setIsModalOpen(false);
+        }
+    };
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -190,27 +193,22 @@ export function GroupCreationTrigger() {
                     credentials: 'include',
                 });
                 const userData = await resUser.json();
-
                 const resFollowers = await fetch(`http://localhost:8080/api/followers?id=${userData.user_id}`, {
                     method: 'GET',
                     credentials: 'include',
                 });
                 const followersData = await resFollowers.json();
-
                 setUserList(followersData);
             } catch (error) {
                 console.error("Failed to fetch users when creating a group:", error);
             }
         };
-
         fetchData();
     }, []);
 
-
     return (
-
-        <div className="create-group-container">
-            <div className="create-group-header">
+        <div className="create-post-container">
+            <div className="create-post-header">
                 <div className="user-avatar">
                     <span>User</span>
                 </div>
@@ -225,16 +223,10 @@ export function GroupCreationTrigger() {
             {isModalOpen && (
                 <CreateGroupForm
                     users={userList}
-                    onSubmit={createGroup}
+                    onSubmit={handleSubmit}
                     onCancel={handleCancel}
                 />
             )}
-            {/* {showNoGroups && (
-                    <div className="no-groups">
-                        You don’t have any groups yet. Click above to create one!
-                    </div>
-                )} */}
         </div>
     )
 }
-
