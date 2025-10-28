@@ -12,6 +12,7 @@ import Post from '../../components/Post.js';
 import { middleware } from "../../middleware/middelware.js";
 import { useWS } from "../../context/wsContext.js";
 import CreatePost from "../../components/createPost.js";
+import { requestToBodyStream } from "next/dist/server/body-streams.js";
 
 export default function Home() {
   // State management
@@ -271,7 +272,11 @@ export default function Home() {
 
      
       const res = await response.json();
+       console.log(res.error);
+       
+      
       if(res.error){
+        
         showToast(res.error)
         return
       }
@@ -306,11 +311,13 @@ export default function Home() {
         credentials: "include",
       });
 
-      if (!res.ok) {
-        throw new Error("Failed to fetch post");
-      }
+       
 
       const data = await res.json();
+      if(data.error){
+        showToast(data.error)
+        return
+      }
       return data;
     } catch (err) {
       console.error("Error fetching post:", err);
@@ -577,7 +584,7 @@ export default function Home() {
                           checked={selectedUsers.includes(follower.id)}
                           onChange={() => handleUserSelect(follower.id)}
                         />
-                        <span>{user.first_name + " " + user.last_name}</span>
+                        <span>{follower.first_name + " " + follower.last_name}</span>
                       </label>
                     ))
                   ) : (
