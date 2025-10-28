@@ -7,7 +7,7 @@ import { useRouter, useSelectedLayoutSegments } from 'next/navigation'
 import { GroupCreationTrigger } from '../../components/CreateGroup.js';
 import { GroupsTabs } from '../../components/groupTabs.js';
 import LeftBar from '../../components/LeftBar.js';
-import RightBar from '../../components/RightBar.js';
+import RightBarGroup from '../../components/RightBarGroups.js';
 import { useDarkMode } from '../../context/darkMod.js';
 // import RightBarGroup from '../../components/RightBarGroups.js';
 
@@ -21,7 +21,7 @@ export default function () {
             <main className="content" id="contentgroups">
                 <LeftBar showSidebar={true} />
                 <GroupsTabs />
-                <RightBar />
+                <RightBarGroup />
             </main>
         </div>
     )
@@ -69,7 +69,6 @@ export function AllGroups() {
 }
 
 export function MyGroups() {
-    console.log("MyGroups rendered");
     const [group, setGroup] = useState([]);
     const [loading, setLoading] = useState(true);
     const router = useRouter()
@@ -101,7 +100,6 @@ export function MyGroups() {
             </div>
         )
     }
-    console.log("groups after are :", group);
     return (
         <div className="group-container">
             <GroupCreationTrigger

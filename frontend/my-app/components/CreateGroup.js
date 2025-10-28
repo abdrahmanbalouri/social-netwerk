@@ -85,7 +85,7 @@ export function CreateGroupForm({ users, onSubmit, onCancel }) {
                                 {selectedUsers.map(user => (
                                     <div key={user.id} className="selected-user-tag">
                                         <span className="user-avatar-small">
-                                            {user.nickname.charAt(0).toUpperCase()}
+                                            {user.first_name.charAt(0).toUpperCase()}
                                         </span>
                                         <span>{user.name}</span>
                                         <button
@@ -122,10 +122,10 @@ export function CreateGroupForm({ users, onSubmit, onCancel }) {
                                             className="user-suggestion-item"
                                         >
                                             <div className="user-avatar-small">
-                                                {user.nickname.charAt(0).toUpperCase()}
+                                                {user.first_name.charAt(0).toUpperCase()}
                                             </div>
                                             <div className="user-info">
-                                                <div className="user-name">{user.nickname}</div>
+                                                <div className="user-name">{user.first_name}</div>
                                             </div>
                                         </div>
                                     ))}

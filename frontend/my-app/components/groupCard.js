@@ -1,6 +1,5 @@
 // import "../styles/groupstyle.css"
 export function GroupCard({ group, onShow }) {
-    console.log("inside groupCard function/component");
     return (
         <div className="group-card">
             <div className="group-content">

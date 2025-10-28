@@ -43,7 +43,6 @@ export function WSProvider({ children }) {
       socket.onmessage = (event) => {
         try {
           const data = JSON.parse(event.data);
-          console.log("📩 Received:", data);
           // 🔥 Trigger any custom listeners
           if (listeners.current[data.type]) {
 

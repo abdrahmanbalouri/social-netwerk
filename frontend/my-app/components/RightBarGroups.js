@@ -16,6 +16,7 @@ export default function RightBarGroup({ onClick }) {
     const [activeTab, setActiveTab] = useState("friends");
     const [followRequest, setFollowRequest] = useState([])
     const { sendMessage, addListener, removeListener } = useWS();
+    const [invitations, setInvitations] = useState([]);
     useEffect(() => {
         const handleOlineUser = (data) => {
             setonlineUsers(data.users)
@@ -39,17 +40,18 @@ export default function RightBarGroup({ onClick }) {
         return () => removeListener("logout", handleLogout)
     }, [addListener, removeListener])
 
-    async function handleFollowRequest(userId, action) {
+    async function handleGroupRequest(invitaitonId, action) {
         try {
-            const res = await fetch("http://localhost:8080/api/followRequest/action", {
+            console.log("wast l handle request dyal l groups");
+            const res = await fetch("http://localhost:8080/invitations/respond", {
                 method: "POST",
                 credentials: "include",
                 headers: {
                     "Content-Type": "application/json",
                 },
                 body: JSON.stringify({
-                    id: userId,
-                    action: action,
+                    invitation_id: invitaitonId,
+                    response: action,
                 }),
             });
 
@@ -57,10 +59,8 @@ export default function RightBarGroup({ onClick }) {
                 const errMsg = await res.text();
                 throw new Error("Action failed: " + errMsg);
             }
-
             const data = await res.json();
-
-            setFollowRequest((prev) => prev.filter((user) => user.id !== userId));
+            setFollowRequest((prev) => prev.filter((req) => req.invitation_id !== invitaitonId));
         } catch (err) {
         }
     }
@@ -72,44 +72,19 @@ export default function RightBarGroup({ onClick }) {
                     method: "GET",
                     credentials: "include",
                 });
-
                 if (!res.ok) {
                     throw new Error("Failed to fetch posts");
                 }
                 const data = await res.json();
-
                 console.log(data);
                 setFollowRequest(data);
+                setInvitations(data)
             } catch (err) {
                 console.error(err);
             }
         }
-
         fetchFollowRequest();
     }, []);
-
-
-    // useEffect(() => {
-    //     async function fetchusers() {
-    //         try {
-    //             const res = await fetch("http://localhost:8080/api/GetUsersHandler", {
-    //                 method: "GET",
-    //                 credentials: "include",
-    //             });
-
-    //             if (!res.ok) {
-    //                 throw new Error("Failed to fetch posts");
-    //             }
-    //             const data = await res.json();
-
-    //             setusers(data);
-    //         } catch (err) {
-    //             console.error(err);
-    //         }
-    //     }
-
-    //     fetchusers();
-    // }, []);
     useEffect(() => {
         async function fetchfriends() {
             try {
@@ -133,8 +108,7 @@ export default function RightBarGroup({ onClick }) {
     useEffect(() => {
         setGrpID(params.id);
     }, [params.id]);
-
-
+    console.log("groups invitations are :", followRequest);
 
     return (
         <div className="rightBar">
@@ -144,25 +118,16 @@ export default function RightBarGroup({ onClick }) {
                     <h1>no Invitation for now</h1>
                 ) : (
                     followRequest.map((group) => (
-                        <div key={group.id} className="user">
+                        <div key={group.invitation_id} className="user">
                             <div className="userInfo">
                                 <div className="userDetails">
-                                    {/*  <Link href={`/profile/${group.id}`} className="userLink">  */}
-                                  {/*   <img
-                                        src={group?.image ? `/uploads/${group.image}` : "/uploads/default.png"}
-                                        alt="user avatar"
-                                    /> */}
-                                                              <i className="fa-solid fa-people-group"></i>
-
-                                    {/*</Link>*/}
-                                    {/* <Link href={`/profile/${group.id}`}> */}
+                                    <i className="fa-solid fa-people-group"></i>
                                     <span>{group.title}</span>
-                                    {/* </Link> */}
                                 </div>
 
                                 <div className="buttons">
-                                    <button onClick={() => { handleFollowRequest(group.id, "accept") }} >accept</button>
-                                    <button onClick={() => { handleFollowRequest(group.id, "reject") }} >reject</button>
+                                    <button onClick={() => { handleGroupRequest(group.invitation_id, "accept") }} >accept</button>
+                                    <button onClick={() => { handleGroupRequest(group.invitation_id, "reject") }} >reject</button>
                                 </div>
                             </div>
                         </div>
