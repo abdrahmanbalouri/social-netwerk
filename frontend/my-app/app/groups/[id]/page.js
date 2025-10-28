@@ -8,8 +8,9 @@ import "../../../styles/group.css"
 import { useParams } from "next/navigation";
 import { PostCreationTrigger } from "../../../components/cretaePostGroup.js"
 import LeftBar from "../../../components/LeftBar.js";
-import RightBar from "../../../components/RightBar.js";
+import RightBarGroup from "../../../components/RightBarGroups.js";
 import { useDarkMode } from "../../../context/darkMod.js";
+
 // import {CreatePost} from ""
 
 
@@ -23,12 +24,37 @@ export default function () {
                 <LeftBar showSidebar={true} />
                 {/* <AllPosts /> */}
                 <GroupPostChat />
-                <RightBar />
+                {/* <RightBar /> */}
+                <RightBarGroup onClick={sendRequest} />
             </main>
             {/* <AllPosts /> */}
             {/* <CreatePost /> */}
         </div>
     )
+}
+
+function sendRequest(invitedUserID, grpID) {
+    console.log("invited user id is : ", invitedUserID);
+    console.log("group id is : ", grpID);
+
+    fetch(`http://localhost:8080/group/invitation/${grpID}`, {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            invitedUsers: [invitedUserID],
+        }),
+    })
+        .then(async res => {
+            const temp = await res.json()
+            console.log("temp is :", temp);
+        })
+        .catch(error => {
+            console.log("error sending invitation to the user :", error);
+        }
+        )
 }
 
 export function AllPosts() {
@@ -69,25 +95,26 @@ export function AllPosts() {
     //     );
     // }
 
+    console.log("posts are :", posts);
     return (
         <div>
-        <PostCreationTrigger setPost={setPost} />
-        
-        {posts.length === 0 ? (
-            <div>There is no post yeeeeeet.</div>
-        ) : (
-            <div className="posts-list">
-                {posts.map((post) => (
-                    <Post
-                        key={post.id}
-                        post={post}
-                        onGetComments={GetComments}
-                        ondolike={AddLike}
-                    />
-                ))}
-            </div>
-        )}
-    </div>
+            <PostCreationTrigger setPost={setPost} />
+
+            {posts.length === 0 ? (
+                <div>There is no post yeeeeeet.</div>
+            ) : (
+                <div className="posts-list">
+                    {posts.map((post) => (
+                        <Post
+                            key={post.id}
+                            post={post}
+                            onGetComments={GetComments}
+                            ondolike={AddLike}
+                        />
+                    ))}
+                </div>
+            )}
+        </div>
     )
 }
 
