@@ -52,7 +52,6 @@ func CreateCommentHandler(w http.ResponseWriter, r *http.Request) {
 		helper.RespondWithError(w, http.StatusNotFound, "Post not found")
 		return
 	} else if err != nil {
-		fmt.Println("1")
 		helper.RespondWithError(w, http.StatusInternalServerError, "Database error")
 		return
 	}
@@ -75,7 +74,6 @@ func CreateCommentHandler(w http.ResponseWriter, r *http.Request) {
 		uploadDir := "../frontend/my-app/public/uploads"
 		if err := os.MkdirAll(uploadDir, os.ModePerm); err != nil {
 			helper.RespondWithError(w, http.StatusInternalServerError, "Failed to create upload directory")
-			fmt.Println("22")
 			return
 		}
 
@@ -85,14 +83,12 @@ func CreateCommentHandler(w http.ResponseWriter, r *http.Request) {
 		out, err := os.Create(filepath.Join("../frontend/my-app/public", mediaPath))
 		if err != nil {
 			helper.RespondWithError(w, http.StatusInternalServerError, "Failed to save media file")
-			fmt.Println("33")
 			return
 		}
 		defer out.Close()
 
 		if _, err := io.Copy(out, file); err != nil {
 			helper.RespondWithError(w, http.StatusInternalServerError, "Failed to save media file")
-			fmt.Println("44")
 			return
 		}
 	} else {
@@ -107,7 +103,6 @@ func CreateCommentHandler(w http.ResponseWriter, r *http.Request) {
 		commentID, postID, userID, sanitizedContent, mediaPath)
 	if err != nil {
 		helper.RespondWithError(w, http.StatusInternalServerError, "Failed to create comment")
-		fmt.Println("55")
 		return
 	}
 
