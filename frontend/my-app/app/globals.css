@@ -95,8 +95,8 @@ main {
   align-items: center;
   justify-content: center;
   z-index: 10000;
-  opacity: 0;
-  visibility: hidden;
+  /* opacity: 0;
+  visibility: hidden; */
   transition: opacity 0.3s ease, visibility 0.3s ease;
 }
 
