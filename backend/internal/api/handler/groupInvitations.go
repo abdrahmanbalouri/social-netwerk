@@ -96,7 +96,6 @@ func GroupInvitationResponse(w http.ResponseWriter, r *http.Request) {
 }
 
 func GroupInvitationRequest(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("Dkhal l group invitation-----------")
 	if r.Method != http.MethodPost {
 		helper.RespondWithError(w, http.StatusMethodNotAllowed, "Method not allowed")
 		return
@@ -147,39 +146,42 @@ func GroupInvitationRequest(w http.ResponseWriter, r *http.Request) {
 
 	for _, user := range newInvitation.InvitedUsers {
 		// get the user's id
-		var invitedUserID string
-
+	/* 	var invitedUserID string
+		invitedUserID = user */
+	/* 	fmt.Println("user to invite is :", user)
 		// bdelt     nicknamme bfirst naaaame  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 		query = `SELECT id FROM users WHERE nickname = ?`
 		err = tx.QueryRow(query, user).Scan(&invitedUserID)
 		if err != nil {
 			if err == sql.ErrNoRows {
+				fmt.Println("11")
 				continue
 			}
 			helper.RespondWithError(w, http.StatusInternalServerError, "Error finding the invited user")
 			return
-		}
+		} */
 		// check if this user is already in the group or has a pending invit
 		var exists1, exists2 bool
 		query = `SELECT EXISTS (
-        SELECT 1 FROM group_members WHERE user_id = ? AND group_id = ?
-        UNION ALL
-        SELECT 1 FROM group_invitations WHERE user_id = ? AND group_id = ?
-    )`
+			SELECT 1 FROM group_members WHERE user_id = ? AND group_id = ?
+			UNION ALL
+			SELECT 1 FROM group_invitations WHERE user_id = ? AND group_id = ?
+			)`
 		err = tx.QueryRow(query, user, GrpId, user, GrpId).Scan(&exists1)
 		if err != nil {
 			helper.RespondWithError(w, http.StatusInternalServerError, "Error checking for existing membership or invitation")
 			return
 		}
-
+		
+		fmt.Println("hna")
 		if exists1 {
 			continue
 		} else {
 			query = `SELECT EXISTS (
-				SELECT 1
-				FROM users
-				WHERE id = $1
-			);`
+						SELECT 1
+						FROM users
+						WHERE id = $1
+						);`
 			err = tx.QueryRow(query, user).Scan(&exists2)
 			if err != nil {
 				fmt.Println("Database error is :", err)
