@@ -38,12 +38,11 @@ const Stories = () => {
       console.log(response);
 
       if (response.error) {
-        showToast(response.error);
+        //showToast(response.error);
         return
-
       }
       setStories(Array.isArray(response) ? response : []);
-    } catch (err) {
+    } catch (err) {    
       showToast("Failed to load stories");
       setStories([]);
     }
@@ -256,7 +255,7 @@ const Stories = () => {
 
       {/* Toast Notification */}
       {toast && (
-        <div className={`story-toast ${toast.type}`}>
+        <div className={`toast ${toast.type}`}>
           <span>{toast.message}</span>
           <button onClick={() => setToast(null)} className="toast-close">×</button>
         </div>
