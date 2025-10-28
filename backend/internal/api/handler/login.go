@@ -15,6 +15,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	err := json.NewDecoder(r.Body).Decode(&loginInformations)
 	if err != nil {
 	}
+	
 
 	var dbPassword string
 	var userID string
