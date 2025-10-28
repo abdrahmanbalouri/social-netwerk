@@ -22,7 +22,7 @@ export default function Notification({ data }) {
                 </div>
                 <div className="notification-content">
                     <p className="notification-text">
-                        <strong>{data && data.name}</strong>,  {data && data.content}
+                        <strong>{data && data.first_name} {data && data.last_name}</strong>,  {data && data.content}
                     </p>
                     <span className="notification-timer">a few seconds ago</span>
                 </div>
