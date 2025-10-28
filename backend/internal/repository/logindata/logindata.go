@@ -8,8 +8,13 @@ import (
 )
 
 func Checklogindata(nickname string, db *sql.DB, w http.ResponseWriter, dbPassword *string, userID *string, Password string) string {
+	if nickname == "" || Password == "" {
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusUnauthorized)
+		return "email or password incorrect"
+	}
 	err := db.QueryRow(
-		"SELECT id, password FROM users WHERE  email = ? ",
+		"SELECT id, password FROM users WHERE  ( nickname = ? or email = ?)",
 		nickname, nickname,
 	).Scan(userID, dbPassword)
 
