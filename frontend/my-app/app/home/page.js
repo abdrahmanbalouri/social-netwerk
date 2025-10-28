@@ -158,21 +158,29 @@ export default function Home() {
         method: "POST",
         credentials: "include",
       });
-      // const response = await res.json();
-      if (res.ok) {
+       const response = await res.json();
+      if (response.error) {
+        if (response.error == "Unauthorized"){
+        router.push("/login");
+        //sendMessage({ type: "logout" })
+        return 
+        }else{
+          showToast(response.error)
+          return
+        }
 
-        const newpost = await fetchPosts(postId)
-        for (let i = 0; i < posts.length; i++) {
-          if (posts[i].id == newpost.id) {
+      }
+      const newpost = await fetchPosts(postId)
+      for (let i = 0; i < posts.length; i++) {
+        if (posts[i].id == newpost.id) {
 
 
-            setPosts([
-              ...posts.slice(0, i),
-              newpost,
-              ...posts.slice(i + 1)
-            ]);
-            break
-          }
+          setPosts([
+            ...posts.slice(0, i),
+            newpost,
+            ...posts.slice(i + 1)
+          ]);
+          break
         }
       }
     } catch (err) {
@@ -621,6 +629,7 @@ export default function Home() {
             lodinggg={loadingcomment}
             ongetcomment={GetComments}
             post={selectedPost}
+            showToast={showToast}
           />
         )
       }
