@@ -15,7 +15,12 @@ func Getlastcommnet(w http.ResponseWriter, r *http.Request) {
 		helper.RespondWithError(w, http.StatusMethodNotAllowed, "Method Not Allowed")
 		return
 	}
-
+	sss, err1 := helper.AuthenticateUser(r)
+	if err1 != nil {
+		fmt.Println(sss)
+		helper.RespondWithError(w, http.StatusUnauthorized, "Unauthorized")
+		return
+	}
 	parts := strings.Split(r.URL.Path, "/")
 	if len(parts) < 4 {
 		helper.RespondWithError(w, http.StatusNotFound, "Comment not found")
@@ -42,18 +47,18 @@ func Getlastcommnet(w http.ResponseWriter, r *http.Request) {
 	`, commentId)
 
 	var comment struct {
-		ID        string `json:"id"`
-		PostID    string `json:"post_id"`
-		UserID    string `json:"user_id"`
-		Content   string `json:"content"`
-		CreatedAt string `json:"created_at"`
-		First_name    string `json:"first_name"`
-		Last_name    string `json:"last_name"`
-		Profile   string `json:"profile"`
-		MediaPath string `json:"media_path,omitempty"`
+		ID         string `json:"id"`
+		PostID     string `json:"post_id"`
+		UserID     string `json:"user_id"`
+		Content    string `json:"content"`
+		CreatedAt  string `json:"created_at"`
+		First_name string `json:"first_name"`
+		Last_name  string `json:"last_name"`
+		Profile    string `json:"profile"`
+		MediaPath  string `json:"media_path,omitempty"`
 	}
 
-	err := row.Scan(&comment.ID, &comment.PostID, &comment.UserID, &comment.Content, &comment.CreatedAt, &comment.First_name,&comment.Last_name, &comment.Profile, &comment.MediaPath)
+	err := row.Scan(&comment.ID, &comment.PostID, &comment.UserID, &comment.Content, &comment.CreatedAt, &comment.First_name, &comment.Last_name, &comment.Profile, &comment.MediaPath)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			helper.RespondWithError(w, http.StatusNotFound, "Comment not found")
