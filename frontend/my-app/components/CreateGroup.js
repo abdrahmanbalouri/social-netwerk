@@ -1,9 +1,12 @@
 import { useState, useEffect } from "react";
 import "../styles/groupstyle.css";
 import { createGroup } from "../app/groups/page";
+import { GroupCard } from "./groupCard";
+
 import { Plus } from "lucide-react";
 export function CreateGroupForm({ users, onSubmit, onCancel }) {
-  console.log("useeeeers are :", users);
+  console.log("insife CreateGroupform ");
+
   const [groupTitle, setGroupTitle] = useState("");
   const [groupDescription, setGroupDescription] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
@@ -41,6 +44,13 @@ export function CreateGroupForm({ users, onSubmit, onCancel }) {
       title: groupTitle,
       description: groupDescription,
       invitedUsers: selectedUsers.map((u) => u.id),
+    };
+
+    const handleUserSelect = (user) => {
+      if (!selectedUsers.find((u) => u.id === user.id)) {
+        setSelectedUsers([...selectedUsers, user]);
+        setSearchQuery("");
+      }
     };
 
     onSubmit(groupData);
@@ -183,11 +193,11 @@ export function CreateGroupForm({ users, onSubmit, onCancel }) {
   );
 }
 
-export function GroupCreationTrigger() {
+export function GroupCreationTrigger({ setGroup }) {
+  // console.log("inside GroupCreationTrigger");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [showNoGroups, setShowNoGroups] = useState(true);
   const [userList, setUserList] = useState([]);
-  const [userID, setUserID] = useState("");
 
   const handlePostClick = () => {
     setShowNoGroups(false);
@@ -197,6 +207,21 @@ export function GroupCreationTrigger() {
     setIsModalOpen(false);
     setShowNoGroups(true);
   };
+
+  const handleSubmit = async (groupData) => {
+    try {
+      const newGroup = await createGroup(groupData);
+      setGroup((prev) => {
+        console.log("groups before are :", prev);
+        const exists = prev.some((g) => g.ID === newGroup.ID);
+        return exists ? prev : [newGroup, ...prev];
+      });
+    } catch (error) {
+      console.error("Error creating group:", error);
+    } finally {
+      setIsModalOpen(false);
+    }
+  };
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -204,7 +229,6 @@ export function GroupCreationTrigger() {
           credentials: "include",
         });
         const userData = await resUser.json();
-
         const resFollowers = await fetch(
           `http://localhost:8080/api/followers?id=${userData.user_id}`,
           {
@@ -213,17 +237,14 @@ export function GroupCreationTrigger() {
           }
         );
         const followersData = await resFollowers.json();
-
         setUserList(followersData);
       } catch (error) {
         console.error("Failed to fetch users when creating a group:", error);
       }
     };
-
     fetchData();
   }, []);
 
-  console.log("usssssseeers are :", userList);
   return (
     <div className="create-card">
       <div className="create-card-inner">
@@ -242,15 +263,10 @@ export function GroupCreationTrigger() {
       {isModalOpen && (
         <CreateGroupForm
           users={userList}
-          onSubmit={createGroup}
+          onSubmit={handleSubmit}
           onCancel={handleCancel}
         />
       )}
-      {/* {showNoGroups && (
-                    <div className="no-groups">
-                        You don’t have any groups yet. Click above to create one!
-                    </div>
-                )} */}
     </div>
   );
 }

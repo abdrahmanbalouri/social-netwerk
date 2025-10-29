@@ -28,13 +28,18 @@ func AllpostsHandler(w http.ResponseWriter, r *http.Request) {
 		offset = 0
 	}
 
-	posts, err := post.GetAllPosts(userId, r, offset)
-	fmt.Println("posts:", posts)
+	d, err := helper.AuthenticateUser(r)
 	if err != nil {
-		helper.RespondWithError(w, http.StatusInternalServerError, "Failed to retrieve posts")
+		fmt.Println(d)
+		helper.RespondWithError(w, http.StatusUnauthorized, "Unauthorized")
 		return
 	}
+	posts, err := post.GetAllPosts(userId, r, offset)
 	if posts == nil {
+		helper.RespondWithJSON(w, http.StatusOK, posts)
+		return
+	}
+	if err != nil {
 		helper.RespondWithError(w, http.StatusInternalServerError, "Failed to retrieve posts")
 		return
 	}

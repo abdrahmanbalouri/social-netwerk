@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"database/sql"
-	"encoding/json"
 	"fmt"
 	"net/http"
 	"time"
@@ -14,10 +13,9 @@ import (
 func GetStories(w http.ResponseWriter, r *http.Request) {
 	id, err := helper.AuthenticateUser(r)
 	if err != nil {
-		http.Error(w, "Unauthorized", http.StatusUnauthorized)
+		helper.RespondWithError(w, http.StatusUnauthorized, "Unauthorized")
 		return
 	}
-	// Query with JOIN and expiration filter directly in SQL (SQLite DATETIME handling)
 	rows, err := repository.Db.Query(`
         SELECT 
 			s.id, 
@@ -27,7 +25,7 @@ func GetStories(w http.ResponseWriter, r *http.Request) {
 			s.bg_color,
 			s.created_at,
 			s.expires_at,
-            u.nickname, 
+            u.first_name, u.last_name, 
 			u.image AS profile_image
         FROM stories s
         JOIN users u ON s.user_id = u.id
@@ -44,26 +42,27 @@ func GetStories(w http.ResponseWriter, r *http.Request) {
 				OR (s.user_id = ?)
 		)
         ORDER BY s.created_at ASC
-    `,id, id)
+    `, id, id)
+	fmt.Println(err)
 	if err != nil {
-		http.Error(w, "Failed to get stories", http.StatusInternalServerError)
+		helper.RespondWithError(w, http.StatusAccepted, "not story yet")
 		return
 	}
 	defer rows.Close()
 
 	var stories []map[string]interface{}
+
 	for rows.Next() {
 		var (
-			id, userID             string
-			content, imageURL, bg  sql.NullString
-			createdAt, expiresAt   sql.NullString
-			nickname, profileImage sql.NullString
+			id, userID                          string
+			content, imageURL, bg               sql.NullString
+			createdAt, expiresAt                sql.NullString
+			first_name, last_name, profileImage sql.NullString
 		)
 
-		err := rows.Scan(&id, &userID, &content, &imageURL, &bg, &createdAt, &expiresAt, &nickname, &profileImage)
+		err := rows.Scan(&id, &userID, &content, &imageURL, &bg, &createdAt, &expiresAt, &first_name, &last_name, &profileImage)
 		if err != nil {
-			// Log error if needed, but continue to next row
-			fmt.Println("Scan error:", err)
+
 			continue
 		}
 
@@ -75,8 +74,10 @@ func GetStories(w http.ResponseWriter, r *http.Request) {
 			"bg_color":   getNullString(bg),
 			"created_at": getNullString(createdAt),
 			"expires_at": getNullString(expiresAt),
-			"nickname":   getNullString(nickname),
-			"profile":    getNullString(profileImage),
+			"first_name": getNullString(first_name),
+			"last_name":  getNullString(last_name),
+
+			"profile": getNullString(profileImage),
 		}
 
 		// Optional manual filter (for testing or if DB timezone issues)
@@ -92,14 +93,14 @@ func GetStories(w http.ResponseWriter, r *http.Request) {
 
 	// Check for errors during iteration
 	if err = rows.Err(); err != nil {
-		http.Error(w, "Error iterating stories", http.StatusInternalServerError)
+		helper.RespondWithError(w, http.StatusAccepted, "not story yet")
 		return
 	}
+ 
+	
+	helper.RespondWithJSON(w, http.StatusOK, stories)
 
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(stories)
 }
-
 // Helper to handle sql.NullString safely (returns "" if invalid)
 func getNullString(ns sql.NullString) string {
 	if ns.Valid {

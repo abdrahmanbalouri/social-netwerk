@@ -2,13 +2,16 @@
 import Navbar from "../../components/Navbar.js";
 import { useEffect, useState } from "react";
 import "../../styles/groupstyle.css";
-import { useRouter } from "next/navigation";
+import { useRouter, useSelectedLayoutSegments } from "next/navigation";
+import { GroupCard } from "../../components/groupCard.js";
 import { GroupCreationTrigger } from "../../components/CreateGroup.js";
 import { GroupsTabs } from "../../components/groupTabs.js";
 import LeftBar from "../../components/LeftBar.js";
 import RightBar from "../../components/RightBar.js";
 import { useDarkMode } from "../../context/darkMod.js";
 import { Users, ChevronRight } from "lucide-react";
+// import RightBarGroup from '../../components/RightBarGroups.js';
+
 export default function () {
   const { darkMode } = useDarkMode();
 
@@ -50,7 +53,9 @@ export function AllGroups() {
       <div className="group-empty-state">
         <Users />
         <p className="group-empty-state-title">No groups found</p>
-        <p className="group-empty-state-text">Check back later for more groups</p>
+        <p className="group-empty-state-text">
+          Check back later for more groups
+        </p>
       </div>
     );
   }
@@ -87,7 +92,8 @@ export function AllGroups() {
 }
 
 export function MyGroups() {
-  const [group, setGroup] = useState(null);
+  console.log("MyGroups rendered");
+  const [group, setGroup] = useState([]);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
 
@@ -102,8 +108,7 @@ export function MyGroups() {
     })
       .then((res) => res.json())
       .then((data) => {
-        console.log("data is :", data);
-        setGroup(data);
+        setGroup(data || []);
         setLoading(false);
       })
       .catch((error) => {
@@ -111,10 +116,11 @@ export function MyGroups() {
         setLoading(false);
       });
   }, []);
+
   if (!group) {
     return (
       <div>
-        <GroupCreationTrigger />
+        <GroupCreationTrigger setGroup={setGroup} />
         <div className="group-empty-state">
           <Users />
           <p className="group-empty-state-title">No groups found</p>
@@ -127,38 +133,10 @@ export function MyGroups() {
   }
   return (
     <>
-      <GroupCreationTrigger />
+      <GroupCreationTrigger setGroup={setGroup} />
       <div className="groups-grid">
         {group.map((grp) => (
-          <div key={grp.ID} className="group-card">
-            <div className="group-header">
-              <div className="group-icon-wrapper">
-                <div className="group-icon">
-                  <Users />
-                </div>
-              </div>
-            </div>
-            {/* Group Content */}
-            <div className="group-content">
-              <h2 className="group-title">{grp.Title}</h2>
-              <p className="group-description">{grp.Description}</p>
-              {/* Group Footer */}
-              <div className="group-footer">
-                <div className="group-members">
-                  <Users />
-                  <span className="members-text-full">{22} members</span>
-                  <span className="members-text-short">{220}</span>
-                </div>
-                <button
-                  className="view-button"
-                  onClick={() => handleShow(grp.ID)}
-                >
-                  <span>View</span>
-                  <ChevronRight />
-                </button>
-              </div>
-            </div>
-          </div>
+          <GroupCard key={grp.ID} group={grp} onShow={handleShow} />
         ))}
       </div>
     </>
@@ -166,20 +144,42 @@ export function MyGroups() {
 }
 
 export async function createGroup(formData) {
-  console.log("form data in api call is :", formData);
-  return fetch("http://localhost:8080/api/groups/add", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    credentials: "include",
-    body: JSON.stringify(formData),
-  })
-    .then((res) => {
-      if (!res.ok) throw new Error("Failed to create group");
-      return res.json();
+  console.log("inside Create Group function");
+  return (
+    fetch("http://localhost:8080/api/groups/add", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify(formData),
     })
-    .then((data) => data)
-    .catch((error) => {
-      console.error("Failed to create new group:", error);
-      throw error;
-    });
+      .then(async (res) => {
+        console.log("form data ha s: ", formData);
+        if (!res.ok) throw new Error("Failed to create group");
+        // console.log("result :", res);
+        // console.log("result  :",await res.text());
+        const groupIS = await res.json();
+        // console.log("new group is :", groupIS);
+        const SendInvitations = await fetch(
+          `http://localhost:8080/group/invitation/${groupIS.ID}`,
+          {
+            method: "POST",
+            credentials: "include",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              invitedUsers: formData.invitedUsers,
+            }),
+          }
+        );
+
+        console.log("SendInvitations ::", await SendInvitations.json());
+        return groupIS;
+      })
+      // .then(createdGroup => { return createdGroup })
+      .catch((error) => {
+        console.error("Failed to create new group:", error);
+        throw error;
+      })
+  );
 }

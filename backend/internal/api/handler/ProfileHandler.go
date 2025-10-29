@@ -27,7 +27,7 @@ func ProfileHandler(w http.ResponseWriter, r *http.Request) {
 	q := `
 SELECT 
     u.id, 
-    u.nickname, 
+    u.first_name, u.last_name, 
     u.email, 
     u.about, 
     u.privacy, 
@@ -47,7 +47,8 @@ WHERE u.id = ?;
 
 	var user struct {
 		ID          string
-		Nickname    string
+		first_name  string
+		last_name   string
 		Email       string
 		About       string
 		Privacy     string
@@ -58,7 +59,8 @@ WHERE u.id = ?;
 
 	err = row.Scan(
 		&user.ID,
-		&user.Nickname,
+		&user.first_name,
+		&user.last_name,
 		&user.Email,
 		&user.About,
 		&user.Privacy,
@@ -93,7 +95,8 @@ WHERE u.id = ?;
 
 	profileData := map[string]interface{}{
 		"id":          user.ID,
-		"nickname":    user.Nickname,
+		"first_name":  user.first_name,
+		"last_name":   user.last_name,
 		"email":       user.Email,
 		"about":       user.About,
 		"privacy":     user.Privacy,
@@ -104,6 +107,5 @@ WHERE u.id = ?;
 		"following":   following,
 		"followers":   followers,
 	}
-
 	helper.RespondWithJSON(w, http.StatusOK, profileData)
 }
