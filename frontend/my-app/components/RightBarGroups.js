@@ -108,7 +108,7 @@ export default function RightBarGroup({ onClick }) {
     useEffect(() => {
         setGrpID(params.id);
     }, [params.id]);
-    console.log("groups invitations are :", followRequest);
+    // console.log("groups invitations are :", followRequest);
 
     return (
         <div className="rightBar">
