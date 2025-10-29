@@ -11,40 +11,11 @@ import (
 )
 
 func GetStories(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("33333333333333")
 	id, err := helper.AuthenticateUser(r)
 	if err != nil {
-		fmt.Println("1")
-		http.Error(w, "Unauthorized", http.StatusUnauthorized)
+		helper.RespondWithError(w, http.StatusUnauthorized, "Unauthorized")
 		return
 	}
-	var count int
-	err = repository.Db.QueryRow(`
-        SELECT COUNT(*) 
-        FROM stories s
-        JOIN users u ON s.user_id = u.id
-        WHERE 
-            DATETIME(s.expires_at) > DATETIME('now')
-            AND (
-                u.privacy = 'public'
-                OR (u.privacy = 'private' AND EXISTS (
-                    SELECT 1 FROM followers f 
-                    WHERE f.user_id = s.user_id AND f.follower_id = ?
-                ))
-                OR s.user_id = ?
-            )
-    `, id, id).Scan(&count)
-	if err != nil {
-		fmt.Println("COUNT QUERY ERROR:", err)
-		helper.RespondWithError(w, http.StatusInternalServerError, "Database error")
-		return
-	}
-
-
-	if count == 0 {
-		helper.RespondWithError(w, http.StatusInternalServerError, "No stories available")
-		return
-	} 
 	rows, err := repository.Db.Query(`
         SELECT 
 			s.id, 
@@ -74,7 +45,6 @@ func GetStories(w http.ResponseWriter, r *http.Request) {
     `, id, id)
 	fmt.Println(err)
 	if err != nil {
-		fmt.Println("2")
 		helper.RespondWithError(w, http.StatusAccepted, "not story yet")
 		return
 	}
@@ -83,7 +53,6 @@ func GetStories(w http.ResponseWriter, r *http.Request) {
 	var stories []map[string]interface{}
 
 	for rows.Next() {
-		fmt.Println("55555555555")
 		var (
 			id, userID                          string
 			content, imageURL, bg               sql.NullString
@@ -93,7 +62,6 @@ func GetStories(w http.ResponseWriter, r *http.Request) {
 
 		err := rows.Scan(&id, &userID, &content, &imageURL, &bg, &createdAt, &expiresAt, &first_name, &last_name, &profileImage)
 		if err != nil {
-			fmt.Println("66666666666666666")
 
 			continue
 		}
@@ -125,14 +93,17 @@ func GetStories(w http.ResponseWriter, r *http.Request) {
 
 	// Check for errors during iteration
 	if err = rows.Err(); err != nil {
-		fmt.Println("3")
 		helper.RespondWithError(w, http.StatusAccepted, "not story yet")
 		return
 	}
-
+ 
+	for i,r := range stories {
+		fmt.Println(r["first_name"],i)
+	}
+   
 	helper.RespondWithJSON(w, http.StatusOK, stories)
-}
 
+}
 // Helper to handle sql.NullString safely (returns "" if invalid)
 func getNullString(ns sql.NullString) string {
 	if ns.Valid {
