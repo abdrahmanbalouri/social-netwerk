@@ -17,7 +17,11 @@ func GetPostByUserHandler(w http.ResponseWriter, r *http.Request) {
 		helper.RespondWithError(w, http.StatusMethodNotAllowed, "Method Not Allowed")
 		return
 	}
-
+	user, err1 := helper.AuthenticateUser(r)
+	  if err1 != nil {
+		  helper.RespondWithError(w, http.StatusUnauthorized, "Unauthorized")
+		  return
+	  }
 	parts := strings.Split(r.URL.Path, "/")
 	fmt.Println("parts:", parts)
 	if len(parts) < 4 {
@@ -32,7 +36,7 @@ func GetPostByUserHandler(w http.ResponseWriter, r *http.Request) {
 		offset = 0
 	}
 
-	posts, err := GetAllPostsByuser(userId, r, offset)
+	posts, err := GetAllPostsByuser(userId, r, offset, user)
 	// fmt.Println("posts:", posts)
 	if err != nil {
 		helper.RespondWithError(w, http.StatusInternalServerError, "Failed to retrieve posts")
@@ -45,14 +49,14 @@ func GetPostByUserHandler(w http.ResponseWriter, r *http.Request) {
 	helper.RespondWithJSON(w, http.StatusOK, posts)
 }
 
-func GetAllPostsByuser(authUserID string, r *http.Request, ofseet int) ([]map[string]interface{}, error) {
+func GetAllPostsByuser(authUserID string, r *http.Request, ofseet int,userId string) ([]map[string]interface{}, error) {
 	var rows *sql.Rows
 	var err error
 
-	userId, err := helper.AuthenticateUser(r)
-	if err != nil {
-		return nil, fmt.Errorf("authentication error: %v", err)
-	}
+	// userId, err := helper.AuthenticateUser(r)
+	// if err != nil {
+	// 	return nil, fmt.Errorf("authentication error: %v", err)
+	// }
 	if authUserID == "0" {
 		authUserID = userId
 	}
