@@ -82,7 +82,7 @@ func GroupInvitationResponse(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 	query := `DELETE FROM group_invitations WHERE id = ?`
-	_, err = tx.Exec(query, userID, newResponse.InvitationID)
+	_, err = tx.Exec(query, newResponse.InvitationID)
 	if err != nil {
 		fmt.Println("error deleting the invitation from it table")
 		helper.RespondWithError(w, http.StatusInternalServerError, "error deleting the invitation from it table")
