@@ -30,7 +30,9 @@ type Message struct {
 	SubType        string `json:"subType"`
 	ReceiverId     string `json:"receiverId"`
 	MessageContent string `json:"messageContent"`
-	Name           string `json:"name"`
+	First_name     string `json:"first_name"`
+	Last_name      string `json:"last_name"`
+	GroupID        string `json:"groupID"`
 	Photo          string `json:"photo"`
 }
 
@@ -114,11 +116,13 @@ func Loop(conn *websocket.Conn, currentUserID string) {
 			break
 		}
 
-		var nickname string
-		err := repository.Db.QueryRow(`SELECT nickname FROM users WHERE id = ?`, currentUserID).Scan(&nickname)
+		var first_name, last_name string
+		err := repository.Db.QueryRow(`SELECT first_name , last_name FROM users WHERE id = ?`, currentUserID).Scan(&first_name, last_name)
 		if err != nil {
-			log.Println("DB error getting sender nickname:", err)
-			nickname = "Unknown"
+			log.Println("DB error getting sender firsy_name && last_name:", err)
+			first_name = "Unknown"
+			last_name = "Unknown"
+
 		}
 		switch msg.Type {
 		case "logout":
@@ -190,7 +194,7 @@ func Loop(conn *websocket.Conn, currentUserID string) {
 				"subType": "message",
 				"from":    currentUserID,
 				"content": "sent you a message",
-				"name":    nickname,
+				"name":    first_name + " " + last_name,
 				"time":    time.Now().Format(time.RFC3339),
 			})
 
@@ -199,9 +203,10 @@ func Loop(conn *websocket.Conn, currentUserID string) {
 		// ===============================
 		case "follow":
 			var followID int
-			var name, photo string
+			var first_name, last_name, photo, pryvsi string
 
-			err := repository.Db.QueryRow(`SELECT nickname, image FROM users WHERE id = ?`, currentUserID).Scan(&name, &photo)
+			err = repository.Db.QueryRow(`SELECT first_name , last_name, image FROM users WHERE id = ?`, currentUserID).Scan(&first_name, &last_name, &photo)
+			_ = repository.Db.QueryRow(`SELECT privacy FROM users WHERE id = ?`, msg.ReceiverId).Scan(&pryvsi)
 			if err != nil {
 				log.Println("DB error getting user info:", err)
 				continue
@@ -211,28 +216,58 @@ func Loop(conn *websocket.Conn, currentUserID string) {
 			_ = repository.Db.QueryRow(query, msg.ReceiverId, currentUserID).Scan(&followID)
 			if followID != 0 {
 				msg.SubType = "unfollow"
-				msg.Name = name
+				msg.First_name = first_name
+				msg.Last_name = last_name
+
 				msg.Photo = photo
 				msg.MessageContent = "has unfollowed you"
-			} else {
+			} else if followID == 0 && pryvsi == "public" {
 				msg.SubType = "follow"
-				msg.Name = name
+				msg.First_name = first_name
+				msg.Last_name = last_name
 				msg.Photo = photo
 				msg.MessageContent = "has following you"
 				q := `INSERT INTO notifications ( sender_id, receiver_id, type, message, created_at) VALUES (?, ?, ?, ?, ?) `
 				_, _ = repository.Db.Exec(q, currentUserID, msg.ReceiverId, msg.Type, msg.MessageContent, time.Now().Unix())
+			} else {
+				continue
 			}
 
 			// Notify all connected users (except current user)
 			BrodcastNotification(msg.ReceiverId, map[string]any{
-				"type":    "notification",
-				"subType": msg.SubType,
-				"from":    currentUserID,
-				"name":    msg.Name,
+				"type":       "notification",
+				"subType":    msg.SubType,
+				"from":       currentUserID,
+				"first_name": msg.First_name,
+				"last_name":  msg.Last_name,
+
 				"photo":   msg.Photo,
 				"content": msg.MessageContent,
 				"time":    time.Now().Format(time.RFC3339),
 			})
+		case "invite_to_group":
+			var first_name, last_name, photo string
+
+			err = repository.Db.QueryRow(`SELECT first_name , last_name, image FROM users WHERE id = ?`, currentUserID).Scan(&first_name, &last_name, &photo)
+			if err != nil {
+				log.Println("DB error getting user info:", err)
+				continue
+			}
+			msg.MessageContent="has invited you to join a group"
+			q := `INSERT INTO notifications ( sender_id, receiver_id, type, message, created_at) VALUES (?, ?, ?, ?, ?) `
+			_, _ = repository.Db.Exec(q, currentUserID, msg.ReceiverId, msg.Type, msg.MessageContent, time.Now().Unix())
+			// Notify the invited user
+			BrodcastNotification(msg.ReceiverId, map[string]any{
+				"type":       "notification",
+				"subType":    "group_invite",
+				"from":       currentUserID,
+				"first_name": first_name,
+				"last_name":  last_name,
+				"photo":      photo,
+				"content":    msg.MessageContent,
+				"time":       time.Now().Format(time.RFC3339),
+			})
+
 		default:
 			log.Println("Unknown message type:", msg.Type)
 		}

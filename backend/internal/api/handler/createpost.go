@@ -23,7 +23,7 @@ func Createpost(w http.ResponseWriter, r *http.Request) {
 
 	userID, err := middleware.AuthenticateUser(r)
 	if err != nil {
-		helper.RespondWithError(w, http.StatusUnauthorized, "Authentication required")
+		helper.RespondWithError(w, http.StatusUnauthorized, "Unauthorized")
 		return
 	}
 
@@ -32,12 +32,16 @@ func Createpost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	title := strings.TrimSpace(r.FormValue("title"))
-	content := strings.TrimSpace(r.FormValue("content"))
+	title := helper.Skip(strings.TrimSpace(r.FormValue("title")))
+	content := helper.Skip(strings.TrimSpace(r.FormValue("content")))
 	visibility := strings.TrimSpace(r.FormValue("visibility"))
 	allowedUsers := strings.TrimSpace(r.FormValue("allowed_users"))
-
-	if visibility == "private" && allowedUsers == "" {
+	if len(title) <= 2 || len(title) > 20 {
+		helper.RespondWithError(w, http.StatusBadRequest, "title bitwen 2 and  20")
+		return 
+	}
+	users := len(strings.Split(allowedUsers, ","))
+	if visibility == "private" && users == 1 {
 		helper.RespondWithError(w, http.StatusBadRequest, "Allowed users must be provided for private posts")
 		return
 	}
@@ -77,7 +81,6 @@ func Createpost(w http.ResponseWriter, r *http.Request) {
 	} else {
 		imagePath = ""
 	}
-	fmt.Println(imagePath, "------------------+++++++++++++++")
 	postID := uuid.New().String()
 
 	_, err = repository.Db.Exec(`

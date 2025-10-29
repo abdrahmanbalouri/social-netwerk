@@ -93,7 +93,6 @@ export default function ChatBox({ user }) {
 
   useEffect(() => {
     const handleIncomingMessage = (data) => {
-      console.log("Received message:", data);
 
       if (data.from === user.id || data.to === user.id) {
         setMessages((prev) => [
@@ -155,7 +154,7 @@ export default function ChatBox({ user }) {
         </Link>
         <div className="onlinee">
           <Link href={`/profile/${user.id}`}>
-            <span className="username">{user.nickname}</span>
+            <span className="username">{user.first_name +" "+ user.last_name}</span>
           </Link>
           <span className={onlineUsers.includes(user.id) ? "on" : "off"}>
             {onlineUsers.includes(user.id) ? "online" : "offline"}

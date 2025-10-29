@@ -45,7 +45,7 @@ WHERE u.id = ?;
 		return
 	}
 
-	Fquery := `SELECT  u.id , u.nickname, u.image
+	Fquery := `SELECT  u.id , u.first_name, u.last_name, u.image
 	FROM followers f
 	JOIN users u ON u.id = f.follower_id
 	WHERE f.user_id = ?;
@@ -59,15 +59,15 @@ WHERE u.id = ?;
 
 	var followers []map[string]interface{}
 	for rows.Next() {
-		var username, profilePicture, idU string
-		if err := rows.Scan(&idU, &username, &profilePicture); err != nil {
-			fmt.Println("hna 4")
+		var  profilePicture, idU , first_name , last_name string
+		if err := rows.Scan(&idU, &first_name , &last_name, &profilePicture); err != nil {
 			http.Error(w, "Database error: "+err.Error(), http.StatusInternalServerError)
 			return
 		}
 		follower := map[string]interface{}{
 			"id":       idU,
-			"nickname": username,
+			"first_name": first_name,
+			"last_name": last_name,
 			"image":    profilePicture,
 		}
 		followers = append(followers, follower)
