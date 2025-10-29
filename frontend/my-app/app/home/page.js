@@ -204,11 +204,12 @@ export default function Home() {
 
       const data = await res.json() || [];
 
-      if (data) {
+      if (data.length >0) {
         offsetpsot.current += 10
       } else {
         return false
       }
+      
 
       setPosts([...posts, ...data]);
       return data[0].id
