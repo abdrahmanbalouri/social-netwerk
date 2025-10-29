@@ -31,20 +31,19 @@ export function CreatePostForm({ onSubmit, onCancel }) {
 
     const handleSubmit = (e) => {
         e.preventDefault();
+        const formData = new FormData();
+        formData.append("title", PostTitle);
+        formData.append("description", PostDescription);
+        formData.append("image", selectedImage);
 
-        const postData = {
-            title: PostTitle,
-            description: PostDescription,
-            image: selectedImage,
-        };
-        onSubmit(postData);
-        // Reset form after submission
-        setPostTitle('');
-        setPostDescription('');
-        setSearchQuery('');
+        onSubmit(formData);
+        setPostTitle("");
+        setPostDescription("");
+        setSearchQuery("");
         setSelectedImage(null);
         setImagePreview(null);
     };
+
 
     return (
         <div className="create-post-form-container">
@@ -85,7 +84,6 @@ export function CreatePostForm({ onSubmit, onCancel }) {
                         <input
                             id="postImage"
                             type="file"
-                            accept="image/*"
                             onChange={handleImageChange}
                             className="form-input"
                         />
@@ -148,10 +146,10 @@ export function PostCreationTrigger({ setPost }) {
             setIsModalOpen(false);
             // setShowForm(false)
             setPost(prev => {
-                console.log("posts before are :", prev);
+                // console.log("posts before are :", prev);
                 const exists = prev.some(p => p.id === newpost.id);
                 const temp = [newpost, ...prev]
-                console.log("posts after are :", temp);
+                // console.log("posts after are :", temp);
                 return exists ? prev : [newpost, ...prev];
             })
         } catch (err) {

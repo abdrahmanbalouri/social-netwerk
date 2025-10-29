@@ -191,13 +191,11 @@ function AddLike() {
 }
 
 export async function CreatePost(groupId, formData) {
-    const data = new FormData();
-    data.append("postData", JSON.stringify(formData));
 
     const res = await fetch(`http://localhost:8080/group/addPost/${groupId}`, {
         method: "POST",
         credentials: "include",
-        body: data,
+        body: formData,
     });
 
     const text = await res.text();
