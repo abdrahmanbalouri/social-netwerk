@@ -207,7 +207,7 @@ export function GroupCreationTrigger({setGroup}) {
     }, []);
 
     return (
-        <div className="create-post-container">
+        <div className="create-group-container">
             <div className="create-post-header">
                 <div className="user-avatar">
                     <span>User</span>
