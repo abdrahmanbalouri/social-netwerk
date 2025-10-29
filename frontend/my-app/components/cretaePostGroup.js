@@ -8,6 +8,26 @@ export function CreatePostForm({ onSubmit, onCancel }) {
     const [PostTitle, setPostTitle] = useState('');
     const [PostDescription, setPostDescription] = useState('');
     const [searchQuery, setSearchQuery] = useState('');
+    const [selectedImage, setSelectedImage] = useState(null);
+    const [imagePreview, setImagePreview] = useState(null);
+
+    const handleImageChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            setSelectedImage(file);
+            // Create preview URL
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setImagePreview(reader.result);
+            };
+            reader.readAsDataURL(file);
+        }
+    };
+
+    const removeImage = () => {
+        setSelectedImage(null);
+        setImagePreview(null);
+    };
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -15,12 +35,15 @@ export function CreatePostForm({ onSubmit, onCancel }) {
         const postData = {
             title: PostTitle,
             description: PostDescription,
+            image: selectedImage,
         };
         onSubmit(postData);
         // Reset form after submission
         setPostTitle('');
         setPostDescription('');
         setSearchQuery('');
+        setSelectedImage(null);
+        setImagePreview(null);
     };
 
     return (
@@ -56,6 +79,35 @@ export function CreatePostForm({ onSubmit, onCancel }) {
                         />
                     </div>
 
+                    {/* Image Upload */}
+                    <div className="form-field">
+                        <label htmlFor="postImage" className="form-label">Image (optional)</label>
+                        <input
+                            id="postImage"
+                            type="file"
+                            accept="image/*"
+                            onChange={handleImageChange}
+                            className="form-input"
+                        />
+                        {imagePreview && (
+                            <div className="image-preview-container" style={{ marginTop: '10px' }}>
+                                <img
+                                    src={imagePreview}
+                                    alt="Preview"
+                                    style={{ maxWidth: '200px', maxHeight: '200px', borderRadius: '8px' }}
+                                />
+                                <button
+                                    type="button"
+                                    onClick={removeImage}
+                                    className="remove-image-btn"
+                                    style={{ marginLeft: '10px' }}
+                                >
+                                    Remove
+                                </button>
+                            </div>
+                        )}
+                    </div>
+
                     {/* Submit Button */}
                     <div className="form-actions">
                         <button
@@ -79,7 +131,7 @@ export function CreatePostForm({ onSubmit, onCancel }) {
     );
 }
 
-export function PostCreationTrigger({setPost}) {
+export function PostCreationTrigger({ setPost }) {
     const [isModalOpen, setIsModalOpen] = useState(false);
     // const [posts, setPost] = useState([])
     const { id } = useParams();
