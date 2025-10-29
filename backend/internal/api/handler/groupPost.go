@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
@@ -48,6 +47,7 @@ func CreatePostGroup(w http.ResponseWriter, r *http.Request) {
 		helper.RespondWithError(w, http.StatusMethodNotAllowed, "Method not allowed")
 		return
 	}
+	fmt.Println("R.FORMVALUE IS ::::::::::", r.FormValue("image"))
 
 	// get user id
 	userID, IdErr := helper.AuthenticateUser(r)
@@ -70,16 +70,12 @@ func CreatePostGroup(w http.ResponseWriter, r *http.Request) {
 		helper.RespondWithError(w, http.StatusBadRequest, "Unable to parse form")
 		return
 	}
-	data := r.FormValue("postData")
-	if data == "" {
-		helper.RespondWithError(w, http.StatusBadRequest, "Missing JSON form field")
-		return
-	}
+	title := r.FormValue("title")
+	description := r.FormValue("description")
 
-	var postData PostData
-	err = json.Unmarshal([]byte(data), &postData)
+	// file, handler, err := r.FormFile("image")
 	if err != nil {
-		http.Error(w, "Invalid JSON data", http.StatusBadRequest)
+		http.Error(w, "Error retrieving the file", http.StatusBadRequest)
 		return
 	}
 
@@ -142,7 +138,7 @@ func CreatePostGroup(w http.ResponseWriter, r *http.Request) {
 	_, err = repository.Db.Exec(`
         INSERT INTO group_posts (id, user_id, group_id, title, content, image_path, created_at)
         VALUES (?, ?, ?, ?, ?, ?, ?)`,
-		postID, userID, GrpID, postData.Title, postData.Content, imagePath, createdAt,
+		postID, userID, GrpID, title, description, imagePath, createdAt,
 	)
 	if err != nil {
 		fmt.Println("Failed to create post (groups)")
@@ -261,7 +257,7 @@ func GetAllPostsGroup(w http.ResponseWriter, r *http.Request) {
 	var postsJson []Post
 	for rows.Next() {
 		var p Post
-		err := rows.Scan(&p.ID, &p.UserID, &p.Title, &p.Content, &p.ImagePath, &p.CreatedAt, &p.FirstName,&p.LastName, &p.Profile, &p.Like, &p.LikedByUSer, &p.CommentCount)
+		err := rows.Scan(&p.ID, &p.UserID, &p.Title, &p.Content, &p.ImagePath, &p.CreatedAt, &p.FirstName, &p.LastName, &p.Profile, &p.Like, &p.LikedByUSer, &p.CommentCount)
 		if err != nil {
 			fmt.Println("heeeere :", err)
 			helper.RespondWithError(w, http.StatusInternalServerError, "Failed to scan posts")
