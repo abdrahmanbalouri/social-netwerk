@@ -128,7 +128,6 @@ export function LastPost() {
             setLoading(false);
             return;
         }
-
         fetch(`http://localhost:8080/group/fetchPost/${grpID}`, {
             method: 'GET',
             credentials: 'include',
@@ -192,7 +191,6 @@ function AddLike() {
 }
 
 export async function CreatePost(groupId, formData) {
-
     const data = new FormData();
     data.append("postData", JSON.stringify(formData));
 
@@ -205,7 +203,6 @@ export async function CreatePost(groupId, formData) {
     const text = await res.text();
 
     if (!res.ok) throw new Error("Failed to create a post for groups");
-
 
     return JSON.parse(text);
 }
