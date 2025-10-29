@@ -33,7 +33,7 @@ func GetCommentsHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	_, err = helper.AuthenticateUser(r)
 	if err != nil {
-		helper.RespondWithError(w, http.StatusUnauthorized, "Authentication required")
+		helper.RespondWithError(w, http.StatusUnauthorized, "Unauthorized")
 		return
 	}
 

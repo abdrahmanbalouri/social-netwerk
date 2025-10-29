@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"fmt"
 	"net/http"
 	"strconv"
 	"strings"
@@ -27,6 +28,12 @@ func AllpostsHandler(w http.ResponseWriter, r *http.Request) {
 		offset = 0
 	}
 
+	d, err := helper.AuthenticateUser(r)
+	if err != nil {
+		fmt.Println(d)
+		helper.RespondWithError(w, http.StatusUnauthorized, "Unauthorized")
+		return
+	}
 	posts, err := post.GetAllPosts(userId, r, offset)
 	if posts == nil {
 		helper.RespondWithJSON(w, http.StatusOK, posts)

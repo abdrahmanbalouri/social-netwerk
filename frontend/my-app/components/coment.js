@@ -1,5 +1,6 @@
 "use client"
 import { useState, useEffect, useRef } from "react"
+import { useRouter } from 'next/navigation';
 import "../styles/comment.css"
 
 export default function Comment({ comments, isOpen, onClose, postId, onCommentChange, lodinggg, ongetcomment, post, showToast }) {
@@ -15,6 +16,7 @@ export default function Comment({ comments, isOpen, onClose, postId, onCommentCh
   const fileInputRef = useRef(null)
   const emojiRef = useRef(null)
   const textareaRef = useRef(null)
+  const router = useRouter()
 
   // Emojis organisés par catégories
   const emojiCategories = {
@@ -168,14 +170,19 @@ export default function Comment({ comments, isOpen, onClose, postId, onCommentCh
 
 
       const res = await response.json()
-      if (res.err) {
-
-        showToast(res.error)
-        setCommentContent("")
-        setSelectedFile(null)
-        return
+      if (res.error) {
+        if (res.error == "Unauthorized") {
+          router.push("/login");
+          //sendMessage({ type: "logout" })
+          return
+        } else {
+          setCommentContent("")
+          setSelectedFile(null)
+          showToast(res.error)
+          return
+        }
       }
-      console.log(333333);
+
 
       setCommentContent("")
       setSelectedFile(null)
