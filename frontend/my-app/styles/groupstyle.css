@@ -735,6 +735,12 @@ legend.form-label {
   cursor: not-allowed;
 }
 
+.form-textarea {
+    resize: vertical;
+    min-height: 100px;
+}
+
+/* ===== المستخدمون المختارون ===== */
 .selected-users {
   display: flex;
   flex-wrap: wrap;
@@ -800,6 +806,7 @@ legend.form-label {
   transform: scale(1.1);
 }
 
+/* ===== حاوية البحث والاقتراحات ===== */
 .search-container {
   position: relative;
 }
