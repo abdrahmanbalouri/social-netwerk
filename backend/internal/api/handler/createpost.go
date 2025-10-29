@@ -42,11 +42,9 @@ func Createpost(w http.ResponseWriter, r *http.Request) {
 	}
 	users := len(strings.Split(allowedUsers, ","))
 	if visibility == "private" && users == 1 {
-		fmt.Println("123456789")
 		helper.RespondWithError(w, http.StatusBadRequest, "Allowed users must be provided for private posts")
 		return
 	}
-	fmt.Println(visibility,allowedUsers)
 
 	// Handle image upload
 	var imagePath string

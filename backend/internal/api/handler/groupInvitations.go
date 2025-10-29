@@ -111,7 +111,6 @@ func GroupInvitationRequest(w http.ResponseWriter, r *http.Request) {
 	var newInvitation GroupInvitation
 	// fmt.Println("Body is :", json.NewDecoder(r.Body))
 	if err := json.NewDecoder(r.Body).Decode(&newInvitation); err != nil {
-		fmt.Println("Invalid request format : ", err)
 		helper.RespondWithError(w, http.StatusBadRequest, "Invalid request format")
 		return
 	}
@@ -154,7 +153,6 @@ func GroupInvitationRequest(w http.ResponseWriter, r *http.Request) {
 		err = tx.QueryRow(query, user).Scan(&invitedUserID)
 		if err != nil {
 			if err == sql.ErrNoRows {
-				fmt.Println("11")
 				continue
 			}
 			helper.RespondWithError(w, http.StatusInternalServerError, "Error finding the invited user")
@@ -173,7 +171,6 @@ func GroupInvitationRequest(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		
-		fmt.Println("hna")
 		if exists1 {
 			continue
 		} else {
