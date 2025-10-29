@@ -1,7 +1,5 @@
 import { Users, ChevronRight } from "lucide-react";
 
-
-
 export function GroupCard({ group, onShow }) {
   console.log("inside groupCard function/component");
   return (
@@ -24,7 +22,7 @@ export function GroupCard({ group, onShow }) {
             <span className="members-text-full">{22} members</span>
             <span className="members-text-short">{220}</span>
           </div>
-          <button onClick={() => onShow(group.ID)}>
+          <button className="view-button" onClick={() => onShow(group.ID)}>
             <span>View</span>
             <ChevronRight />
           </button>
