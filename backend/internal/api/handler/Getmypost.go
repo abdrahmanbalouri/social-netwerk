@@ -151,7 +151,6 @@ func Getmypost(w http.ResponseWriter, r *http.Request) {
 		}
 		posts = append(posts, post)
 	}
-        fmt.Println(posts,"----------------------")
 	if len(posts) == 0 {
     helper.RespondWithJSON(w, http.StatusOK, posts)
 		return

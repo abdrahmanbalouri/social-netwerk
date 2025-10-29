@@ -57,6 +57,7 @@ func Routes() http.Handler {
 	mux.HandleFunc("/group/fetchPosts/{id}", handlers.GetAllPostsGroup)
 	mux.HandleFunc("/group/fetchPost/{id}", handlers.GetPostGroup)
 	mux.HandleFunc("/group/addComment", handlers.CreateCommentGroup)
+	mux.HandleFunc("/api/videos", handlers.GetVedioHandler)
 
 	return mux
 }
