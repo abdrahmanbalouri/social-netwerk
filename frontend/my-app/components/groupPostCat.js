@@ -5,7 +5,7 @@ import { FileText, MessageCircle } from "lucide-react";
 export function GroupPostChat() {
   const [activeTab, setActiveTab] = useState("posts");
   return (
-    <div className="container">
+    <div className="group-container">
       <div className="max-width-wrapper">
         {/* Header Tabs */}
         <div className="tabs-container">
@@ -33,9 +33,9 @@ export function GroupPostChat() {
         {activeTab === "posts" ? (
           <AllPosts />
         ) : (
-          <div className="empty-state">
+          <div className="group-empty-state">
             <MessageCircle />
-            <p className="empty-state-text">Chat interface coming soon</p>
+            <p className="group-empty-state-text">Chat interface coming soon</p>
           </div>
         )}
         {/* </div> */}

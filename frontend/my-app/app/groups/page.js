@@ -47,10 +47,10 @@ export function AllGroups() {
   }, []);
   if (!group) {
     return (
-      <div className="empty-state">
+      <div className="group-empty-state">
         <Users />
-        <p className="empty-state-title">No groups found</p>
-        <p className="empty-state-text">Check back later for more groups</p>
+        <p className="group-empty-state-title">No groups found</p>
+        <p className="group-empty-state-text">Check back later for more groups</p>
       </div>
     );
   }
@@ -115,10 +115,10 @@ export function MyGroups() {
     return (
       <div>
         <GroupCreationTrigger />
-        <div className="empty-state">
+        <div className="group-empty-state">
           <Users />
-          <p className="empty-state-title">No groups found</p>
-          <p className="empty-state-text">
+          <p className="group-empty-state-title">No groups found</p>
+          <p className="group-empty-state-text">
             Create your first group to get started!
           </p>
         </div>
