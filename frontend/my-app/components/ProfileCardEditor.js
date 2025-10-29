@@ -53,7 +53,6 @@ export default function ProfileCardEditor({
 
         if (coverInputRef.current.files[0]) {
             formData.append("cover", coverInputRef.current.files[0]);
-            console.log(coverInputRef.current.files[0]);
 
 
         } else if (initialCover) {

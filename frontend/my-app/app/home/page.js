@@ -41,6 +41,13 @@ export default function Home() {
   const router = useRouter();
   const { darkMode } = useDarkMode();
   const sendMessage = useWS()
+  const [toast, setToast] = useState(null);
+  const showToast = (message, type = "error", duration = 3000) => {
+    setToast({ message, type });
+    setTimeout(() => {
+      setToast(null);
+    }, duration);
+  };
   // Authentication check
   useEffect(() => {
     const checkAuth = async () => {
@@ -48,7 +55,7 @@ export default function Home() {
       if (!auth) {
         router.push("/login");
         sendMessage({ type: "logout" })
-        
+
       }
     }
     checkAuth();
@@ -68,25 +75,35 @@ export default function Home() {
     );
   }
   useEffect(() => {
-    if (!modalRefhome.current) return;
+    console.log(offsetpsot.current);
 
-    const modal = modalRefhome.current;
 
     const reachedBottom =
-      modal.scrollHeight > modal.clientHeight + 10 &&
-      modal.scrollTop + modal.clientHeight >= modal.scrollHeight - 50;
+      window.innerHeight + window.scrollY >= document.body.scrollHeight - 20;
+
+    console.log(reachedBottom);
 
     async function handlescrollhome() {
+
       let b = await fetchingposts();
       if (b) {
-        scrollToPost(b)
+        scrollToPost(b);
       }
-
     }
+
     if (reachedBottom && !loading) {
-      handlescrollhome()
+      handlescrollhome();
     }
   }, [scroollhome]);
+  useEffect(() => {
+    const handleScroll = () => {
+      setscroolHome(window.scrollY);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
   async function logout(e) {
     e.preventDefault();
 
@@ -139,21 +156,29 @@ export default function Home() {
         method: "POST",
         credentials: "include",
       });
-      // const response = await res.json();
-      if (res.ok) {
+       const response = await res.json();
+      if (response.error) {
+        if (response.error == "Unauthorized"){
+        router.push("/login");
+        //sendMessage({ type: "logout" })
+        return 
+        }else{
+          showToast(response.error)
+          return
+        }
 
-        const newpost = await fetchPosts(postId)
-        for (let i = 0; i < posts.length; i++) {
-          if (posts[i].id == newpost.id) {
+      }
+      const newpost = await fetchPosts(postId)
+      for (let i = 0; i < posts.length; i++) {
+        if (posts[i].id == newpost.id) {
 
 
-            setPosts([
-              ...posts.slice(0, i),
-              newpost,
-              ...posts.slice(i + 1)
-            ]);
-            break
-          }
+          setPosts([
+            ...posts.slice(0, i),
+            newpost,
+            ...posts.slice(i + 1)
+          ]);
+          break
         }
       }
     } catch (err) {
@@ -178,11 +203,12 @@ export default function Home() {
 
       const data = await res.json() || [];
 
-      if (data.length !== 0) {
+      if (data.length >0) {
         offsetpsot.current += 10
       } else {
         return false
       }
+      
 
       setPosts([...posts, ...data]);
       return data[0].id
@@ -202,13 +228,19 @@ export default function Home() {
       });
       if (!res.ok) {
         return false
+      } else {
+
+        const data = await res.json() || [];
+        if (!data) return
+
+        setPosts([...data]);
+
       }
-      
-      const data = await res.json() || [];
-      
 
 
-      setPosts([...data]);
+
+
+
       return true
     } catch (err) {
       console.error("Error fetching posts:", err);
@@ -245,13 +277,19 @@ export default function Home() {
         body: formData,
       });
 
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error("Create post error:", errorText);
-        throw new Error('Failed to create post');
-      }
-
+     
       const res = await response.json();
+       
+      if (res.error) {
+       if (res.error == "Unauthorized"){
+        router.push("/login");
+        //sendMessage({ type: "logout" })
+        return 
+        }else{
+          showToast(res.error)
+          return
+        }
+      }
 
 
       // Fetch the newly created post
@@ -264,8 +302,7 @@ export default function Home() {
       offsetpsot.current++
 
     } catch (err) {
-      console.error("Error creating post:", err);
-      alert("Failed to create post. Please try again.");
+    //  console.error("Error creating post:", err);
     } finally {
       setLoading(false);
       // Reset form
@@ -284,11 +321,13 @@ export default function Home() {
         credentials: "include",
       });
 
-      if (!res.ok) {
-        throw new Error("Failed to fetch post");
-      }
+       
 
       const data = await res.json();
+      if(data.error){
+        showToast(data.error)
+        return
+      }
       return data;
     } catch (err) {
       console.error("Error fetching post:", err);
@@ -305,7 +344,7 @@ export default function Home() {
         title: post.title || post.post_title || "Post",
         image_path: post.image_path,
         content: post.content,
-        author: post.author
+        author: post.first_name + " " + post.last_name
       });
       setShowComments(true);
       // Fetch comments
@@ -355,8 +394,11 @@ export default function Home() {
         credentials: "include",
       });
 
-      if (res.ok) {
         const data = await res.json();
+        if (data.error){
+          showToast(data.error)
+          return
+        }
 
         let newcomment = [];
 
@@ -384,7 +426,7 @@ export default function Home() {
             break
           }
         }
-      }
+      
     } catch (err) {
       console.error("Error refreshing comments:", err);
     }
@@ -428,6 +470,12 @@ export default function Home() {
         showSidebar={showSidebar}
         onToggleSidebar={() => setShowSidebar(!showSidebar)}
       />
+      {toast && (
+        <div className={`toast ${toast.type}`}>
+          <span>{toast.message}</span>
+          <button onClick={() => setToast(null)} className="toast-close">×</button>
+        </div>
+      )}
 
       {/* Main Content */}
       <main className="content">
@@ -538,7 +586,7 @@ export default function Home() {
                       <label key={follower.id} className="user-picker-item">
                         <img
                           src={follower?.image ? `/uploads/${follower.image}` : "/assets/default.png"}
-                          alt={follower.nickname}
+                          alt={follower.first_name}
                           className="image-avatar"
                         />
                         <input
@@ -546,7 +594,7 @@ export default function Home() {
                           checked={selectedUsers.includes(follower.id)}
                           onChange={() => handleUserSelect(follower.id)}
                         />
-                        <span>{follower.nickname}</span>
+                        <span>{follower.first_name + " " + follower.last_name}</span>
                       </label>
                     ))
                   ) : (
@@ -583,6 +631,7 @@ export default function Home() {
             lodinggg={loadingcomment}
             ongetcomment={GetComments}
             post={selectedPost}
+            showToast={showToast}
           />
         )
       }

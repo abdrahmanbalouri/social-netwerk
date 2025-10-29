@@ -11,8 +11,40 @@ export default function RightBar() {
   const [users, setusers] = useState([])
   const [onlineUsers, setonlineUsers] = useState([])
   const [activeTab, setActiveTab] = useState("friends");
+  const [activeTabRequests, setActiveTabRequests] = useState("followRequests");
+
+  const  [groupeInvitation, setgroupeInvitation] = useState([])
+
   const [followRequest, setFollowRequest] = useState([])
   const { sendMessage, addListener, removeListener } = useWS();
+
+
+
+
+
+  useEffect(() => {
+    async function fetchGroupeInvitation() {
+      try {
+        const res = await fetch("http://localhost:8080/api/groupeInvitation", {
+          method: "GET",
+          credentials: "include",
+        });
+
+        if (!res.ok) {
+          throw new Error("Failed to fetch posts");
+        }
+        const data = await res.json();
+
+        setgroupeInvitation(data);
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    fetchGroupeInvitation();
+  }, []);
+
+
 
   useEffect(() => {
     const handleOlineUser = (data) => {
@@ -81,7 +113,6 @@ export default function RightBar() {
         const data = await res.json();
 
 
-        console.log(data);
 
         setFollowRequest(data);
       } catch (err) {
@@ -143,34 +174,89 @@ export default function RightBar() {
   return (
     <div className="rightBar">
       <div className="item">
-        <span>Follow requests</span>
+        <div className="sections">
+          <h3
+            className={activeTabRequests === "followRequests" ? "active" : ""}
+            onClick={() => setActiveTabRequests("followRequests")}
+          >
+            Follow Requests
+          </h3>
+          <h3
+            className={activeTabRequests === "groupeInvitation" ? "active" : ""}
+            onClick={() => setActiveTabRequests("groupeInvitation")}
+          >
+            Groupe Invitation
+          </h3>
+        </div>
 
-        {!followRequest || followRequest.length === 0 ? (
-          <h1>no users for now</h1>
-        ) : (
-          followRequest.map((user) => (
-            <div key={user.id} className="user">
-              <div className="userInfo">
-                <div className="userDetails">
-                  <Link href={`/profile/${user.id}`} className="userLink">
-                    <img
-                      src={user?.image ? `/uploads/${user.image}` : "/assets/default.png"}
-                      alt="user avatar"
-                    />
-                  </Link>
-                  <Link href={`/profile/${user.id}`}>
-                    <span>{user.nickname}</span>
-                  </Link>
-                </div>
 
-                <div className="buttons">
-                  <button onClick={() => { handleFollowRequest(user.id, "accept") }} >accept</button>
-                  <button onClick={() => { handleFollowRequest(user.id, "reject") }} >reject</button>
+        {activeTabRequests === "followRequests" && (
+
+          <div>
+            {!followRequest || followRequest .length === 0? (<p>no follow reuqets found  </p>) : (
+              followRequest.map((user) => (
+                <div key={user.id} className="user">
+                  <div className="userInfo">
+                    <div className="userDetails">
+                      <Link href={`/profile/${user.id}`} className="userLink">
+                        <img
+                          src={user?.image ? `/uploads/${user.image}` : "/assets/default.png"}
+                          alt="user avatar"
+                        />
+                      </Link>
+                      <Link href={`/profile/${user.id}`}>
+                        <span>{user.first_name + " " + user.last_name}</span>
+                      </Link>
+                    </div>
+
+                    <div className="buttons">
+                      <button onClick={() => { handleFollowRequest(user.id, "accept") }} >accept</button>
+                      <button onClick={() => { handleFollowRequest(user.id, "reject") }} >reject</button>
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </div>
-          ))
+              ))
+            )}
+
+
+          </div>
         )}
+
+        {activeTabRequests === "groupeInvitation" && (
+
+          <div>
+
+            {!groupeInvitation ? (<p> no groupe invitation found </p>) :
+              (
+                groupeInvitation.map((group) => (
+                  <div key={group.id} className="user">
+                    <div className="userInfo">
+                      <div className="userDetails">
+                        {/* <Link href={`/profile/${group.id}`} className="userLink"> */}
+                         {/*  <img
+                            src={group?.image ? `/uploads/${group.image}` : "/assets/default.png"}
+                            alt="user avatar"
+                          />  */}
+                          <i className="fa-solid fa-people-group"></i>
+                       {/*  </Link> */}
+                        {/* <Link href={`/profile/${group.id}`}> */}
+                          <span>{group.title}</span>
+                      {/*   </Link> */}
+                      </div>
+
+                      <div className="buttons">
+                        <button onClick={() => { handleFollowRequest(group.id, "accept") }} >accept</button>
+                        <button onClick={() => { handleFollowRequest(group.id, "reject") }} >reject</button>
+                      </div>
+                    </div>
+                  </div>
+                ))
+              )}
+
+
+          </div>
+        )}
+
 
       </div>
 
@@ -194,7 +280,7 @@ export default function RightBar() {
             {!friends ? (
               <p>No friends yet</p>
             ) : (
-              
+
               friends.map((user) => (
                 <div key={user.id} className="user">
                   <div className="userInfo">
@@ -207,7 +293,7 @@ export default function RightBar() {
                       </Link>
                       <div className={onlineUsers.includes(user.id) ? "online" : "offline"} />
                       <Link href={`/profile/${user.id}`}>
-                        <span>{user.nickname}</span>
+                        <span>{user.first_name + " " + user.last_name}</span>
                       </Link>
                     </div>
                     <div className="">
@@ -235,7 +321,7 @@ export default function RightBar() {
                         />
                       </Link>
                       <Link href={`/profile/${user.id}`} className="userLink">
-                        <span>{user.nickname}</span>
+                        <span>{user.first_name + " " + user.last_name}</span>
                       </Link>
                     </div>
                     <Link href={`/profile/${user.id}`} className="userLink">
