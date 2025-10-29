@@ -56,15 +56,15 @@ export function CreateGroupForm({ users, onSubmit, onCancel }) {
   console.log("filterd users areeeee---------- :", users);
 
   return (
-    <div className="modal-overlay">
-      <div className="modal-content">
-        <div className="modal-header">
-          <h1 className="modal-title">Create a New Group</h1>
+    <div className="group-modal-overlay">
+      <div className="group-modal-content">
+        <div className="group-modal-header">
+          <h1 className="group-modal-title">Create a New Group</h1>
         </div>
 
-        <form className="hhhhh" onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit}>
           {/* Group Title */}
-          <div className="modal-form">
+          <div className="group-modal-form">
             <div className="form-group">
               <label htmlFor="groupTitle" className="form-label">
                 Group Title
@@ -165,7 +165,7 @@ export function CreateGroupForm({ users, onSubmit, onCancel }) {
           </div>
 
           {/* Submit Button */}
-          <div className="modal-actions">
+          <div className="group-modal-actions">
             <button type="button" className="cancel-button" onClick={onCancel}>
               Cancel
             </button>
@@ -227,7 +227,7 @@ export function GroupCreationTrigger() {
   return (
     <div className="create-card">
       <div className="create-card-inner">
-        <div className="avatar">U</div>
+        <div className="group-avatar">U</div>
         <input
           type="text"
           placeholder="Create a group?"
