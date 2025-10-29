@@ -43,7 +43,6 @@ export default function Home() {
   const { darkMode } = useDarkMode();
   const sendMessage = useWS()
   const [toast, setToast] = useState(null);
-
   const showToast = (message, type = "error", duration = 3000) => {
     setToast({ message, type });
     setTimeout(() => {
@@ -280,13 +279,16 @@ export default function Home() {
 
      
       const res = await response.json();
-       console.log(res.error);
        
-      
-      if(res.error){
-        
-        showToast(res.error)
-        return
+      if (res.error) {
+       if (res.error == "Unauthorized"){
+        router.push("/login");
+        //sendMessage({ type: "logout" })
+        return 
+        }else{
+          showToast(res.error)
+          return
+        }
       }
 
 

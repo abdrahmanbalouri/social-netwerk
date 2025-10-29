@@ -45,6 +45,16 @@ export default function Profile() {
   const boleanofset = useRef(false)
   const postRefs = useRef({});
   const [showPrivacy, setShowPrivacy] = useState(false);
+  const [toast, setToast] = useState(null);
+
+  const showToast = (message, type = "error", duration = 3000) => {
+    console.log(8889898);
+
+    setToast({ message, type });
+    setTimeout(() => {
+      setToast(null);
+    }, duration);
+  };
   // Authentication check
   useEffect(() => {
     const checkAuth = async () => {
@@ -180,25 +190,25 @@ export default function Profile() {
         : [...prevSelected, userId]
     );
   }
-useEffect(() => {
-  console.log(scroollhome, "-----++++----++++---++++--+++");
+  useEffect(() => {
+    console.log(scroollhome, "-----++++----++++---++++--+++");
 
-  const reachedBottom =
-    window.innerHeight + window.scrollY >= document.body.scrollHeight - 20;
+    const reachedBottom =
+      window.innerHeight + window.scrollY >= document.body.scrollHeight - 20;
 
-  console.log(reachedBottom);
+    console.log(reachedBottom);
 
-  async function handlescrollhome() {
-    let b = await fetchingposts();
-    if (b) {
-      scrollToPost(b);
+    async function handlescrollhome() {
+      let b = await fetchingposts();
+      if (b) {
+        scrollToPost(b);
+      }
     }
-  }
 
-  if (reachedBottom && !loading) {
-    handlescrollhome();
-  }
-}, [scroollhome]);
+    if (reachedBottom && !loading) {
+      handlescrollhome();
+    }
+  }, [scroollhome]);
 
   const fetchFollowers = async () => {
     setLoadingFollowers(true);
@@ -235,23 +245,33 @@ useEffect(() => {
         method: "POST",
         credentials: "include",
       });
-      // const response = await res.json();
-      if (res.ok) {
+      const response = await res.json();
+      if (response.error) {
+        if (response.error == "Unauthorized") {
+          router.push("/login");
+          //sendMessage({ type: "logout" })
+          return
+        } else {
+          showToast(response.error)
+          return
+        }
 
-        const newpost = await fetchPosts(postId)
-        for (let i = 0; i < posts.length; i++) {
-          if (posts[i].id == newpost.id) {
+      }
+
+      const newpost = await fetchPosts(postId)
+      for (let i = 0; i < posts.length; i++) {
+        if (posts[i].id == newpost.id) {
 
 
-            setPosts([
-              ...posts.slice(0, i),
-              newpost,
-              ...posts.slice(i + 1)
-            ]);
-            break
-          }
+          setPosts([
+            ...posts.slice(0, i),
+            newpost,
+            ...posts.slice(i + 1)
+          ]);
+          break
         }
       }
+
     } catch (err) {
       console.error("Error liking post:", err);
     }
@@ -343,13 +363,18 @@ useEffect(() => {
         body: formData,
       });
 
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error("Create post error:", errorText);
-        throw new Error('Failed to create post');
-      }
+       const res = await response.json();
+      if (res.error) {
+        if (res.error == "Unauthorized"){
+        router.push("/login");
+        //sendMessage({ type: "logout" })
+        return 
+        }else{
+          showToast(res.error)
+          return
+        }
 
-      const res = await response.json();
+      }
 
 
       // Fetch the newly created post
@@ -511,15 +536,15 @@ useEffect(() => {
     setSelectedPost(null);
     setComment([]);
   }
-useEffect(() => {
-  const handleScroll = () => {
-    setscroolHome(window.scrollY);
-  };
+  useEffect(() => {
+    const handleScroll = () => {
+      setscroolHome(window.scrollY);
+    };
 
-  window.addEventListener("scroll", handleScroll);
+    window.addEventListener("scroll", handleScroll);
 
-  return () => window.removeEventListener("scroll", handleScroll);
-}, []);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   // Loading state
   if (loading && posts.length === 0) {
@@ -592,13 +617,19 @@ useEffect(() => {
       <Navbar
         onToggleSidebar={() => setShowSidebar(!showSidebar)}
       />
+      {toast && (
+        <div className={`toast ${toast.type}`}>
+          <span>{toast.message}</span>
+          <button onClick={() => setToast(null)} className="toast-close">×</button>
+        </div>
+      )}
 
       <main className="content">
         <LeftBar showSidebar={showSidebar} />
 
         <div
           className="main-section"
-          onScroll={(e) => setscroolHome(window.scrollY)} 
+          onScroll={(e) => setscroolHome(window.scrollY)}
           ref={modalRefhome}
         >
           {/* ===== Profile Section ===== */}
@@ -869,6 +900,7 @@ useEffect(() => {
             lodinggg={loadingcomment}
             ongetcomment={GetComments}
             post={selectedPost}
+            showToast={showToast}
           />
         )
       }
