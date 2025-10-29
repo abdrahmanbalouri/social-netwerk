@@ -16,7 +16,6 @@ import { useDarkMode } from "../../../context/darkMod.js";
 
 export default function () {
     const { darkMode } = useDarkMode();
-
     return (
         <div className={darkMode ? "theme-dark" : "theme-light"}>
             <Navbar />
