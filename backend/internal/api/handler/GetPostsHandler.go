@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"database/sql"
-	"fmt"
 	"net/http"
 	"strings"
 
@@ -11,7 +10,6 @@ import (
 )
 
 func GetPostsHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("22222")
 	if r.Method != "GET" {
 		helper.RespondWithError(w, http.StatusMethodNotAllowed, "Method Not Allowed")
 		return
@@ -54,11 +52,11 @@ func GetPostsHandler(w http.ResponseWriter, r *http.Request) {
 		GROUP BY p.id, p.user_id, p.title, p.content, p.image_path, p.created_at, 	u.first_name, u.last_name, u.image
 	`, UserId, postID)
 
-	var id, userID, title, content, imagePath, first_name , last_name, profile, createdAt string
+	var id, userID, title, content, imagePath, first_name, last_name, profile, createdAt string
 	var likeCount, likedByUser, commentsCount int
 
 	// Scan the result into variables
-	err = row.Scan(&id, &userID, &title, &content, &imagePath, &createdAt, &first_name,&last_name, &profile, &likeCount, &likedByUser, &commentsCount)
+	err = row.Scan(&id, &userID, &title, &content, &imagePath, &createdAt, &first_name, &last_name, &profile, &likeCount, &likedByUser, &commentsCount)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			helper.RespondWithError(w, http.StatusNotFound, "Post not found")
@@ -67,14 +65,14 @@ func GetPostsHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	post := map[string]interface{}{
-		"id":             id,
-		"user_id":        userID,
-		"title":          title,
-		"content":        content,
-		"image_path":     imagePath,
-		"created_at":     createdAt,
-		"first_name":         first_name,
-		"last_name":         last_name,
+		"id":         id,
+		"user_id":    userID,
+		"title":      title,
+		"content":    content,
+		"image_path": imagePath,
+		"created_at": createdAt,
+		"first_name": first_name,
+		"last_name":  last_name,
 
 		"profile":        profile,
 		"like":           likeCount,

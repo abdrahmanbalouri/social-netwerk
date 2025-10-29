@@ -97,10 +97,7 @@ func GetStories(w http.ResponseWriter, r *http.Request) {
 		return
 	}
  
-	for i,r := range stories {
-		fmt.Println(r["first_name"],i)
-	}
-   
+	
 	helper.RespondWithJSON(w, http.StatusOK, stories)
 
 }

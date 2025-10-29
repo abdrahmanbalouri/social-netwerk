@@ -12,7 +12,6 @@ import Post from '../../components/Post.js';
 import { middleware } from "../../middleware/middelware.js";
 import { useWS } from "../../context/wsContext.js";
 import CreatePost from "../../components/createPost.js";
-import { requestToBodyStream } from "next/dist/server/body-streams.js";
 
 export default function Home() {
   // State management
