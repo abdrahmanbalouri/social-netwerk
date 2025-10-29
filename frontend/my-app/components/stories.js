@@ -39,9 +39,10 @@ const Stories = () => {
         //showToast(response.error);
         return
       }
+       
       setStories(Array.isArray(response) ? response : []);
     } catch (err) {    
-      showToast("Failed to load stories");
+      //showToast("Failed to load stories");
       setStories([]);
     }
   };
@@ -68,11 +69,13 @@ const Stories = () => {
       }
       grouped[s.user_id].stories.push(s);
     });
+    
     return Object.values(grouped);
   };
 
   const groupedStories = groupStoriesByUser();
-
+  
+   
   const activeGrouped = groupedStories
     .map(group => ({
       ...group,
@@ -107,7 +110,6 @@ const Stories = () => {
         body: form,
       });
       const response = await res.json()
-      console.log(response);
 
       if (response.error) {
         showToast(response.error);
@@ -126,6 +128,8 @@ const Stories = () => {
 
   const openViewer = (group, storyIndex = 0) => {
     const groupIndex = allGroups.findIndex(g => g.user.id === group.user.id);
+    
+    
     if (groupIndex !== -1) {
       setViewStoryIndex({ group: groupIndex, story: storyIndex });
       setTimeLeft(6);
