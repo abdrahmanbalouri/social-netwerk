@@ -102,6 +102,7 @@ func CreatePostGroup(w http.ResponseWriter, r *http.Request) {
 	var imagePath string
 	imageFile, header, err := r.FormFile("image")
 	if err == nil {
+		fmt.Println("INSIDE L IF ")
 		defer imageFile.Close()
 		ext := strings.ToLower(filepath.Ext(header.Filename))
 		allowedExts := map[string]bool{
@@ -131,6 +132,7 @@ func CreatePostGroup(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	} else {
+		fmt.Println("ERROOOOR IS :", err)
 		imagePath = ""
 	}
 
@@ -247,8 +249,7 @@ func GetAllPostsGroup(w http.ResponseWriter, r *http.Request) {
 	GROUP BY 
     gp.id, gp.user_id, gp.title, gp.content, gp.image_path, gp.created_at, 
     u.first_name,u.last_name, u.image
-	ORDER BY gp.created_at DESC;
-`
+	ORDER BY gp.created_at DESC;`
 	rows, err := repository.Db.Query(query, userID, GrpId)
 	if err != nil {
 		fmt.Println("Failed to get posts:", err)
@@ -270,6 +271,7 @@ func GetAllPostsGroup(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Return the posts as a JSON response
+	fmt.Println("FINISHED GET ALL POSTS ________________")
 	helper.RespondWithJSON(w, http.StatusOK, postsJson)
 }
 
