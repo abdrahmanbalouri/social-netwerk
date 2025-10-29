@@ -16,7 +16,7 @@ export default function RightBarGroup({ onClick }) {
     const [activeTab, setActiveTab] = useState("friends");
     const [followRequest, setFollowRequest] = useState([])
     const { sendMessage, addListener, removeListener } = useWS();
-    const [invitations, setInvitations] = useState([]);
+    // const [invitations, setInvitations] = useState([]);
     useEffect(() => {
         const handleOlineUser = (data) => {
             setonlineUsers(data.users)
@@ -60,7 +60,7 @@ export default function RightBarGroup({ onClick }) {
                 throw new Error("Action failed: " + errMsg);
             }
             const data = await res.json();
-            setFollowRequest((prev) => prev.filter((req) => req.invitation_id !== invitaitonId));
+            setFollowRequest((prev) => (prev || []).filter((req) => req.invitation_id !== invitaitonId));
         } catch (err) {
         }
     }
@@ -78,7 +78,7 @@ export default function RightBarGroup({ onClick }) {
                 const data = await res.json();
                 console.log(data);
                 setFollowRequest(data);
-                setInvitations(data)
+                // setInvitations(data)
             } catch (err) {
                 console.error(err);
             }
