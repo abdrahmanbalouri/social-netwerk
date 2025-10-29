@@ -110,6 +110,8 @@
   z-index: 5;
   transition: all 0.2s ease;
 }
+/* Toast Notification */
+
 
 .story-add-btn.add-more:hover {
   background: #0077c5;

@@ -48,7 +48,7 @@ func Getmypost(w http.ResponseWriter, r *http.Request) {
 				p.visibility,
 				p.canseperivite,
 				p.created_at, 
-				u.nickname,
+				u.first_name,u.last_name,
 				u.privacy,
 				u.image AS profile,
 				COUNT(DISTINCT l.id) AS like_count,
@@ -61,7 +61,7 @@ func Getmypost(w http.ResponseWriter, r *http.Request) {
 			WHERE p.user_id = ?
 			GROUP BY 
 				p.id, p.user_id, p.title, p.content, p.image_path, p.visibility,
-				p.canseperivite, p.created_at, u.nickname, u.privacy, u.image
+				p.canseperivite, p.created_at, u.first_name,u.last_name, u.privacy, u.image
 			ORDER BY p.created_at DESC
 			LIMIT ? OFFSET ?;
 		`, authUserID, userId, limit, offset)
@@ -76,7 +76,7 @@ func Getmypost(w http.ResponseWriter, r *http.Request) {
 				p.visibility,
 				p.canseperivite,
 				p.created_at, 
-				u.nickname,
+				u.first_name,u.last_name,
 				u.privacy,
 				u.image AS profile,
 				COUNT(DISTINCT l.id) AS like_count,
@@ -100,7 +100,7 @@ func Getmypost(w http.ResponseWriter, r *http.Request) {
 				)
 			GROUP BY 
 				p.id, p.user_id, p.title, p.content, p.image_path, p.visibility,
-				p.canseperivite, p.created_at, u.nickname, u.privacy, u.image
+				p.canseperivite, p.created_at,u.first_name,u.last_name, u.privacy, u.image
 			ORDER BY p.created_at DESC
 			LIMIT ? OFFSET ?;
 		`, authUserID, userId, authUserID, limit, offset)
@@ -116,14 +116,14 @@ func Getmypost(w http.ResponseWriter, r *http.Request) {
 
 	for rows.Next() {
 		var (
-			id, userID, title, content, visibility, canseperivite, createdAt, privacy, nickname string
+			id, userID, title, content, visibility, canseperivite, createdAt, privacy, first_name , last_name string
 			imagePath, profile                                                                  sql.NullString
 			likeCount, likedByUser, commentsCount                                               int
 		)
 
 		err := rows.Scan(
 			&id, &userID, &title, &content, &imagePath,
-			&visibility, &canseperivite, &createdAt, &nickname, &privacy,
+			&visibility, &canseperivite, &createdAt, &first_name,&last_name, &privacy,
 			&profile, &likeCount, &likedByUser, &commentsCount,
 		)
 		if err != nil {
@@ -141,7 +141,9 @@ func Getmypost(w http.ResponseWriter, r *http.Request) {
 			"canseperivite":  canseperivite,
 			"privacy":        privacy,
 			"created_at":     createdAt,
-			"author":         nickname,
+			"first_name":         first_name,
+			"last_name":         last_name,
+
 			"profile":        nilIfEmpty(profile),
 			"like":           likeCount,
 			"liked_by_user":  likedByUser > 0,
@@ -149,9 +151,8 @@ func Getmypost(w http.ResponseWriter, r *http.Request) {
 		}
 		posts = append(posts, post)
 	}
-
 	if len(posts) == 0 {
-		helper.RespondWithError(w, http.StatusNotFound, "No posts found")
+    helper.RespondWithJSON(w, http.StatusOK, posts)
 		return
 	}
 

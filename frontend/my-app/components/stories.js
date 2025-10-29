@@ -15,9 +15,18 @@ const Stories = () => {
     bgColor: "#000000",
   });
   const [viewStoryIndex, setViewStoryIndex] = useState(null);
-  const [error, setError] = useState(null);
   const [timeLeft, setTimeLeft] = useState(6);
   const intervalId = useRef(null);
+
+  // Toast state
+  const [toast, setToast] = useState(null);
+
+  const showToast = (message, type = "error", duration = 3000) => {
+    setToast({ message, type });
+    setTimeout(() => {
+      setToast(null);
+    }, duration);
+  };
 
   const fetchStories = async () => {
     try {
@@ -25,14 +34,15 @@ const Stories = () => {
         credentials: "include",
       });
 
-      if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
-      const data = await res.json();
-      console.log("Fetched stories:", data);
-
-      setStories(Array.isArray(data) ? data : []);
-    } catch (err) {
-      console.error("Failed to fetch stories:", err);
-      setError("Failed to load stories");
+      const response = await res.json()
+      if (response.error) {
+        //showToast(response.error);
+        return
+      }
+       
+      setStories(Array.isArray(response) ? response : []);
+    } catch (err) {    
+      //showToast("Failed to load stories");
       setStories([]);
     }
   };
@@ -43,7 +53,6 @@ const Stories = () => {
     return () => clearInterval(interval);
   }, []);
 
-  // Group stories by user_id
   const groupStoriesByUser = () => {
     const grouped = {};
     stories.forEach(s => {
@@ -51,7 +60,8 @@ const Stories = () => {
         grouped[s.user_id] = {
           user: {
             id: s.user_id,
-            nickname: s.nickname,
+            first_name: s.first_name,
+            last_name: s.last_name,
             profile: s.profile,
           },
           stories: [],
@@ -59,30 +69,31 @@ const Stories = () => {
       }
       grouped[s.user_id].stories.push(s);
     });
+    
     return Object.values(grouped);
   };
 
   const groupedStories = groupStoriesByUser();
+  
+   
+  const activeGrouped = groupedStories
+    .map(group => ({
+      ...group,
+      stories: group.stories.filter(s => !s.expires_at || new Date(s.expires_at) > new Date()),
+    }))
+    .filter(group => group.stories.length > 0);
 
-  const activeGrouped = groupedStories.map(group => ({
-    ...group,
-    stories: group.stories.filter(s => !s.expires_at || new Date(s.expires_at) > new Date()),
-  })).filter(group => group.stories.length > 0);
-
-  // SIMPLIFICATION: Un seul array pour tout
   const allGroups = [...activeGrouped];
 
-  // Trouver mon groupe
   const myGroup = allGroups.find(g => g.user.id === Profile?.id);
   const hasMyStories = myGroup && myGroup.stories.length > 0;
 
-  // Les autres groupes (sans moi)
   const otherGroups = allGroups.filter(g => g.user.id !== Profile?.id);
 
   const handleCreateStory = async () => {
     try {
       if (!newStory.content && !newStory.imageFile) {
-        setError("Add text or an image");
+        showToast("Add text or an image");
         return;
       }
 
@@ -98,26 +109,27 @@ const Stories = () => {
         credentials: "include",
         body: form,
       });
+      const response = await res.json()
 
-      if (!res.ok) {
-        const errText = await res.text();
-        throw new Error(errText || `HTTP ${res.status}`);
+      if (response.error) {
+        showToast(response.error);
+        return
+
       }
 
       setNewStory({ content: "", imageFile: null, bgColor: "#000000" });
       setShowModal(false);
-      setError(null);
+      showToast("Story created successfully!", "success");
       await fetchStories();
     } catch (err) {
-      console.error(err);
-      setError(err.message || "Failed to create story");
+      showToast(err.message || "Failed to create story");
     }
   };
 
-  // OUVERTURE SIMPLIFIÉE
   const openViewer = (group, storyIndex = 0) => {
-    // Trouver l'index du groupe dans allGroups
     const groupIndex = allGroups.findIndex(g => g.user.id === group.user.id);
+    
+    
     if (groupIndex !== -1) {
       setViewStoryIndex({ group: groupIndex, story: storyIndex });
       setTimeLeft(6);
@@ -185,7 +197,6 @@ const Stories = () => {
     }
   };
 
-  // NAVIGATION
   const handlePrevious = (e) => {
     e.stopPropagation();
     goToPreviousStory();
@@ -195,6 +206,7 @@ const Stories = () => {
     e.stopPropagation();
     goToNextStory();
   };
+
   useEffect(() => {
     if (!viewStoryIndex) {
       if (intervalId.current) {
@@ -220,7 +232,6 @@ const Stories = () => {
   const currentGroup = currentGroupIdx !== null ? allGroups[currentGroupIdx] : null;
   const currentStory = currentGroup && currentStoryIdx !== null ? currentGroup.stories[currentStoryIdx] : null;
 
-  // For segmented progress - Instagram style (per story group)
   const getCurrentGroupSegments = () => {
     return currentGroup ? currentGroup.stories.length : 0;
   };
@@ -228,33 +239,31 @@ const Stories = () => {
   const totalSegments = getCurrentGroupSegments();
   const currentSegment = currentStoryIdx;
 
-  // Calculer la largeur de la barre de progression
-  const getCurrentProgressWidth = () => {
-    return ((6 - timeLeft) / 6) * 100;
-  };
-
-  const currentProgressWidth = getCurrentProgressWidth();
-
-  // Check if we can go next/prev
   const canGoNext = () => {
     if (!viewStoryIndex) return false;
     const { group: gIdx, story: sIdx } = viewStoryIndex;
     const currentGroup = allGroups[gIdx];
-
     return (sIdx + 1 < currentGroup.stories.length) || (gIdx + 1 < allGroups.length);
   };
 
   const canGoPrev = () => {
     if (!viewStoryIndex) return false;
     const { group: gIdx, story: sIdx } = viewStoryIndex;
-
     return (sIdx > 0) || (gIdx > 0);
   };
 
   return (
     <div className="story-bar">
-      {error && <div className="story-error">{error}</div>}
-      {/* "Your Story" - TOUJOURS VISIBLE avec le bouton + */}
+
+      {/* Toast Notification */}
+      {toast && (
+        <div className={`toast ${toast.type}`}>
+          <span>{toast.message}</span>
+          <button onClick={() => setToast(null)} className="toast-close">×</button>
+        </div>
+      )}
+
+      {/* "Your Story" */}
       {Profile && (
         <div
           className={`story-item my-story ${hasMyStories ? 'has-story' : ''}`}
@@ -273,12 +282,10 @@ const Stories = () => {
           </div>
           <span className="story-label">Your Story</span>
 
-          {/* BOUTON + TOUJOURS VISIBLE pour créer des stories */}
           <button
             className="story-add-btn add-more"
             onClick={(e) => {
               e.stopPropagation();
-              setShowModal(true); e.stopPropagation();
               setShowModal(true);
             }}
           >
@@ -287,8 +294,8 @@ const Stories = () => {
         </div>
       )}
 
-      {/* Afficher les stories des autres utilisateurs - SIMPLE */}
-      {otherGroups.map((group, index) => (
+      {/* Other Users' Stories */}
+      {otherGroups.map((group) => (
         <div
           key={group.user.id}
           className="story-item"
@@ -297,11 +304,13 @@ const Stories = () => {
           <div className="story-image-wrapper">
             <img
               src={group?.user?.profile ? `/uploads/${group.user.profile}` : "/assets/default.png"}
-              alt={group.user.nickname}
+              alt={group.user.first_name}
               className="profile-img"
             />
           </div>
-          <span className="story-label">{group.user.nickname}</span>
+          <span className="story-label">
+            {group.user.first_name} {group.user.last_name}
+          </span>
         </div>
       ))}
 
@@ -355,10 +364,8 @@ const Stories = () => {
               <button onClick={() => {
                 setShowModal(false);
                 setNewStory({ content: "", imageFile: null, bgColor: "#000000" });
-                setError(null);
               }}>Cancel</button>
             </div>
-            {error && <div className="story-error" style={{ marginTop: '10px' }}>{error}</div>}
           </div>
         </div>
       )}
@@ -366,11 +373,8 @@ const Stories = () => {
       {/* Story Viewer */}
       {currentStory && (
         <div className="story-view-overlay" onClick={closeViewer}>
-          <div
-            className="story-view-container"
-            onClick={e => e.stopPropagation()}
-          >
-            {/* Progress Bars - Instagram Style */}
+          <div className="story-view-container" onClick={e => e.stopPropagation()}>
+            {/* Progress Bars */}
             <div className="stories-progress-container">
               {Array.from({ length: totalSegments }).map((_, segIdx) => {
                 const isCompleted = segIdx < currentSegment;
@@ -383,7 +387,7 @@ const Stories = () => {
 
                 return (
                   <div
-                    key={`${currentGroupIdx}-${segIdx}`} 
+                    key={`${currentGroupIdx}-${segIdx}`}
                     className={`story-segment-bar ${isCompleted ? "completed" : ""} ${isActive ? "active" : ""}`}
                   >
                     <div
@@ -397,30 +401,31 @@ const Stories = () => {
                 );
               })}
             </div>
-            {/* User Info Overlay - Instagram Style */}
+
+            {/* User Info */}
             <div className="story-user-info">
               <img
                 src={currentGroup.user.profile ? `/uploads/${currentGroup.user.profile}` : "/avatar.png"}
-                alt={currentGroup.user.nickname}
+                alt={currentGroup.user.first_name}
                 className="story-user-avatar"
               />
-              <span className="story-user-name">{currentGroup.user.nickname}</span>
+              <span className="story-user-name">
+                {currentGroup.user.first_name} {currentGroup.user.last_name}
+              </span>
               <span className="story-time">
                 {new Date(currentStory.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
               </span>
             </div>
 
-            {/* Timer Display */}
-            <div className="story-timer-text">
-              {timeLeft}s
-            </div>
+            {/* Timer */}
+            <div className="story-timer-text">{timeLeft}s</div>
 
-            {/* Story Content - CENTERED IMAGE LIKE INSTAGRAM */}
+            {/* Story Content */}
             {currentStory.image_url ? (
               <div className="story-content-container">
                 <img
                   src={currentStory.image_url}
-                  alt="Story cover"
+                  alt="Story"
                   className="story-centered-image"
                 />
               </div>
@@ -438,24 +443,21 @@ const Stories = () => {
               </div>
             )}
 
-            {/* Navigation Buttons - Like Instagram */}
+            {/* Navigation */}
             {canGoPrev() && (
               <button className="story-nav-btn story-prev-btn" onClick={handlePrevious}>
                 ‹
               </button>
             )}
-
             {canGoNext() && (
               <button className="story-nav-btn story-next-btn" onClick={handleNext}>
                 ›
               </button>
             )}
 
-            {/* Navigation Tap Zones (keep for mobile) */}
             <div className="tap-left" onClick={handlePrevious} />
             <div className="tap-right" onClick={handleNext} />
 
-            {/* Close Button */}
             <button className="story-close-btn" onClick={closeViewer}>×</button>
           </div>
         </div>
