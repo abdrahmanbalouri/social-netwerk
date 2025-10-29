@@ -25,15 +25,15 @@ export function CreatePostForm({ onSubmit, onCancel }) {
   };
 
   return (
-    <div className="modal-overlay">
-      <div className="modal-content">
-        <div className="modal-header">
-          <h1 className="modal-title">Create a New Post</h1>
+    <div className="group-modal-overlay">
+      <div className="group-modal-content">
+        <div className="group-modal-header">
+          <h1 className="group-modal-title">Create a New Post</h1>
         </div>
 
         <form onSubmit={handleSubmit}>
           {/* post Title */}
-          <div className="modal-form">
+          <div className="group-modal-form">
             <div className="form-group">
               <label htmlFor="postTitle" className="form-label">
                 Post Title
@@ -66,7 +66,7 @@ export function CreatePostForm({ onSubmit, onCancel }) {
             </div>
           </div>
           {/* Submit Button */}
-          <div className="modal-actions">
+          <div className="group-modal-actions">
             <button type="button" className="cancel-button" onClick={onCancel}>
               Cancel
             </button>
