@@ -69,7 +69,7 @@ export default function UserBar() {
                                             alt="user avatar"
                                         />
                                         <div className={onlineUsers.includes(user.id) ? "online" : "offline"} />
-                                        <span>{user.nickname}</span>
+                                        <span>{user.first_name +" " + user.last_name}</span>
                                     </div>
                                 </Link>
                             </div>

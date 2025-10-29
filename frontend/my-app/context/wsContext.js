@@ -21,7 +21,6 @@ export function WSProvider({ children }) {
   useEffect(() => {
     function connect() {
       if (ws.current) {
-        console.log("Closing old WebSocket");
         ws.current.close();
       }
 
@@ -29,7 +28,6 @@ export function WSProvider({ children }) {
       ws.current = socket;
 
       socket.onopen = () => {
-        console.log("✅ WebSocket connected");
         setConnected(true);
       };
 
@@ -47,7 +45,6 @@ export function WSProvider({ children }) {
           const data = JSON.parse(event.data);
           console.log("📩 Received:", data);
           // 🔥 Trigger any custom listeners
-          console.log("listeenenn-------", listeners.current);
           if (listeners.current[data.type]) {
 
             listeners.current[data.type].forEach((cb) => cb(data));

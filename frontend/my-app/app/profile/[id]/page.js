@@ -45,6 +45,16 @@ export default function Profile() {
   const boleanofset = useRef(false)
   const postRefs = useRef({});
   const [showPrivacy, setShowPrivacy] = useState(false);
+  const [toast, setToast] = useState(null);
+
+  const showToast = (message, type = "error", duration = 3000) => {
+    console.log(8889898);
+
+    setToast({ message, type });
+    setTimeout(() => {
+      setToast(null);
+    }, duration);
+  };
   // Authentication check
   useEffect(() => {
     const checkAuth = async () => {
@@ -70,7 +80,7 @@ export default function Profile() {
       );
       if (res.ok) {
         const json = await res.json();
-        console.log("khoya", json);
+        console.log("profile daaaataa", json);
 
 
         setProfile(json);
@@ -85,7 +95,7 @@ export default function Profile() {
     loadProfile();
 
   }, []);
-  console.log("ededed", theprofile);
+
 
 
   async function followUser() {
@@ -105,9 +115,11 @@ export default function Profile() {
         let followw = await res.json();
 
 
+        console.log("folllllow data ", followw);
 
         setProfile((prevProfile) => ({
           ...prevProfile,
+          privacy: followw.privacy,
           followers: followw.followers,
           following: followw.following,
           isFollowing: followw.isFollowed,
@@ -179,23 +191,22 @@ export default function Profile() {
     );
   }
   useEffect(() => {
-    if (!modalRefhome.current) return;
-
-    const modal = modalRefhome.current;
+    console.log(scroollhome, "-----++++----++++---++++--+++");
 
     const reachedBottom =
-      modal.scrollHeight > modal.clientHeight + 10 &&
-      modal.scrollTop + modal.clientHeight >= modal.scrollHeight - 50;
+      window.innerHeight + window.scrollY >= document.body.scrollHeight - 20;
+
+    console.log(reachedBottom);
 
     async function handlescrollhome() {
       let b = await fetchingposts();
       if (b) {
-        scrollToPost(b)
+        scrollToPost(b);
       }
-
     }
+
     if (reachedBottom && !loading) {
-      handlescrollhome()
+      handlescrollhome();
     }
   }, [scroollhome]);
 
@@ -234,23 +245,33 @@ export default function Profile() {
         method: "POST",
         credentials: "include",
       });
-      // const response = await res.json();
-      if (res.ok) {
+      const response = await res.json();
+      if (response.error) {
+        if (response.error == "Unauthorized") {
+          router.push("/login");
+          //sendMessage({ type: "logout" })
+          return
+        } else {
+          showToast(response.error)
+          return
+        }
 
-        const newpost = await fetchPosts(postId)
-        for (let i = 0; i < posts.length; i++) {
-          if (posts[i].id == newpost.id) {
+      }
+
+      const newpost = await fetchPosts(postId)
+      for (let i = 0; i < posts.length; i++) {
+        if (posts[i].id == newpost.id) {
 
 
-            setPosts([
-              ...posts.slice(0, i),
-              newpost,
-              ...posts.slice(i + 1)
-            ]);
-            break
-          }
+          setPosts([
+            ...posts.slice(0, i),
+            newpost,
+            ...posts.slice(i + 1)
+          ]);
+          break
         }
       }
+
     } catch (err) {
       console.error("Error liking post:", err);
     }
@@ -272,13 +293,14 @@ export default function Profile() {
       }
 
       const data = await res.json();
+      console.log(data);
 
-      if (data.length !== 0) {
+
+      if (data) {
         offsetpsot.current += 10
       } else {
         return false
       }
-      console.log(data.length);
 
       setPosts([...posts, ...data]);
       return data[0].id
@@ -302,9 +324,8 @@ export default function Profile() {
       }
 
       const data = await res.json();
+      if (!data) return
 
-
-      if (data.length == 0) return
       setPosts([...data]);
       return true
     } catch (err) {
@@ -342,13 +363,18 @@ export default function Profile() {
         body: formData,
       });
 
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error("Create post error:", errorText);
-        throw new Error('Failed to create post');
-      }
+       const res = await response.json();
+      if (res.error) {
+        if (res.error == "Unauthorized"){
+        router.push("/login");
+        //sendMessage({ type: "logout" })
+        return 
+        }else{
+          showToast(res.error)
+          return
+        }
 
-      const res = await response.json();
+      }
 
 
       // Fetch the newly created post
@@ -398,7 +424,6 @@ export default function Profile() {
 
   async function GetComments(post) {
     setLoadingcomment(true)
-    console.log(post, "--------------------------++++++++++++++++++++");
 
     try {
       setSelectedPost({
@@ -406,7 +431,7 @@ export default function Profile() {
         title: post.title || post.post_title || "Post",
         image_path: post.image_path,
         content: post.content,
-        author: post.author
+        author: post.first_name + " " + post.last_name
       });
 
       // Fetch comments
@@ -429,7 +454,7 @@ export default function Profile() {
       }
       comments = comments.map(comment => ({
         id: comment.id || Math.random(),
-        author: comment.author || comment.username || "Anonymous",
+        author: comment.first_name + " " + comment.last_name || "Anonymous",
         content: comment.content || comment.text || "",
         created_at: comment.created_at || comment.createdAt || new Date().toISOString()
       }));
@@ -511,6 +536,15 @@ export default function Profile() {
     setSelectedPost(null);
     setComment([]);
   }
+  useEffect(() => {
+    const handleScroll = () => {
+      setscroolHome(window.scrollY);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   // Loading state
   if (loading && posts.length === 0) {
@@ -583,17 +617,21 @@ export default function Profile() {
       <Navbar
         onToggleSidebar={() => setShowSidebar(!showSidebar)}
       />
+      {toast && (
+        <div className={`toast ${toast.type}`}>
+          <span>{toast.message}</span>
+          <button onClick={() => setToast(null)} className="toast-close">×</button>
+        </div>
+      )}
 
       <main className="content">
         <LeftBar showSidebar={showSidebar} />
 
-        <div className="main-section"
-          onScroll={(e) => {
-            setscroolHome(e.target.scrollTop)
-            console.log(scroollhome);
-
-          }}
-          ref={modalRefhome}>
+        <div
+          className="main-section"
+          onScroll={(e) => setscroolHome(window.scrollY)}
+          ref={modalRefhome}
+        >
           {/* ===== Profile Section ===== */}
           <div className="profile">
             <div className="images">
@@ -620,7 +658,7 @@ export default function Profile() {
             <div className="profileContainer">
               <div className="uInfo">
                 <div className="center">
-                  <div className="comb"><h1 className="nickname">{theprofile.nickname}</h1><h1 className="privacy">{theprofile.privacy}</h1></div>
+                  <div className="comb"><h1 className="nickname">{theprofile.first_name + " " + theprofile.last_name}</h1><h1 className="privacy">{theprofile.privacy}</h1></div>
                   {Profile && Profile.id !== theprofile.id && !theprofile.isFollowing && theprofile.privacy === "private" ? (
                     <div className="left">
                       <p className='disabled'>
@@ -814,7 +852,7 @@ export default function Profile() {
                             alt={follower.nickname}
                             className="image-avatar"
                           />
-                          <span>{follower.nickname}</span>
+                          <span>{follower.first_name + " " + follower.last_name}</span>
                           <input
                             type="checkbox"
                             checked={selectedUsers.includes(follower.id)}
@@ -862,6 +900,7 @@ export default function Profile() {
             lodinggg={loadingcomment}
             ongetcomment={GetComments}
             post={selectedPost}
+            showToast={showToast}
           />
         )
       }

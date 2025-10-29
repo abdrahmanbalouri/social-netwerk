@@ -84,7 +84,7 @@ export function CreatePostForm({ onSubmit, onCancel }) {
   );
 }
 
-export function PostCreationTrigger() {
+export function PostCreationTrigger({ setPost }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { id } = useParams();
 
@@ -98,8 +98,16 @@ export function PostCreationTrigger() {
   };
   const handleSubmit = async (formData) => {
     try {
-      await CreatePost(id, formData);
+      const newpost = await CreatePost(id, formData);
       setIsModalOpen(false);
+      // setShowForm(false)
+      setPost((prev) => {
+        console.log("posts before are :", prev);
+        const exists = prev.some((p) => p.id === newpost.id);
+        const temp = [newpost, ...prev];
+        console.log("posts after are :", temp);
+        return exists ? prev : [newpost, ...prev];
+      });
     } catch (err) {
       console.error("Error creating post:", err);
     }
