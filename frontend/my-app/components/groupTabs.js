@@ -6,7 +6,7 @@ import { Globe, Users } from "lucide-react";
 export function GroupsTabs() {
   const [activeTab, setActiveTab] = useState("myGroups");
   return (
-    <div className="container">
+    <div className="group-container">
       <div className="max-width-wrapper">
         {/* Header Tabs */}
         <div className="tabs-container">
