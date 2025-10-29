@@ -61,7 +61,6 @@ WHERE u.id = ?;
 	for rows.Next() {
 		var  profilePicture, idU , first_name , last_name string
 		if err := rows.Scan(&idU, &first_name , &last_name, &profilePicture); err != nil {
-			fmt.Println("hna 4")
 			http.Error(w, "Database error: "+err.Error(), http.StatusInternalServerError)
 			return
 		}

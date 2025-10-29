@@ -47,8 +47,8 @@ WHERE u.id = ?;
 
 	var user struct {
 		ID          string
-		first_name    string
-		last_name    string
+		first_name  string
+		last_name   string
 		Email       string
 		About       string
 		Privacy     string
@@ -60,7 +60,7 @@ WHERE u.id = ?;
 	err = row.Scan(
 		&user.ID,
 		&user.first_name,
-		&user.last_name ,
+		&user.last_name,
 		&user.Email,
 		&user.About,
 		&user.Privacy,
@@ -95,9 +95,8 @@ WHERE u.id = ?;
 
 	profileData := map[string]interface{}{
 		"id":          user.ID,
-		"first_name":    user.first_name,
-		"last_name":    user.last_name,
-
+		"first_name":  user.first_name,
+		"last_name":   user.last_name,
 		"email":       user.Email,
 		"about":       user.About,
 		"privacy":     user.Privacy,
@@ -108,6 +107,5 @@ WHERE u.id = ?;
 		"following":   following,
 		"followers":   followers,
 	}
-
 	helper.RespondWithJSON(w, http.StatusOK, profileData)
 }

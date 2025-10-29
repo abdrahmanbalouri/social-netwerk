@@ -67,7 +67,6 @@ func Getlastcommnet(w http.ResponseWriter, r *http.Request) {
 		helper.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
-	fmt.Println(comment.MediaPath)
 
 	helper.RespondWithJSON(w, http.StatusOK, comment)
 }
