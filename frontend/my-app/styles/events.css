@@ -203,6 +203,331 @@
   
   .create-event-card,
   .event-card {
+
+  /* Dark mode support: when the root has .theme-dark, prefer darker backgrounds and adjusted colors */
+  .theme-dark .events-container,
+  .theme-dark .create-event-card,
+  .theme-dark .event-card,
+  .theme-dark .events-list,
+  .theme-dark .events-container .card-title {
+    background: transparent;
+  }
+
+  .theme-dark .events-container {
+    padding: 20px;
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
+  .theme-dark .create-event-card {
+    background: #191919;
+    color: #eaeaea;
+    border-color: #222;
+    box-shadow: 0 6px 30px rgba(0,0,0,0.6);
+  }
+
+  .theme-dark .card-title {
+    color: #fff;
+  }
+
+  .theme-dark .form-group input,
+  .theme-dark .form-group textarea {
+    background: #0f0f0f;
+    border: 1px solid #2b2b2b;
+    color: #e6e6e6;
+  }
+
+  .theme-dark .form-group label,
+  .theme-dark .event-description,
+  .theme-dark .event-datetime,
+  .theme-dark .stat-going,
+  .theme-dark .stat-not-going {
+    color: #bdbdbd;
+  }
+
+  .theme-dark .event-card {
+    background: #121212;
+    color: #e6e6e6;
+    box-shadow: 0 6px 24px rgba(0,0,0,0.65);
+  }
+
+  .theme-dark .btn-create,
+  .theme-dark .Showbutton {
+    background: #6f5be6;
+  }
+
+  .theme-dark .btn-going {
+    background: #213221;
+    color: #8be98b;
+    border-color: #2f5a2f;
+  }
+
+  .theme-dark .btn-not-going {
+    background: #3a2424;
+    color: #f19b9b;
+    border-color: #5a3a3a;
+  }
+
+  .theme-dark .privacy-overlay {
+    background: rgba(0,0,0,0.85);
+    backdrop-filter: blur(6px);
+  }
+
+  .theme-dark .backLayer {
+    background: rgba(0,0,0,0.6);
+  }
+  }
+  
+  .event-header {
+    flex-direction: column;
+  }
+  
+  .event-datetime {
+    align-self: flex-start;
+  }
+}
+
+/* Privacy Overlay - Modal Background */
+.privacy-overlay {
+  width: 100vw;
+  height: 100vh;
+  position: fixed;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  inset: 0;
+}
+
+.backLayer {
+  width: 100vw;
+  height: 100vh;
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+}
+
+/* Events Container - Modal Content */
+.events-container {
+  position: relative;
+  z-index: 2;
+  padding: 0;
+  max-width: 500px;
+  width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+/* Create Event Card */
+.create-event-card {
+  background: #2a2a2a;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+  margin: 0;
+}
+
+.card-title {
+  color: #fff;
+  font-size: 20px;
+  font-weight: 600;
+  margin: 0 0 20px 0;
+}
+
+/* Form Styles */
+.event-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-group label {
+  color: #b0b0b0;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.form-group input,
+.form-group textarea {
+  background: #1a1a1a;
+  border: 1px solid #3a3a3a;
+  border-radius: 8px;
+  padding: 12px;
+  color: #fff;
+  font-size: 14px;
+  font-family: inherit;
+  transition: border-color 0.2s;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: #7c6bea;
+}
+
+.form-group textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+.form-group input::placeholder,
+.form-group textarea::placeholder {
+  color: #666;
+}
+
+.btn-create {
+  background: #7c6bea;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 24px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+  margin-top: 8px;
+}
+
+.btn-create:hover {
+  background: #6b5ad6;
+}
+
+/* Events List */
+.events-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 20px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+/* Event Card */
+.event-card {
+  background: #2a2a2a;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  transition: transform 0.2s;
+}
+
+.event-card:hover {
+  transform: translateY(-2px);
+}
+
+.event-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 12px;
+  gap: 12px;
+}
+
+.event-title {
+  color: #fff;
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0;
+  flex: 1;
+}
+
+.event-datetime {
+  color: #7c6bea;
+  font-size: 13px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.event-description {
+  color: #b0b0b0;
+  font-size: 14px;
+  line-height: 1.5;
+  margin: 0 0 16px 0;
+}
+
+/* Event Actions */
+.event-actions {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.btn-going,
+.btn-not-going {
+  flex: 1;
+  padding: 10px;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-going {
+  background: #2d3a2d;
+  color: #6fcf6f;
+  border: 1px solid #4a6b4a;
+}
+
+.btn-going:hover {
+  background: #3a4a3a;
+}
+
+.btn-not-going {
+  background: #3a2d2d;
+  color: #e87d7d;
+  border: 1px solid #6b4a4a;
+}
+
+.btn-not-going:hover {
+  background: #4a3a3a;
+}
+
+/* Event Stats */
+.event-stats {
+  display: flex;
+  gap: 16px;
+  padding-top: 12px;
+  border-top: 1px solid #3a3a3a;
+}
+
+.stat-going,
+.stat-not-going {
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.stat-going {
+  color: #6fcf6f;
+}
+
+.stat-not-going {
+  color: #e87d7d;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .events-container {
+    width: 95%;
+  }
+  
+  .create-event-card {
+    padding: 20px;
+  }
+  
+  .events-list {
+    padding: 16px;
+  }
+  
+  .event-card {
     padding: 16px;
   }
   
@@ -213,4 +538,38 @@
   .event-datetime {
     align-self: flex-start;
   }
+}
+
+
+.Showbutton {
+  background: #7c6bea;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 24px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 20px auto;
+  box-shadow: 0 2px 8px rgba(124, 107, 234, 0.3);
+}
+
+.Showbutton:hover {
+  background: #6b5ad6;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(124, 107, 234, 0.4);
+}
+
+.Showbutton:active {
+  transform: translateY(0);
+}
+
+/* If you want to add an icon before the text */
+.Showbutton::before {
+  content: "📅";
+  font-size: 16px;
 }
