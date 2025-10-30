@@ -107,6 +107,7 @@
   transition: all 0.3s ease;
   position: relative;
   outline: none;
+  
 }
 
 
@@ -173,4 +174,12 @@
     width: 10px;
     height: 10px;
   }
+}
+
+
+.activeButt{
+   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+  transform: translateY(-1px);
 }
