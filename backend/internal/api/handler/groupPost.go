@@ -32,9 +32,8 @@ type Post struct {
 	Content      string    `json:"content"`
 	ImagePath    string    `json:"image_path"`
 	CreatedAt    time.Time `json:"created_at"`
-	Author       string    `json:"author"`
-	FirstName    string    `json:"first_name`
-	LastName     string    `json:"last_name`
+	FirstName    string    `json:"first_name"`
+	LastName     string    `json:"last_name"`
 	Profile      string    `json:"profile"`
 	Like         int       `json:"likeCount"`
 	LikedByUSer  int       `json:"liked_by_user"`
@@ -312,7 +311,7 @@ func GetPostGroup(w http.ResponseWriter, r *http.Request) {
     gp.content, 
     gp.image_path, 
     gp.created_at, 
-    u.nickname,
+    u.first_name,u.last_name,
     u.image AS profile,
     COUNT(DISTINCT l.id) AS like_count,
     COUNT(DISTINCT CASE WHEN l.user_id = ? THEN l.id END) AS liked_by_user,
@@ -337,7 +336,7 @@ func GetPostGroup(w http.ResponseWriter, r *http.Request) {
 	defer rows.Close()
 
 	var p Post
-	err = rows.Scan(&p.ID, &p.UserID, &p.Title, &p.Content, &p.ImagePath, &p.CreatedAt, &p.Author, &p.Profile, &p.Like, &p.LikedByUSer, &p.CommentCount)
+	err = rows.Scan(&p.ID, &p.UserID, &p.Title, &p.Content, &p.ImagePath, &p.CreatedAt, &p.FirstName, &p.LastName, &p.Profile, &p.Like, &p.LikedByUSer, &p.CommentCount)
 	if err != nil {
 		fmt.Println("heeeeeeeeeere :", err)
 		helper.RespondWithError(w, http.StatusInternalServerError, "Failed to scan posts")
