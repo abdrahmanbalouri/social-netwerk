@@ -1,7 +1,6 @@
 package api
 
 import (
-	"fmt"
 	"net/http"
 
 	handlers "social-network/internal/api/handler"
@@ -18,8 +17,6 @@ func Routes() http.Handler {
 	mux.HandleFunc("/api/followers/", handlers.FollowersHandler)
 	mux.HandleFunc("/api/followRequest", handlers.FollowRequest)
 	mux.HandleFunc("/api/groupeInvitation", handlers.GroupeInvitation)
-	fmt.Println("22")
-
 	mux.HandleFunc("/api/followRequest/action", handlers.FollowRequestAction)
 	mux.HandleFunc("/api/following/", handlers.FollowingHandler)
 	mux.HandleFunc("/api/register", handlers.RegisterHandler)
@@ -37,7 +34,7 @@ func Routes() http.Handler {
 	mux.HandleFunc("/api/gallery", handlers.GalleryHandler)
 	mux.HandleFunc("/api/createcomment", handlers.CreateCommentHandler)
 	mux.HandleFunc("/api/editor", handlers.Editor)
-	mux.HandleFunc("/api/like/{id}", handlers.LikeHandler)
+	mux.HandleFunc("/api/like/{id}/{groupId}", handlers.LikeHandler)
 	mux.HandleFunc("/api/follow", handlers.FollowHandler)
 	mux.HandleFunc("/api/users/followers", handlers.Getfollowers)
 	mux.HandleFunc("/api/getlastcomment/{id}", handlers.Getlastcommnet)
@@ -50,16 +47,16 @@ func Routes() http.Handler {
 	mux.HandleFunc("/api/clearNotifications", handlers.ClearNotifications)
 	mux.HandleFunc("/myGroups", handlers.GetMyGroups)
 	mux.HandleFunc("/groups", handlers.GetAllGroups)
-	mux.HandleFunc("/group/like", handlers.LikesGroup)
-	mux.HandleFunc("/group/fetchComments/{id}", handlers.GetCommentGroup)
+	//mux.HandleFunc("/group/like", handlers.LikesGroup)
 	mux.HandleFunc("/api/groups/add", handlers.CreateGroupHandler)
 	mux.HandleFunc("/invitations/respond", handlers.GroupInvitationResponse)
 	mux.HandleFunc("/group/invitation/{id}", handlers.GroupInvitationRequest)
 	mux.HandleFunc("/group/addPost/{id}", handlers.CreatePostGroup)
 	mux.HandleFunc("/group/fetchPosts/{id}", handlers.GetAllPostsGroup)
 	mux.HandleFunc("/group/fetchPost/{id}", handlers.GetPostGroup)
-	mux.HandleFunc("/group/addComment", handlers.CreateCommentGroup)
-    mux.HandleFunc("/group/updatepost/{id}", handlers.GetGroupPostByID)
+	mux.HandleFunc("/group/updatepost/{id}/{groupId}", handlers.GetGroupPostByID)
+	mux.HandleFunc("/group/Getcomments/{id}/{offset}/{groupId}", handlers.GetCommentsGroup)
+	 mux.HandleFunc("/group/getlastcomment/{id}/{groupId}", handlers.GetlastcommnetGroup)
 
 	mux.HandleFunc("/api/videos", handlers.GetVedioHandler)
 
