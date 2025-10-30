@@ -6,7 +6,7 @@ import Navbar from "../../../components/Navbar.js";
 import LeftBar from "../../../components/LeftBar.js";
 import RightBar from "../../../components/RightBar.js";
 import { useDarkMode } from "../../../context/darkMod.js";
-import "./follow.css";
+import "../../../styles/follow.css";
 import { middleware } from "../../../middleware/middelware.js";
 import { useWS } from "../../../context/wsContext.js";
 
@@ -47,7 +47,7 @@ export default function FollowPage() {
 
 
         if (res.ok) {
-          
+
           const data = await res.json();
           tab === "followers" ? setFollowers(data) : setFollowing(data);
         }
@@ -71,19 +71,17 @@ export default function FollowPage() {
           <div className="tabButtons">
             <button
               onClick={() => handleTabChange("followers")}
-              style={{
-                backgroundColor: tab === "followers" ? "blue" : "var(--bg)",
-                color: tab === "followers" ? "var(--textColor)" : "var(--textColor)",
-              }}
+              className={
+                tab === "followers" ? "activeButt" : ""
+              }
             >
               Followers
             </button>
             <button
               onClick={() => handleTabChange("following")}
-              style={{
-                backgroundColor: tab === "following" ? "blue" : "var(--bg)",
-                color: tab === "following" ? "var(--textColor)" : "var(--textColor)",
-              }}
+              className={
+                tab === "following" ? "activeButt" : ""
+              }
             >
               Following
             </button>
@@ -98,7 +96,7 @@ export default function FollowPage() {
 
                     <div className="onlin" />
                     <Link href={`/profile/${user.id}`} >
-                      <span>{user.first_name +" "+user.last_name}</span>
+                      <span>{user.first_name + " " + user.last_name}</span>
                     </Link>
                   </div>
                 </div>
@@ -113,7 +111,7 @@ export default function FollowPage() {
 
                       <div className="onlin" />
                       <Link href={`/profile/${user.id}`} >
-                        <span>{user.first_name +" "+user.last_name}</span>
+                        <span>{user.first_name + " " + user.last_name}</span>
                       </Link>
                     </div>
                   </div>
