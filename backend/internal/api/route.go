@@ -1,6 +1,7 @@
 package api
 
 import (
+	"fmt"
 	"net/http"
 
 	handlers "social-network/internal/api/handler"
@@ -17,6 +18,7 @@ func Routes() http.Handler {
 	mux.HandleFunc("/api/followers/", handlers.FollowersHandler)
 	mux.HandleFunc("/api/followRequest", handlers.FollowRequest)
 	mux.HandleFunc("/api/groupeInvitation", handlers.GroupeInvitation)
+	fmt.Println("22")
 
 	mux.HandleFunc("/api/followRequest/action", handlers.FollowRequestAction)
 	mux.HandleFunc("/api/following/", handlers.FollowingHandler)
