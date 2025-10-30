@@ -35,7 +35,7 @@ type Post struct {
 	FirstName    string    `json:"first_name"`
 	LastName     string    `json:"last_name"`
 	Profile      string    `json:"profile"`
-	Like         int       `json:"likeCount"`
+	Like         int       `json:"like"`
 	LikedByUSer  int       `json:"liked_by_user"`
 	CommentCount int       `json:"comment_count"`
 }
@@ -152,7 +152,8 @@ func CreatePostGroup(w http.ResponseWriter, r *http.Request) {
 		Content       string    `json:"content"`
 		ImagePath     string    `json:"image_path"`
 		CreatedAt     time.Time `json:"created_at"`
-		Nickname      string    `json:"nickname"`
+		Last_name      string    `json:"last_name"`
+		First_name     string    `json:"first_name"`
 		Profile       string    `json:"profile"`
 		LikeCount     int       `json:"like_count"`
 		LikedByUser   int       `json:"liked_by_user"`
@@ -162,7 +163,7 @@ func CreatePostGroup(w http.ResponseWriter, r *http.Request) {
 	queryNewPost := `
 	SELECT  
 	gp.id, gp.user_id, gp.title, gp.content, gp.image_path, gp.created_at, 
-	u.nickname, u.image AS profile, 
+	   u.first_name,u.last_name, u.image AS profile, 
 	COUNT(DISTINCT l.id) AS like_count, 
 	COUNT(DISTINCT CASE WHEN l.user_id = ? THEN l.id END) AS liked_by_user, 
 	COUNT(DISTINCT c.id) AS comments_count 
@@ -177,7 +178,7 @@ func CreatePostGroup(w http.ResponseWriter, r *http.Request) {
 
 	err = repository.Db.QueryRow(queryNewPost, userID, postID).Scan(
 		&newPost.ID, &newPost.UserID, &newPost.Title, &newPost.Content, &newPost.ImagePath,
-		&newPost.CreatedAt, &newPost.Nickname, &newPost.Profile,
+		&newPost.CreatedAt, &newPost.Last_name,&newPost.First_name, &newPost.Profile,
 		&newPost.LikeCount, &newPost.LikedByUser, &newPost.CommentsCount,
 	)
 	if err != nil {
@@ -281,7 +282,6 @@ func GetPostGroup(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	GrpId := parts[3]
-
 	// Get user ID
 	userID, err := helper.AuthenticateUser(r)
 	if err != nil {
