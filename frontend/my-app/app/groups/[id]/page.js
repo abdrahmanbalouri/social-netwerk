@@ -9,7 +9,7 @@ import { PostCreationTrigger } from "../../../components/cretaePostGroup.js";
 import LeftBar from "../../../components/LeftBar.js";
 import RightBarGroup from "../../../components/RightBarGroups.js";
 import { useDarkMode } from "../../../context/darkMod.js";
-import { FileText } from "lucide-react";
+import { FileText, MessageCircle } from "lucide-react";
 // import {CreatePost} from ""
 
 export default function () {
@@ -119,65 +119,65 @@ export function AllPosts() {
   );
 }
 export function LastPost() {
-    const [posts, setPosts] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const params = useParams();
-    const grpID = params.id;
+  const [posts, setPosts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const params = useParams();
+  const grpID = params.id;
 
-    useEffect(() => {
-        if (!grpID) {
-            setLoading(false);
-            return;
-        }
-
-        fetch(`http://localhost:8080/group/fetchPost/${grpID}`, {
-            method: 'GET',
-            credentials: 'include',
-        })
-            .then(res => {
-                if (!res.ok) throw new Error('Failed to fetch last post');
-                return res.json();
-            })
-            .then(data => {
-                setPosts(data);
-                setLoading(false);
-            })
-            .catch(error => {
-                console.error("Failed to fetch last post:", error);
-                setLoading(false);
-            });
-    }, [grpID]);
-
-    if (loading) {
-        return <div>Loading...</div>;
+  useEffect(() => {
+    if (!grpID) {
+      setLoading(false);
+      return;
     }
 
-    if (!posts || posts.length === 0) {
-        return (
-            <div>
-                <PostCreationTrigger setPosts={setPosts} />
-                <div>There is no post yet.</div>
-            </div>
-        );
-    }
+    fetch(`http://localhost:8080/group/fetchPost/${grpID}`, {
+      method: "GET",
+      credentials: "include",
+    })
+      .then((res) => {
+        if (!res.ok) throw new Error("Failed to fetch last post");
+        return res.json();
+      })
+      .then((data) => {
+        setPosts(data);
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.error("Failed to fetch last post:", error);
+        setLoading(false);
+      });
+  }, [grpID]);
 
-    console.log("posts are:", posts);
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
+  if (!posts || posts.length === 0) {
     return (
-        <div>
-            <PostCreationTrigger setPosts={setPosts} />
-            <div className="content-area">
-                {posts.map((post) => (
-                    <Post
-                        key={post.id}
-                        post={post}
-                        onGetComments={GetComments}
-                        ondolike={AddLike}
-                    />
-                ))}
-            </div>
-        </div>
+      <div>
+        <PostCreationTrigger setPosts={setPosts} />
+        <div>There is no post yet.</div>
+      </div>
     );
+  }
+
+  console.log("posts are:", posts);
+
+  return (
+    <div>
+      <PostCreationTrigger setPosts={setPosts} />
+      <div className="content-area">
+        {posts.map((post) => (
+          <Post
+            key={post.id}
+            post={post}
+            onGetComments={GetComments}
+            ondolike={AddLike}
+          />
+        ))}
+      </div>
+    </div>
+  );
 }
 
 function GetComments(post) {
@@ -204,4 +204,13 @@ export async function CreatePost(groupId, formData) {
   if (!res.ok) throw new Error("Failed to create a post for groups");
 
   return JSON.parse(text);
+}
+export function GroupChat() {
+
+  return (
+    <div className="group-empty-state">
+      <MessageCircle className="tab-icon" />
+      <p className="group-empty-state-text">Chat interface coming soon</p>
+    </div>
+  );
 }

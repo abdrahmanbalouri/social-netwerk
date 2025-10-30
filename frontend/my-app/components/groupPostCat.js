@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { AllPosts } from "../app/groups/[id]/page";
+import { AllPosts, GroupChat } from "../app/groups/[id]/page";
 import { FileText, MessageCircle } from "lucide-react";
 
 export function GroupPostChat() {
@@ -33,10 +33,7 @@ export function GroupPostChat() {
         {activeTab === "posts" ? (
           <AllPosts />
         ) : (
-          <div className="group-empty-state">
-            <MessageCircle className="tab-icon" />
-            <p className="group-empty-state-text">Chat interface coming soon</p>
-          </div>
+          <GroupChat />
         )}
         {/* </div> */}
       </div>
