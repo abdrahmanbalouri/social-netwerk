@@ -3,7 +3,7 @@ import Navbar from "../../../components/Navbar.js"
 import { GroupPostChat } from "../../../components/groupPostCat.js";
 import Post from "../../../components/Post.js";
 import { useEffect, useState } from "react";
-// import "../../../styles/groupstyle.css"
+import "../../../styles/groupstyle.css"
 // import "../../../styles/group.css"
 import { useParams } from "next/navigation";
 import { PostCreationTrigger } from "../../../components/cretaePostGroup.js"
@@ -85,22 +85,16 @@ export function AllPosts() {
                 setLoading(false);
             });
     }, [grpID]);
-    // if (!posts) {
-    //     return (
-    //         <div>
-    //             <PostCreationTrigger setPost = {setPost}/>
-    //             <div>There is no post yeeeeeet.</div>
-    //         </div>
-    //     );
-    // }
+
 
     console.log("posts are :", posts);
     return (
         <div>
             <PostCreationTrigger setPost={setPost} />
-
-            {posts.length === 0 ? (
-                <div>There is no post yeeeeeet.</div>
+            {loading ? (
+                <div>Loading posts...</div>
+            ) : posts.length === 0 ? (
+                <div>There is no post yet.</div>
             ) : (
                 <div className="posts-list">
                     {posts.map((post) => (
