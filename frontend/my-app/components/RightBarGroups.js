@@ -113,7 +113,7 @@ export default function RightBarGroup({ onClick }) {
     return (
         <div className="rightBar">
             <div className="item">
-                <span>Groupe Invitation </span>
+                <span>Group Invitation </span>
                 {!followRequest || followRequest.length === 0 ? (
                     <h1>no Invitation for now</h1>
                 ) : (
