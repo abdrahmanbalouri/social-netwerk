@@ -40,7 +40,7 @@ export function GroupPostChat() {
 
         {/* <div className="group-container"> */}
         {activeTab === "posts"  &&(
-          <AllPosts />
+          <AllPosts   />
         ) }
         {activeTab === "event" &&  (
           <Events />

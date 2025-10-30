@@ -121,65 +121,65 @@ export function AllPosts() {
   );
 }
 export function LastPost() {
-    const [posts, setPosts] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const params = useParams();
-    const grpID = params.id;
+  const [posts, setPosts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const params = useParams();
+  const grpID = params.id;
 
-    useEffect(() => {
-        if (!grpID) {
-            setLoading(false);
-            return;
-        }
-
-        fetch(`http://localhost:8080/group/fetchPost/${grpID}`, {
-            method: 'GET',
-            credentials: 'include',
-        })
-            .then(res => {
-                if (!res.ok) throw new Error('Failed to fetch last post');
-                return res.json();
-            })
-            .then(data => {
-                setPosts(data);
-                setLoading(false);
-            })
-            .catch(error => {
-                console.error("Failed to fetch last post:", error);
-                setLoading(false);
-            });
-    }, [grpID]);
-
-    if (loading) {
-        return <div>Loading...</div>;
+  useEffect(() => {
+    if (!grpID) {
+      setLoading(false);
+      return;
     }
 
-    if (!posts || posts.length === 0) {
-        return (
-            <div>
-                <PostCreationTrigger setPosts={setPosts} />
-                <div>There is no post yet.</div>
-            </div>
-        );
-    }
+    fetch(`http://localhost:8080/group/fetchPost/${grpID}`, {
+      method: 'GET',
+      credentials: 'include',
+    })
+      .then(res => {
+        if (!res.ok) throw new Error('Failed to fetch last post');
+        return res.json();
+      })
+      .then(data => {
+        setPosts(data);
+        setLoading(false);
+      })
+      .catch(error => {
+        console.error("Failed to fetch last post:", error);
+        setLoading(false);
+      });
+  }, [grpID]);
 
-    console.log("posts are:", posts);
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
+  if (!posts || posts.length === 0) {
     return (
-        <div>
-            <PostCreationTrigger setPosts={setPosts} />
-            <div className="content-area">
-                {posts.map((post) => (
-                    <Post
-                        key={post.id}
-                        post={post}
-                        onGetComments={GetComments}
-                        ondolike={AddLike}
-                    />
-                ))}
-            </div>
-        </div>
+      <div>
+        <PostCreationTrigger setPosts={setPosts} />
+        <div>There is no post yet.</div>
+      </div>
     );
+  }
+
+  console.log("posts are:", posts);
+
+  return (
+    <div>
+      <PostCreationTrigger setPosts={setPosts} />
+      <div className="content-area">
+        {posts.map((post) => (
+          <Post
+            key={post.id}
+            post={post}
+            onGetComments={GetComments}
+            ondolike={AddLike}
+          />
+        ))}
+      </div>
+    </div>
+  );
 }
 
 function GetComments(post) {
@@ -189,7 +189,7 @@ function GetComments(post) {
   // });
 }
 
-function AddLike() {}
+function AddLike() { }
 
 export async function CreatePost(groupId, formData) {
   const data = new FormData();
@@ -212,72 +212,101 @@ export async function CreatePost(groupId, formData) {
 // events 
 
 
+export function Events() {
+  const [ShowEventForm, SetShowEventForm] = useState(true)
 
+  function showEvent() {
+    SetShowEventForm(prev => !prev)
+  }
 
-export  function Events() {
-  return(
+  return (
     <>
-   <div className="events-container">
-  <div className="create-event-card">
-    <h2 className="card-title">Create Event</h2>
-    <form className="event-form">
-      <div className="form-group">
-        <label htmlFor="event-title">Title</label>
-        <input type="text" id="event-title" placeholder="Event title..." />
-      </div>
-      
-      <div className="form-group">
-        <label htmlFor="event-description">Description</label>
-        <textarea id="event-description" rows="3" placeholder="Event description..."></textarea>
-      </div>
-      
-      <div className="form-group">
-        <label htmlFor="event-datetime">Day/Time</label>
-        <input type="datetime-local" id="event-datetime" />
-      </div>
-      
-      <button type="submit" className="btn-create">Create Event</button>
-    </form>
-  </div>
+      {ShowEventForm ? (
+        <div>
+          <button onClick={showEvent} className="Showbutton"> 
+            create event
+          </button>
+        </div>
+      ) : (
+        <div className="privacy-overlay">
 
-  <div className="events-list">
-    <div className="event-card">
-      <div className="event-header">
-        <h3 className="event-title">Team Meeting</h3>
-        <span className="event-datetime">Nov 15, 2024 - 14:00</span>
-      </div>
-      <p className="event-description">
-        Monthly team sync to discuss project progress and upcoming milestones.
-      </p>
-      <div className="event-actions">
-        <button className="btn-going">Going</button>
-        <button className="btn-not-going">Not Going</button>
-      </div>
-      <div className="event-stats">
-        <span className="stat-going">12 going</span>
-        <span className="stat-not-going">3 not going</span>
-      </div>
-    </div>
+          <div className="backLayer" onClick={showEvent}></div>
+          <EventForm ShowEventForm={ShowEventForm}
+          />
+        </div>
+      )}
 
-    <div className="event-card">
-      <div className="event-header">
-        <h3 className="event-title">Code Review Session</h3>
-        <span className="event-datetime">Nov 20, 2024 - 10:00</span>
+       <div className="events-list">
+        <div className="event-card">
+          <div className="event-header">
+            <h3 className="event-title">Team Meeting</h3>
+            <span className="event-datetime">Nov 15, 2024 - 14:00</span>
+          </div>
+          <p className="event-description">
+            Monthly team sync to discuss project progress and upcoming milestones.
+          </p>
+          <div className="event-actions">
+            <button className="btn-going">Going</button>
+            <button className="btn-not-going">Not Going</button>
+          </div>
+          <div className="event-stats">
+            <span className="stat-going">12 going</span>
+            <span className="stat-not-going">3 not going</span>
+          </div>
+        </div>
+
+        <div className="event-card">
+          <div className="event-header">
+            <h3 className="event-title">Code Review Session</h3>
+            <span className="event-datetime">Nov 20, 2024 - 10:00</span>
+          </div>
+          <p className="event-description">
+            Review and discuss recent code changes with the development team.
+          </p>
+          <div className="event-actions">
+            <button className="btn-going">Going</button>
+            <button className="btn-not-going">Not Going</button>
+          </div>
+          <div className="event-stats">
+            <span className="stat-going">8 going</span>
+            <span className="stat-not-going">2 not going</span>
+          </div>
+        </div>
       </div>
-      <p className="event-description">
-        Review and discuss recent code changes with the development team.
-      </p>
-      <div className="event-actions">
-        <button className="btn-going">Going</button>
-        <button className="btn-not-going">Not Going</button>
-      </div>
-      <div className="event-stats">
-        <span className="stat-going">8 going</span>
-        <span className="stat-not-going">2 not going</span>
-      </div>
-    </div>
-  </div>
-</div>
     </>
   )
+}
+
+
+
+export function EventForm() {
+  return (
+
+    <div className="events-container">
+      <div className="create-event-card">
+        <h2 className="card-title">Create Event</h2>
+        <form className="event-form">
+          <div className="form-group">
+            <label htmlFor="event-title">Title</label>
+            <input type="text" id="event-title" placeholder="Event title..." />
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="event-description">Description</label>
+            <textarea id="event-description" rows="3" placeholder="Event description..."></textarea>
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="event-datetime">Day/Time</label>
+            <input type="datetime-local" id="event-datetime" />
+          </div>
+
+          <button type="submit" className="btn-create">Create Event</button>
+        </form>
+      </div>
+
+     
+    </div>
+  )
+
 }
