@@ -1,6 +1,7 @@
 .group-container {
   min-height: 100vh;
-  width: 500px;
+  width: 80%;
+  max-width: 800px;
   background-color: #f9fafb;
 }
 
