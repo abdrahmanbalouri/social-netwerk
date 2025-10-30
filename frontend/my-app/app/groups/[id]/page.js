@@ -1,4 +1,6 @@
 "use client";
+
+import "../../../styles/events.css"
 import Navbar from "../../../components/Navbar.js";
 import { GroupPostChat } from "../../../components/groupPostCat.js";
 import Post from "../../../components/Post.js";
@@ -201,7 +203,81 @@ export async function CreatePost(groupId, formData) {
 
   const text = await res.text();
 
-  if (!res.ok) throw new Error("Failed to create a post for groups");
+  if (!res.ok) throw new Error("Failed to create a post htmlFor groups");
 
   return JSON.parse(text);
+}
+
+
+// events 
+
+
+
+
+export  function Events() {
+  return(
+    <>
+   <div className="events-container">
+  <div className="create-event-card">
+    <h2 className="card-title">Create Event</h2>
+    <form className="event-form">
+      <div className="form-group">
+        <label htmlFor="event-title">Title</label>
+        <input type="text" id="event-title" placeholder="Event title..." />
+      </div>
+      
+      <div className="form-group">
+        <label htmlFor="event-description">Description</label>
+        <textarea id="event-description" rows="3" placeholder="Event description..."></textarea>
+      </div>
+      
+      <div className="form-group">
+        <label htmlFor="event-datetime">Day/Time</label>
+        <input type="datetime-local" id="event-datetime" />
+      </div>
+      
+      <button type="submit" className="btn-create">Create Event</button>
+    </form>
+  </div>
+
+  <div className="events-list">
+    <div className="event-card">
+      <div className="event-header">
+        <h3 className="event-title">Team Meeting</h3>
+        <span className="event-datetime">Nov 15, 2024 - 14:00</span>
+      </div>
+      <p className="event-description">
+        Monthly team sync to discuss project progress and upcoming milestones.
+      </p>
+      <div className="event-actions">
+        <button className="btn-going">Going</button>
+        <button className="btn-not-going">Not Going</button>
+      </div>
+      <div className="event-stats">
+        <span className="stat-going">12 going</span>
+        <span className="stat-not-going">3 not going</span>
+      </div>
+    </div>
+
+    <div className="event-card">
+      <div className="event-header">
+        <h3 className="event-title">Code Review Session</h3>
+        <span className="event-datetime">Nov 20, 2024 - 10:00</span>
+      </div>
+      <p className="event-description">
+        Review and discuss recent code changes with the development team.
+      </p>
+      <div className="event-actions">
+        <button className="btn-going">Going</button>
+        <button className="btn-not-going">Not Going</button>
+      </div>
+      <div className="event-stats">
+        <span className="stat-going">8 going</span>
+        <span className="stat-not-going">2 not going</span>
+      </div>
+    </div>
+  </div>
+</div>
+    </>
+  )
 }
