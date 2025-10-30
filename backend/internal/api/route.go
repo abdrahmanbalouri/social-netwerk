@@ -49,7 +49,7 @@ func Routes() http.Handler {
 	mux.HandleFunc("/myGroups", handlers.GetMyGroups)
 	mux.HandleFunc("/groups", handlers.GetAllGroups)
 	mux.HandleFunc("/group/like", handlers.LikesGroup)
-	mux.HandleFunc("/group/fetchComments", handlers.GetCommentGroup)
+	mux.HandleFunc("/group/fetchComments/{id}", handlers.GetCommentGroup)
 	mux.HandleFunc("/api/groups/add", handlers.CreateGroupHandler)
 	mux.HandleFunc("/invitations/respond", handlers.GroupInvitationResponse)
 	mux.HandleFunc("/group/invitation/{id}", handlers.GroupInvitationRequest)

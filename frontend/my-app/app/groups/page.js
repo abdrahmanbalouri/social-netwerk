@@ -1,31 +1,30 @@
 "use client";
 import Navbar from "../../components/Navbar.js";
 import { useEffect, useState } from "react";
-import "../../styles/groupstyle.css";
-import { useRouter, useSelectedLayoutSegments } from "next/navigation";
+import "../../styles/groupstyle.css"
+import { useRouter, useSelectedLayoutSegments } from 'next/navigation'
+import { GroupCreationTrigger } from '../../components/CreateGroup.js';
+import { GroupsTabs } from '../../components/groupTabs.js';
+import LeftBar from '../../components/LeftBar.js';
+import RightBarGroup from '../../components/RightBarGroups.js';
+import { useDarkMode } from '../../context/darkMod.js';
 import { GroupCard } from "../../components/groupCard.js";
-import { GroupCreationTrigger } from "../../components/CreateGroup.js";
-import { GroupsTabs } from "../../components/groupTabs.js";
-import LeftBar from "../../components/LeftBar.js";
-import RightBar from "../../components/RightBar.js";
-import { useDarkMode } from "../../context/darkMod.js";
-import { Users, ChevronRight } from "lucide-react";
 // import RightBarGroup from '../../components/RightBarGroups.js';
 
 export default function () {
   const { darkMode } = useDarkMode();
 
-  return (
-    <div id="div" className={darkMode ? "theme-dark" : "theme-light"}>
-      <Navbar />
-      {/* main content area */}
-      <main className="content" id="contentgroups">
-        <LeftBar showSidebar={true} />
-        <GroupsTabs />
-        <RightBar />
-      </main>
-    </div>
-  );
+    return (
+        <div id="div" className={darkMode ? 'theme-dark' : 'theme-light'}>
+            <Navbar />
+            {/* main content area */}
+            <main className="content" id="contentgroups">
+                <LeftBar showSidebar={true} />
+                <GroupsTabs />
+                <RightBarGroup />
+            </main>
+        </div>
+    )
 }
 
 export function AllGroups() {
@@ -51,7 +50,7 @@ export function AllGroups() {
   if (!group) {
     return (
       <div className="group-empty-state">
-        <Users />
+        {/* <Users /> */}
         <p className="group-empty-state-title">No groups found</p>
         <p className="group-empty-state-text">
           Check back later for more groups
@@ -66,7 +65,7 @@ export function AllGroups() {
           <div className="group-header">
             <div className="group-icon-wrapper">
               <div className="group-icon">
-                <Users />
+                {/* <Users /> */}
               </div>
             </div>
           </div>
@@ -75,13 +74,13 @@ export function AllGroups() {
             <p className="group-description">{grp.Description}</p>
             <div className="group-footer">
               <div className="group-members">
-                <Users />
+                {/* <Users /> */}
                 <span className="members-text-full">{22} members</span>
                 <span className="members-text-short">{220} members</span>
               </div>
               <button className="view-button">
                 <span>Join</span>
-                <ChevronRight />
+                {/* <ChevronRight /> */}
               </button>
             </div>
           </div>
@@ -92,55 +91,50 @@ export function AllGroups() {
 }
 
 export function MyGroups() {
-  console.log("MyGroups rendered");
-  const [group, setGroup] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const router = useRouter();
+    const [group, setGroup] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const router = useRouter()
 
   const handleShow = (group) => {
     router.push(`/groups/${group}`);
   };
 
-  useEffect(() => {
-    fetch("http://localhost:8080/myGroups", {
-      method: "GET",
-      credentials: "include",
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        setGroup(data || []);
-        setLoading(false);
-      })
-      .catch((error) => {
-        console.error("Failed to fetch group data:", error);
-        setLoading(false);
-      });
-  }, []);
-
-  if (!group) {
+    useEffect(() => {
+        fetch('http://localhost:8080/myGroups', {
+            method: 'GET',
+            credentials: 'include',
+        })
+            .then(res => res.json())
+            .then(data => {
+                setGroup(data || []);
+                setLoading(false);
+            })
+            .catch(error => {
+                console.error("Failed to fetch group data:", error);
+                setLoading(false);
+            });
+    }, [])
+    if (!group) {
+        return (
+            <div>
+                <GroupCreationTrigger setGroup={setGroup} />
+            </div>
+        )
+    }
     return (
-      <div>
-        <GroupCreationTrigger setGroup={setGroup} />
-        <div className="group-empty-state">
-          <Users />
-          <p className="group-empty-state-title">No groups found</p>
-          <p className="group-empty-state-text">
-            Create your first group to get started!
-          </p>
+        <div className="group-container">
+            <GroupCreationTrigger
+                setGroup={setGroup}
+            />
+            {group.map(grp => (
+                <GroupCard
+                    key={grp.ID}
+                    group={grp}
+                    onShow={handleShow}
+                />
+            ))}
         </div>
-      </div>
-    );
-  }
-  return (
-    <>
-      <GroupCreationTrigger setGroup={setGroup} />
-      <div className="groups-grid">
-        {group.map((grp) => (
-          <GroupCard key={grp.ID} group={grp} onShow={handleShow} />
-        ))}
-      </div>
-    </>
-  );
+    )
 }
 
 export async function createGroup(formData) {
