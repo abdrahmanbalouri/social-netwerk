@@ -118,7 +118,7 @@ export function PostCreationTrigger({ setPost }) {
     <>
       <div className="create-card">
         <div className="create-card-inner">
-          <div className="avatar">U</div>
+          <div className="group-avatar">U</div>
           <input
             type="text"
             placeholder="What's on your mind?"
