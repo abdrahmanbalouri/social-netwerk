@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
@@ -33,7 +32,8 @@ type Post struct {
 	Content      string    `json:"content"`
 	ImagePath    string    `json:"image_path"`
 	CreatedAt    time.Time `json:"created_at"`
-	Author       string    `json:"author"`
+	FirstName    string    `json:"first_name"`
+	LastName     string    `json:"last_name"`
 	Profile      string    `json:"profile"`
 	Like         int       `json:"likeCount"`
 	LikedByUSer  int       `json:"liked_by_user"`
@@ -41,10 +41,12 @@ type Post struct {
 }
 
 func CreatePostGroup(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("INSIDE GROUP POST HANDLER ----------")
 	if r.Method != http.MethodPost {
 		helper.RespondWithError(w, http.StatusMethodNotAllowed, "Method not allowed")
 		return
 	}
+	fmt.Println("R.FORMVALUE IS ::::::::::", r.FormValue("image"))
 
 	// get user id
 	userID, IdErr := helper.AuthenticateUser(r)
@@ -53,6 +55,12 @@ func CreatePostGroup(w http.ResponseWriter, r *http.Request) {
 		helper.RespondWithError(w, http.StatusInternalServerError, IdErr.Error())
 		return
 	}
+	parts := strings.Split(r.URL.Path, "/")
+	if len(parts) < 4 {
+		helper.RespondWithError(w, http.StatusNotFound, "Group not found")
+		return
+	}
+	GrpID := parts[3]
 
 	// parse Data
 	err := r.ParseMultipartForm(10 << 20) // 10MB
@@ -61,21 +69,12 @@ func CreatePostGroup(w http.ResponseWriter, r *http.Request) {
 		helper.RespondWithError(w, http.StatusBadRequest, "Unable to parse form")
 		return
 	}
-	data := r.FormValue("postData")
-	if data == "" {
-		helper.RespondWithError(w, http.StatusBadRequest, "Missing JSON form field")
-		return
-	}
-	parts := strings.Split(r.URL.Path, "/")
-	if len(parts) < 4 {
-		helper.RespondWithError(w, http.StatusNotFound, "Group not found")
-		return
-	}
-	GrpID := parts[3]
-	var postData PostData
-	err = json.Unmarshal([]byte(data), &postData)
+	title := r.FormValue("title")
+	description := r.FormValue("description")
+
+	// file, handler, err := r.FormFile("image")
 	if err != nil {
-		http.Error(w, "Invalid JSON data", http.StatusBadRequest)
+		http.Error(w, "Error retrieving the file", http.StatusBadRequest)
 		return
 	}
 
@@ -96,31 +95,39 @@ func CreatePostGroup(w http.ResponseWriter, r *http.Request) {
 
 	// image part
 	var imagePath string
-	imageFile, _, err := r.FormFile("image")
+	imageFile, header, err := r.FormFile("image")
 	if err == nil {
+		fmt.Println("INSIDE L IF ")
 		defer imageFile.Close()
+		ext := strings.ToLower(filepath.Ext(header.Filename))
+		allowedExts := map[string]bool{
+			".jpg": true, ".jpeg": true, ".png": true, ".gif": true,
+			".mp4": true, ".mov": true, ".avi": true,
+		}
+		if !allowedExts[ext] {
+			helper.RespondWithError(w, http.StatusBadRequest, "Unsupported media format")
+			return
+		}
 		uploadDir := "../frontend/my-app/public/uploads"
-		err = os.MkdirAll(uploadDir, os.ModePerm)
-		if err != nil {
-			fmt.Println("Failed to create upload directory")
+		if err := os.MkdirAll(uploadDir, os.ModePerm); err != nil {
 			helper.RespondWithError(w, http.StatusInternalServerError, "Failed to create upload directory")
 			return
 		}
+		filname := fmt.Sprintf("%s%s", uuid.New().String(), ext)
+		imagePath = fmt.Sprintf("uploads/%s", filname)
 
-		imagePath = fmt.Sprintf("uploads/%s.jpg", uuid.New().String()) // Keep the path relative for database storage
 		out, err := os.Create(filepath.Join("../frontend/my-app/public", imagePath))
 		if err != nil {
-			fmt.Println("Failed to save image :", err)
 			helper.RespondWithError(w, http.StatusInternalServerError, "Failed to save image")
 			return
 		}
 		defer out.Close()
-		_, err = io.Copy(out, imageFile)
-		if err != nil {
+		if _, err := io.Copy(out, imageFile); err != nil {
 			helper.RespondWithError(w, http.StatusInternalServerError, "Failed to save image")
 			return
 		}
 	} else {
+		fmt.Println("ERROOOOR IS :", err)
 		imagePath = ""
 	}
 
@@ -130,7 +137,7 @@ func CreatePostGroup(w http.ResponseWriter, r *http.Request) {
 	_, err = repository.Db.Exec(`
         INSERT INTO group_posts (id, user_id, group_id, title, content, image_path, created_at)
         VALUES (?, ?, ?, ?, ?, ?, ?)`,
-		postID, userID, GrpID, postData.Title, postData.Content, imagePath, createdAt,
+		postID, userID, GrpID, title, description, imagePath, createdAt,
 	)
 	if err != nil {
 		fmt.Println("Failed to create post (groups)")
@@ -183,6 +190,7 @@ func CreatePostGroup(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetAllPostsGroup(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("GET ALL POSTS GROUP ____________")
 	if r.Method != http.MethodGet {
 		helper.RespondWithError(w, http.StatusMethodNotAllowed, "Method not allowed")
 		return
@@ -223,7 +231,7 @@ func GetAllPostsGroup(w http.ResponseWriter, r *http.Request) {
     gp.content, 
     gp.image_path, 
     gp.created_at, 
-  u.first_name,u.last_name,
+    u.first_name,u.last_name,
     u.image AS profile,
     COUNT(DISTINCT l.id) AS like_count,
     COUNT(DISTINCT CASE WHEN l.user_id = ? THEN l.id END) AS liked_by_user,
@@ -235,9 +243,8 @@ func GetAllPostsGroup(w http.ResponseWriter, r *http.Request) {
 	WHERE gp.group_id = ?
 	GROUP BY 
     gp.id, gp.user_id, gp.title, gp.content, gp.image_path, gp.created_at, 
-     u.first_name,u.last_name, u.image
-	ORDER BY gp.created_at DESC;
-`
+    u.first_name,u.last_name, u.image
+	ORDER BY gp.created_at DESC;`
 	rows, err := repository.Db.Query(query, userID, GrpId)
 	if err != nil {
 		fmt.Println("Failed to get posts:", err)
@@ -249,7 +256,7 @@ func GetAllPostsGroup(w http.ResponseWriter, r *http.Request) {
 	var postsJson []Post
 	for rows.Next() {
 		var p Post
-		err := rows.Scan(&p.ID, &p.UserID, &p.Title, &p.Content, &p.ImagePath, &p.CreatedAt, &p.Author, &p.Profile, &p.Like, &p.LikedByUSer, &p.CommentCount)
+		err := rows.Scan(&p.ID, &p.UserID, &p.Title, &p.Content, &p.ImagePath, &p.CreatedAt, &p.FirstName, &p.LastName, &p.Profile, &p.Like, &p.LikedByUSer, &p.CommentCount)
 		if err != nil {
 			fmt.Println("heeeere :", err)
 			helper.RespondWithError(w, http.StatusInternalServerError, "Failed to scan posts")
@@ -259,6 +266,7 @@ func GetAllPostsGroup(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Return the posts as a JSON response
+	fmt.Println("FINISHED GET ALL POSTS ________________")
 	helper.RespondWithJSON(w, http.StatusOK, postsJson)
 }
 
@@ -303,7 +311,7 @@ func GetPostGroup(w http.ResponseWriter, r *http.Request) {
     gp.content, 
     gp.image_path, 
     gp.created_at, 
-    u.nickname,
+    u.first_name,u.last_name,
     u.image AS profile,
     COUNT(DISTINCT l.id) AS like_count,
     COUNT(DISTINCT CASE WHEN l.user_id = ? THEN l.id END) AS liked_by_user,
@@ -328,7 +336,7 @@ func GetPostGroup(w http.ResponseWriter, r *http.Request) {
 	defer rows.Close()
 
 	var p Post
-	err = rows.Scan(&p.ID, &p.UserID, &p.Title, &p.Content, &p.ImagePath, &p.CreatedAt, &p.Author, &p.Profile, &p.Like, &p.LikedByUSer, &p.CommentCount)
+	err = rows.Scan(&p.ID, &p.UserID, &p.Title, &p.Content, &p.ImagePath, &p.CreatedAt, &p.FirstName, &p.LastName, &p.Profile, &p.Like, &p.LikedByUSer, &p.CommentCount)
 	if err != nil {
 		fmt.Println("heeeeeeeeeere :", err)
 		helper.RespondWithError(w, http.StatusInternalServerError, "Failed to scan posts")
