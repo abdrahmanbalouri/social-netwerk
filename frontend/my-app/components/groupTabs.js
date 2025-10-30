@@ -12,7 +12,7 @@ export function GroupsTabs() {
         <div className="tabs-container">
           <button
             onClick={() => setActiveTab("myGroups")}
-            className={`tab-button ${
+            className={`group-tab-button ${
               activeTab === "myGroups" ? "active" : "inactive"
             }`}
           >
@@ -22,7 +22,7 @@ export function GroupsTabs() {
           </button>
           <button
             onClick={() => setActiveTab("allGroups")}
-            className={`tab-button ${
+            className={`group-tab-button ${
               activeTab === "allGroups" ? "active" : "inactive"
             }`}
           >
