@@ -10,6 +10,8 @@ import { PostCreationTrigger } from "../../../components/cretaePostGroup.js"
 import LeftBar from "../../../components/LeftBar.js";
 import RightBarGroup from "../../../components/RightBarGroups.js";
 import { useDarkMode } from "../../../context/darkMod.js";
+// import Comment from "../../components/coment.js";
+import Comment from "../../../components/coment.js";
 
 // import {CreatePost} from ""
 
@@ -55,11 +57,20 @@ function sendRequest(invitedUserID, grpID) {
         }
         )
 }
+function closeComments(setShowComments, setSelectedPost, setComment) {
+    setShowComments(false);
+    setSelectedPost(null);
+    setComment([]);
+}
 
 export function AllPosts() {
     const [posts, setPost] = useState([]);
     const [loading, setLoading] = useState(true);
     const params = useParams();
+    const [loadingComment, setLoadingComment] = useState(false)
+    const [selectedPost, setSelectedPost] = useState(false)
+    const [showComments, setShowComments] = useState(false)
+    const [comment, setComment] = useState([])
     const grpID = params.id;
 
     useEffect(() => {
@@ -101,10 +112,22 @@ export function AllPosts() {
                         <Post
                             key={post.id}
                             post={post}
-                            onGetComments={GetComments}
+                            onGetComments={() => GetComments(post, setSelectedPost, setShowComments, setComment, setLoadingComment)}
                             ondolike={AddLike}
                         />
                     ))}
+                    showComments && (
+                    <Comment
+                        comments={comment}
+                        isOpen={showComments}
+                        onClose={()=>{closeComments(setShowComments, setSelectedPost, setComment)}}
+                        postId={selectedPost?.id}
+                        postTitle={selectedPost?.title}
+                        // onCommentChange={refreshComments}
+                        // lodinggg={loadingcomment}
+                        ongetcomment={GetComments}
+                        post={selectedPost}
+                    />
                 </div>
             )}
         </div>
@@ -115,7 +138,13 @@ export function LastPost() {
     const [posts, setPosts] = useState([]);
     const [loading, setLoading] = useState(true);
     const params = useParams();
+    const [loadingComment, setLoadingComment] = useState(false)
+    const [selectedPost, setSelectedPost] = useState(false)
+    const [showComments, setShowComments] = useState(false)
+    const [comment, setComment] = useState([])
     const grpID = params.id;
+
+
 
     useEffect(() => {
         if (!grpID) {
@@ -143,7 +172,6 @@ export function LastPost() {
     if (loading) {
         return <div>Loading...</div>;
     }
-
     if (!posts || posts.length === 0) {
         return (
             <div>
@@ -168,17 +196,60 @@ export function LastPost() {
                     />
                 ))}
             </div>
+            {
+                showComments && (
+                    <Comment
+                        comments={comment}
+                        isOpen={showComments}
+                        onClose={closeComments}
+                        postId={selectedPost?.id}
+                        postTitle={selectedPost?.title}
+                        onCommentChange={refreshComments}
+                        lodinggg={loadingcomment}
+                        ongetcomment={GetComments}
+                        post={selectedPost}
+                    />
+                )
+            }
         </div>
     );
 }
 
+async function GetComments(post, setSelectedPost, setShowComments, setComment, setLoadingComment) {
+    setLoadingComment(true);
+    try {
+        setSelectedPost({
+            id: post.id,
+            title: post.title || post.post_title || "Post",
+            image_path: post.image_path,
+            content: post.content,
+            author: post.first_name + " " + post.last_name,
+        });
 
-function GetComments(post) {
-    // setSelectedPost({
-    //     id: post.id,
-    //     title: post.title || post.post_title || "Post"
-    // });
+        setShowComments(true);
+
+        const res = await fetch(`http://localhost:8080/group/fetchComments/${post.id}`, {
+            method: "GET",
+            credentials: "include",
+        });
+
+        if (!res.ok) {
+            const errorText = await res.text();
+            console.error("Failed to fetch comments:", res.status, res.statusText, errorText);
+            return false;
+        }
+
+        const data = await res.json();
+        setComment(data || []);
+        return data?.[0]?.id || null;
+    } catch (err) {
+        console.error("Error fetching comments:", err);
+        return false;
+    } finally {
+        setLoadingComment(false);
+    }
 }
+
 
 function AddLike() {
 
