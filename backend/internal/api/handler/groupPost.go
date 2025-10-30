@@ -37,7 +37,7 @@ type Post struct {
 	Profile      string    `json:"profile"`
 	Like         int       `json:"like"`
 	LikedByUSer  int       `json:"liked_by_user"`
-	CommentCount int       `json:"comment_count"`
+	CommentsCount int       `json:"comments_count"`
 }
 
 func CreatePostGroup(w http.ResponseWriter, r *http.Request) {
@@ -221,6 +221,7 @@ func GetAllPostsGroup(w http.ResponseWriter, r *http.Request) {
 		helper.RespondWithError(w, http.StatusUnauthorized, "You are not a member of this group")
 		return
 	}
+	fmt.Println(isMember, "_________ IS MEMBER _________")
 
 	// Fetch all the posts of this group
 	// query = `SELECT id, title, content, image_path, created_at, user_id FROM posts WHERE group_id = ?`
@@ -240,7 +241,7 @@ func GetAllPostsGroup(w http.ResponseWriter, r *http.Request) {
 	FROM group_posts gp
 	JOIN users u ON gp.user_id = u.id
 	LEFT JOIN likes l ON gp.id = l.liked_item_id AND l.liked_item_type = 'post'
-	LEFT JOIN comments c ON gp.id = c.post_id
+	LEFT JOIN comments_groups c ON gp.id = c.post_id
 	WHERE gp.group_id = ?
 	GROUP BY 
     gp.id, gp.user_id, gp.title, gp.content, gp.image_path, gp.created_at, 
@@ -257,7 +258,7 @@ func GetAllPostsGroup(w http.ResponseWriter, r *http.Request) {
 	var postsJson []Post
 	for rows.Next() {
 		var p Post
-		err := rows.Scan(&p.ID, &p.UserID, &p.Title, &p.Content, &p.ImagePath, &p.CreatedAt, &p.FirstName, &p.LastName, &p.Profile, &p.Like, &p.LikedByUSer, &p.CommentCount)
+		err := rows.Scan(&p.ID, &p.UserID, &p.Title, &p.Content, &p.ImagePath, &p.CreatedAt, &p.FirstName, &p.LastName, &p.Profile, &p.Like, &p.LikedByUSer, &p.CommentsCount)
 		if err != nil {
 			fmt.Println("heeeere :", err)
 			helper.RespondWithError(w, http.StatusInternalServerError, "Failed to scan posts")
@@ -336,7 +337,7 @@ func GetPostGroup(w http.ResponseWriter, r *http.Request) {
 	defer rows.Close()
 
 	var p Post
-	err = rows.Scan(&p.ID, &p.UserID, &p.Title, &p.Content, &p.ImagePath, &p.CreatedAt, &p.FirstName, &p.LastName, &p.Profile, &p.Like, &p.LikedByUSer, &p.CommentCount)
+	err = rows.Scan(&p.ID, &p.UserID, &p.Title, &p.Content, &p.ImagePath, &p.CreatedAt, &p.FirstName, &p.LastName, &p.Profile, &p.Like, &p.LikedByUSer, &p.CommentsCount)
 	if err != nil {
 		fmt.Println("heeeeeeeeeere :", err)
 		helper.RespondWithError(w, http.StatusInternalServerError, "Failed to scan posts")

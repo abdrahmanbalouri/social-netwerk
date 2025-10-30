@@ -29,6 +29,13 @@ func GetGroupPostByID(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	postID := parts[3]
+	groupId:= parts[4]
+
+	 err = helper.CheckUserInGroup(currentUserID, groupId)
+		if err != nil {
+			helper.RespondWithError(w, http.StatusForbidden, "You are not a member of this group")
+			return
+		}
 	fmt.Println(postID)
 	query := `
 	SELECT 
@@ -47,7 +54,7 @@ func GetGroupPostByID(w http.ResponseWriter, r *http.Request) {
 	FROM group_posts gp
 	JOIN users u ON gp.user_id = u.id
 	LEFT JOIN likes l ON gp.id = l.liked_item_id AND l.liked_item_type = 'post'
-	LEFT JOIN comments c ON gp.id = c.post_id
+	LEFT JOIN comments_groups c ON gp.id = c.post_id
 	WHERE gp.id = ?
 	GROUP BY 
 		gp.id, gp.user_id, gp.title, gp.content, gp.image_path, gp.created_at, 
