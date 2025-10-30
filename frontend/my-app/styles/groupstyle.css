@@ -3,9 +3,12 @@
     width: 50%;
     margin: 0 auto;
     padding: 20px;
+    flex: 6;
 }
 
 .tabs {
+    margin: 0 auto;
+    max-width: 800px;
     display: flex;
     background: #f8f9fa;
     gap: 8px;
@@ -50,6 +53,10 @@
     height: 3px;
     background: linear-gradient(90deg, #667eea, #764ba2);
     border-radius: 3px;
+}
+
+.main-container {
+    flex: 6;
 }
 
 .group-container {
@@ -126,7 +133,9 @@
     box-shadow: 0 8px 16px rgba(102, 126, 234, 0.4);
 }
 
-.create-group-container {
+.create-post-container {
+    margin: 0 auto;
+    max-width: 800px;
     margin-bottom: 24px;
     background: white;
     border-radius: 16px;
@@ -135,7 +144,19 @@
     border: 1px solid #e2e8f0;
 }
 
-.create-group-header {
+.create-group-container {
+    max-width: 800px;
+    width: 100%;
+    margin: 0 auto 24px;
+    background: white;
+    border-radius: 16px;
+    padding: 20px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    border: 1px solid #e2e8f0;
+    box-sizing: border-box;
+}
+
+.create-post-header {
     display: flex;
     align-items: center;
     gap: 16px;
@@ -155,7 +176,7 @@
     flex-shrink: 0;
 }
 
-.group-input {
+.post-input-group {
     flex: 1;
     padding: 14px 20px;
     border: 2px solid #e2e8f0;
@@ -167,15 +188,38 @@
     transition: all 0.3s ease;
 }
 
-.group-input:hover {
+.post-input-group:hover {
     border-color: #cbd5e0;
     background: white;
 }
 
-.group-input:focus {
+.post-input-group:focus {
     outline: none;
     border-color: #667eea;
     background: white;
+}
+
+.group-input {
+    color: #64748b;
+    cursor: pointer;
+    background: #f8f9fa;
+    border: 2px solid #e2e8f0;
+    border-radius: 50px;
+    flex: 1;
+    padding: 14px 20px;
+    font-size: 14px;
+    transition: all .3s;
+}
+
+.group-input:hover {
+    background: #fff;
+    border-color: #cbd5e0;
+}
+
+.group-input:focus {
+    background: #fff;
+    border-color: #667eea;
+    outline: none;
 }
 
 .create-group-form-container {
