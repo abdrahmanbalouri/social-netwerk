@@ -10,7 +10,7 @@ export function GroupPostChat() {
         {/* Header Tabs */}
         <div className="tabs-container">
           <button
-            className={`tab-button ${
+            className={`group-tab-button ${
               activeTab === "posts" ? "active" : "inactive"
             }`}
             onClick={() => setActiveTab("posts")}
@@ -19,7 +19,7 @@ export function GroupPostChat() {
             <span>Posts</span>
           </button>
           <button
-            className={`tab-button ${
+            className={`group-tab-button ${
               activeTab === "chat" ? "active" : "inactive"
             }`}
             onClick={() => setActiveTab("chat")}
@@ -34,7 +34,7 @@ export function GroupPostChat() {
           <AllPosts />
         ) : (
           <div className="group-empty-state">
-            <MessageCircle />
+            <MessageCircle className="tab-icon" />
             <p className="group-empty-state-text">Chat interface coming soon</p>
           </div>
         )}
