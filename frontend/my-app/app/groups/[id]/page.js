@@ -278,6 +278,15 @@ export function Events() {
 }
 
 
+export async function createEvent() {
+  // Handle event creation logic here
+
+
+  
+  console.log("Event created!");
+}
+
+
 
 export function EventForm() {
   return (
@@ -301,7 +310,7 @@ export function EventForm() {
             <input type="datetime-local" id="event-datetime" />
           </div>
 
-          <button type="submit" className="btn-create">Create Event</button>
+          <button type="submit" className="btn-create" onClick={createEvent()}>Create Event</button>
         </form>
       </div>
 
