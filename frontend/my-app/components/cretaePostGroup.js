@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { CreatePost } from '../app/groups/[id]/page.js';
-import "../styles/groupstyle.css"
+// import "../styles/groupstyle.css"
 import { useParams } from "next/navigation";
 
 
@@ -47,7 +47,7 @@ export function CreatePostForm({ onSubmit, onCancel }) {
 
     return (
         <div className="create-post-form-container">
-            <div className="create-post-form-card">
+            <div className="create-group-form-card">
                 <h1 className="form-title">Create a New post</h1>
 
                 <form onSubmit={handleSubmit}>
@@ -110,14 +110,14 @@ export function CreatePostForm({ onSubmit, onCancel }) {
                     <div className="form-actions">
                         <button
                             type="button"
-                            className="cancel-post-btn"
+                            className="cancel-group-btn"
                             onClick={onCancel}
                         >
                             Cancel
                         </button>
                         <button
                             type="submit"
-                            className="submit-post-btn"
+                            className="submit-group-btn"
                             disabled={!PostTitle.trim()}
                         >
                             Create post
@@ -170,7 +170,7 @@ export function PostCreationTrigger({ setPost }) {
                         <input
                             type="text"
                             placeholder="Do you want to create a post? Just click here!"
-                            className="post-input"
+                            className="post-input-group"
                             onClick={handlePostClick}
                             readOnly
                         />
