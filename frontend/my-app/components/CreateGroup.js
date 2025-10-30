@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import "../styles/groupstyle.css"
+// import "../styles/groupstyle.css"
 import { createGroup } from '../app/groups/page';
 import { GroupCard } from './groupCard';
 
@@ -207,7 +207,7 @@ export function GroupCreationTrigger({setGroup}) {
     }, []);
 
     return (
-        <div className="create-post-container">
+        <div className="create-group-container">
             <div className="create-post-header">
                 <div className="user-avatar">
                     <span>User</span>

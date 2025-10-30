@@ -1,6 +1,6 @@
 "use client"
 import { useState } from 'react'
-import "../styles/groupstyle.css"
+// import "../styles/groupstyle.css"
 import { MyGroups, AllGroups } from "../app/groups/page"
 
 export function GroupsTabs() {
