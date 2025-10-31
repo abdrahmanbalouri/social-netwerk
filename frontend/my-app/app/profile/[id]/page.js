@@ -158,13 +158,7 @@ export default function Profile() {
     setShowPrivacy(!showPrivacy);
   }
 
-  function scrollToPost(postId) {
 
-    const el = postRefs.current[postId];
-    if (el) {
-      el.scrollIntoView({ behavior: "smooth", block: "start" });
-    }
-  }
   useEffect(() => {
     async function midle() {
       try {
@@ -190,18 +184,22 @@ export default function Profile() {
         : [...prevSelected, userId]
     );
   }
-  useEffect(() => {
-
+  useEffect(() => {  
+    console.log(scroollhome);
+    
+    console.log(loading);
+    
     const reachedBottom =
       window.innerHeight + window.scrollY >= document.body.scrollHeight - 20;
 
 
     async function handlescrollhome() {
-      let b = await fetchingposts();
+      await fetchingposts();
     
     }
 
-    if (reachedBottom && !loading) {
+    if (reachedBottom && !loading && posts.length >= 10) {
+      
       handlescrollhome();
     }
   }, [scroollhome]);
@@ -278,7 +276,7 @@ export default function Profile() {
       boleanofset.current = true
     }
     try {
-      setLoading(true);
+     setLoading(true);
       const res = await fetch(`http://localhost:8080/api/getmypost/${params.id}/${offsetpsot.current}`, {
         method: "GET",
         credentials: "include",
@@ -286,25 +284,24 @@ export default function Profile() {
            console.log(res);
            
       if (!res.ok) {
-        return 
+        throw new Error(`Failed to fetch posts: ${res.status}`); 
       }
     
 
       const data = await res.json();
-
-
-      if (data) {
-        offsetpsot.current += 10
-      } else {        
-        return 
-      }
       
 
+
+      if (!data) {
+        return} 
+      console.log(data,"/*/**");
+      
+      
+      offsetpsot.current += 10
+
       setPosts([...posts, ...data]);
-      return data[0].id
     } catch (err) {
       console.error("Error fetching posts:", err);
-      return false
     } finally {
       setLoading(false);
     }

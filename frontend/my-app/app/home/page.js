@@ -91,7 +91,7 @@ export default function Home() {
       }
     }
 
-    if (reachedBottom && !loading) {
+    if (reachedBottom && !loading && posts.length >= 10) {
       handlescrollhome();
     }
   }, [scroollhome]);
@@ -485,8 +485,7 @@ export default function Home() {
 
         {/* Feed Section */}
         <section className="feed"
-          onScroll={(e) => setscroolHome(e.target.scrollTop)}
-          ref={modalRefhome}
+         
         >
           <Stories />
           <CreatePost onCreatePost={() => setShowModal(true)} />
