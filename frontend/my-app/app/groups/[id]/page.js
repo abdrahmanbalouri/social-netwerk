@@ -4,7 +4,7 @@ import "../../../styles/events.css"
 import Navbar from "../../../components/Navbar.js";
 import { GroupPostChat } from "../../../components/groupPostCat.js";
 import Post from "../../../components/Post.js";
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 import "../../../styles/groupstyle.css";
 import { useParams } from "next/navigation";
 import { PostCreationTrigger } from "../../../components/cretaePostGroup.js";
@@ -214,10 +214,66 @@ export async function CreatePost(groupId, formData) {
 
 export function Events() {
   const [ShowEventForm, SetShowEventForm] = useState(true)
+  const params = useParams();
+
+  const grpID = params.id;
+
+  const [EventList, setEventList] = useState([])
+
+  useEffect(() => {
+    fetchEvents();
+  }, []);
+
+  async function fetchEvents() {
+    try {
+      const response = await fetch(`http://localhost:8080/api/getEvents/${grpID}`, {
+        method: 'GET',
+        credentials: 'include',
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch events');
+      }
+
+      const data = await response.json();
+      setEventList(data);
+    } catch (error) {
+      console.error('Error fetching events:', error);
+    }
+  }
 
   function showEvent() {
     SetShowEventForm(prev => !prev)
   }
+
+
+
+  async function goingEvent(status, eventID) {
+   
+      if ((!status || !eventID) || (status !== "going" && status !== "notGoing")) {
+        console.error('Status and Event ID are required');
+        return;
+      }
+      try {
+        const response = await fetch(`http://localhost:8080/api/event/action/${grpID}`, {
+          method: 'POST',
+          credentials: 'include',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ status  , eventID }),
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to RSVP to event');
+        }
+
+        await fetchEvents();
+      } catch (error) {
+        console.error('Error RSVPing to event:', error);
+      }
+    }
+  
 
   return (
     <>
@@ -231,55 +287,53 @@ export function Events() {
         <div className="privacy-overlay">
 
           <div className="backLayer" onClick={showEvent}></div>
-          <EventForm ShowEventForm={ShowEventForm}
+          <EventForm ShowEventForm={ShowEventForm} closeForm={showEvent}
+          fetchEvents={fetchEvents}
           />
         </div>
       )}
 
-      <div className="events-list">
-        <div className="event-card">
-          <div className="event-header">
-            <h3 className="event-title">Team Meeting</h3>
-            <span className="event-datetime">Nov 15, 2024 - 14:00</span>
-          </div>
-          <p className="event-description">
-            Monthly team sync to discuss project progress and upcoming milestones.
-          </p>
-          <div className="event-actions">
-            <button className="btn-going">Going</button>
-            <button className="btn-not-going">Not Going</button>
-          </div>
-          <div className="event-stats">
-            <span className="stat-going">12 going</span>
-            <span className="stat-not-going">3 not going</span>
-          </div>
-        </div>
+      {EventList.length === 0 ? (
+        <div>No events yet. Be the first to create one!</div>
+      ) : (
+        EventList.map((ev) => (
+          <div className="events-list" key={ev.id}>
+            <div className="event-card">
+              <div className="event-header">
+                <h3 className="event-title">{ev.title}</h3>
+                <span className="event-datetime">{new Date(ev.time).toLocaleString() }</span>
+              </div>
 
-        <div className="event-card">
-          <div className="event-header">
-            <h3 className="event-title">Code Review Session</h3>
-            <span className="event-datetime">Nov 20, 2024 - 10:00</span>
+              <p className="event-description">{ev.description}</p>
+
+              <div className="event-actions">
+                <button className="btn-going"    onClick={()=>goingEvent("going",ev.id)} >Going</button>
+                <button className="btn-not-going" onClick={()=>goingEvent("notGoing",ev.id)} >Not Going</button>
+              </div>
+
+              <div className="event-stats">
+                <span className="stat-going">{ev.going} going</span>
+                <span className="stat-not-going">{ev.notGoing} not going</span>
+              </div>
+            </div>
           </div>
-          <p className="event-description">
-            Review and discuss recent code changes with the development team.
-          </p>
-          <div className="event-actions">
-            <button className="btn-going">Going</button>
-            <button className="btn-not-going">Not Going</button>
-          </div>
-          <div className="event-stats">
-            <span className="stat-going">8 going</span>
-            <span className="stat-not-going">2 not going</span>
-          </div>
-        </div>
-      </div>
+        ))
+      )}
+
+
+
+
+
     </>
   )
 }
 
 
 
-export function EventForm() {
+export function EventForm({ closeForm  , fetchEvents}) {
+  const params = useParams();
+
+  const grpID = params.id;
 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -294,7 +348,12 @@ export function EventForm() {
       dateTime: dateTime
     }
 
-    const res = await fetch(`http://localhost:8080/events/createEvent`, {
+    if (!title || !description || !dateTime) {
+      console.error("All fields are required");
+      return;
+    }
+
+    const res = await fetch(`http://localhost:8080/api/createEvent/${grpID}`, {
       method: "POST",
       credentials: "include",
       headers: {
@@ -308,11 +367,11 @@ export function EventForm() {
       return;
     }
 
+await fetchEvents();
+
+    closeForm();
 
 
-
-
-    console.log("Event created!");
   }
 
 
@@ -338,7 +397,7 @@ export function EventForm() {
             <input type="datetime-local" id="event-datetime" onChange={(e) => { setDateTime(e.target.value) }} />
           </div>
 
-          <button type="submit" className="btn-create" onClick={() => { createEvent() }}>Create Event</button>
+          <button type="submit" className="btn-create" onClick={createEvent}>Create Event</button>
         </form>
       </div>
 

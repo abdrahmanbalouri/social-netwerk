@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"strings"
+	"time"
 
 	"social-network/internal/helper"
 	"social-network/internal/repository"
@@ -32,26 +33,42 @@ func CreateEvent(w http.ResponseWriter, r *http.Request) {
 
 	err = repository.Db.QueryRow(`select  user_id from group_members where user_id = ? and group_id = ? `, userID, GrpID).Scan(&exists)
 	if err != nil {
-		helper.RespondWithError(w, http.StatusUnauthorized, "Unauthorized " + err.Error() )
+		helper.RespondWithError(w, http.StatusUnauthorized, "Unauthorized "+err.Error())
 		return
 	}
 
-jsonDecoder := json.NewDecoder(r.Body)
+	jsonDecoder := json.NewDecoder(r.Body)
 	var event struct {
 		Title       string `json:"title"`
 		Description string `json:"description"`
-		DateTime string `json:"dateTime"`
-
+		DateTime    string `json:"dateTime"`
 	}
+
 	err = jsonDecoder.Decode(&event)
 	if err != nil {
 		helper.RespondWithError(w, http.StatusBadRequest, "Invalid request payload")
 		return
 	}
 
-	result, err := repository.Db.Exec(`INSERT INTO events (group_id, title, description, time) VALUES (?, ?, ?,?)`, GrpID, event.Title, event.Description  , event.DateTime)
+	dateStr := event.DateTime
+
+	layout := "2006-01-02T15:04"
+	eventTime, err := time.Parse(layout, dateStr)
 	if err != nil {
-		helper.RespondWithError(w, http.StatusInternalServerError, "Database insert error" + err.Error())
+		helper.RespondWithError(w, http.StatusBadRequest, "Invalid date format")
+		return
+	}
+
+	currentTime := time.Now()
+
+	if eventTime.Before(currentTime) {
+		helper.RespondWithError(w, http.StatusBadRequest, "Event date and time must be in the future")
+		return
+	}
+
+	result, err := repository.Db.Exec(`INSERT INTO events (group_id, title, description, time) VALUES (?, ?, ?,?)`, GrpID, event.Title, event.Description, event.DateTime)
+	if err != nil {
+		helper.RespondWithError(w, http.StatusInternalServerError, "Database insert error"+err.Error())
 		return
 	}
 
@@ -64,19 +81,14 @@ jsonDecoder := json.NewDecoder(r.Body)
 	type CreatedEvent struct {
 		ID          int64  `json:"id"`
 		Title       string `json:"title"`
-		Description string `json:"description"`	
-		Date  string `json:"time"`				
-
-
-
+		Description string `json:"description"`
+		Date        string `json:"time"`
 	}
-	
 
 	helper.RespondWithJSON(w, http.StatusOK, CreatedEvent{
 		ID:          eventID,
 		Title:       event.Title,
 		Description: event.Description,
-		Date: event.DateTime,
+		Date:        event.DateTime,
 	})
-
 }
