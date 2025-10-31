@@ -1,6 +1,6 @@
 -- +migrate Up
 CREATE TABLE IF NOT EXISTS events (
-    id TEXT PRIMARY KEY,
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
     group_id TEXT NOT NULL,
     title TEXT DEFAULT NULL,
     description  TEXT NOT NULL,

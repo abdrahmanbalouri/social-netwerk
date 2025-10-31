@@ -223,7 +223,7 @@ export function Events() {
     <>
       {ShowEventForm ? (
         <div>
-          <button onClick={showEvent} className="Showbutton"> 
+          <button onClick={showEvent} className="Showbutton">
             create event
           </button>
         </div>
@@ -236,7 +236,7 @@ export function Events() {
         </div>
       )}
 
-       <div className="events-list">
+      <div className="events-list">
         <div className="event-card">
           <div className="event-header">
             <h3 className="event-title">Team Meeting</h3>
@@ -278,17 +278,45 @@ export function Events() {
 }
 
 
-export async function createEvent() {
-  // Handle event creation logic here
-
-
-  
-  console.log("Event created!");
-}
-
-
 
 export function EventForm() {
+
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [dateTime, setDateTime] = useState("");
+
+  async function createEvent(e) {
+    e.preventDefault();
+
+    const Data = {
+      title: title,
+      description: description,
+      dateTime: dateTime
+    }
+
+    const res = await fetch(`http://localhost:8080/events/createEvent`, {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(Data),
+    });
+
+    if (!res.ok) {
+      console.error("Failed to create event");
+      return;
+    }
+
+
+
+
+
+    console.log("Event created!");
+  }
+
+
+
   return (
 
     <div className="events-container">
@@ -297,24 +325,24 @@ export function EventForm() {
         <form className="event-form">
           <div className="form-group">
             <label htmlFor="event-title">Title</label>
-            <input type="text" id="event-title" placeholder="Event title..." />
+            <input type="text" id="event-title" placeholder="Event title..." onChange={(e) => { setTitle(e.target.value) }} />
           </div>
 
           <div className="form-group">
             <label htmlFor="event-description">Description</label>
-            <textarea id="event-description" rows="3" placeholder="Event description..."></textarea>
+            <textarea id="event-description" rows="3" placeholder="Event description..." onChange={(e) => { setDescription(e.target.value) }}></textarea>
           </div>
 
           <div className="form-group">
             <label htmlFor="event-datetime">Day/Time</label>
-            <input type="datetime-local" id="event-datetime" />
+            <input type="datetime-local" id="event-datetime" onChange={(e) => { setDateTime(e.target.value) }} />
           </div>
 
-          <button type="submit" className="btn-create" onClick={createEvent()}>Create Event</button>
+          <button type="submit" className="btn-create" onClick={() => { createEvent() }}>Create Event</button>
         </form>
       </div>
 
-     
+
     </div>
   )
 
