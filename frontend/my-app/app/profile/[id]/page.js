@@ -191,18 +191,14 @@ export default function Profile() {
     );
   }
   useEffect(() => {
-    console.log(scroollhome, "-----++++----++++---++++--+++");
 
     const reachedBottom =
       window.innerHeight + window.scrollY >= document.body.scrollHeight - 20;
 
-    console.log(reachedBottom);
 
     async function handlescrollhome() {
       let b = await fetchingposts();
-      if (b) {
-        scrollToPost(b);
-      }
+    
     }
 
     if (reachedBottom && !loading) {
@@ -287,20 +283,22 @@ export default function Profile() {
         method: "GET",
         credentials: "include",
       });
-
+           console.log(res);
+           
       if (!res.ok) {
-        return false
+        return 
       }
+    
 
       const data = await res.json();
-      console.log(data);
 
 
       if (data) {
         offsetpsot.current += 10
-      } else {
-        return false
+      } else {        
+        return 
       }
+      
 
       setPosts([...posts, ...data]);
       return data[0].id
@@ -629,8 +627,7 @@ export default function Profile() {
 
         <div
           className="main-section"
-          onScroll={(e) => setscroolHome(window.scrollY)}
-          ref={modalRefhome}
+         
         >
           {/* ===== Profile Section ===== */}
           <div className="profile">
