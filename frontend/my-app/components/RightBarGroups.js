@@ -39,6 +39,7 @@ export default function RightBarGroup({ onClick }) {
         addListener("logout", handleLogout)
         return () => removeListener("logout", handleLogout)
     }, [addListener, removeListener])
+    
 
     async function handleGroupRequest(invitaitonId, action) {
         try {
@@ -72,11 +73,14 @@ export default function RightBarGroup({ onClick }) {
                     method: "GET",
                     credentials: "include",
                 });
-                if (!res.ok) {
-                    throw new Error("Failed to fetch posts");
-                }
+              
                 const data = await res.json();
                 console.log(data);
+                
+                if (data.error == "Unauthorized") {
+                    window.location.href = "/login";
+                    return;
+                }
                 setFollowRequest(data);
                 // setInvitations(data)
             } catch (err) {
@@ -92,10 +96,18 @@ export default function RightBarGroup({ onClick }) {
                     method: "GET",
                     credentials: "include",
                 });
-                if (!res.ok) {
-                    throw new Error("Failed to fetch posts");
-                }
+                
+             
                 const data = await res.json();
+                if (!data){
+                    setFriends([]);
+                    return;
+                }
+                
+                if(data.error == "Unauthorized"){
+                    window.location.href = "/login";
+                    return;
+                }
                 setFriends(data);
             } catch (err) {
                 console.error(err);
