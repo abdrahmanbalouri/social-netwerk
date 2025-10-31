@@ -77,10 +77,10 @@ export default function RightBarGroup({ onClick }) {
                 const data = await res.json();
                 console.log(data);
                 
-                if (data.error == "Unauthorized") {
-                    window.location.href = "/login";
-                    return;
-                }
+                // if (data.error == "Unauthorized") {
+                //     window.location.href = "/login";
+                //     return;
+                // }
                 setFollowRequest(data);
                 // setInvitations(data)
             } catch (err) {
@@ -120,7 +120,6 @@ export default function RightBarGroup({ onClick }) {
     useEffect(() => {
         setGrpID(params.id);
     }, [params.id]);
-    // console.log("groups invitations are :", followRequest);
 
     return (
         <div className="rightBar">
