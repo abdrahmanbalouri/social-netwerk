@@ -10,11 +10,13 @@ import (
 
 func GetEvents(w http.ResponseWriter, r *http.Request) {
 	type Event struct {
-		ID          string `json:"id"`
+		ID          int    `json:"id"`
 		Title       string `json:"title"`
 		Description string `json:"description"`
+		Date        string `json:"time"`
 		Going       int    `json:"going"`
 		NotGoing    int    `json:"notGoing"`
+		userAction string `json:"userAction"`
 	}
 	UserId, err := helper.AuthenticateUser(r)
 	if err != nil {
@@ -38,16 +40,18 @@ func GetEvents(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var Events []Event
-	Fquery := `SELECT  e.id , e.title ,e.description, 
+	Fquery := `SELECT e.id, e.title, e.description,e.time,
   SUM(CASE WHEN A.action = 'going' THEN 1 ELSE 0 END) AS going,
-  SUM(CASE WHEN A.action = 'notGping' THEN 1 ELSE 0 END) AS notGoing,
-	FROM events e
-left JOIN event_Actions A  ON e.id = A.event_id
-WHERE e.group_id  = ?    ;
+  SUM(CASE WHEN A.action = 'notGoing' THEN 1 ELSE 0 END) AS notGoing
+FROM events e
+LEFT JOIN event_Actions A ON e.id = A.event_id
+WHERE e.group_id = ?
+GROUP BY e.id 
+ORDER BY e.time DESC
 `
-	rows, err := repository.Db.Query(Fquery, UserId)
+	rows, err := repository.Db.Query(Fquery, GrpID)
 	if err != nil {
-		helper.RespondWithError(w, http.StatusInternalServerError, "Database query error")
+		helper.RespondWithError(w, http.StatusInternalServerError, "Database query error"+err.Error())
 		return
 	}
 	defer rows.Close()
@@ -56,8 +60,8 @@ WHERE e.group_id  = ?    ;
 
 		var events Event
 
-		if err := rows.Scan(&events.ID, &events.Title, &events.Description, &events.Going, &events.NotGoing); err != nil {
-			helper.RespondWithError(w, http.StatusInternalServerError, "Database scan error")
+		if err := rows.Scan(&events.ID, &events.Title, &events.Description, &events.Date, &events.Going, &events.NotGoing); err != nil {
+			helper.RespondWithError(w, http.StatusInternalServerError, "Database scan error"+err.Error())
 			return
 		}
 		Events = append(Events, events)
@@ -67,6 +71,7 @@ WHERE e.group_id  = ?    ;
 		helper.RespondWithError(w, http.StatusInternalServerError, "Database rows error")
 		return
 	}
+
 
 	helper.RespondWithJSON(w, http.StatusOK, Events)
 }
