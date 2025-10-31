@@ -10,6 +10,7 @@ import LeftBar from "../../../components/LeftBar.js";
 import RightBarGroup from "../../../components/RightBarGroups.js";
 import { useDarkMode } from "../../../context/darkMod.js";
 import Comment from "../../../components/coment.js";
+import  {middleware} from "../../../middleware/middelware.js";
 
 // Global sendRequest (can be moved to a service file later)
 async function sendRequest(invitedUserID, grpID) {
@@ -42,6 +43,23 @@ async function sendRequest(invitedUserID, grpID) {
 // Main Page Component
 export default function GroupPage() {
     const { darkMode } = useDarkMode();
+    const router = useRouter();
+    const params = useParams();
+     const grpID = params.id;
+  useEffect(() => {
+    console.log(2122132123121321);
+    
+    const checkAuth = async () => {
+      const auth = await middleware();
+      if (!auth) {
+        console.log(11111111111111111111111111);
+        
+        router.push("/login");
+
+      }
+    }
+    checkAuth();
+  }, [grpID])
 
     return (
         <div className={darkMode ? "theme-dark" : "theme-light"}>
@@ -96,10 +114,17 @@ function closeComments() {
                 return res.json();
             })
             .then(data => {
-                console.log(data);
+
+                if( data.error){
+                    showToast(data.error)
+                    setLoading(false);
+                    router.push("/login");
+                    return
+                }
                 
                 setPost(data || []);
                 setLoading(false);
+              
             })
             .catch(error => {
                 console.error("Failed to fetch posts:", error);
