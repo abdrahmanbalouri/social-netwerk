@@ -152,11 +152,13 @@ export default function Home() {
   }
   async function Handlelik(postId) {
     try {
-      const res = await fetch(`http://localhost:8080/api/like/${postId}`, {
+      const res = await fetch(`http://localhost:8080/api/like/${postId}/${"-9999"}`, {
         method: "POST",
         credentials: "include",
       });
        const response = await res.json();
+       console.log(response);
+       
       if (response.error) {
         if (response.error == "Unauthorized"){
         router.push("/login");

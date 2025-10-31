@@ -58,7 +58,7 @@ export default function Reels() {
         <div className="no-videos">
             No reels
             <Link
-                href="/"
+                href="/home"
                 className="home-link"
                 style={{
                     marginTop: '20px',
@@ -125,7 +125,7 @@ export default function Reels() {
             </div>
 
             {/* Back to Home */}
-            <Link href='/' className='home-btn' > Go Home</Link>
+            <Link href='/home' className='home-btn' > Go Home</Link>
 
         </div>
     );
