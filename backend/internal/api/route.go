@@ -19,6 +19,8 @@ func Routes() http.Handler {
 	mux.HandleFunc("/api/groupeInvitation", handlers.GroupeInvitation)
 	mux.HandleFunc("/api/getEvents/", handlers.GetEvents)
 	mux.HandleFunc("/api/createEvent/", handlers.CreateEvent)
+	mux.HandleFunc("/api/event/action/", handlers.EventAction)
+
 
 
 
