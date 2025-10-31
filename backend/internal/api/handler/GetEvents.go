@@ -31,9 +31,9 @@ func GetEvents(w http.ResponseWriter, r *http.Request) {
 
 	var exists string
 
-	err = repository.Db.QueryRow(`select  id from group_members where user_id = ? and group_id = ? `, UserId, GrpID).Scan(&exists)
+	err = repository.Db.QueryRow(`select  user_id from group_members where user_id = ? and group_id = ? `, UserId, GrpID).Scan(&exists)
 	if err != nil {
-		helper.RespondWithError(w, http.StatusUnauthorized, "Unauthorized")
+		helper.RespondWithError(w, http.StatusUnauthorized, "Unauthorized "+err.Error())
 		return
 	}
 
