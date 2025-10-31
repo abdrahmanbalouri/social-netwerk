@@ -72,11 +72,7 @@ func CreatePostGroup(w http.ResponseWriter, r *http.Request) {
 	title := r.FormValue("title")
 	description := r.FormValue("description")
 
-	// file, handler, err := r.FormFile("image")
-	if err != nil {
-		http.Error(w, "Error retrieving the file", http.StatusBadRequest)
-		return
-	}
+
 
 	// check for membership of the user
 	var isMember bool

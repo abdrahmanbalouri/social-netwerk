@@ -54,10 +54,24 @@ export default function Reels() {
     };
 
     if (loading) return <div className="loading">Loading...</div>;
-    if (videos.length === 0) return (
+    if (!videos || videos.length === 0) return (
         <div className="no-videos">
             No reels
-            <Link href="/" className="home-link">Back to Home</Link>
+            <Link
+                href="/"
+                className="home-link"
+                style={{
+                    marginTop: '20px',
+                    display: 'inline-block',
+                    padding: '10px 20px',
+                    color: '#fff',
+                    backgroundColor: '#5271ff',
+                    borderRadius: '5px',
+                    textDecoration: 'none',
+                }}
+            >
+                Back to Home
+            </Link>
         </div>
     );
 
@@ -85,15 +99,7 @@ export default function Reels() {
                 />
             </div>
 
-            {/*Name + Title*/}
-            {/* <div className="user-info">
-                <div className="user-text">
-                    <p className="name">{current.first_name} {current.last_name}</p>
-                    <p className="title">{current.title || ''}</p>
-                </div>
-            </div> */}
 
-            {/* Like Count */}
             <div className="like-count">
                 <span className="icon">❤️</span>
                 <span className="count">{current.like || 0}</span>
@@ -119,8 +125,8 @@ export default function Reels() {
             </div>
 
             {/* Back to Home */}
-        <Link href= '/' className='home-btn' > Go Home</Link>
-            
+            <Link href='/' className='home-btn' > Go Home</Link>
+
         </div>
     );
 }
