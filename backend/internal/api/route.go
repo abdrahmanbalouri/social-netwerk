@@ -17,7 +17,12 @@ func Routes() http.Handler {
 	mux.HandleFunc("/api/followers/", handlers.FollowersHandler)
 	mux.HandleFunc("/api/followRequest", handlers.FollowRequest)
 	mux.HandleFunc("/api/groupeInvitation", handlers.GroupeInvitation)
-	mux.HandleFunc("/api/getEvents", handlers.GetEvents)
+	mux.HandleFunc("/api/getEvents/", handlers.GetEvents)
+	mux.HandleFunc("/api/createEvent/", handlers.CreateEvent)
+
+
+
+
 
 
 	mux.HandleFunc("/api/followRequest/action", handlers.FollowRequestAction)
