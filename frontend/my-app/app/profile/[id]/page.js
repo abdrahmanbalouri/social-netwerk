@@ -2,7 +2,7 @@
 import { useEffect, useRef, useState } from 'react';
 import Navbar from '../../../components/Navbar.js';
 import { useDarkMode } from '../../../context/darkMod.js';
-import './profile.css';
+import '../../../styles/profile.css';
 import LeftBar from '../../../components/LeftBar.js';
 import RightBar from '../../../components/RightBar.js';
 import { useParams, useRouter } from 'next/navigation.js';
