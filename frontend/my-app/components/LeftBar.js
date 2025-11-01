@@ -83,10 +83,12 @@ export default function LeftBar({ showSidebar }) {
       </div>
       <hr />
       <div className="menu">
-        <div className="item">
-          <img src="/icon/6.png" alt="" />
-          <span>Events</span>
-        </div>
+        <Link href='/Events'>
+          <div className="item">
+            <img src="/icon/6.png" alt="" />
+            <span>Events</span>
+          </div>
+        </Link>
         <Link href='/games'>
           <div className="item">
             <img src="/icon/7.png" alt="" />

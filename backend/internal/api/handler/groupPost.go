@@ -49,7 +49,6 @@ func CreatePostGroup(w http.ResponseWriter, r *http.Request) {
 	// get user id
 	userID, IdErr := helper.AuthenticateUser(r)
 	if IdErr != nil {
-		fmt.Println("Error getting the user's id")
 		helper.RespondWithError(w, http.StatusInternalServerError, IdErr.Error())
 		return
 	}
@@ -57,7 +56,6 @@ func CreatePostGroup(w http.ResponseWriter, r *http.Request) {
 	// parse Data
 	err := r.ParseMultipartForm(10 << 20) // 10MB
 	if err != nil {
-		fmt.Println("Unable to parse form :", err)
 		helper.RespondWithError(w, http.StatusBadRequest, "Unable to parse form")
 		return
 	}
@@ -84,12 +82,10 @@ func CreatePostGroup(w http.ResponseWriter, r *http.Request) {
 	query := `SELECT EXISTS (SELECT 1 FROM group_members WHERE user_id = ? AND group_id = ?)`
 	err = repository.Db.QueryRow(query, userID, GrpID).Scan(&isMember)
 	if err != nil {
-		fmt.Println("Failed to check group membership")
 		helper.RespondWithError(w, http.StatusInternalServerError, "Failed to check group membership")
 		return
 	}
 	if !isMember {
-		fmt.Println("The user is not a member of the group")
 		helper.RespondWithError(w, http.StatusUnauthorized, "You are not a member of this group")
 		return
 	}
@@ -102,7 +98,6 @@ func CreatePostGroup(w http.ResponseWriter, r *http.Request) {
 		uploadDir := "../frontend/my-app/public/uploads"
 		err = os.MkdirAll(uploadDir, os.ModePerm)
 		if err != nil {
-			fmt.Println("Failed to create upload directory")
 			helper.RespondWithError(w, http.StatusInternalServerError, "Failed to create upload directory")
 			return
 		}
@@ -110,7 +105,6 @@ func CreatePostGroup(w http.ResponseWriter, r *http.Request) {
 		imagePath = fmt.Sprintf("uploads/%s.jpg", uuid.New().String()) // Keep the path relative for database storage
 		out, err := os.Create(filepath.Join("../frontend/my-app/public", imagePath))
 		if err != nil {
-			fmt.Println("Failed to save image :", err)
 			helper.RespondWithError(w, http.StatusInternalServerError, "Failed to save image")
 			return
 		}
@@ -133,7 +127,6 @@ func CreatePostGroup(w http.ResponseWriter, r *http.Request) {
 		postID, userID, GrpID, postData.Title, postData.Content, imagePath, createdAt,
 	)
 	if err != nil {
-		fmt.Println("Failed to create post (groups)")
 		helper.RespondWithError(w, http.StatusInternalServerError, "Failed to create post")
 		return
 	}
@@ -174,7 +167,6 @@ func CreatePostGroup(w http.ResponseWriter, r *http.Request) {
 		&newPost.LikeCount, &newPost.LikedByUser, &newPost.CommentsCount,
 	)
 	if err != nil {
-		fmt.Println("Failed to fetch created post:", err)
 		helper.RespondWithError(w, http.StatusInternalServerError, "Post created but failed to fetch it")
 		return
 	}
@@ -240,7 +232,6 @@ func GetAllPostsGroup(w http.ResponseWriter, r *http.Request) {
 `
 	rows, err := repository.Db.Query(query, userID, GrpId)
 	if err != nil {
-		fmt.Println("Failed to get posts:", err)
 		helper.RespondWithError(w, http.StatusInternalServerError, "Failed to get posts")
 		return
 	}
@@ -251,7 +242,6 @@ func GetAllPostsGroup(w http.ResponseWriter, r *http.Request) {
 		var p Post
 		err := rows.Scan(&p.ID, &p.UserID, &p.Title, &p.Content, &p.ImagePath, &p.CreatedAt, &p.Author, &p.Profile, &p.Like, &p.LikedByUSer, &p.CommentCount)
 		if err != nil {
-			fmt.Println("heeeere :", err)
 			helper.RespondWithError(w, http.StatusInternalServerError, "Failed to scan posts")
 			return
 		}
@@ -321,7 +311,6 @@ func GetPostGroup(w http.ResponseWriter, r *http.Request) {
 `
 	rows, err := repository.Db.Query(query, userID, GrpId)
 	if err != nil {
-		fmt.Println("Failed to get the latest post :", err)
 		helper.RespondWithError(w, http.StatusInternalServerError, "Failed to get posts")
 		return
 	}
@@ -330,7 +319,6 @@ func GetPostGroup(w http.ResponseWriter, r *http.Request) {
 	var p Post
 	err = rows.Scan(&p.ID, &p.UserID, &p.Title, &p.Content, &p.ImagePath, &p.CreatedAt, &p.Author, &p.Profile, &p.Like, &p.LikedByUSer, &p.CommentCount)
 	if err != nil {
-		fmt.Println("heeeeeeeeeere :", err)
 		helper.RespondWithError(w, http.StatusInternalServerError, "Failed to scan posts")
 		return
 	}

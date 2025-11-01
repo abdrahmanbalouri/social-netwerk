@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"strings"
 	"time"
@@ -21,7 +20,7 @@ type Comment struct {
 	CreatedAt time.Time `json:"created_at"`
 	AuthorID  string    `json:"author_id"`
 }
-type FetchComment struct{
+type FetchComment struct {
 	PostID string `json:"postId"`
 }
 
@@ -32,7 +31,6 @@ func CreateCommentGroup(w http.ResponseWriter, r *http.Request) {
 	}
 	userID, err := helper.AuthenticateUser(r)
 	if err != nil {
-		fmt.Println(err)
 		helper.RespondWithError(w, http.StatusUnauthorized, "Authentication required")
 		return
 	}
@@ -47,12 +45,10 @@ func CreateCommentGroup(w http.ResponseWriter, r *http.Request) {
 	var isMember bool
 	err = repository.Db.QueryRow(query, userID, comment.PostID).Scan(&grpID, &isMember)
 	if err != nil {
-		fmt.Println("Failed to get the group's id or post not exist :", err)
 		helper.RespondWithError(w, http.StatusInternalServerError, "Failed to get the group's id or post not exist")
 		return
 	}
 	if !isMember {
-		fmt.Println("User is not a member of the group")
 		helper.RespondWithError(w, http.StatusUnauthorized, "User is not a member of the group")
 		return
 	}
@@ -89,14 +85,12 @@ func GetCommentGroup(w http.ResponseWriter, r *http.Request) {
 
 	var newComment FetchComment
 	if err := json.NewDecoder(r.Body).Decode(&newComment); err != nil {
-		fmt.Println("error is :", err)
 		helper.RespondWithError(w, http.StatusBadRequest, "Invalid request formattt")
 		return
 	}
 
 	userID, err := helper.AuthenticateUser(r)
 	if err != nil {
-		fmt.Println("Authentication failed : ", err)
 		helper.RespondWithError(w, http.StatusUnauthorized, "Authentication failed")
 		return
 	}
@@ -107,12 +101,10 @@ func GetCommentGroup(w http.ResponseWriter, r *http.Request) {
 	var isMember bool
 	err = repository.Db.QueryRow(query, userID, newComment.PostID).Scan(&grpID, &isMember)
 	if err != nil {
-		fmt.Println("Failed to get the group's id or post not exist :", err)
 		helper.RespondWithError(w, http.StatusInternalServerError, "Failed to get the group's id or post not exist")
 		return
 	}
 	if !isMember {
-		fmt.Println("User is not a member of the group")
 		helper.RespondWithError(w, http.StatusUnauthorized, "User is not a member of the group")
 		return
 	}
@@ -121,7 +113,6 @@ func GetCommentGroup(w http.ResponseWriter, r *http.Request) {
 	query = `SELECT id, content, created_at FROM comments WHERE post_id = ?`
 	rows, err := repository.Db.Query(query, newComment.PostID)
 	if err != nil {
-		fmt.Println("Failed to get comments : ", err)
 		helper.RespondWithError(w, http.StatusInternalServerError, "Failed to get comments")
 		return
 	}
@@ -130,9 +121,8 @@ func GetCommentGroup(w http.ResponseWriter, r *http.Request) {
 	var CommentJson []Comment
 	for rows.Next() {
 		var c Comment
-		err := rows.Scan(&c.ID, &c.Content, &c.CreatedAt);
+		err := rows.Scan(&c.ID, &c.Content, &c.CreatedAt)
 		if err != nil {
-			fmt.Println("Failed to get comments : ", err)
 			helper.RespondWithError(w, http.StatusInternalServerError, "Failed to comments comments")
 			return
 		}

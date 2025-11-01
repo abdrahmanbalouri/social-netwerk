@@ -21,12 +21,6 @@ func Routes() http.Handler {
 	mux.HandleFunc("/api/createEvent/", handlers.CreateEvent)
 	mux.HandleFunc("/api/event/action/", handlers.EventAction)
 
-
-
-
-
-
-
 	mux.HandleFunc("/api/followRequest/action", handlers.FollowRequestAction)
 	mux.HandleFunc("/api/following/", handlers.FollowingHandler)
 	mux.HandleFunc("/api/register", handlers.RegisterHandler)
@@ -67,6 +61,7 @@ func Routes() http.Handler {
 	mux.HandleFunc("/group/fetchPost/{id}", handlers.GetPostGroup)
 	mux.HandleFunc("/group/addComment", handlers.CreateCommentGroup)
 	mux.HandleFunc("/api/videos", handlers.GetVedioHandler)
+	mux.HandleFunc("/api/myevents",handlers.MyEavents)
 
 	return mux
 }

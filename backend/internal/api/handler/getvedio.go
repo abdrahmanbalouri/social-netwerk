@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"database/sql"
-	"fmt"
 	"net/http"
 
 	"social-network/internal/helper"
@@ -15,7 +14,6 @@ func GetVedioHandler(w http.ResponseWriter, r *http.Request) {
 		helper.RespondWithError(w, http.StatusUnauthorized, "Unauthorized")
 		return
 	}
-	fmt.Println("33333")
 
 	rows, err := repository.Db.Query(`
 		SELECT 

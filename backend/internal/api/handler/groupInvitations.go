@@ -3,7 +3,6 @@ package handlers
 import (
 	"database/sql"
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"strings"
 	"time"
@@ -48,7 +47,6 @@ func GroupInvitationResponse(w http.ResponseWriter, r *http.Request) {
 	// start the transaction
 	tx, err := repository.Db.Begin()
 	if err != nil {
-		fmt.Println("Failed to start database transaction")
 		helper.RespondWithError(w, http.StatusInternalServerError, "Failed to start database transaction")
 		return
 	}
@@ -61,7 +59,6 @@ func GroupInvitationResponse(w http.ResponseWriter, r *http.Request) {
 			helper.RespondWithError(w, http.StatusNotFound, "No pending invitation found for this user and group")
 			return
 		}
-		fmt.Println("Failed to retrieve invitation")
 		helper.RespondWithError(w, http.StatusInternalServerError, "Failed to retrieve invitation")
 		return
 	}
@@ -70,7 +67,6 @@ func GroupInvitationResponse(w http.ResponseWriter, r *http.Request) {
 		query := `INSERT INTO group_members (user_id, group_id) VALUES (?, ?)`
 		_, err = tx.Exec(query, userID, newResponse.GrpID)
 		if err != nil {
-			fmt.Println("error is :", err)
 			helper.RespondWithError(w, http.StatusInternalServerError, "error inserting the user in the group member table")
 			return
 		}
@@ -78,13 +74,11 @@ func GroupInvitationResponse(w http.ResponseWriter, r *http.Request) {
 	query := `DELETE FROM group_invitations WHERE user_id = ? AND group_id = ?`
 	_, err = tx.Exec(query, userID, newResponse.GrpID)
 	if err != nil {
-		fmt.Println("error deleting the invitation from it table")
 		helper.RespondWithError(w, http.StatusInternalServerError, "error deleting the invitation from it table")
 		return
 	}
 
 	if err := tx.Commit(); err != nil {
-		fmt.Println("Failed to commit transaction")
 		helper.RespondWithError(w, http.StatusInternalServerError, "Failed to commit transaction")
 		return
 	}
@@ -109,13 +103,12 @@ func GroupInvitationRequest(w http.ResponseWriter, r *http.Request) {
 	GrpId := parts[3]
 
 	var newInvitation GroupInvitation
-	// fmt.Println("Body is :", json.NewDecoder(r.Body))
+	// ("Body is :", json.NewDecoder(r.Body))
 	if err := json.NewDecoder(r.Body).Decode(&newInvitation); err != nil {
 		helper.RespondWithError(w, http.StatusBadRequest, "Invalid request format")
 		return
 	}
 
-	fmt.Println("new invitation has :", newInvitation)
 	// find the user id
 	userID, IDerr := helper.AuthenticateUser(r)
 	if IDerr != nil {
@@ -145,9 +138,9 @@ func GroupInvitationRequest(w http.ResponseWriter, r *http.Request) {
 
 	for _, user := range newInvitation.InvitedUsers {
 		// get the user's id
-	/* 	var invitedUserID string
+		/* 	var invitedUserID string
 		invitedUserID = user */
-	/* 	fmt.Println("user to invite is :", user)
+		/* 	("user to invite is :", user)
 		// bdelt     nicknamme bfirst naaaame  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 		query = `SELECT id FROM users WHERE nickname = ?`
 		err = tx.QueryRow(query, user).Scan(&invitedUserID)
@@ -170,7 +163,7 @@ func GroupInvitationRequest(w http.ResponseWriter, r *http.Request) {
 			helper.RespondWithError(w, http.StatusInternalServerError, "Error checking for existing membership or invitation")
 			return
 		}
-		
+
 		if exists1 {
 			continue
 		} else {
@@ -181,7 +174,6 @@ func GroupInvitationRequest(w http.ResponseWriter, r *http.Request) {
 						);`
 			err = tx.QueryRow(query, user).Scan(&exists2)
 			if err != nil {
-				fmt.Println("Database error is :", err)
 				helper.RespondWithError(w, http.StatusInternalServerError, "Database error")
 				return
 			}
@@ -210,6 +202,5 @@ func GroupInvitationRequest(w http.ResponseWriter, r *http.Request) {
 	response := map[string]string{
 		"message": "Invitation successfully processed",
 	}
-	fmt.Println("everything went good ----")
 	helper.RespondWithJSON(w, http.StatusOK, response)
 }
