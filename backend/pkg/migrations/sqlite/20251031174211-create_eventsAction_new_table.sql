@@ -1,6 +1,5 @@
 -- +migrate Up
 
--- 1. إنشاء جدول جديد بالشكل الصحيح
 CREATE TABLE eventsAction_new (
  id INTEGER PRIMARY KEY AUTOINCREMENT,    user_id TEXT NOT NULL,
     event_id TEXT NOT NULL,
@@ -12,10 +11,8 @@ CREATE TABLE eventsAction_new (
 
 
 
--- 3. حذف الجدول القديم
-DROP TABLE event_Actions;
+.DROP TABLE event_Actions;
 
--- 4. إعادة تسمية الجدول الجديد
 ALTER TABLE eventsAction_new RENAME TO event_Actions;
 -- +migrate Down
 DROP TABLE IF EXISTS event_Actions;
