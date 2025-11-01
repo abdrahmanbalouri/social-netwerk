@@ -25,7 +25,7 @@ export default function LeftBar({ showSidebar }) {
   }
 
   const logoutStyle = {
-    width: '100%',
+    width: '90%',
     height: '40px',
     display: 'flex',
     alignItems: 'center',
@@ -83,7 +83,6 @@ export default function LeftBar({ showSidebar }) {
       </div>
       <hr />
       <div className="menu">
-        <span>Your shortcuts</span>
         <div className="item">
           <img src="/icon/6.png" alt="" />
           <span>Events</span>
