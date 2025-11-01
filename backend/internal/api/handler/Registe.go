@@ -48,7 +48,7 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 		About:     r.FormValue("aboutMe"),
 		Privacy:   r.FormValue("privacy"),
 	}
-
+	fmt.Println("privacy", userInformation.Privacy)
 	file, handler, err := r.FormFile("avatar")
 	if err == nil {
 		defer file.Close()

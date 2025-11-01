@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import './register.css'
+import '../../styles/register.css'
 
 export default function SignupPage() {
   const [form, setForm] = useState({
@@ -45,7 +45,8 @@ export default function SignupPage() {
     formData.append("dob", form.dob)
     formData.append("nickname", form.nickname)
     formData.append("aboutMe", form.aboutMe)
-    formData.append("avatar", form.avatar) 
+    formData.append("avatar", form.avatar)
+    formData.append("privacy", form.privacy || "public")
 
     try {
       const response = await fetch("http://localhost:8080/api/register", {
@@ -86,10 +87,27 @@ export default function SignupPage() {
         <input type="file" name="avatar" accept="image/*" onChange={handleFileChange} />
         <textarea name="aboutMe" placeholder="About me (optional)" onChange={handleChange}></textarea>
 
-        <label className="checkbox">
-          <input type="checkbox" required />
-          I agree to the Terms & Privacy Policy
+        <label>
+          <input
+            type="radio"
+            name="privacy"
+            value="private"
+            onChange={handleChange}
+            required
+          />
+          Private
         </label>
+
+        <label>
+          <input
+            type="radio"
+            name="privacy"
+            value="public"
+            onChange={handleChange}
+          />
+          Public
+        </label>
+
 
         <button type="submit" className="button">Sign Up</button>
       </form>
