@@ -201,6 +201,53 @@ func Loop(conn *websocket.Conn, currentUserID string) {
 		// ===============================
 		//  HANDLE FOLLOW NOTIFICATION
 		// ===============================
+		case "group_message":
+			if msg.GroupID == "" {
+				log.Println("Invalid group ID")
+				continue
+			}
+			err := repository.Db.QueryRow("SELECT 1 FROM group_members WHERE group_id = ? AND user_id = ?", msg.GroupID, currentUserID).Scan(new(interface{}))
+			if err == sql.ErrNoRows {
+				log.Println("User is not a member of the group")
+				continue
+			} else if err != nil {
+				log.Println("DB error:", err)
+				continue
+			}
+
+
+			_, err = repository.Db.Exec(`
+				INSERT INTO messages (group_id, sender_id, content)
+				VALUES (?, ?, ?)
+			`, msg.GroupID, currentUserID, msg.MessageContent)
+			if err != nil {
+				log.Println("DB error inserting group message:", err)
+				continue
+			}
+
+			sendToGroupMembers(msg.GroupID, currentUserID, map[string]any{
+				"type":     msg.Type,
+				"from":     currentUserID,
+				"groupID":  msg.GroupID,
+				"content":  msg.MessageContent,
+				"time":     time.Now().Format(time.RFC3339),
+			})
+
+		// ===============================
+		//  HANDLE FOLLOW NOTIFICATION
+		// ===============================
+		msg.MessageContent="sent a message to the group"
+		BrodcastGroupMembersNotification(msg.GroupID, currentUserID, map[string]any{
+				"type":     "notification",
+				"subType":  "group_message",
+				"from":     currentUserID,
+				"groupID":  msg.GroupID,
+				"content":  msg.MessageContent,
+				"name":     first_name + " " + last_name,
+				"time":     time.Now().Format(time.RFC3339),
+			})
+
+			// ✅ Insert message direct sans check dyal follows
 		case "follow":
 			var followID int
 			var first_name, last_name, photo, pryvsi string
@@ -276,6 +323,41 @@ func Loop(conn *websocket.Conn, currentUserID string) {
 	}
 }
 
+func BrodcastGroupMembersNotification(groupID string, senderID string, message map[string]any) {
+	ClientsMutex.Lock()
+	defer ClientsMutex.Unlock()
+
+	rows, err := repository.Db.Query("SELEC user_id FROM group_members WHERE group_id = ?", groupID)
+	if err != nil {
+		log.Println("DB error getting group members:", err)
+		return
+	}
+	defer rows.Close()
+
+	var userID string
+	for rows.Next() {
+		if err := rows.Scan(&userID); err != nil {
+			log.Println("DB error scanning group member:", err)
+			continue
+		}
+		if userID == senderID {
+			continue // Skip sender
+		}
+		conns, exists := Clients[userID]
+		if !exists {
+			continue
+		}
+		for _, conn := range conns {
+			if err := conn.WriteJSON(message); err != nil {
+				log.Println("WebSocket write error:", err)
+				if err := conn.Close(); err != nil {
+					log.Println("WebSocket close error:", err)
+				}
+			}
+		}
+	}
+}
+
 func BrodcastNotification(userID string, message map[string]any) {
 	// TO BE IMPLEMENTED
 	sendToUser(userID, message)
@@ -318,6 +400,41 @@ func sendToUser(userID string, message map[string]any) {
 			log.Println("WebSocket write error:", err)
 			if err := conn.Close(); err != nil {
 				log.Println("WebSocket close error:", err)
+			}
+		}
+	}
+}
+
+func sendToGroupMembers(groupID string, senderID string, message map[string]any)  {
+	ClientsMutex.Lock()
+	defer ClientsMutex.Unlock()
+
+	rows, err := repository.Db.Query("SELEC user_id FROM group_members WHERE group_id = ?", groupID)
+	if err != nil {
+		log.Println("DB error getting group members:", err)
+		return
+	}
+	defer rows.Close()
+
+	var userID string
+	for rows.Next() {
+		if err := rows.Scan(&userID); err != nil {
+			log.Println("DB error scanning group member:", err)
+			continue
+		}
+		if userID == senderID {
+			continue // Skip sender
+		}
+		conns, exists := Clients[userID]
+		if !exists {
+			continue
+		}
+		for _, conn := range conns {
+			if err := conn.WriteJSON(message); err != nil {
+				log.Println("WebSocket write error:", err)
+				if err := conn.Close(); err != nil {
+					log.Println("WebSocket close error:", err)
+				}
 			}
 		}
 	}

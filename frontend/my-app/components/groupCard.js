@@ -19,8 +19,8 @@ export function GroupCard({ group, onShow }) {
         <div className="group-footer">
           <div className="group-members">
             <Users />
-            <span className="members-text-full">{22} members</span>
-            <span className="members-text-short">{220}</span>
+            <span className="members-text-full">{group.MemberCount} members</span>
+            <span className="members-text-short">{group.MemberCount}</span>
           </div>
           <button className="view-button" onClick={() => onShow(group.ID)}>
             <span>View</span>
