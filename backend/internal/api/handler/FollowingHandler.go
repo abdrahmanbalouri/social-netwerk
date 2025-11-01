@@ -21,6 +21,12 @@ func FollowingHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	var idd string
+	err = repository.Db.QueryRow(`select id from users where id  =   ? `, id).Scan(&idd)
+	if err != nil {
+		helper.RespondWithJSON(w, http.StatusNotFound, "User not found")
+		return
+	}
 	var privacy string
 	var isFollowing int
 
@@ -40,7 +46,7 @@ WHERE u.id = ?;
 		fmt.Println("errrrrrrrrrrrrrrrrrrrrrrrrrrrrr", err)
 		return
 	}
-	if privacy == "private" && isFollowing == 0 &&  UserID  !=  id  { 
+	if privacy == "private" && isFollowing == 0 && UserID != id {
 
 		helper.RespondWithJSON(w, http.StatusUnauthorized, "errrrrrrrrrrrrorrororororroororo")
 
@@ -60,17 +66,17 @@ WHERE u.id = ?;
 
 	var following []map[string]interface{}
 	for rows.Next() {
-		var first_name , last_name  ,  profilePicture, idU string
+		var first_name, last_name, profilePicture, idU string
 		if err := rows.Scan(&idU, &first_name, &last_name, &profilePicture); err != nil {
 			http.Error(w, "Database error: "+err.Error(), http.StatusInternalServerError)
 			return
 		}
 		follower := map[string]interface{}{
-			"id":       idU,
+			"id":         idU,
 			"first_name": first_name,
-			"last_name": last_name,
+			"last_name":  last_name,
 
-			"image":    profilePicture,
+			"image": profilePicture,
 		}
 		following = append(following, follower)
 	}
