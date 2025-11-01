@@ -2,7 +2,11 @@
 import { useEffect, useRef, useState } from 'react';
 import Navbar from '../../../components/Navbar.js';
 import { useDarkMode } from '../../../context/darkMod.js';
+<<<<<<< HEAD
 import '../../../styles/profile.css';
+=======
+import './profile.css';
+>>>>>>> postgroup
 import LeftBar from '../../../components/LeftBar.js';
 import RightBar from '../../../components/RightBar.js';
 import { useParams, useRouter } from 'next/navigation.js';
@@ -190,22 +194,22 @@ export default function Profile() {
         : [...prevSelected, userId]
     );
   }
-  useEffect(() => {
-    console.log(scroollhome, "-----++++----++++---++++--+++");
-
+  useEffect(() => {  
+    console.log(scroollhome);
+    
+    console.log(loading);
+    
     const reachedBottom =
       window.innerHeight + window.scrollY >= document.body.scrollHeight - 20;
 
-    console.log(reachedBottom);
 
     async function handlescrollhome() {
-      let b = await fetchingposts();
-      if (b) {
-        scrollToPost(b);
-      }
+      await fetchingposts();
+    
     }
 
-    if (reachedBottom && !loading) {
+    if (reachedBottom && !loading && posts.length >= 10) {
+      
       handlescrollhome();
     }
   }, [scroollhome]);
@@ -287,26 +291,27 @@ export default function Profile() {
         method: "GET",
         credentials: "include",
       });
-
+           console.log(res);
+           
       if (!res.ok) {
-        return false
+        throw new Error(`Failed to fetch posts: ${res.status}`); 
       }
+    
 
       const data = await res.json();
-      console.log(data);
+      
 
 
-      if (data) {
-        offsetpsot.current += 10
-      } else {
-        return false
-      }
+      if (!data) {
+        return} 
+      console.log(data,"/*/**");
+      
+      
+      offsetpsot.current += 10
 
       setPosts([...posts, ...data]);
-      return data[0].id
     } catch (err) {
       console.error("Error fetching posts:", err);
-      return false
     } finally {
       setLoading(false);
     }
@@ -629,8 +634,7 @@ export default function Profile() {
 
         <div
           className="main-section"
-          onScroll={(e) => setscroolHome(window.scrollY)}
-          ref={modalRefhome}
+         
         >
           {/* ===== Profile Section ===== */}
           <div className="profile">

@@ -69,7 +69,7 @@ func main() {
 	for i := 0; i < len(rr); i++ {
 		_, err := repository.Db.Exec("insert into  follow_requests (user_id , follower_id) values (?,?)", "847334d1-e080-4536-bdb4-256708383ef0", rr[i])
 		if err != nil {
-			("erfref", err)
+			fmt.Println("erfref", err)
 			continue
 		}
 	} */

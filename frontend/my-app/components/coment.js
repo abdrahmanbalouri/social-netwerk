@@ -1,9 +1,10 @@
 "use client"
 import { useState, useEffect, useRef } from "react"
-import { useRouter } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import "../styles/comment.css"
 
-export default function Comment({ comments, isOpen, onClose, postId, onCommentChange, lodinggg, ongetcomment, post, showToast }) {
+
+export default function Comment({ comments, isOpen, onClose, postId, onCommentChange, lodinggg, ongetcomment, post, showToast,ID }) {
   const [commentContent, setCommentContent] = useState("")
   const [selectedFile, setSelectedFile] = useState(null)
   const [loading, setLoading] = useState(false)
@@ -17,6 +18,10 @@ export default function Comment({ comments, isOpen, onClose, postId, onCommentCh
   const emojiRef = useRef(null)
   const textareaRef = useRef(null)
   const router = useRouter()
+  console.log(12121);
+  
+
+
 
   // Emojis organisés par catégories
   const emojiCategories = {
@@ -161,8 +166,11 @@ export default function Comment({ comments, isOpen, onClose, postId, onCommentCh
       if (selectedFile) {
         formData.append("media", selectedFile)
       }
+      formData.append("whatis",  window.location.href.split('/')[3])
+      
+      formData.append("groupId", ID)
 
-      const response = await fetch("http://localhost:8080/api/createcomment", {
+      const response = await fetch(`http://localhost:8080/api/createcomment`, {
         method: "POST",
         credentials: "include",
         body: formData,
@@ -170,6 +178,8 @@ export default function Comment({ comments, isOpen, onClose, postId, onCommentCh
 
 
       const res = await response.json()
+      console.log(res,'-**-88987+97+7+7+77+9');
+      
       if (res.error) {
         if (res.error == "Unauthorized") {
           router.push("/login");

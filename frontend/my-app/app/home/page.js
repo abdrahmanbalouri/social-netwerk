@@ -91,7 +91,7 @@ export default function Home() {
       }
     }
 
-    if (reachedBottom && !loading) {
+    if (reachedBottom && !loading && posts.length >= 10) {
       handlescrollhome();
     }
   }, [scroollhome]);
@@ -152,7 +152,7 @@ export default function Home() {
   }
   async function Handlelik(postId) {
     try {
-      const res = await fetch(`http://localhost:8080/api/like/${postId}`, {
+      const res = await fetch(`http://localhost:8080/api/like/${postId}/${"-9999"}`, {
         method: "POST",
         credentials: "include",
       });

@@ -38,7 +38,7 @@ func Routes() http.Handler {
 	mux.HandleFunc("/api/gallery", handlers.GalleryHandler)
 	mux.HandleFunc("/api/createcomment", handlers.CreateCommentHandler)
 	mux.HandleFunc("/api/editor", handlers.Editor)
-	mux.HandleFunc("/api/like/{id}", handlers.LikeHandler)
+	mux.HandleFunc("/api/like/{id}/{groupId}", handlers.LikeHandler)
 	mux.HandleFunc("/api/follow", handlers.FollowHandler)
 	mux.HandleFunc("/api/users/followers", handlers.Getfollowers)
 	mux.HandleFunc("/api/getlastcomment/{id}", handlers.Getlastcommnet)
@@ -53,6 +53,7 @@ func Routes() http.Handler {
 	mux.HandleFunc("/groups", handlers.GetAllGroups)
 	mux.HandleFunc("/group/like", handlers.LikesGroup)
 	mux.HandleFunc("/group/fetchComments", handlers.GetCommentGroup)
+	//mux.HandleFunc("/group/like", handlers.LikesGroup)
 	mux.HandleFunc("/api/groups/add", handlers.CreateGroupHandler)
 	mux.HandleFunc("/invitations/respond", handlers.GroupInvitationResponse)
 	mux.HandleFunc("/group/invitation/{id}", handlers.GroupInvitationRequest)
@@ -62,6 +63,11 @@ func Routes() http.Handler {
 	mux.HandleFunc("/group/addComment", handlers.CreateCommentGroup)
 	mux.HandleFunc("/api/videos", handlers.GetVedioHandler)
 	mux.HandleFunc("/api/myevents",handlers.MyEavents)
+//mux.HandleFunc("/group/fetchPost/{id}", handlers.GetPostGroup)
+	mux.HandleFunc("/group/updatepost/{id}/{groupId}", handlers.GetGroupPostByID)
+	mux.HandleFunc("/group/Getcomments/{id}/{offset}/{groupId}", handlers.GetCommentsGroup)
+	 mux.HandleFunc("/group/getlastcomment/{id}/{groupId}", handlers.GetlastcommnetGroup)
+
 
 	return mux
 }

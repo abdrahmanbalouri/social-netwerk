@@ -41,7 +41,6 @@ export default function Post({ post, onGetComments, ondolike }) {
             ) : null
           )}
 
-
         </div>
         <div className="infoo">
           <div className="item" onClick={() => ondolike(post.id)} >
