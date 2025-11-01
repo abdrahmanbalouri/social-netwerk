@@ -12,6 +12,7 @@ import LeftBar from "../../../components/LeftBar.js";
 import RightBarGroup from "../../../components/RightBarGroups.js";
 import { useDarkMode } from "../../../context/darkMod.js";
 import { FileText } from "lucide-react";
+import EventCard from "../../../components/EventCard.js";
 // import {CreatePost} from ""
 
 export default function () {
@@ -236,6 +237,8 @@ export function Events() {
       }
 
       const data = await response.json();
+
+      console.log('Fetched events:', data);
       setEventList(data);
     } catch (error) {
       console.error('Error fetching events:', error);
@@ -296,27 +299,8 @@ export function Events() {
       {EventList?.length === 0 ? (
         <div>No events yet. Be the first to create one!</div>
       ) : (
-        EventList?.map((ev) => (
-          <div className="events-list" key={ev.id}>
-            <div className="event-card">
-              <div className="event-header">
-                <h3 className="event-title">{ev.title}</h3>
-                <span className="event-datetime">{new Date(ev.time).toLocaleString()}</span>
-              </div>
-
-              <p className="event-description">{ev.description}</p>
-
-              <div className="event-actions">
-                <button className="btn-going" onClick={() => goingEvent("going", ev.id)} >Going</button>
-                <button className="btn-not-going" onClick={() => goingEvent("notGoing", ev.id)} >Not Going</button>
-              </div>
-
-              <div className="event-stats">
-                <span className="stat-going">{ev.going} going</span>
-                <span className="stat-not-going">{ev.notGoing} not going</span>
-              </div>
-            </div>
-          </div>
+        EventList.map((ev) => (
+          <EventCard key={ev.id} ev={ev} goingEvent={goingEvent} />
         ))
       )}
 
