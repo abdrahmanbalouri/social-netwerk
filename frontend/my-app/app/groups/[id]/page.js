@@ -11,8 +11,9 @@ import { PostCreationTrigger } from "../../../components/cretaePostGroup.js";
 import LeftBar from "../../../components/LeftBar.js";
 import RightBarGroup from "../../../components/RightBarGroups.js";
 import { useDarkMode } from "../../../context/darkMod.js";
-import { FileText } from "lucide-react";
 import EventCard from "../../../components/EventCard.js";
+import { FileText, MessageCircle } from "lucide-react";
+import { useWS } from "../../../context/wsContext.js";
 // import {CreatePost} from ""
 
 export default function () {
@@ -382,11 +383,45 @@ export function EventForm({ closeForm, fetchEvents }) {
 
           <button type="submit" className="btn-create" onClick={createEvent}>Create Event</button>
         </form>
-        <p className="error-message" style={{ color: "red" ,alignItems:'center'}}>{error}</p>
+        <p className="error-message" style={{ color: "red", alignItems: 'center' }}>{error}</p>
       </div>
 
 
     </div>
   )
 
+}
+export function GroupChat() {
+  const [id, setId] = useState(null)
+  const { addEventListener, removeEventListener, sendMessage } = useWS();
+
+  useEffect(() => {
+    
+    addEventListener("group_message", handleGroupChatMessage);
+    return () => {
+      removeEventListener("group_message", handleGroupChatMessage);
+    };
+  }, [addEventListener, removeEventListener]);
+  useEffect(() => {
+    fetch("http://localhost:8080/api/me")
+      .then(res => res.json())
+      .then(data => setId(data.user_id))
+      .catch(err => console.error(err))
+  })
+  function handleSendGroupChatMessage(input) {
+    if (input.trim() === "") return
+    const payload = {
+      senderId: id,
+      messageContent: input,
+      type: "message",
+    }
+    sendMessage(payload)
+
+  }
+  return (
+    <div className="group-empty-state">
+      <MessageCircle className="tab-icon" />
+      <p className="group-empty-state-text">Chat interface coming soon</p>
+    </div>
+  );
 }
