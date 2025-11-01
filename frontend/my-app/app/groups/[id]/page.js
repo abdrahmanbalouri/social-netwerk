@@ -318,7 +318,7 @@ export function EventForm({ closeForm, fetchEvents }) {
   const params = useParams();
 
   const grpID = params.id;
-
+  const [errors, setErrors] = useState(null);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [dateTime, setDateTime] = useState("");
@@ -333,27 +333,54 @@ export function EventForm({ closeForm, fetchEvents }) {
     }
 
     if (!title || !description || !dateTime) {
-      console.error("All fields are required");
+      setErrors("All fields are required");
       return;
     }
 
-    const res = await fetch(`http://localhost:8080/api/createEvent/${grpID}`, {
-      method: "POST",
-      credentials: "include",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(Data),
-    });
-
-    if (!res.ok) {
-      console.error("Failed to create event");
+    if ((title.length < 5 && title.length > 50)) {
+      setErrors(" Title must be between 5 and 50 characters");
       return;
     }
 
-    await fetchEvents();
+    if (description.length < 10 || description.length > 300) {
+      setErrors("Description must be between 10 and 300 characters");
+      return;
+    }
 
-    closeForm();
+
+    if (new Date(dateTime) <= new Date()) {
+      setErrors("Event date and time must be in the future");
+      return;
+    }
+
+    try {
+      const res = await fetch(`http://localhost:8080/api/createEvent/${grpID}`, {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(Data),
+      });
+
+      if (!res.ok) {
+        let err = await res.text();
+        setErrors(err);
+        return;
+      }
+
+      await fetchEvents();
+
+      closeForm();
+
+      setErrors(null);
+
+
+
+
+    } catch (error) {
+      setErrors(error.message);
+    }
 
 
   }
@@ -380,7 +407,7 @@ export function EventForm({ closeForm, fetchEvents }) {
             <label htmlFor="event-datetime">Day/Time</label>
             <input type="datetime-local" id="event-datetime" onChange={(e) => { setDateTime(e.target.value) }} />
           </div>
-
+          <span className="error" style={{ red: "red" }}> {errors}</span>
           <button type="submit" className="btn-create" onClick={createEvent}>Create Event</button>
         </form>
       </div>
