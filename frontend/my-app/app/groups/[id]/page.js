@@ -1,6 +1,5 @@
 "use client";
 import "../../../styles/events.css"
-
 import Navbar from "../../../components/Navbar.js";
 import { GroupPostChat } from "../../../components/groupPostCat.js";
 import Post from "../../../components/Post.js";
