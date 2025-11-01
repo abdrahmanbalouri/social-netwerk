@@ -206,7 +206,34 @@ export async function CreatePost(groupId, formData) {
   return JSON.parse(text);
 }
 export function GroupChat() {
+  const [id, setId] = useState(null)
+  const { addEventListener, removeEventListener, sendMessage } = useWS();
 
+  useEffect(()=> {
+    function handleGroupChatMessage {
+
+    }
+    addEventListener("group_message", handleGroupChatMessage);
+    return () => {
+      removeEventListener("group_message", handleGroupChatMessage);
+    };
+  }, [addEventListener, removeEventListener]);
+  useEffect(()=> {
+    fetch("http://localhost:8080/api/me")
+    .then(res => res.json())
+    .then(data=> setId(data.user_id))
+    .catch(err=> console.error(err))
+  })
+  function handleSendGroupChatMessage (input) {
+    if (input.trim() === "") return
+    const payload = {
+      senderId: id,
+      messageContent: input,
+      type: "message",
+    }
+    sendMessage(payload)
+    
+  }
   return (
     <div className="group-empty-state">
       <MessageCircle className="tab-icon" />
