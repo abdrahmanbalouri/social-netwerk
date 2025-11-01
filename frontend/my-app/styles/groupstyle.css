@@ -535,7 +535,7 @@
 }
 
 .group-modal-content {
-  position: static;
+  position: absolute;
   background: white;
   border-radius: 20px;
   padding: 32px;
