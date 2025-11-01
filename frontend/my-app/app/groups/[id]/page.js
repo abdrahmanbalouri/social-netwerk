@@ -249,31 +249,31 @@ export function Events() {
 
 
   async function goingEvent(status, eventID) {
-   
-      if ((!status || !eventID) || (status !== "going" && status !== "notGoing")) {
-        console.error('Status and Event ID are required');
-        return;
-      }
-      try {
-        const response = await fetch(`http://localhost:8080/api/event/action/${grpID}`, {
-          method: 'POST',
-          credentials: 'include',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ status  , eventID }),
-        });
 
-        if (!response.ok) {
-          throw new Error('Failed to RSVP to event');
-        }
-
-        await fetchEvents();
-      } catch (error) {
-        console.error('Error RSVPing to event:', error);
-      }
+    if ((!status || !eventID) || (status !== "going" && status !== "notGoing")) {
+      console.error('Status and Event ID are required');
+      return;
     }
-  
+    try {
+      const response = await fetch(`http://localhost:8080/api/event/action/${grpID}`, {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ status, eventID }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to RSVP to event');
+      }
+
+      await fetchEvents();
+    } catch (error) {
+      console.error('Error RSVPing to event:', error);
+    }
+  }
+
 
   return (
     <>
@@ -288,27 +288,27 @@ export function Events() {
 
           <div className="backLayer" onClick={showEvent}></div>
           <EventForm ShowEventForm={ShowEventForm} closeForm={showEvent}
-          fetchEvents={fetchEvents}
+            fetchEvents={fetchEvents}
           />
         </div>
       )}
 
-      {EventList.length === 0 ? (
+      {EventList?.length === 0 ? (
         <div>No events yet. Be the first to create one!</div>
       ) : (
-        EventList.map((ev) => (
+        EventList?.map((ev) => (
           <div className="events-list" key={ev.id}>
             <div className="event-card">
               <div className="event-header">
                 <h3 className="event-title">{ev.title}</h3>
-                <span className="event-datetime">{new Date(ev.time).toLocaleString() }</span>
+                <span className="event-datetime">{new Date(ev.time).toLocaleString()}</span>
               </div>
 
               <p className="event-description">{ev.description}</p>
 
               <div className="event-actions">
-                <button className="btn-going"    onClick={()=>goingEvent("going",ev.id)} >Going</button>
-                <button className="btn-not-going" onClick={()=>goingEvent("notGoing",ev.id)} >Not Going</button>
+                <button className="btn-going" onClick={() => goingEvent("going", ev.id)} >Going</button>
+                <button className="btn-not-going" onClick={() => goingEvent("notGoing", ev.id)} >Not Going</button>
               </div>
 
               <div className="event-stats">
@@ -330,14 +330,13 @@ export function Events() {
 
 
 
-export function EventForm({ closeForm  , fetchEvents}) {
+export function EventForm({ closeForm, fetchEvents }) {
   const params = useParams();
-
   const grpID = params.id;
-
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [dateTime, setDateTime] = useState("");
+  const [error, setError] = useState("");
 
   async function createEvent(e) {
     e.preventDefault();
@@ -363,11 +362,11 @@ export function EventForm({ closeForm  , fetchEvents}) {
     });
 
     if (!res.ok) {
-      console.error("Failed to create event");
+      setError("Failed to create event");
       return;
     }
 
-await fetchEvents();
+    await fetchEvents();
 
     closeForm();
 
@@ -399,6 +398,7 @@ await fetchEvents();
 
           <button type="submit" className="btn-create" onClick={createEvent}>Create Event</button>
         </form>
+        <p className="error-message" style={{ color: "red" ,alignItems:'center'}}>{error}</p>
       </div>
 
 
