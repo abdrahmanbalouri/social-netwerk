@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"strings"
+	"time"
 
 	"social-network/internal/helper"
 	"social-network/internal/repository"
@@ -49,14 +50,29 @@ func EventAction(w http.ResponseWriter, r *http.Request) {
 
 	}
 	var event int
-	err = repository.Db.QueryRow(`select  id from events where id = ? and group_id = ? `, req.EventID, GrpID).Scan(&event)
+	var timee string
+	err = repository.Db.QueryRow(`select  id , time  from events where id = ? and group_id = ? `, req.EventID, GrpID).Scan(&event, &timee)
 	if err != nil {
 		helper.RespondWithError(w, http.StatusUnauthorized, "Unauthorized "+err.Error())
 		return
 	}
 
+	eventTime, err := time.Parse(time.RFC3339, timee)
+	if err != nil {
+		helper.RespondWithError(w, http.StatusBadRequest, "Invalid date format")
+		return
+	}
+
+	currentTime := time.Now()
+
+	if eventTime.Before(currentTime) {
+		helper.RespondWithError(w, http.StatusBadRequest, "Event date and time must be in the future 222 ")
+		return
+	}
+
 	var status string
-	err = repository.Db.QueryRow(`select  action  from event_actions where event_id = ? and  user_id= ? `, req.EventID, UserID).Scan(&status)
+	err = repository.Db.QueryRow(`select  action    from event_actions where event_id = ? and  user_id= ? `, req.EventID, UserID).Scan(&status)
+
 	if err == sql.ErrNoRows {
 		_, err = repository.Db.Exec(`insert into event_actions (event_id,user_id,action) values (?,?,?)`, req.EventID, UserID, req.Action)
 		if err != nil {
