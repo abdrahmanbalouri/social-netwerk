@@ -5,25 +5,25 @@ import (
 	"fmt"
 	"net/http"
 
+	"social-network/internal/helper"
 	"social-network/internal/repository"
 )
 
 type Event struct {
 	ID          int    `json:"id"`
-	GroupID     int    `json:"group_id"`
+	GroupID     string `json:"group_id"`
 	Title       string `json:"title"`
 	Description string `json:"description"`
 	Time        string `json:"time"`
+	CreatedAt   string `json:"created_at"`
 }
 
 func MyEavents(w http.ResponseWriter, r *http.Request) {
-	sessionCookie, err := r.Cookie("session")
-	if err != nil {
+	userID, ok := helper.AuthenticateUser(r)
+	if ok != nil {
 		http.Error(w, "Unauthorized", http.StatusUnauthorized)
 		return
 	}
-	userID := sessionCookie.Value
-
 	query := `
 	SELECT e.id, e.group_id, e.title, e.description, e.time, e.created_at
 	FROM events AS e
@@ -39,9 +39,9 @@ func MyEavents(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	defer rows.Close()
-
 	var events []Event
 	for rows.Next() {
+		fmt.Println("111111111111")
 		var event Event
 		err := rows.Scan(
 			&event.ID,
@@ -49,14 +49,15 @@ func MyEavents(w http.ResponseWriter, r *http.Request) {
 			&event.Title,
 			&event.Description,
 			&event.Time,
+			&event.CreatedAt,
 		)
 		if err != nil {
+
 			w.Header().Set("Content-Type", "application/json")
 			w.WriteHeader(http.StatusInternalServerError)
 			json.NewEncoder(w).Encode(map[string]string{"error": err.Error()})
 			return
 		}
-		fmt.Println("11111111111")
 		events = append(events, event)
 	}
 
