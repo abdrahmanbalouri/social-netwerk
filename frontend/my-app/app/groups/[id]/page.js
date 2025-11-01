@@ -82,7 +82,7 @@ export function AllPosts() {
         console.error("Failed to fetch posts:", error);
         setLoading(false);
       });
-  }, [grpID]);
+  }, []);
   // if (!posts) {
   //     return (
   //         <div>
@@ -187,7 +187,7 @@ function GetComments(post) {
   // });
 }
 
-function AddLike() {}
+function AddLike() { }
 
 export async function CreatePost(groupId, formData) {
   const data = new FormData();
@@ -205,26 +205,57 @@ export async function CreatePost(groupId, formData) {
 
   return JSON.parse(text);
 }
+
+// group chat component
 export function GroupChat() {
+  console.log("group chat component rendered");
   const [id, setId] = useState(null)
-  const { addEventListener, removeEventListener, sendMessage } = useWS();
-
-  useEffect(()=> {
-    function handleGroupChatMessage {
-
+  const [input, setInput] = useState("");
+  const [messages, setMessages] = useState([]);
+  const { addListener, removeListener, sendMessage } = useWS();
+  const emojiArray = ["😀", "😃", "😄", "😁", "😆", "😅", "🤣", "😂", "🚀", "💡", "😊", "😇", "🙂", "🙃", "😉", "😍", "🥰", "😘", "😗", "😋", "😛", "😜", "🤪", "😝", "🤑", "🤗", "🤭", "🤔", "🤨", "😐", "😑", "😶", "😏", "😒", "🙄", "😬", "😔", "😪", "🤤", "😴", "😷", "🤒", "🤕", "🤢", "🤮", "🥴", "😵", "🤯", "😎", "🤓"];
+  const addEmoji = (emoji) => {
+    const cursorPos = inputRef.current.selectionStart;
+    const newText = input.slice(0, cursorPos) + input.slice(cursorPos) + emoji;
+    setInput(newText);
+    setTimeout(() => {
+      inputRef.current.focus();
+      const end = inputRef.current.value.length;
+      inputRef.current.setSelectionRange(end, end);
+    }, 0);
+  };
+  // 👇 Scroll to bottom whenever messages change
+  useEffect(() => {
+    if (chatEndRef.current) {
+      chatEndRef.current.scrollIntoView({ behavior: "smooth" });
     }
-    addEventListener("group_message", handleGroupChatMessage);
-    return () => {
-      removeEventListener("group_message", handleGroupChatMessage);
+  }, [messages]);
+
+  useEffect(() => {
+    const handleIncomingMessage = (data) => {
+
+      setMessages((prev) => [
+        ...prev,
+        {
+          text: data.content,
+          sender: data.from === user.id ? "them" : "me",
+          time: data.time,
+        },
+      ]);
+
     };
-  }, [addEventListener, removeEventListener]);
-  useEffect(()=> {
+
+    addListener("group_messages", handleIncomingMessage);
+    return () => removeListener("group_messages", handleIncomingMessage);
+  }, [addListener, removeListener]);
+  useEffect(() => {
     fetch("http://localhost:8080/api/me")
-    .then(res => res.json())
-    .then(data=> setId(data.user_id))
-    .catch(err=> console.error(err))
+      .then(res => res.json())
+      .then(data => setId(data.user_id))
+      .catch(err => console.error(err))
   })
-  function handleSendGroupChatMessage (input) {
+  
+  function handleSendGroupChatMessage() {
     if (input.trim() === "") return
     const payload = {
       senderId: id,
@@ -232,12 +263,63 @@ export function GroupChat() {
       type: "message",
     }
     sendMessage(payload)
-    
+
+
   }
+
   return (
-    <div className="group-empty-state">
-      <MessageCircle className="tab-icon" />
-      <p className="group-empty-state-text">Chat interface coming soon</p>
+    <div className="chat-container">
+      {/* Chat box */}
+      <div className="chat-box">
+        {messages.length === 0 ? (
+          <p className="no-msg">No messages yet</p>
+        ) : (
+          messages.map((msg, index) => (
+            <div key={index} className={`message ${msg.sender}`}>
+              <div className="msg-content">{msg.text}</div>
+              <div className="info-time">
+                <span className="time">
+                  {new Date(msg.time).toLocaleTimeString("en-US")}
+                </span>
+              </div>
+            </div>
+          ))
+        )}
+        <div ref={chatEndRef}></div>
+      </div>
+
+      {/* Emoji panel */}
+      {showEmojis && (
+        <div className="emoji-panel">
+          {emojiArray.map((emoji, i) => (
+            <span key={i} className="emoji" onClick={() => addEmoji(emoji)}>
+              {emoji}
+            </span>
+          ))}
+        </div>
+      )}
+
+      {/* Input area */}
+      <div className="input-area">
+        <button
+          className="emoji-toggle"
+          onClick={() => setShowEmojis(!showEmojis)}
+        >
+          <AddReactionIcon />
+        </button>
+
+        <input
+          ref={inputRef}
+          type="text"
+          placeholder="Type a message..."
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          onKeyDown={(e) => e.key === "Enter" && handleSendGroupChatMessage()}
+        />
+        <button onClick={handleSendGroupChatMessage}>
+          <SendIcon />
+        </button>
+      </div>
     </div>
   );
 }
