@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"database/sql"
 	"fmt"
 	"io"
 	"net/http"
@@ -42,18 +41,17 @@ func CreateCommentHandler(w http.ResponseWriter, r *http.Request) {
 		helper.RespondWithError(w, http.StatusBadRequest, "Content length invalid")
 		return
 	}
+	whatis := strings.TrimSpace(r.FormValue("whatis"))
 
 	sanitizedContent := helper.Skip(content)
-
-	row := repository.Db.QueryRow(`SELECT content FROM posts WHERE id = ?`, postID)
-	var exists string
-	err = row.Scan(&exists)
-	if err == sql.ErrNoRows {
-		helper.RespondWithError(w, http.StatusNotFound, "Post not found")
-		return
-	} else if err != nil {
-		helper.RespondWithError(w, http.StatusInternalServerError, "Database error")
-		return
+	groupId := strings.TrimSpace(r.FormValue("groupId"))
+	fmt.Println(groupId, "----------------- GROUP ID ---------------")
+	if whatis == "groups" {
+		err = helper.CheckUserInGroup(userID, groupId)
+		if err != nil {
+			helper.RespondWithError(w, http.StatusForbidden, "You are not a member of this group")
+			return
+		}
 	}
 
 	var mediaPath string
@@ -95,15 +93,31 @@ func CreateCommentHandler(w http.ResponseWriter, r *http.Request) {
 		mediaPath = ""
 	}
 
-	commentID := uuid.New().String()
+	fmt.Println("6565656556555656")
 
-	_, err = repository.Db.Exec(`
+	commentID := uuid.New().String()
+	fmt.Println(whatis)
+	if whatis == "groups" {
+		_, err = repository.Db.Exec(`
+		INSERT INTO  comments_groups(id, post_id, user_id, content, media_path)
+		VALUES (?, ?, ?, ?, ?)`,
+			commentID, postID, userID, sanitizedContent, mediaPath)
+		if err != nil {
+			fmt.Println(err, "--------------------------")
+			fmt.Println("1111111111111111111111111111111121212121212")
+			helper.RespondWithError(w, http.StatusInternalServerError, "Failed to create comment")
+			return
+		}
+	} else {
+		_, err = repository.Db.Exec(`
 		INSERT INTO comments (id, post_id, user_id, content, media_path)
 		VALUES (?, ?, ?, ?, ?)`,
-		commentID, postID, userID, sanitizedContent, mediaPath)
-	if err != nil {
-		helper.RespondWithError(w, http.StatusInternalServerError, "Failed to create comment")
-		return
+			commentID, postID, userID, sanitizedContent, mediaPath)
+		if err != nil {
+			fmt.Println("mmmmmmmmmmmmmmmmmm", err)
+			helper.RespondWithError(w, http.StatusInternalServerError, "Failed to create comment")
+			return
+		}
 	}
 
 	helper.RespondWithJSON(w, http.StatusCreated, map[string]string{

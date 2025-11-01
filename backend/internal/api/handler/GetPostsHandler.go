@@ -73,7 +73,6 @@ func GetPostsHandler(w http.ResponseWriter, r *http.Request) {
 		"created_at": createdAt,
 		"first_name": first_name,
 		"last_name":  last_name,
-
 		"profile":        profile,
 		"like":           likeCount,
 		"liked_by_user":  likedByUser > 0,
