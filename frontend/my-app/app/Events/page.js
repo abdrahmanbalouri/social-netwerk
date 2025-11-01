@@ -41,7 +41,7 @@ export default function EventsPage() {
                 <div className="spacer" >
 
                     {
-                        myEvents.map((event) => (
+                        myEvents?.map((event) => (
                             <Link key={event.id} href={`/groups/${event.group_id}`} >
                                 <div className="events-page" >
                                     <h1>{event.title}</h1>
