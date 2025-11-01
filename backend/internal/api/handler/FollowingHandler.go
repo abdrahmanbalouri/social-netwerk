@@ -20,6 +20,12 @@ func FollowingHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	var idd string
+	err = repository.Db.QueryRow(`select id from users where id  =   ? `, id).Scan(&idd)
+	if err != nil {
+		helper.RespondWithJSON(w, http.StatusNotFound, "User not found")
+		return
+	}
 	var privacy string
 	var isFollowing int
 
