@@ -3,7 +3,6 @@ package handlers
 import (
 	"database/sql"
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"time"
 
@@ -41,14 +40,12 @@ func LikesGroup(w http.ResponseWriter, r *http.Request) {
 	err = repository.Db.QueryRow(query, userID, newLike.PostID).Scan(&grpID, &isMember)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			fmt.Println("Failed to get the group's id or post not exist :", err)
 			helper.RespondWithError(w, http.StatusNotFound, "Failed to get the group's id or post not exist")
 		}
 		helper.RespondWithError(w, http.StatusInternalServerError, "error finding the group/post")
 		return
 	}
 	if !isMember {
-		fmt.Println("User is not a member of the group")
 		helper.RespondWithError(w, http.StatusUnauthorized, "User is not a member of the group")
 		return
 	}

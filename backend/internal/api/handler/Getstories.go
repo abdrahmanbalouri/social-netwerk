@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"database/sql"
-	"fmt"
 	"net/http"
 	"time"
 
@@ -43,7 +42,6 @@ func GetStories(w http.ResponseWriter, r *http.Request) {
 		)
         ORDER BY s.created_at ASC
     `, id, id)
-	fmt.Println(err)
 	if err != nil {
 		helper.RespondWithError(w, http.StatusAccepted, "not story yet")
 		return
@@ -62,7 +60,6 @@ func GetStories(w http.ResponseWriter, r *http.Request) {
 
 		err := rows.Scan(&id, &userID, &content, &imageURL, &bg, &createdAt, &expiresAt, &first_name, &last_name, &profileImage)
 		if err != nil {
-
 			continue
 		}
 
@@ -96,11 +93,10 @@ func GetStories(w http.ResponseWriter, r *http.Request) {
 		helper.RespondWithError(w, http.StatusAccepted, "not story yet")
 		return
 	}
- 
-	
-	helper.RespondWithJSON(w, http.StatusOK, stories)
 
+	helper.RespondWithJSON(w, http.StatusOK, stories)
 }
+
 // Helper to handle sql.NullString safely (returns "" if invalid)
 func getNullString(ns sql.NullString) string {
 	if ns.Valid {

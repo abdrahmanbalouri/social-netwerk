@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"fmt"
 	"net/http"
 
 	"social-network/internal/helper"
@@ -11,7 +10,7 @@ import (
 func FollowersHandler(w http.ResponseWriter, r *http.Request) {
 	UserID, err := helper.AuthenticateUser(r)
 	if err != nil {
-		http.Error(w, "Unauthorized: "+ err.Error(), http.StatusUnauthorized)
+		http.Error(w, "Unauthorized: "+err.Error(), http.StatusUnauthorized)
 		return
 	}
 
@@ -37,7 +36,6 @@ LEFT JOIN followers f
 WHERE u.id = ?;
 `, UserID, id).Scan(&privacy, &isFollowing)
 	if err != nil {
-		fmt.Println("errrrrrrrrrrrrrrrrrrrrrrrrrrrrr", err)
 		return
 	}
 	if privacy == "private" && isFollowing == 0 && UserID != id {
@@ -59,16 +57,16 @@ WHERE u.id = ?;
 
 	var followers []map[string]interface{}
 	for rows.Next() {
-		var  profilePicture, idU , first_name , last_name string
-		if err := rows.Scan(&idU, &first_name , &last_name, &profilePicture); err != nil {
+		var profilePicture, idU, first_name, last_name string
+		if err := rows.Scan(&idU, &first_name, &last_name, &profilePicture); err != nil {
 			http.Error(w, "Database error: "+err.Error(), http.StatusInternalServerError)
 			return
 		}
 		follower := map[string]interface{}{
-			"id":       idU,
+			"id":         idU,
 			"first_name": first_name,
-			"last_name": last_name,
-			"image":    profilePicture,
+			"last_name":  last_name,
+			"image":      profilePicture,
 		}
 		followers = append(followers, follower)
 	}

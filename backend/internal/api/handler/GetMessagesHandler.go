@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 
 	"social-network/internal/helper"
@@ -19,7 +18,6 @@ func GetMessagesHandler(w http.ResponseWriter, r *http.Request) {
 	// w.Header().Set("Content-Type", "application/json")
 	currentUserID, err := helper.AuthenticateUser(r)
 	if err != nil {
-		fmt.Println("Authentication error:", err)
 		http.Error(w, "Unauthorized", http.StatusUnauthorized)
 		return
 	}
@@ -46,15 +44,14 @@ func GetMessagesHandler(w http.ResponseWriter, r *http.Request) {
 		SenderId   string `json:"senderId"`
 		ReceiverId string `json:"receiverId"`
 		CreatedAt  string `json:"createdAt"`
-		First_name   string `json:"first_name"`
-		Last_name   string `json:"last_name"`
-
+		First_name string `json:"first_name"`
+		Last_name  string `json:"last_name"`
 	}
 
 	var messages []Message
 	for rows.Next() {
 		var msg Message
-		err = repository.Db.QueryRow("SELECT first_name , last_name FROM users WHERE id = ?", currentUserID).Scan(&msg.First_name , &msg.Last_name)
+		err = repository.Db.QueryRow("SELECT first_name , last_name FROM users WHERE id = ?", currentUserID).Scan(&msg.First_name, &msg.Last_name)
 		if err != nil {
 			http.Error(w, "Database error: "+err.Error(), http.StatusInternalServerError)
 			return

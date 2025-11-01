@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"encoding/json"
-	"fmt"
 	"io"
 	"net/http"
 	"os"
@@ -55,7 +54,6 @@ func Editor(w http.ResponseWriter, r *http.Request) {
 		coverPath := "../frontend/my-app/public/uploads/" + coverHeader.Filename
 		err = os.MkdirAll(uploadDir, os.ModePerm)
 		if err != nil {
-			fmt.Println("Error creating directory:", err)
 			return
 		}
 		out, _ := os.Create(coverPath)
@@ -73,7 +71,6 @@ func Editor(w http.ResponseWriter, r *http.Request) {
 		avatarPath := "../frontend/my-app/public/uploads/" + avatarHeader.Filename
 		err = os.MkdirAll(uploadDir, os.ModePerm)
 		if err != nil {
-			fmt.Println("Error creating directory:", err)
 			return
 		}
 		out, _ := os.Create(avatarPath)
