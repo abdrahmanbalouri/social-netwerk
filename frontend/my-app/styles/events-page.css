@@ -1,0 +1,7 @@
+.events-page{
+    flex: 8;
+    padding: 20px;
+    background-color: var(--bg);
+    color: var(--logo);
+
+}

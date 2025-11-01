@@ -48,32 +48,27 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 		About:     r.FormValue("aboutMe"),
 		Privacy:   r.FormValue("privacy"),
 	}
-	fmt.Println("privacy", userInformation.Privacy)
 	file, handler, err := r.FormFile("avatar")
 	if err == nil {
 		defer file.Close()
 		uploadDir := "../frontend/my-app/public/uploads"
 		err = os.MkdirAll(uploadDir, os.ModePerm)
 		if err != nil {
-			fmt.Println("Error creating directory:", err)
 			return
 		}
 		filePath := fmt.Sprintf("%s/%s", uploadDir, handler.Filename)
 		dst, err := os.Create(filePath)
 		if err != nil {
-			fmt.Println("Error creating file:", err)
 			return
 		}
 		defer dst.Close()
 		_, err = io.Copy(dst, file)
 		if err != nil {
-			fmt.Println("Error copying file:", err)
 			return
 		}
 		userInformation.Image = handler.Filename
 
 	} else {
-		fmt.Println("Error reading form file:", err)
 	}
 
 	dobStr := r.FormValue("dob")

@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"database/sql"
-	"fmt"
 	"net/http"
 	"strings"
 
@@ -15,12 +14,11 @@ func Getlastcommnet(w http.ResponseWriter, r *http.Request) {
 		helper.RespondWithError(w, http.StatusMethodNotAllowed, "Method Not Allowed")
 		return
 	}
-	sss, err1 := helper.AuthenticateUser(r)
+	/*sss, err1 := helper.AuthenticateUser(r)
 	if err1 != nil {
-		fmt.Println(sss)
 		helper.RespondWithError(w, http.StatusUnauthorized, "Unauthorized")
 		return
-	}
+	}*/
 	parts := strings.Split(r.URL.Path, "/")
 	if len(parts) < 4 {
 		helper.RespondWithError(w, http.StatusNotFound, "Comment not found")
