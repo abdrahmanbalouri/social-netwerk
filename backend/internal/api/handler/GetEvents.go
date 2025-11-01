@@ -16,7 +16,7 @@ func GetEvents(w http.ResponseWriter, r *http.Request) {
 		Date        string `json:"time"`
 		Going       int    `json:"going"`
 		NotGoing    int    `json:"notGoing"`
-		userAction string `json:"userAction"`
+		UserAction  string `json:"userAction"`
 	}
 	UserId, err := helper.AuthenticateUser(r)
 	if err != nil {
@@ -64,6 +64,10 @@ ORDER BY e.time DESC
 			helper.RespondWithError(w, http.StatusInternalServerError, "Database scan error"+err.Error())
 			return
 		}
+		err = repository.Db.QueryRow(`select  action from event_actions where user_id = ? and event_id = ? `, UserId, events.ID).Scan(&events.UserAction)
+		if err != nil {
+			events.UserAction = ""
+		}
 		Events = append(Events, events)
 	}
 
@@ -71,7 +75,6 @@ ORDER BY e.time DESC
 		helper.RespondWithError(w, http.StatusInternalServerError, "Database rows error")
 		return
 	}
-
 
 	helper.RespondWithJSON(w, http.StatusOK, Events)
 }

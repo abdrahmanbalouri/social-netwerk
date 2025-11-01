@@ -12,6 +12,7 @@ import LeftBar from "../../../components/LeftBar.js";
 import RightBarGroup from "../../../components/RightBarGroups.js";
 import { useDarkMode } from "../../../context/darkMod.js";
 import { FileText } from "lucide-react";
+import EventCard from "../../../components/EventCard.js";
 // import {CreatePost} from ""
 
 export default function () {
@@ -236,6 +237,8 @@ export function Events() {
       }
 
       const data = await response.json();
+
+      console.log('Fetched events:', data);
       setEventList(data);
     } catch (error) {
       console.error('Error fetching events:', error);
@@ -249,31 +252,31 @@ export function Events() {
 
 
   async function goingEvent(status, eventID) {
-   
-      if ((!status || !eventID) || (status !== "going" && status !== "notGoing")) {
-        console.error('Status and Event ID are required');
-        return;
-      }
-      try {
-        const response = await fetch(`http://localhost:8080/api/event/action/${grpID}`, {
-          method: 'POST',
-          credentials: 'include',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ status  , eventID }),
-        });
 
-        if (!response.ok) {
-          throw new Error('Failed to RSVP to event');
-        }
-
-        await fetchEvents();
-      } catch (error) {
-        console.error('Error RSVPing to event:', error);
-      }
+    if ((!status || !eventID) || (status !== "going" && status !== "notGoing")) {
+      console.error('Status and Event ID are required');
+      return;
     }
-  
+    try {
+      const response = await fetch(`http://localhost:8080/api/event/action/${grpID}`, {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ status, eventID }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to RSVP to event');
+      }
+
+      await fetchEvents();
+    } catch (error) {
+      console.error('Error RSVPing to event:', error);
+    }
+  }
+
 
   return (
     <>
@@ -288,7 +291,7 @@ export function Events() {
 
           <div className="backLayer" onClick={showEvent}></div>
           <EventForm ShowEventForm={ShowEventForm} closeForm={showEvent}
-          fetchEvents={fetchEvents}
+            fetchEvents={fetchEvents}
           />
         </div>
       )}
@@ -297,26 +300,7 @@ export function Events() {
         <div>No events yet. Be the first to create one!</div>
       ) : (
         EventList.map((ev) => (
-          <div className="events-list" key={ev.id}>
-            <div className="event-card">
-              <div className="event-header">
-                <h3 className="event-title">{ev.title}</h3>
-                <span className="event-datetime">{new Date(ev.time).toLocaleString() }</span>
-              </div>
-
-              <p className="event-description">{ev.description}</p>
-
-              <div className="event-actions">
-                <button className="btn-going"    onClick={()=>goingEvent("going",ev.id)} >Going</button>
-                <button className="btn-not-going" onClick={()=>goingEvent("notGoing",ev.id)} >Not Going</button>
-              </div>
-
-              <div className="event-stats">
-                <span className="stat-going">{ev.going} going</span>
-                <span className="stat-not-going">{ev.notGoing} not going</span>
-              </div>
-            </div>
-          </div>
+          <EventCard key={ev.id} ev={ev} goingEvent={goingEvent} />
         ))
       )}
 
@@ -330,7 +314,7 @@ export function Events() {
 
 
 
-export function EventForm({ closeForm  , fetchEvents}) {
+export function EventForm({ closeForm, fetchEvents }) {
   const params = useParams();
 
   const grpID = params.id;
@@ -367,7 +351,7 @@ export function EventForm({ closeForm  , fetchEvents}) {
       return;
     }
 
-await fetchEvents();
+    await fetchEvents();
 
     closeForm();
 
