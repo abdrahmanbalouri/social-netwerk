@@ -1,12 +1,13 @@
 import { useState } from "react";
 import "../styles/notfcationBar.css";
 import formatTime from "../helpers/formatTime.js";
+import { useRouter } from "next/navigation.js";
 
 
 export default function NotBar({ notData }) {
     const [filter, setFilter] = useState('all');
     const [notifications, setNotifications] = useState(notData || []);
-
+    const router = useRouter();
     const Clear = () => {
         fetch('http://localhost:8080/api/clearNotifications', {
             method: 'POST',
@@ -35,7 +36,9 @@ export default function NotBar({ notData }) {
         }
     };
 
+
     const filteredNotifications = getFilteredNotifications();
+    console.log(filteredNotifications);
 
     return (
         <div className="dropdown-menu show">
@@ -60,6 +63,16 @@ export default function NotBar({ notData }) {
                             <div
                                 key={noti.id || index}
                                 className={`notification-item ${!noti.isRead ? 'unread' : ''}`}
+                                onClick={() => {
+                                    if (noti.type == 'follow') {
+
+                                        router.push(`/profile/${noti.sender_id}`)
+                                    } else if (noti.type == 'message') {
+                                        router.push(`/chat/${noti.sender_id}`)
+
+                                    }
+                                }}
+
                             >
                                 <div className="notification-avatar">
                                     <img
