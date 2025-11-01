@@ -337,7 +337,7 @@ export function EventForm({ closeForm, fetchEvents }) {
       return;
     }
 
-    if ((title.length < 5 && title.length > 50)) {
+    if ((title.length < 5 || title.length > 50)) {
       setErrors(" Title must be between 5 and 50 characters");
       return;
     }
@@ -407,7 +407,7 @@ export function EventForm({ closeForm, fetchEvents }) {
             <label htmlFor="event-datetime">Day/Time</label>
             <input type="datetime-local" id="event-datetime" onChange={(e) => { setDateTime(e.target.value) }} />
           </div>
-          <span className="error" style={{ red: "red" }}> {errors}</span>
+          <span className="error" style={{ color: "red" }}> {errors}</span>
           <button type="submit" className="btn-create" onClick={createEvent}>Create Event</button>
         </form>
       </div>
