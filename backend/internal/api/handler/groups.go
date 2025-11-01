@@ -3,6 +3,7 @@ package handlers
 import (
 	"database/sql"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"strings"
 	"time"
@@ -15,16 +16,15 @@ type GroupRequest struct {
 	Title        string   `json:"title"`
 	Description  string   `json:"description"`
 	InvitedUsers []string `json:"invitedUsers"`
-	MemberCount  int      `json:"memberCount"`
 }
 type Group struct {
 	ID          string
 	Title       string
 	Description string
-	MemberCount int
 }
 
 func CreateGroupHandler(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("11111")
 	if r.Method != http.MethodPost {
 		helper.RespondWithError(w, http.StatusMethodNotAllowed, "Method not allowed")
 		return
@@ -32,7 +32,7 @@ func CreateGroupHandler(w http.ResponseWriter, r *http.Request) {
 
 	var newGroup GroupRequest
 	if err := json.NewDecoder(r.Body).Decode(&newGroup); err != nil {
-
+		
 		helper.RespondWithError(w, http.StatusBadRequest, "Invalid request format")
 		return
 	}
@@ -70,6 +70,7 @@ func CreateGroupHandler(w http.ResponseWriter, r *http.Request) {
 
 	grpID := helper.GenerateUUID()
 
+	fmt.Println("22222")
 	// Insert new group
 	query1 := `INSERT INTO groups (id, title, description, admin_id) VALUES (?, ?, ?, ?)`
 	if _, err := tx.Exec(query1, grpID, newGroup.Title, newGroup.Description, adminID); err != nil {
@@ -80,6 +81,7 @@ func CreateGroupHandler(w http.ResponseWriter, r *http.Request) {
 	// Insert the admin as a member of the group with is_admin set to true
 	query2 := `INSERT INTO group_members (user_id, group_id) VALUES (?, ?)`
 	if _, err := tx.Exec(query2, adminID, grpID); err != nil {
+		fmt.Println("the error is : ", err)
 		helper.RespondWithError(w, http.StatusInternalServerError, "Failed to insert admin into group members table")
 		return
 	}
@@ -112,6 +114,7 @@ func CreateGroupHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	fmt.Println("333333")
 	// var createdGroup struct {
 	// 	ID          string `json:"id"`
 	// 	Title       string `json:"title"`
@@ -133,11 +136,14 @@ func CreateGroupHandler(w http.ResponseWriter, r *http.Request) {
 
 	err = repository.Db.QueryRow(queryGetGroup, grpID).Scan(
 		&createdGroup.ID, &createdGroup.Title, &createdGroup.Description,
+		
 	)
 	if err != nil {
+		fmt.Println("Failed to fetch created group:", err)
 		helper.RespondWithError(w, http.StatusInternalServerError, "Group created but failed to fetch it")
 		return
 	}
+	fmt.Println("Created groups is :::", createdGroup)
 
 	helper.RespondWithJSON(w, http.StatusCreated, createdGroup)
 }
@@ -154,7 +160,7 @@ func GetAllGroups(w http.ResponseWriter, r *http.Request) {
 		helper.RespondWithError(w, http.StatusUnauthorized, "No valid session found")
 		return
 	}
-	// ("session is :::", c)
+	// fmt.Println("session is :::", c)
 	var userID string
 	if err := repository.Db.QueryRow("SELECT user_id FROM sessions WHERE token = ?", c.Value).Scan(&userID); err != nil {
 		if err == sql.ErrNoRows {
@@ -169,20 +175,16 @@ func GetAllGroups(w http.ResponseWriter, r *http.Request) {
 	query := `SELECT 
     g.id, 
     g.title, 
-    g.description,
-    (
-        SELECT COUNT(*) 
-        FROM group_members gm2 
-        WHERE gm2.group_id = g.id
-    ) AS member_count
-FROM groups g
-WHERE g.id NOT IN (
+    g.description
+	FROM groups g
+	WHERE g.id NOT IN (
     SELECT gm.group_id 
     FROM group_members gm 
-    WHERE gm.user_id = ?
+    WHERE gm.user_id = ? 
 );`
 	rows, err := repository.Db.Query(query, userID)
 	if err != nil {
+		fmt.Println("error is :", err)
 		helper.RespondWithError(w, http.StatusInternalServerError, "error getting all valid groups")
 		return
 	}
@@ -190,15 +192,15 @@ WHERE g.id NOT IN (
 	var GroupJson []Group
 	for rows.Next() {
 		var g Group
-		err := rows.Scan(&g.ID, &g.Title, &g.Description,&g.MemberCount)
+		err := rows.Scan(&g.ID, &g.Title, &g.Description)
 		if err != nil {
+			fmt.Println("Failed to get group infos : ", err)
 			helper.RespondWithError(w, http.StatusInternalServerError, "Failed to get group infos")
 			return
 		}
-		
 		GroupJson = append(GroupJson, g)
 	}
-	
+
 	// Return the posts as a JSON response
 	helper.RespondWithJSON(w, http.StatusOK, GroupJson)
 }
@@ -215,7 +217,7 @@ func GetMyGroups(w http.ResponseWriter, r *http.Request) {
 		helper.RespondWithError(w, http.StatusUnauthorized, "No valid session found")
 		return
 	}
-	// ("session is :::", c)
+	// fmt.Println("session is :::", c)
 	var userID string
 	if err := repository.Db.QueryRow("SELECT user_id FROM sessions WHERE token = ?", c.Value).Scan(&userID); err != nil {
 		if err == sql.ErrNoRows {
@@ -228,22 +230,18 @@ func GetMyGroups(w http.ResponseWriter, r *http.Request) {
 
 	// get all groups
 	query := `SELECT 
-    g.id,
-    g.title,
-    g.description,
-    (
-        SELECT COUNT(*) 
-        FROM group_members gm2 
-        WHERE gm2.group_id = g.id
-    ) AS member_count
-FROM groups g
-WHERE g.id IN (
+    g.id, 
+    g.title, 
+    g.description
+	FROM groups g
+	WHERE g.id IN (
     SELECT gm.group_id 
     FROM group_members gm 
-    WHERE gm.user_id = ?
+    WHERE gm.user_id = ? 
 );`
 	rows, err := repository.Db.Query(query, userID)
 	if err != nil {
+		fmt.Println("error is (my groups handler):", err)
 		helper.RespondWithError(w, http.StatusInternalServerError, "error getting all valid groups")
 		return
 	}
@@ -251,8 +249,9 @@ WHERE g.id IN (
 	var GroupJson []Group
 	for rows.Next() {
 		var g Group
-		err := rows.Scan(&g.ID, &g.Title, &g.Description, &g.MemberCount)
+		err := rows.Scan(&g.ID, &g.Title, &g.Description)
 		if err != nil {
+			fmt.Println("Failed to get group infos (my groups handler): ", err)
 			helper.RespondWithError(w, http.StatusInternalServerError, "Failed to get group infos")
 			return
 		}

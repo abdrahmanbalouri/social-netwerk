@@ -18,11 +18,12 @@ func GetPostByUserHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	user, err1 := helper.AuthenticateUser(r)
-	if err1 != nil {
-		helper.RespondWithError(w, http.StatusUnauthorized, "Unauthorized")
-		return
-	}
+	  if err1 != nil {
+		  helper.RespondWithError(w, http.StatusUnauthorized, "Unauthorized")
+		  return
+	  }
 	parts := strings.Split(r.URL.Path, "/")
+	fmt.Println("parts:", parts)
 	if len(parts) < 4 {
 		helper.RespondWithError(w, http.StatusNotFound, "Post not found")
 		return
@@ -36,7 +37,7 @@ func GetPostByUserHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	posts, err := GetAllPostsByuser(userId, r, offset, user)
-	// ("posts:", posts)
+	// fmt.Println("posts:", posts)
 	if err != nil {
 		helper.RespondWithError(w, http.StatusInternalServerError, "Failed to retrieve posts")
 		return
@@ -48,7 +49,7 @@ func GetPostByUserHandler(w http.ResponseWriter, r *http.Request) {
 	helper.RespondWithJSON(w, http.StatusOK, posts)
 }
 
-func GetAllPostsByuser(authUserID string, r *http.Request, ofseet int, userId string) ([]map[string]interface{}, error) {
+func GetAllPostsByuser(authUserID string, r *http.Request, ofseet int,userId string) ([]map[string]interface{}, error) {
 	var rows *sql.Rows
 	var err error
 
@@ -149,8 +150,8 @@ LIMIT ? OFFSET ?;
 			canseperivite string
 			createdAt     string
 			privacy       string
-			first_name    string
-			last_name     string
+			first_name      string
+			last_name      string
 
 			profile       sql.NullString
 			likeCount     int
@@ -164,17 +165,17 @@ LIMIT ? OFFSET ?;
 		}
 
 		post := map[string]interface{}{
-			"id":            id,
-			"user_id":       userID,
-			"title":         title,
-			"content":       content,
-			"image_path":    post.NilIfEmpty(imagePath),
-			"visibility":    visibility,
-			"canseperivite": canseperivite,
-			"privacy":       privacy,
-			"created_at":    createdAt,
-			"first_name":    first_name,
-			"last_name":     last_name,
+			"id":             id,
+			"user_id":        userID,
+			"title":          title,
+			"content":        content,
+			"image_path":     post.NilIfEmpty(imagePath),
+			"visibility":     visibility,
+			"canseperivite":  canseperivite,
+			"privacy":        privacy,
+			"created_at":     createdAt,
+			"first_name":         first_name,
+			"last_name":         last_name,
 
 			"profile":        post.NilIfEmpty(profile),
 			"like":           likeCount,

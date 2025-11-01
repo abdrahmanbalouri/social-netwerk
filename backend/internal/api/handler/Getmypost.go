@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"database/sql"
+	"fmt"
 	"net/http"
 	"strconv"
 	"strings"
@@ -33,6 +34,7 @@ func Getmypost(w http.ResponseWriter, r *http.Request) {
 		offset = 0
 	}
 	limit := 10
+	fmt.Println("2")
 	var rows *sql.Rows
 
 	if authUserID == userId {
@@ -114,14 +116,14 @@ func Getmypost(w http.ResponseWriter, r *http.Request) {
 
 	for rows.Next() {
 		var (
-			id, userID, title, content, visibility, canseperivite, createdAt, privacy, first_name, last_name string
-			imagePath, profile                                                                               sql.NullString
-			likeCount, likedByUser, commentsCount                                                            int
+			id, userID, title, content, visibility, canseperivite, createdAt, privacy, first_name , last_name string
+			imagePath, profile                                                                  sql.NullString
+			likeCount, likedByUser, commentsCount                                               int
 		)
 
 		err := rows.Scan(
 			&id, &userID, &title, &content, &imagePath,
-			&visibility, &canseperivite, &createdAt, &first_name, &last_name, &privacy,
+			&visibility, &canseperivite, &createdAt, &first_name,&last_name, &privacy,
 			&profile, &likeCount, &likedByUser, &commentsCount,
 		)
 		if err != nil {
@@ -130,17 +132,17 @@ func Getmypost(w http.ResponseWriter, r *http.Request) {
 		}
 
 		post := map[string]interface{}{
-			"id":            id,
-			"user_id":       userID,
-			"title":         title,
-			"content":       content,
-			"image_path":    nilIfEmpty(imagePath),
-			"visibility":    visibility,
-			"canseperivite": canseperivite,
-			"privacy":       privacy,
-			"created_at":    createdAt,
-			"first_name":    first_name,
-			"last_name":     last_name,
+			"id":             id,
+			"user_id":        userID,
+			"title":          title,
+			"content":        content,
+			"image_path":     nilIfEmpty(imagePath),
+			"visibility":     visibility,
+			"canseperivite":  canseperivite,
+			"privacy":        privacy,
+			"created_at":     createdAt,
+			"first_name":         first_name,
+			"last_name":         last_name,
 
 			"profile":        nilIfEmpty(profile),
 			"like":           likeCount,
@@ -150,7 +152,7 @@ func Getmypost(w http.ResponseWriter, r *http.Request) {
 		posts = append(posts, post)
 	}
 	if len(posts) == 0 {
-		helper.RespondWithJSON(w, http.StatusOK, posts)
+    helper.RespondWithJSON(w, http.StatusOK, posts)
 		return
 	}
 

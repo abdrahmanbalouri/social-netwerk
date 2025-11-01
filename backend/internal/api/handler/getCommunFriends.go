@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"fmt"
 	"net/http"
 
 	"social-network/internal/helper"
@@ -9,12 +10,11 @@ import (
 )
 
 func GetCommunFriends(w http.ResponseWriter, r *http.Request) {
-	// ("GetCommunFriends called")
+	// fmt.Println("GetCommunFriends called")
 	if r.Method != "GET" {
 		helper.RespondWithError(w, http.StatusMethodNotAllowed, "Method Not Allowed")
 		return
 	}
-
 	userID, err := helper.AuthenticateUser(r)
 	if err != nil {
 		helper.RespondWithError(w, http.StatusUnauthorized, "Unauthorized")
@@ -29,6 +29,7 @@ func GetCommunFriends(w http.ResponseWriter, r *http.Request) {
 	WHERE (f.user_id = ? OR f.follower_id = ?);
 	`, userID, userID)
 	if err != nil {
+		fmt.Println("Error querying common friends:", err)
 		helper.RespondWithError(w, http.StatusInternalServerError, "Failed to fetch common friends")
 		return
 	}
