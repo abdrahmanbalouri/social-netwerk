@@ -2,15 +2,17 @@
 import Navbar from "../../../components/Navbar.js";
 import { GroupPostChat } from "../../../components/groupPostCat.js";
 import Post from "../../../components/Post.js";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import "../../../styles/groupstyle.css";
 import { useParams } from "next/navigation";
 import { PostCreationTrigger } from "../../../components/cretaePostGroup.js";
 import LeftBar from "../../../components/LeftBar.js";
 import RightBarGroup from "../../../components/RightBarGroups.js";
 import { useDarkMode } from "../../../context/darkMod.js";
-import { FileText, MessageCircle } from "lucide-react";
-// import {CreatePost} from ""
+import { FileText, SendIcon } from "lucide-react";
+import AddReactionIcon from "@mui/icons-material/AddReaction";
+import { useWS } from "../../../context/wsContext.js";
+import "../../../styles/chat.css";
 
 export default function () {
   const { darkMode } = useDarkMode();
@@ -54,11 +56,9 @@ function sendRequest(invitedUserID, grpID) {
     });
 }
 
-export function AllPosts() {
+export function AllPosts({ grpID }) {
   const [posts, setPost] = useState([]);
   const [loading, setLoading] = useState(true);
-  const params = useParams();
-  const grpID = params.id;
 
   useEffect(() => {
     if (!grpID) {
@@ -187,7 +187,7 @@ function GetComments(post) {
   // });
 }
 
-function AddLike() { }
+function AddLike() {}
 
 export async function CreatePost(groupId, formData) {
   const data = new FormData();
@@ -206,14 +206,155 @@ export async function CreatePost(groupId, formData) {
   return JSON.parse(text);
 }
 
+// ===========================
 // group chat component
-export function GroupChat() {
+// ===========================
+
+export function GroupChat({ groupId }) {
   console.log("group chat component rendered");
-  const [id, setId] = useState(null)
-  const [input, setInput] = useState("");
+  const [id, setId] = useState(null);
   const [messages, setMessages] = useState([]);
-  const { addListener, removeListener, sendMessage } = useWS();
-  const emojiArray = ["😀", "😃", "😄", "😁", "😆", "😅", "🤣", "😂", "🚀", "💡", "😊", "😇", "🙂", "🙃", "😉", "😍", "🥰", "😘", "😗", "😋", "😛", "😜", "🤪", "😝", "🤑", "🤗", "🤭", "🤔", "🤨", "😐", "😑", "😶", "😏", "😒", "🙄", "😬", "😔", "😪", "🤤", "😴", "😷", "🤒", "🤕", "🤢", "🤮", "🥴", "😵", "🤯", "😎", "🤓"];
+  const [input, setInput] = useState("");
+  const [showEmojis, setShowEmojis] = useState(false);
+  const inputRef = useRef(null);
+  const chatEndRef = useRef(null);
+  const { sendMessage, addListener, removeListener } = useWS();
+  useEffect(() => {
+    fetch("http://localhost:8080/api/me", {
+      credentials: "include",
+      method: "GET",
+    })
+      .then((res) => res.json())
+      .then((data) => {
+      console.log("user id in group chat------------ : ", data.user_id);
+        setId(data.user_id)
+      })
+      .catch((err) => console.error(err));
+  });
+
+  setTimeout(() => {
+    inputRef.current?.focus();
+  }, 0);
+
+  useEffect(() => {
+    const fetchMessages = async () => {
+      try {
+        const response = await fetch(
+          `http://localhost:8080/api/getGroupMessages?groupId=${groupId}`,
+          { credentials: "include", method: "GET" }
+        );
+        if (!response.ok) throw new Error("Failed to fetch messages");
+        const data = await response.json();
+        if (data.messages) {
+          console.log("user id in group chat message listener23131 : ", id);
+
+          const formattedMessages = data.messages
+            .map((msg) => ({
+              text: msg.content,
+              sender: msg.senderId !== id ? "them" : "me",
+              time: new Date(msg.createdAt).toLocaleString(),
+            }))
+            .reverse();
+
+          setMessages(formattedMessages);
+        }
+      } catch (error) {
+        console.error("Error fetching messages:", error);
+      }
+    };
+    fetchMessages();
+  }, [id]);
+
+  useEffect(() => {
+    const handleIncomingMessage = (data) => {
+      console.log("user id in group chat message listener : ", id);
+      setMessages((prev) => [
+        ...prev,
+        {
+          text: data.content,
+          sender: data.senderId !== id ? "them" : "me",
+          time: data.time,
+        },
+      ]);
+    };
+
+    addListener("group_message", handleIncomingMessage);
+    return () => removeListener("group_message", handleIncomingMessage);
+  }, [addListener, removeListener, id]);
+
+  // 👇 Scroll to bottom whenever messages change
+  useEffect(() => {
+    if (chatEndRef.current) {
+      chatEndRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [messages]);
+
+  const emojiArray = [
+    "😀",
+    "😃",
+    "😄",
+    "😁",
+    "😆",
+    "😅",
+    "🤣",
+    "😂",
+    "🚀",
+    "💡",
+    "😊",
+    "😇",
+    "🙂",
+    "🙃",
+    "😉",
+    "😍",
+    "🥰",
+    "😘",
+    "😗",
+    "😋",
+    "😛",
+    "😜",
+    "🤪",
+    "😝",
+    "🤑",
+    "🤗",
+    "🤭",
+    "🤔",
+    "🤨",
+    "😐",
+    "😑",
+    "😶",
+    "😏",
+    "😒",
+    "🙄",
+    "😬",
+    "😔",
+    "😪",
+    "🤤",
+    "😴",
+    "😷",
+    "🤒",
+    "🤕",
+    "🤢",
+    "🤮",
+    "🥴",
+    "😵",
+    "🤯",
+    "😎",
+    "🤓",
+  ];
+
+  function handleSendGroupChatMessage() {
+    console.log("=========", typeof groupId);
+    if (input.trim() === "") return;
+    const payload = {
+      groupID: groupId,
+      messageContent: input,
+      type: "group_message",
+    };
+    sendMessage(payload);
+    setInput("");
+    setShowEmojis(false);
+  }
+
   const addEmoji = (emoji) => {
     const cursorPos = inputRef.current.selectionStart;
     const newText = input.slice(0, cursorPos) + input.slice(cursorPos) + emoji;
@@ -224,51 +365,9 @@ export function GroupChat() {
       inputRef.current.setSelectionRange(end, end);
     }, 0);
   };
-  // 👇 Scroll to bottom whenever messages change
-  useEffect(() => {
-    if (chatEndRef.current) {
-      chatEndRef.current.scrollIntoView({ behavior: "smooth" });
-    }
-  }, [messages]);
-
-  useEffect(() => {
-    const handleIncomingMessage = (data) => {
-
-      setMessages((prev) => [
-        ...prev,
-        {
-          text: data.content,
-          sender: data.from === user.id ? "them" : "me",
-          time: data.time,
-        },
-      ]);
-
-    };
-
-    addListener("group_messages", handleIncomingMessage);
-    return () => removeListener("group_messages", handleIncomingMessage);
-  }, [addListener, removeListener]);
-  useEffect(() => {
-    fetch("http://localhost:8080/api/me")
-      .then(res => res.json())
-      .then(data => setId(data.user_id))
-      .catch(err => console.error(err))
-  })
-  
-  function handleSendGroupChatMessage() {
-    if (input.trim() === "") return
-    const payload = {
-      senderId: id,
-      messageContent: input,
-      type: "message",
-    }
-    sendMessage(payload)
-
-
-  }
 
   return (
-    <div className="chat-container">
+    <div className="group-chat-container">
       {/* Chat box */}
       <div className="chat-box">
         {messages.length === 0 ? (
