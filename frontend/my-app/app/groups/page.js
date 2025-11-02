@@ -1,15 +1,15 @@
 "use client";
 import Navbar from "../../components/Navbar.js";
 import { useEffect, useState } from "react";
-import RightBar from "../../components/RightBar.js";
-import { Users, ChevronRight } from "lucide-react";
-import "../../styles/groupstyle.css"
-import { useRouter } from 'next/navigation'
-import { GroupCreationTrigger } from '../../components/CreateGroup.js';
-import { GroupsTabs } from '../../components/groupTabs.js';
-import LeftBar from '../../components/LeftBar.js';
-import { useDarkMode } from '../../context/darkMod.js';
+import "../../styles/groupstyle.css";
+import { useRouter } from "next/navigation";
 import { GroupCard } from "../../components/groupCard.js";
+import { GroupCreationTrigger } from "../../components/CreateGroup.js";
+import { GroupsTabs } from "../../components/groupTabs.js";
+import LeftBar from "../../components/LeftBar.js";
+import RightBar from "../../components/RightBar.js";
+import { useDarkMode } from "../../context/darkMod.js";
+import { Users, ChevronRight } from "lucide-react";
 // import RightBarGroup from '../../components/RightBarGroups.js';
 
 export default function () {
@@ -92,9 +92,10 @@ export function AllGroups() {
 }
 
 export function MyGroups() {
-    const [group, setGroup] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const router = useRouter()
+  console.log("MyGroups rendered");
+  const [group, setGroup] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const router = useRouter();
 
   const handleShow = (group) => {
     router.push(`/groups/${group}`);
