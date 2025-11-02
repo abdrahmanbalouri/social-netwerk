@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"database/sql"
+	"fmt"
 	"log"
 	"net/http"
 	"sync"
@@ -117,9 +118,9 @@ func Loop(conn *websocket.Conn, currentUserID string) {
 		}
 
 		var first_name, last_name string
-		err := repository.Db.QueryRow(`SELECT first_name , last_name FROM users WHERE id = ?`, currentUserID).Scan(&first_name, last_name)
+		err := repository.Db.QueryRow(`SELECT first_name, last_name FROM users WHERE id = ?`, currentUserID).Scan(&first_name, &last_name)
 		if err != nil {
-			log.Println("DB error getting sender firsy_name && last_name:", err)
+			log.Println("DB error getting sender first_name && last_name:", err)
 			first_name = "Unknown"
 			last_name = "Unknown"
 
@@ -227,7 +228,7 @@ func Loop(conn *websocket.Conn, currentUserID string) {
 
 			sendToGroupMembers(msg.GroupID, currentUserID, map[string]any{
 				"type":     msg.Type,
-				"from":     currentUserID,
+				"senderId": currentUserID,
 				"groupID":  msg.GroupID,
 				"content":  msg.MessageContent,
 				"time":     time.Now().Format(time.RFC3339),
@@ -327,7 +328,7 @@ func BrodcastGroupMembersNotification(groupID string, senderID string, message m
 	ClientsMutex.Lock()
 	defer ClientsMutex.Unlock()
 
-	rows, err := repository.Db.Query("SELEC user_id FROM group_members WHERE group_id = ?", groupID)
+	rows, err := repository.Db.Query("SELECT user_id FROM group_members WHERE group_id = ?", groupID)
 	if err != nil {
 		log.Println("DB error getting group members:", err)
 		return
@@ -409,7 +410,7 @@ func sendToGroupMembers(groupID string, senderID string, message map[string]any)
 	ClientsMutex.Lock()
 	defer ClientsMutex.Unlock()
 
-	rows, err := repository.Db.Query("SELEC user_id FROM group_members WHERE group_id = ?", groupID)
+	rows, err := repository.Db.Query("SELECT user_id FROM group_members WHERE group_id = ?", groupID)
 	if err != nil {
 		log.Println("DB error getting group members:", err)
 		return
@@ -422,14 +423,13 @@ func sendToGroupMembers(groupID string, senderID string, message map[string]any)
 			log.Println("DB error scanning group member:", err)
 			continue
 		}
-		if userID == senderID {
-			continue // Skip sender
-		}
+
 		conns, exists := Clients[userID]
 		if !exists {
 			continue
 		}
 		for _, conn := range conns {
+			fmt.Println("======================================================")
 			if err := conn.WriteJSON(message); err != nil {
 				log.Println("WebSocket write error:", err)
 				if err := conn.Close(); err != nil {
