@@ -44,6 +44,7 @@ func Routes() http.Handler {
 	mux.HandleFunc("/api/Getstories", handlers.GetStories)
 	mux.HandleFunc("/api/Createstories", handlers.CreateStories)
 	mux.HandleFunc("/api/getmessages", handlers.GetMessagesHandler)
+	mux.HandleFunc("/api/getGroupMessages", handlers.GetGroupMessagesHandler)
 	mux.HandleFunc("/ws", handlers.Websocket)
 	mux.HandleFunc("/api/clearNotifications", handlers.ClearNotifications)
 	mux.HandleFunc("/myGroups", handlers.GetMyGroups)
