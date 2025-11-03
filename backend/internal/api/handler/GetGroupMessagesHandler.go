@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"database/sql"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -17,7 +18,7 @@ func GetGroupMessagesHandler(w http.ResponseWriter, r *http.Request) {
 
 	// Authenticate user
 
-	_, err := helper.AuthenticateUser(r)
+	currentUserID, err := helper.AuthenticateUser(r)
 	if err != nil {
 		fmt.Println("Authentication error:", err)
 		http.Error(w, "Unauthorized", http.StatusUnauthorized)
@@ -29,6 +30,15 @@ func GetGroupMessagesHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Missing receiverId parameter", http.StatusBadRequest)
 		return
 	}
+	err = repository.Db.QueryRow("SELECT 1 FROM group_members WHERE group_id = ? AND user_id = ?", groupId, currentUserID).Scan(new(interface{}))
+	if err == sql.ErrNoRows {
+		http.Error(w, "Forbidden: You are not a member of this group", http.StatusForbidden)
+		return
+	} else if err != nil {
+		http.Error(w, "Database error: "+err.Error(), http.StatusInternalServerError)
+		return
+	}
+
 	query := `
 		SELECT m.content, m.sender_id, m.sent_at FROM messages m
 		WHERE m.group_id = ?
