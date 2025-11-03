@@ -100,7 +100,6 @@ export function AllPosts() {
             setLoading(false);
             return;
         }
-
         fetch(`http://localhost:8080/group/fetchPosts/${grpID}`, {
             method: 'GET',
             credentials: 'include',
@@ -110,12 +109,12 @@ export function AllPosts() {
                 return res.json();
             })
             .then(data => {
-                if (data.error) {
-                    showToast(data.error)
-                    setLoading(false);
-                    router.push("/login");
-                    return
-                }
+                // if (data.error) {
+                //     // showToast(data.error)
+                //     setLoading(false);
+                //     router.push("/login");
+                //     return
+                // }
                 setPost(data || []);
                 setLoading(false);
             })

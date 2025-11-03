@@ -9,6 +9,8 @@ import LeftBar from '../../components/LeftBar.js';
 import RightBarGroup from '../../components/RightBarGroups.js';
 import { useDarkMode } from '../../context/darkMod.js';
 import { GroupCard } from "../../components/groupCard.js";
+import { Toaster, toast } from "sonner"
+
 // import RightBarGroup from '../../components/RightBarGroups.js';
 
 export default function () {
@@ -29,7 +31,8 @@ export default function () {
 
 async function JoinGroup(grpID, setJoining) {
   console.log("inside join group function");
-  setJoining(true);
+  // setJoining(true);
+
   try {
     const res = await fetch(`http://localhost:8080/group/invitation/${grpID}`, {
       method: 'POST',
@@ -45,7 +48,7 @@ async function JoinGroup(grpID, setJoining) {
 
     const temp = await res.json();
     // console.log("temp is :", temp);
-    setJoining(true)
+    // setJoining(true)
     return temp;
   } catch (error) {
     console.error("error sending invitation to join the group :", error);
@@ -89,6 +92,7 @@ export function AllGroups() {
   }
   return (
     <div className="groups-grid">
+      <Toaster position="bottom-right" richColors />
       {group.map((grp) => (
         <div key={grp.ID} className="group-card">
           <div className="group-header">
@@ -107,7 +111,10 @@ export function AllGroups() {
                 <span className="members-text-full">{22} members</span>
                 <span className="members-text-short">{220} members</span>
               </div>
-              <button className="view-button" onClick={() => JoinGroup(grp.ID, setJoining)} disabled={joining}>
+              <button className="view-button" onClick={() => {
+                toast.success("Join request sent!");
+                JoinGroup(grp.ID, setJoining)
+                }}>
                 <span>Join</span>
                 {/* <ChevronRight /> */}
               </button>

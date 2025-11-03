@@ -7,7 +7,41 @@ import PersonAddAltIcon from "@mui/icons-material/PersonAddAlt";
 import "../styles/rightbar.css"
 import { useWS } from "../context/wsContext";
 import { useParams } from "next/navigation";
+import { Toaster, toast } from "sonner"
 
+
+async function handleGroupRequest(invitationId, action) {
+    try {
+        console.log("wast l handle request dyal l groups");
+        const res = await fetch("http://localhost:8080/invitations/respond", {
+            method: "POST",
+            credentials: "include",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                invitation_type: "join",
+                invitation_id: invitationId,
+                response: action,
+            }),
+        });
+
+        if (!res.ok) {
+            const errMsg = await res.text();
+            throw new Error("Action failed: " + errMsg);
+        }
+        const data = await res.json();
+        console.log("invitaiton id is :", invitationId);
+
+        console.log("BEfore :", joinRequest);
+        setJoinRequest((prev) => (prev || []).filter((req) => {
+            console.log("request is ::", req);
+            console.log("req.invitation_id is :", req.InvitationID);
+            req.InvitationID !== invitationId
+        }));
+    } catch (err) {
+    }
+}
 export default function RightBarGroup({ onClick }) {
     // console.log("INSIIIIDE RIGHT BAR GROUP ");
     const [friends, setFriends] = useState([])
@@ -42,39 +76,6 @@ export default function RightBarGroup({ onClick }) {
         return () => removeListener("logout", handleLogout)
     }, [addListener, removeListener])
 
-
-    async function handleGroupRequest(invitationId, action) {
-        try {
-            console.log("wast l handle request dyal l groups");
-            const res = await fetch("http://localhost:8080/invitations/respond", {
-                method: "POST",
-                credentials: "include",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                    invitation_type : "join",
-                    invitation_id: invitationId,
-                    response: action,
-                }),
-            });
-
-            if (!res.ok) {
-                const errMsg = await res.text();
-                throw new Error("Action failed: " + errMsg);
-            }
-            const data = await res.json();
-            console.log("invitaiton id is :", invitationId);
-            
-            console.log("BEfore :", joinRequest);
-            setJoinRequest((prev) => (prev || []).filter((req) => {
-                console.log("request is ::", req);
-                console.log("req.invitation_id is :", req.InvitationID);
-                req.InvitationID !== invitationId
-            }));
-        } catch (err) {
-        }
-    }
     console.log("After :", joinRequest);
 
     // useEffect(() => {
@@ -157,6 +158,7 @@ export default function RightBarGroup({ onClick }) {
 
     return (
         <div className="rightBar">
+            <Toaster position="bottom-right" richColors />
             <div className="item">
                 <span>Group Invitation </span>
                 {!joinRequest || joinRequest.length === 0 ? (
@@ -198,10 +200,10 @@ export default function RightBarGroup({ onClick }) {
                                     <div className="userInfo">
                                         <div className="userDetails">
                                             <Link href={`/profile/${user.id}`}>
-                                                <img
-                                                    src={user?.image ? `/uploads/${user.image}` : "/assets/default.png"}
-                                                    alt="user avatar"
-                                                />
+                                            <img
+                                                src={user?.image ? `/uploads/${user.image}` : "/assets/default.png"}
+                                                alt="user avatar"
+                                            />
                                             </Link>
                                             <div className={onlineUsers.includes(user.id) ? "online" : "offline"} />
                                             <Link href={`/profile/${user.id}`}>
@@ -209,6 +211,7 @@ export default function RightBarGroup({ onClick }) {
                                             </Link>
                                         </div>
                                         <div onClick={() => {
+                                            toast.success("invitaiton sent ")
                                             onClick(user.id, grpID)
                                             sendMessage({ type: "invite_to_group", ReceiverId: user.id, groupID: grpID })
                                         }}>
