@@ -15,7 +15,8 @@ import { middleware } from "../../../middleware/middelware.js";
 import EventCard from "../../../components/EventCard.js";
 import { useWS } from "../../../context/wsContext.js";
 import AddReactionIcon from "@mui/icons-material/AddReaction";
-import { FileText, SendIcon } from "lucide-react";
+import SendIcon from "@mui/icons-material/Send";
+
 import "../../../styles/chat.css";
 
 // Global sendRequest (can be moved to a service file later)
