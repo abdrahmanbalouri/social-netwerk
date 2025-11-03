@@ -54,7 +54,6 @@ func GetCommentsHandler(w http.ResponseWriter, r *http.Request) {
 		ID        string    `json:"id"`
 		Content   string    `json:"content"`
 		CreatedAt time.Time `json:"created_at"`
-
 		First_name    string    `json:"first_name"`
 		Last_name    string    `json:"last_name"`
 		MediaPath string    `json:"media_path,omitempty"`
