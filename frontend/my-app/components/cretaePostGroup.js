@@ -1,3 +1,4 @@
+"use client";
 import { useState } from 'react';
 import { CreatePost } from '../app/groups/[id]/page.js';
 // import "../styles/groupstyle.css"
@@ -46,9 +47,9 @@ export function CreatePostForm({ onSubmit, onCancel }) {
 
 
   return (
-    <div >
-      <div className='group-modal-overlay' onClick={onCancel} style={{zIndex:0}} ></div>
-      <div className="group-modal-content" style={{zIndex:100}}>
+    <div className='group-modal-overlay'>
+      <div className='group-modal-overlay1' onClick={onCancel}></div>
+      <div className="group-modal-content">
         <div className="group-modal-header">
           <h1 className="group-modal-title">Create a New Post</h1>
         </div>
