@@ -150,8 +150,32 @@ func GroupInvitationRequest(w http.ResponseWriter, r *http.Request) {
 
 	invitationId := helper.GenerateUUID()
 	if newInvitation.InvitationType == "join" {
+		//t2akd ila kayna aslan invitation b nafs l variables wla la
+		var exists bool
+		query := `SELECT EXISTS (
+					SELECT 1 
+					FROM group_invitations
+					WHERE user_id = ? 
+						AND group_id = ? 
+						AND request_type = 'join'
+					) AS has_invitation;`
+		err = tx.QueryRow(query, userID, GrpId).Scan(&exists)
+		if err != nil {
+			fmt.Println("EROORRRRRR :", err)
+			helper.RespondWithError(w, http.StatusInternalServerError, "Database error")
+			return
+		}
+		fmt.Println("EXIST VALUE IS :", exists)
+		if exists{
+			response := map[string]any{
+				"invitation_id": invitationId,
+				"message":       "Invitation allready exist",
+			}
+			helper.RespondWithJSON(w, http.StatusOK, response)
+			return
+		}
 		createdAt := time.Now().UTC()
-		query := `INSERT INTO group_invitations (id, group_id, user_id, invited_by_user_id, request_type, created_at) VALUES (?, ?, ?, ?, ?, ?)`
+		query = `INSERT INTO group_invitations (id, group_id, user_id, invited_by_user_id, request_type, created_at) VALUES (?, ?, ?, ?, ?, ?)`
 		_, err = tx.Exec(query, invitationId, GrpId, userID, nil, "join", createdAt)
 		if err != nil {
 			fmt.Println("User id is :", userID)
