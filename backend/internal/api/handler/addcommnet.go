@@ -33,11 +33,17 @@ func CreateCommentHandler(w http.ResponseWriter, r *http.Request) {
 
 	postID := strings.TrimSpace(r.FormValue("postId"))
 	content := strings.TrimSpace(r.FormValue("content"))
-	if postID == "" || content == "" {
+	if postID == ""  {
 		helper.RespondWithError(w, http.StatusBadRequest, "Missing required fields")
 		return
 	}
-	if len(content) < 3 || len(content) > 300 {
+	 _,_, err = r.FormFile("media")
+	 if err != nil && content == "" {	  
+		helper.RespondWithError(w, http.StatusBadRequest, "Either content or media is required")
+		return
+	 }
+
+	if  len(content) > 300 {
 		helper.RespondWithError(w, http.StatusBadRequest, "Content length invalid")
 		return
 	}
@@ -45,7 +51,6 @@ func CreateCommentHandler(w http.ResponseWriter, r *http.Request) {
 
 	sanitizedContent := helper.Skip(content)
 	groupId := strings.TrimSpace(r.FormValue("groupId"))
-	fmt.Println(groupId, "----------------- GROUP ID ---------------")
 	if whatis == "groups" {
 		err = helper.CheckUserInGroup(userID, groupId)
 		if err != nil {
@@ -90,10 +95,10 @@ func CreateCommentHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	} else {
+		
 		mediaPath = ""
 	}
 
-	fmt.Println("6565656556555656")
 
 	commentID := uuid.New().String()
 	fmt.Println(whatis)
@@ -103,8 +108,6 @@ func CreateCommentHandler(w http.ResponseWriter, r *http.Request) {
 		VALUES (?, ?, ?, ?, ?)`,
 			commentID, postID, userID, sanitizedContent, mediaPath)
 		if err != nil {
-			fmt.Println(err, "--------------------------")
-			fmt.Println("1111111111111111111111111111111121212121212")
 			helper.RespondWithError(w, http.StatusInternalServerError, "Failed to create comment")
 			return
 		}
@@ -114,7 +117,6 @@ func CreateCommentHandler(w http.ResponseWriter, r *http.Request) {
 		VALUES (?, ?, ?, ?, ?)`,
 			commentID, postID, userID, sanitizedContent, mediaPath)
 		if err != nil {
-			fmt.Println("mmmmmmmmmmmmmmmmmm", err)
 			helper.RespondWithError(w, http.StatusInternalServerError, "Failed to create comment")
 			return
 		}

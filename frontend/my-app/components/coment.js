@@ -156,7 +156,10 @@ export default function Comment({ comments, isOpen, onClose, postId, onCommentCh
 
   async function handlePostComment(e) {
     e.preventDefault()
-    if (!commentContent.trim() && !selectedFile) return
+    if (!commentContent.trim() && !selectedFile){
+      showToast("Please enter a comment or select a file.")
+      return
+    }
 
     try {
       setLoading(true)
@@ -177,9 +180,7 @@ export default function Comment({ comments, isOpen, onClose, postId, onCommentCh
       })
 
 
-      const res = await response.json()
-      console.log(res,'-**-88987+97+7+7+77+9');
-      
+      const res = await response.json()      
       if (res.error) {
         if (res.error == "Unauthorized") {
           router.push("/login");
