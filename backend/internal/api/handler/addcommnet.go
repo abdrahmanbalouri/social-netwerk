@@ -15,6 +15,8 @@ import (
 )
 
 func CreateCommentHandler(w http.ResponseWriter, r *http.Request) {
+	const maxFileSize = 1 * 1024 * 1024 * 1024 // 1 gb bazaf yak
+
 	if r.Method != "POST" {
 		helper.RespondWithError(w, http.StatusMethodNotAllowed, "Method Not Allowed")
 		return
@@ -73,6 +75,11 @@ func CreateCommentHandler(w http.ResponseWriter, r *http.Request) {
 			helper.RespondWithError(w, http.StatusBadRequest, "Unsupported media format")
 			return
 		}
+		 if header.Size > maxFileSize {
+		 helper.RespondWithError(w, http.StatusBadRequest, "File too large, max 1 GB")
+		return
+	}
+
 
 		uploadDir := "../frontend/my-app/public/uploads"
 		if err := os.MkdirAll(uploadDir, os.ModePerm); err != nil {
