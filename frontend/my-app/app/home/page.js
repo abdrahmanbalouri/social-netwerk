@@ -541,7 +541,6 @@ export default function Home() {
                 className="input"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
-                required
               />
               <input
                 type="file"
@@ -555,7 +554,6 @@ export default function Home() {
                 className="input"
                 value={content}
                 onChange={(e) => setContent(e.target.value)}
-                required
               />
               {/* Visibility Selection */}
               <div className="visibility-select">

@@ -16,6 +16,8 @@ import (
 )
 
 func Createpost(w http.ResponseWriter, r *http.Request) {
+const maxFileSize = 1 * 1024 * 1024 * 1024 // 1 gb bazaf yak
+
 	if r.Method != "POST" {
 		helper.RespondWithError(w, http.StatusMethodNotAllowed, "Method Not Allowed")
 		return
@@ -36,7 +38,7 @@ func Createpost(w http.ResponseWriter, r *http.Request) {
 	content := helper.Skip(strings.TrimSpace(r.FormValue("content")))
 	visibility := strings.TrimSpace(r.FormValue("visibility"))
 	allowedUsers := strings.TrimSpace(r.FormValue("allowed_users"))
-	if len(title) <= 2 || len(title) > 20 {
+	if  len(title) > 20 {
 		helper.RespondWithError(w, http.StatusBadRequest, "title bitwen 2 and  20")
 		return 
 	}
@@ -60,6 +62,10 @@ func Createpost(w http.ResponseWriter, r *http.Request) {
 			helper.RespondWithError(w, http.StatusBadRequest, "Unsupported media format")
 			return
 		}
+		 if header.Size > maxFileSize {
+         helper.RespondWithError(w, http.StatusBadRequest, "File too large, max 1 GB")
+        return
+    }
 		uploadDir := "../frontend/my-app/public/uploads"
 		if err := os.MkdirAll(uploadDir, os.ModePerm); err != nil {
 			helper.RespondWithError(w, http.StatusInternalServerError, "Failed to create upload directory")

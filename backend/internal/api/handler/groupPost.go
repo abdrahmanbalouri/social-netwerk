@@ -41,11 +41,11 @@ type Post struct {
 }
 
 func CreatePostGroup(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("INSIDE GROUP POST HANDLER ----------")
 	if r.Method != http.MethodPost {
 		helper.RespondWithError(w, http.StatusMethodNotAllowed, "Method not allowed")
 		return
 	}
+
 	fmt.Println("R.FORMVALUE IS ::::::::::", r.FormValue("image"))
 
 	// get user id
@@ -55,6 +55,8 @@ func CreatePostGroup(w http.ResponseWriter, r *http.Request) {
 		helper.RespondWithError(w, http.StatusInternalServerError, IdErr.Error())
 		return
 	}
+	const maxFileSize = 1 * 1024 * 1024 * 1024 // 1 gb bazaf yak
+
 	parts := strings.Split(r.URL.Path, "/")
 	if len(parts) < 4 {
 		helper.RespondWithError(w, http.StatusNotFound, "Group not found")
@@ -104,6 +106,10 @@ func CreatePostGroup(w http.ResponseWriter, r *http.Request) {
 			helper.RespondWithError(w, http.StatusBadRequest, "Unsupported media format")
 			return
 		}
+		 if header.Size > maxFileSize {
+		 helper.RespondWithError(w, http.StatusBadRequest, "File too large, max 1 GB")
+		return
+	}
 		uploadDir := "../frontend/my-app/public/uploads"
 		if err := os.MkdirAll(uploadDir, os.ModePerm); err != nil {
 			helper.RespondWithError(w, http.StatusInternalServerError, "Failed to create upload directory")
