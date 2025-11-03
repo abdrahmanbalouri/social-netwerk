@@ -88,7 +88,6 @@ export function Events() {
   const grpID = params.id;
 
   const [EventList, setEventList] = useState([])
-
   useEffect(() => {
     fetchEvents();
   }, []);
@@ -104,7 +103,7 @@ export function Events() {
         throw new Error('Failed to fetch events');
       }
 
-      const data = await response.json();
+      const data = await response.json() || [];
 
       console.log('Fetched events:', data);
       setEventList(data);
@@ -171,11 +170,6 @@ export function Events() {
           <EventCard key={ev.id} ev={ev} goingEvent={goingEvent} />
         ))
       )}
-
-
-
-
-
     </>
   )
 }
