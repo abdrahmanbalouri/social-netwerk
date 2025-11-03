@@ -31,7 +31,7 @@ func GetGroupPostByID(w http.ResponseWriter, r *http.Request) {
 	postID := parts[3]
 	groupId:= parts[4]
 
-	 err = helper.CheckUserInGroup(currentUserID, groupId)
+	err = helper.CheckUserInGroup(currentUserID, groupId)
 		if err != nil {
 			helper.RespondWithError(w, http.StatusForbidden, "You are not a member of this group")
 			return

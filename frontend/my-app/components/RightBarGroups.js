@@ -9,18 +9,20 @@ import { useWS } from "../context/wsContext";
 import { useParams } from "next/navigation";
 
 export default function RightBarGroup({ onClick }) {
+    // console.log("INSIIIIDE RIGHT BAR GROUP ");
     const [friends, setFriends] = useState([])
     const [grpID, setGrpID] = useState('')
     // const [users, setusers] = useState([])
     const [onlineUsers, setonlineUsers] = useState([])
     const [activeTab, setActiveTab] = useState("friends");
-    const [followRequest, setFollowRequest] = useState([])
+    // const [followRequest, setFollowRequest] = useState([])
+    const [joinRequest, setJoinRequest] = useState([])
     const { sendMessage, addListener, removeListener } = useWS();
     // const [invitations, setInvitations] = useState([]);
+
     useEffect(() => {
         const handleOlineUser = (data) => {
             setonlineUsers(data.users)
-
         }
         sendMessage({ type: "online_list" })
         addListener("online_list", handleOlineUser)
@@ -39,9 +41,9 @@ export default function RightBarGroup({ onClick }) {
         addListener("logout", handleLogout)
         return () => removeListener("logout", handleLogout)
     }, [addListener, removeListener])
-    
 
-    async function handleGroupRequest(invitaitonId, action) {
+
+    async function handleGroupRequest(invitationId, action) {
         try {
             console.log("wast l handle request dyal l groups");
             const res = await fetch("http://localhost:8080/invitations/respond", {
@@ -51,7 +53,8 @@ export default function RightBarGroup({ onClick }) {
                     "Content-Type": "application/json",
                 },
                 body: JSON.stringify({
-                    invitation_id: invitaitonId,
+                    invitation_type : "join",
+                    invitation_id: invitationId,
                     response: action,
                 }),
             });
@@ -61,34 +64,43 @@ export default function RightBarGroup({ onClick }) {
                 throw new Error("Action failed: " + errMsg);
             }
             const data = await res.json();
-            setFollowRequest((prev) => (prev || []).filter((req) => req.invitation_id !== invitaitonId));
+            console.log("invitaiton id is :", invitationId);
+            
+            console.log("BEfore :", joinRequest);
+            setJoinRequest((prev) => (prev || []).filter((req) => {
+                console.log("request is ::", req);
+                console.log("req.invitation_id is :", req.InvitationID);
+                req.InvitationID !== invitationId
+            }));
         } catch (err) {
         }
     }
+    console.log("After :", joinRequest);
 
-    useEffect(() => {
-        async function fetchFollowRequest() {
-            try {
-                const res = await fetch("http://localhost:8080/api/groupeInvitation", {
-                    method: "GET",
-                    credentials: "include",
-                });
-              
-                const data = await res.json();
-                console.log(data);
-                
-                // if (data.error == "Unauthorized") {
-                //     window.location.href = "/login";
-                //     return;
-                // }
-                setFollowRequest(data);
-                // setInvitations(data)
-            } catch (err) {
-                console.error(err);
-            }
-        }
-        fetchFollowRequest();
-    }, []);
+    // useEffect(() => {
+    //     async function fetchFollowRequest() {
+    //         try {
+    //             const res = await fetch("http://localhost:8080/api/groupeInvitation", {
+    //                 method: "GET",
+    //                 credentials: "include",
+    //             });
+
+    //             const data = await res.json();
+    //             console.log(data);
+
+    //             // if (data.error == "Unauthorized") {
+    //             //     window.location.href = "/login";
+    //             //     return;
+    //             // }
+    //             setFollowRequest(data);
+    //             // setInvitations(data)
+    //         } catch (err) {
+    //             console.error(err);
+    //         }
+    //     }
+    //     fetchFollowRequest();
+    // }, []);
+
     useEffect(() => {
         async function fetchfriends() {
             try {
@@ -96,15 +108,12 @@ export default function RightBarGroup({ onClick }) {
                     method: "GET",
                     credentials: "include",
                 });
-                
-             
                 const data = await res.json();
-                if (!data){
+                if (!data) {
                     setFriends([]);
                     return;
                 }
-                
-                if(data.error == "Unauthorized"){
+                if (data.error == "Unauthorized") {
                     window.location.href = "/login";
                     return;
                 }
@@ -118,27 +127,51 @@ export default function RightBarGroup({ onClick }) {
 
     const params = useParams();
     useEffect(() => {
+        console.log("wst had l3ibatika");
         setGrpID(params.id);
+        console.log("params houmaaa :", params.id);
     }, [params.id]);
+
+    useEffect(() => {
+        if (!grpID) return;
+        async function fetchJoinRequest(grpID) {
+            console.log("INSIDE FETCH JOIN FUNC");
+            console.log("group id is :", grpID);
+            try {
+                const res = await fetch(`http://localhost:8080/api/fetchJoinRequests/${grpID}`, {
+                    method: "GET",
+                    credentials: "include",
+                });
+                const data = await res.json();
+                console.log("malkiiiii :", data);
+                setJoinRequest(data);
+                // setInvitations(data)
+            } catch (err) {
+                console.log("error is :", err);
+                console.error(err);
+            }
+        }
+        fetchJoinRequest(grpID);
+    }, [grpID]);
+
 
     return (
         <div className="rightBar">
             <div className="item">
                 <span>Group Invitation </span>
-                {!followRequest || followRequest.length === 0 ? (
+                {!joinRequest || joinRequest.length === 0 ? (
                     <h1>no Invitation for now</h1>
                 ) : (
-                    followRequest.map((group) => (
-                        <div key={group.invitation_id} className="user">
+                    joinRequest.map((req) => (
+                        <div key={req.InvitationID} className="user">
                             <div className="userInfo">
                                 <div className="userDetails">
                                     <i className="fa-solid fa-people-group"></i>
-                                    <span>{group.title}</span>
+                                    <span>{req.FirstName} {req.LastName}</span>
                                 </div>
-
                                 <div className="buttons">
-                                    <button onClick={() => { handleGroupRequest(group.invitation_id, "accept") }} >accept</button>
-                                    <button onClick={() => { handleGroupRequest(group.invitation_id, "reject") }} >reject</button>
+                                    <button onClick={() => { handleGroupRequest(req.InvitationID, "accept") }} >accept</button>
+                                    <button onClick={() => { handleGroupRequest(req.InvitationID, "reject") }} >reject</button>
                                 </div>
                             </div>
                         </div>

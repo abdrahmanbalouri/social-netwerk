@@ -14,22 +14,51 @@ import { GroupCard } from "../../components/groupCard.js";
 export default function () {
   const { darkMode } = useDarkMode();
 
-    return (
-        <div id="div" className={darkMode ? 'theme-dark' : 'theme-light'}>
-            <Navbar />
-            {/* main content area */}
-            <main className="content" id="contentgroups">
-                <LeftBar showSidebar={true} />
-                <GroupsTabs />
-                <RightBarGroup />
-            </main>
-        </div>
-    )
+  return (
+    <div id="div" className={darkMode ? 'theme-dark' : 'theme-light'}>
+      <Navbar />
+      {/* main content area */}
+      <main className="content" id="contentgroups">
+        <LeftBar showSidebar={true} />
+        <GroupsTabs />
+        <RightBarGroup />
+      </main>
+    </div>
+  )
+}
+
+async function JoinGroup(grpID, setJoining) {
+  console.log("inside join group function");
+  setJoining(true);
+  try {
+    const res = await fetch(`http://localhost:8080/group/invitation/${grpID}`, {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        InvitationType: "join",
+        invitedUsers: [],
+      }),
+    });
+
+    const temp = await res.json();
+    // console.log("temp is :", temp);
+    setJoining(true)
+    return temp;
+  } catch (error) {
+    console.error("error sending invitation to join the group :", error);
+    return { error: error.message };
+  } finally {
+    setJoining(false);
+  }
 }
 
 export function AllGroups() {
   const [group, setGroup] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [joining, setJoining] = useState(false)
 
   useEffect(() => {
     fetch("http://localhost:8080/groups", {
@@ -78,7 +107,7 @@ export function AllGroups() {
                 <span className="members-text-full">{22} members</span>
                 <span className="members-text-short">{220} members</span>
               </div>
-              <button className="view-button">
+              <button className="view-button" onClick={() => JoinGroup(grp.ID, setJoining)} disabled={joining}>
                 <span>Join</span>
                 {/* <ChevronRight /> */}
               </button>
@@ -91,50 +120,50 @@ export function AllGroups() {
 }
 
 export function MyGroups() {
-    const [group, setGroup] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const router = useRouter()
+  const [group, setGroup] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const router = useRouter()
 
   const handleShow = (group) => {
     router.push(`/groups/${group}`);
   };
 
-    useEffect(() => {
-        fetch('http://localhost:8080/myGroups', {
-            method: 'GET',
-            credentials: 'include',
-        })
-            .then(res => res.json())
-            .then(data => {
-                setGroup(data || []);
-                setLoading(false);
-            })
-            .catch(error => {
-                console.error("Failed to fetch group data:", error);
-                setLoading(false);
-            });
-    }, [])
-    if (!group) {
-        return (
-            <div>
-                <GroupCreationTrigger setGroup={setGroup} />
-            </div>
-        )
-    }
+  useEffect(() => {
+    fetch('http://localhost:8080/myGroups', {
+      method: 'GET',
+      credentials: 'include',
+    })
+      .then(res => res.json())
+      .then(data => {
+        setGroup(data || []);
+        setLoading(false);
+      })
+      .catch(error => {
+        console.error("Failed to fetch group data:", error);
+        setLoading(false);
+      });
+  }, [])
+  if (!group) {
     return (
-        <div className="group-container">
-            <GroupCreationTrigger
-                setGroup={setGroup}
-            />
-            {group.map(grp => (
-                <GroupCard
-                    key={grp.ID}
-                    group={grp}
-                    onShow={handleShow}
-                />
-            ))}
-        </div>
+      <div>
+        <GroupCreationTrigger setGroup={setGroup} />
+      </div>
     )
+  }
+  return (
+    <div className="group-container">
+      <GroupCreationTrigger
+        setGroup={setGroup}
+      />
+      {group.map(grp => (
+        <GroupCard
+          key={grp.ID}
+          group={grp}
+          onShow={handleShow}
+        />
+      ))}
+    </div>
+  )
 }
 
 export async function createGroup(formData) {
@@ -162,6 +191,7 @@ export async function createGroup(formData) {
               "Content-Type": "application/json",
             },
             body: JSON.stringify({
+              InvitationType: "invitation",
               invitedUsers: formData.invitedUsers,
             }),
           }

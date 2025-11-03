@@ -19,7 +19,7 @@ export default function RightBar() {
   useEffect(() => {
     async function fetchGroupeInvitation() {
       try {
-        const res = await fetch("http://localhost:8080/api/groupeInvitation", {
+        const res = await fetch("http://localhost:8080/api/fetchGroupInvitation", {
           method: "GET",
           credentials: "include",
         });
