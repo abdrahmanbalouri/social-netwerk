@@ -187,7 +187,7 @@ func CreatePostGroup(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetAllPostsGroup(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("GET ALL POSTS GROUP ____________")
+	// fmt.Println("GET ALL POSTS GROUP ____________")
 	if r.Method != http.MethodGet {
 		helper.RespondWithError(w, http.StatusMethodNotAllowed, "Method not allowed")
 		return
@@ -217,7 +217,7 @@ func GetAllPostsGroup(w http.ResponseWriter, r *http.Request) {
 		helper.RespondWithError(w, http.StatusUnauthorized, "You are not a member of this group")
 		return
 	}
-	fmt.Println(isMember, "_________ IS MEMBER _________")
+	// fmt.Println(isMember, "_________ IS MEMBER _________")
 
 	// Fetch all the posts of this group
 	// query = `SELECT id, title, content, image_path, created_at, user_id FROM posts WHERE group_id = ?`
@@ -264,7 +264,7 @@ func GetAllPostsGroup(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Return the posts as a JSON response
-	fmt.Println("FINISHED GET ALL POSTS ________________")
+	// fmt.Println("FINISHED GET ALL POSTS ________________")
 	helper.RespondWithJSON(w, http.StatusOK, postsJson)
 }
 

@@ -11,7 +11,7 @@ import NOtBar from "./notfcationBar.js"
 import "../styles/navbar.css";
 
 export default function Navbar() {
-  console.log("navvvvvvvvvvvvvvvvvv");
+  // console.log("navvvvvvvvvvvvvvvvvv");
   
   const router = useRouter();
   const { darkMode, toggle } = useDarkMode();

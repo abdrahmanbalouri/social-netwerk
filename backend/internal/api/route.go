@@ -16,7 +16,6 @@ func Routes() http.Handler {
 	mux.Handle("/uploads/", http.StripPrefix("/uploads/", http.FileServer(http.Dir("uploads"))))
 	mux.HandleFunc("/api/followers/", handlers.FollowersHandler)
 	mux.HandleFunc("/api/followRequest", handlers.FollowRequest)
-	mux.HandleFunc("/api/groupeInvitation", handlers.GroupeInvitation)
 	mux.HandleFunc("/api/followRequest/action", handlers.FollowRequestAction)
 	mux.HandleFunc("/api/following/", handlers.FollowingHandler)
 	mux.HandleFunc("/api/register", handlers.RegisterHandler)
@@ -45,6 +44,10 @@ func Routes() http.Handler {
 	mux.HandleFunc("/api/getmessages", handlers.GetMessagesHandler)
 	mux.HandleFunc("/ws", handlers.Websocket)
 	mux.HandleFunc("/api/clearNotifications", handlers.ClearNotifications)
+
+
+	mux.HandleFunc("/api/fetchGroupInvitation", handlers.GroupeInvitation)
+	mux.HandleFunc("/api/fetchJoinRequests/{id}", handlers.FetchJoinRequests)
 	mux.HandleFunc("/myGroups", handlers.GetMyGroups)
 	mux.HandleFunc("/groups", handlers.GetAllGroups)
 	//mux.HandleFunc("/group/like", handlers.LikesGroup)
@@ -53,10 +56,12 @@ func Routes() http.Handler {
 	mux.HandleFunc("/group/invitation/{id}", handlers.GroupInvitationRequest)
 	mux.HandleFunc("/group/addPost/{id}", handlers.CreatePostGroup)
 	mux.HandleFunc("/group/fetchPosts/{id}", handlers.GetAllPostsGroup)
-//mux.HandleFunc("/group/fetchPost/{id}", handlers.GetPostGroup)
+	//mux.HandleFunc("/group/fetchPost/{id}", handlers.GetPostGroup)
 	mux.HandleFunc("/group/updatepost/{id}/{groupId}", handlers.GetGroupPostByID)
 	mux.HandleFunc("/group/Getcomments/{id}/{offset}/{groupId}", handlers.GetCommentsGroup)
-	 mux.HandleFunc("/group/getlastcomment/{id}/{groupId}", handlers.GetlastcommnetGroup)
+	mux.HandleFunc("/group/getlastcomment/{id}/{groupId}", handlers.GetlastcommnetGroup)
+
+
 
 	mux.HandleFunc("/api/videos", handlers.GetVedioHandler)
 
