@@ -10,7 +10,7 @@ import LeftBar from "../../../components/LeftBar.js";
 import RightBarGroup from "../../../components/RightBarGroups.js";
 import { useDarkMode } from "../../../context/darkMod.js";
 import Comment from "../../../components/coment.js";
-import  {middleware} from "../../../middleware/middelware.js";
+import { middleware } from "../../../middleware/middelware.js";
 
 // Global sendRequest (can be moved to a service file later)
 async function sendRequest(invitedUserID, grpID) {
@@ -25,6 +25,7 @@ async function sendRequest(invitedUserID, grpID) {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
+                InvitationType: "invitation",
                 invitedUsers: [invitedUserID],
             }),
         });
@@ -45,21 +46,16 @@ export default function GroupPage() {
     const { darkMode } = useDarkMode();
     const router = useRouter();
     const params = useParams();
-     const grpID = params.id;
-  useEffect(() => {
-    console.log(2122132123121321);
-    
-    const checkAuth = async () => {
-      const auth = await middleware();
-      if (!auth) {
-        console.log(11111111111111111111111111);
-        
-        router.push("/login");
-
-      }
-    }
-    checkAuth();
-  }, [grpID])
+    const grpID = params.id;
+    useEffect(() => {
+        const checkAuth = async () => {
+            const auth = await middleware();
+            if (!auth) {
+                router.push("/login");
+            }
+        }
+        checkAuth();
+    }, [grpID])
 
     return (
         <div className={darkMode ? "theme-dark" : "theme-light"}>
@@ -92,12 +88,12 @@ export function AllPosts() {
             setToast(null);
         }, duration);
     };
-function closeComments() {
-    offsetcomment.current = 0
-    setShowComments(false);
-    setSelectedPost(null);
-    setComment([]);
-  }
+    function closeComments() {
+        offsetcomment.current = 0
+        setShowComments(false);
+        setSelectedPost(null);
+        setComment([]);
+    }
 
     useEffect(() => {
         if (!grpID) {
@@ -114,41 +110,34 @@ function closeComments() {
                 return res.json();
             })
             .then(data => {
-
-                if( data.error){
+                if (data.error) {
                     showToast(data.error)
                     setLoading(false);
                     router.push("/login");
                     return
                 }
-                
                 setPost(data || []);
                 setLoading(false);
-              
             })
             .catch(error => {
                 console.error("Failed to fetch posts:", error);
                 setLoading(false);
             });
-            
+
     }, [grpID]);
     async function refreshComments(commentID) {
         if (!selectedPost?.id) return;
-
         try {
             const res = await fetch(`http://localhost:8080/group/getlastcomment/${commentID}/${grpID}`, {
                 method: "GET",
                 credentials: "include",
             });
-
             const data = await res.json();
             if (data.error) {
                 showToast(data.error)
                 return
             }
-
             let newcomment = [];
-
             if (Array.isArray(data)) {
                 newcomment = data;
             } else if (data && data.newcomment && Array.isArray(data.newcomment)) {
@@ -156,13 +145,9 @@ function closeComments() {
             } else if (data) {
                 newcomment = [data];
             }
-
-
             setComment([...newcomment, ...comment]);
             offsetcomment.current++
-
-
-            const potsreplace = await  fetchPostById(selectedPost.id)
+            const potsreplace = await fetchPostById(selectedPost.id)
             for (let i = 0; i < posts.length; i++) {
                 if (posts[i].id == selectedPost.id) {
                     setPost([
@@ -173,7 +158,6 @@ function closeComments() {
                     break
                 }
             }
-
         } catch (err) {
             console.error("Error refreshing comments:", err);
         }
@@ -181,27 +165,19 @@ function closeComments() {
 
     // Handle Like
     const handleLike = async (postId) => {
-
         try {
             const res = await fetch(`http://localhost:8080/api/like/${postId}/${grpID}`, {
                 method: "POST",
                 credentials: "include",
             });
             const response = await res.json();
-            console.log(response);
-
-
             if (response.error) {
                 if (response.error === "Unauthorized") {
                     router.push("/login");
                 }
                 return;
             }
-
             const updatedPost = await fetchPostById(postId);
-            //console.log(updatedPost);
-
-
             if (updatedPost) {
                 setPost(prevPosts =>
                     prevPosts.map(p => p.id === updatedPost.id ? updatedPost : p)
@@ -219,8 +195,6 @@ function closeComments() {
                 credentials: "include",
             });
             const data = await res.json();
-            console.log(data);
-
             return data.error ? null : data;
         } catch (err) {
             console.error("Error fetching post:", err);
@@ -230,7 +204,6 @@ function closeComments() {
 
     async function GetComments(post) {
         setLoadingComment(true)
-
         try {
             setSelectedPost({
                 id: post.id,
@@ -245,30 +218,22 @@ function closeComments() {
                 method: "GET",
                 credentials: "include",
             });
-
             if (!res.ok) {
                 return false
             }
             const data = await res.json() || [];
-
-
-
             if (data.length == 0) {
                 return false
             } else {
                 offsetcomment.current += 10
-
             }
-
-
             setComment([...comment, ...data]);
             return data[0].id
-
         } catch (err) {
             return false
         }
         finally {
-             setLoadingComment(false);
+            setLoadingComment(false);
         }
     }
 
