@@ -156,13 +156,13 @@ export default function Home() {
         method: "POST",
         credentials: "include",
       });
-       const response = await res.json();
+      const response = await res.json();
       if (response.error) {
-        if (response.error == "Unauthorized"){
-        router.push("/login");
-        //sendMessage({ type: "logout" })
-        return 
-        }else{
+        if (response.error == "Unauthorized") {
+          router.push("/login");
+          //sendMessage({ type: "logout" })
+          return
+        } else {
           showToast(response.error)
           return
         }
@@ -203,12 +203,12 @@ export default function Home() {
 
       const data = await res.json() || [];
 
-      if (data.length >0) {
+      if (data.length > 0) {
         offsetpsot.current += 10
       } else {
         return false
       }
-      
+
 
       setPosts([...posts, ...data]);
       return data[0].id
@@ -277,15 +277,15 @@ export default function Home() {
         body: formData,
       });
 
-     
+
       const res = await response.json();
-       
+
       if (res.error) {
-       if (res.error == "Unauthorized"){
-        router.push("/login");
-        //sendMessage({ type: "logout" })
-        return 
-        }else{
+        if (res.error == "Unauthorized") {
+          router.push("/login");
+          //sendMessage({ type: "logout" })
+          return
+        } else {
           showToast(res.error)
           return
         }
@@ -302,7 +302,7 @@ export default function Home() {
       offsetpsot.current++
 
     } catch (err) {
-    //  console.error("Error creating post:", err);
+      //  console.error("Error creating post:", err);
     } finally {
       setLoading(false);
       // Reset form
@@ -321,10 +321,10 @@ export default function Home() {
         credentials: "include",
       });
 
-       
+
 
       const data = await res.json();
-      if(data.error){
+      if (data.error) {
         showToast(data.error)
         return
       }
@@ -391,39 +391,39 @@ export default function Home() {
         credentials: "include",
       });
 
-        const data = await res.json();
-        if (data.error){
-          showToast(data.error)
-          return
+      const data = await res.json();
+      if (data.error) {
+        showToast(data.error)
+        return
+      }
+
+      let newcomment = [];
+
+      if (Array.isArray(data)) {
+        newcomment = data;
+      } else if (data && data.newcomment && Array.isArray(data.newcomment)) {
+        newcomment = data.newcomment;
+      } else if (data) {
+        newcomment = [data];
+      }
+
+
+      setComment([...newcomment, ...comment]);
+      offsetcomment.current++
+
+
+      const potsreplace = await fetchPosts(selectedPost.id)
+      for (let i = 0; i < posts.length; i++) {
+        if (posts[i].id == selectedPost.id) {
+          setPosts([
+            ...posts.slice(0, i),
+            potsreplace,
+            ...posts.slice(i + 1)
+          ]);
+          break
         }
+      }
 
-        let newcomment = [];
-
-        if (Array.isArray(data)) {
-          newcomment = data;
-        } else if (data && data.newcomment && Array.isArray(data.newcomment)) {
-          newcomment = data.newcomment;
-        } else if (data) {
-          newcomment = [data];
-        }
-
-
-        setComment([...newcomment, ...comment]);
-        offsetcomment.current++
-
-
-        const potsreplace = await fetchPosts(selectedPost.id)
-        for (let i = 0; i < posts.length; i++) {
-          if (posts[i].id == selectedPost.id) {
-            setPosts([
-              ...posts.slice(0, i),
-              potsreplace,
-              ...posts.slice(i + 1)
-            ]);
-            break
-          }
-        }
-      
     } catch (err) {
       console.error("Error refreshing comments:", err);
     }
@@ -508,9 +508,9 @@ export default function Home() {
       {showModal && (
         <div
           className={`modal-overlay ${showModal ? 'is-open' : ''}`}
-          onMouseDown={(e) => {
-            if (e.target === e.currentTarget) setShowModal(false);
-            setVisibility("public")
+          onClick={() => {
+            setShowModal(false)
+            setVisibility('public')
           }}
         >
           <div
@@ -519,7 +519,7 @@ export default function Home() {
             aria-modal="true"
             aria-labelledby="create-post-title"
             className="modal-content"
-            onMouseDown={(e) => e.stopPropagation()}
+           onClick={(e) => e.stopPropagation()}
           >
             <button
               className="modal-close"
