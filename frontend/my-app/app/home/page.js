@@ -379,10 +379,7 @@ export default function Home() {
     }
   }
 
-  useEffect(() => {
 
-
-  }, [])
 
   // Refresh comments after posting a new comment
   async function refreshComments(commentID) {
