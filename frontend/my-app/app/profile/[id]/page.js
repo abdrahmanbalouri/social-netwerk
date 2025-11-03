@@ -158,42 +158,12 @@ export default function Profile() {
     setShowPrivacy(!showPrivacy);
   }
 
-  function scrollToPost(postId) {
+ 
+ 
+  
 
-    const el = postRefs.current[postId];
-    if (el) {
-      el.scrollIntoView({ behavior: "smooth", block: "start" });
-    }
-  }
-  useEffect(() => {
-    async function midle() {
-      try {
-        const response = await fetch("http://localhost:8080/api/me", {
-          credentials: "include",
-          method: "GET",
-        }, {});
-        if (!response.ok) {
-          router.replace("/login");
-          return null;
-        }
-      } catch (error) {
-        router.replace("/login");
-        return null;
-      }
-    }
-    midle()
-  }, [])
-  function handleUserSelect(userId) {
-    setSelectedUsers((prevSelected) =>
-      prevSelected.includes(userId)
-        ? prevSelected.filter((id) => id !== userId)
-        : [...prevSelected, userId]
-    );
-  }
   useEffect(() => {  
-    console.log(scroollhome);
-    
-    console.log(loading);
+ 
     
     const reachedBottom =
       window.innerHeight + window.scrollY >= document.body.scrollHeight - 20;
@@ -296,11 +266,9 @@ export default function Profile() {
 
       const data = await res.json();
       
-
-
       if (!data) {
-        return} 
-      console.log(data,"/*/**");
+        return
+      } 
       
       
       offsetpsot.current += 10
@@ -496,7 +464,10 @@ export default function Profile() {
 
 
         const potsreplace = await fetchPosts(selectedPost.id)
+        console.log(posts.length);
+        
         for (let i = 0; i < posts.length; i++) {
+          
           if (posts[i].id == selectedPost.id) {
             setPosts([
               ...posts.slice(0, i),
