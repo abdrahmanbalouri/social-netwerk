@@ -97,7 +97,6 @@
   .tab-text-full {
     display: inline;
   }
-
   .tab-text-short {
     display: none;
   }
@@ -219,8 +218,7 @@
 .groups-grid {
   display: grid;
 }
-
-.groups-grid>* {
+.groups-grid > * {
   grid-column: 1 / -1;
 }
 
@@ -410,7 +408,6 @@
   .members-text-full {
     display: inline;
   }
-
   .members-text-short {
     display: none;
   }
@@ -517,8 +514,6 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.6);
-  backdrop-filter: blur(4px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -526,12 +521,25 @@
   padding: 20px;
   animation: fadeIn 0.3s ease;
 }
-
+.group-modal-overlay1{
+    position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: -1;
+  padding: 20px;
+  animation: fadeIn 0.3s ease;
+}
 @keyframes fadeIn {
   from {
     opacity: 0;
   }
-
   to {
     opacity: 1;
   }
@@ -548,19 +556,16 @@
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
   animation: slideUp 0.4s ease;
 }
-
 @media (min-width: 640px) {
   .group-modal-content {
     padding: 32px;
   }
 }
-
 @keyframes slideUp {
   from {
     opacity: 0;
     transform: translateY(30px);
   }
-
   to {
     opacity: 1;
     transform: translateY(0);
@@ -691,7 +696,6 @@ legend.form-label {
     padding-top: 24px;
   }
 }
-
 .cancel-button {
   flex: 1;
   padding: 14px 24px;
