@@ -242,7 +242,7 @@ func GetAllPostsGroup(w http.ResponseWriter, r *http.Request) {
     COUNT(DISTINCT c.id) AS comments_count
 	FROM group_posts gp
 	JOIN users u ON gp.user_id = u.id
-	LEFT JOIN likes l ON gp.id = l.liked_item_id AND l.liked_item_type = 'post'
+	LEFT JOIN likesgroups l ON gp.id = l.liked_item_id AND l.liked_item_type = 'post'
 	LEFT JOIN comments_groups c ON gp.id = c.post_id
 	WHERE gp.group_id = ?
 	GROUP BY 

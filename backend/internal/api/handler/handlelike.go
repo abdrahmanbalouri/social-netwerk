@@ -26,7 +26,6 @@ func LikeHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	postID := pathParts[3]
-	GroupID := pathParts[4]
 
 	// Authenticate user
 	userID, err := helper.AuthenticateUser(r)
@@ -34,13 +33,9 @@ func LikeHandler(w http.ResponseWriter, r *http.Request) {
 		helper.RespondWithError(w, http.StatusUnauthorized, "Unauthorized")
 		return
 	}
-     if GroupID != "-9999" {
-	err = helper.CheckUserInGroup( userID, GroupID)
-	if err != nil {
-		helper.RespondWithError(w, http.StatusForbidden, "You are not a member of this group")
-		return
-	}
-}
+   
+	
+
 
 	var existingLikeID string
 	err = repository.Db.QueryRow(`

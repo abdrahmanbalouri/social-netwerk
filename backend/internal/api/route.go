@@ -9,52 +9,62 @@ import (
 func Routes() http.Handler {
 	mux := http.NewServeMux()
 
+	// ======= Home / Default =======
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusNotFound)
 	})
-	mux.Handle("/uploads/", http.StripPrefix("/uploads/", http.FileServer(http.Dir("uploads"))))
-	mux.HandleFunc("/api/followers/", handlers.FollowersHandler)
-	mux.HandleFunc("/api/followRequest", handlers.FollowRequest)
-	mux.HandleFunc("/api/groupeInvitation", handlers.GroupeInvitation)
-	mux.HandleFunc("/api/getEvents/", handlers.GetEvents)
-	mux.HandleFunc("/api/createEvent/", handlers.CreateEvent)
-	mux.HandleFunc("/api/event/action/", handlers.EventAction)
 
-	mux.HandleFunc("/api/followRequest/action", handlers.FollowRequestAction)
-	mux.HandleFunc("/api/following/", handlers.FollowingHandler)
+	// ======= Static Files =======
+	mux.Handle("/uploads/", http.StripPrefix("/uploads/", http.FileServer(http.Dir("uploads"))))
+
+	// ======= Auth & User =======
 	mux.HandleFunc("/api/register", handlers.RegisterHandler)
 	mux.HandleFunc("/api/login", handlers.LoginHandler)
 	mux.HandleFunc("/api/logout", handlers.LogoutHandler)
 	mux.HandleFunc("/api/me", handlers.MeHandler)
 	mux.HandleFunc("/api/profile", handlers.ProfileHandler)
+	mux.HandleFunc("/api/searchUser", handlers.SearchUserHandler)
+	mux.HandleFunc("/api/GetUsersHandler", handlers.GetUsersHandler)
+
+	// ======= Followers / Following =======
+	mux.HandleFunc("/api/followers/", handlers.FollowersHandler)
+	mux.HandleFunc("/api/following/", handlers.FollowingHandler)
+	mux.HandleFunc("/api/followRequest", handlers.FollowRequest)
+	mux.HandleFunc("/api/followRequest/action", handlers.FollowRequestAction)
+	mux.HandleFunc("/api/follow", handlers.FollowHandler)
+	mux.HandleFunc("/api/users/followers", handlers.Getfollowers)
+	mux.HandleFunc("/api/communfriends", handlers.GetCommunFriends)
+
+	// ======= Posts & Comments =======
 	mux.HandleFunc("/api/createpost", handlers.Createpost)
 	mux.HandleFunc("/api/Getpost/{id}", handlers.GetPostsHandler)
 	mux.HandleFunc("/api/Getallpost/{id}", handlers.AllpostsHandler)
 	mux.HandleFunc("/api/getmypost/{id}/{offset}", handlers.Getmypost)
-	mux.HandleFunc("/api/GetUsersHandler", handlers.GetUsersHandler)
-	mux.HandleFunc("/api/communfriends", handlers.GetCommunFriends)
-	mux.HandleFunc("/api/Getcomments/{id}/{offset}", handlers.GetCommentsHandler)
-	mux.HandleFunc("/api/gallery", handlers.GalleryHandler)
 	mux.HandleFunc("/api/createcomment", handlers.CreateCommentHandler)
-	mux.HandleFunc("/api/editor", handlers.Editor)
-	mux.HandleFunc("/api/like/{id}/{groupId}", handlers.LikeHandler)
-	mux.HandleFunc("/api/follow", handlers.FollowHandler)
-	mux.HandleFunc("/api/users/followers", handlers.Getfollowers)
+	mux.HandleFunc("/api/Getcomments/{id}/{offset}", handlers.GetCommentsHandler)
+	mux.HandleFunc("/api/like/{id}", handlers.LikeHandler)
 	mux.HandleFunc("/api/getlastcomment/{id}", handlers.Getlastcommnet)
-	mux.HandleFunc("/api/searchUser", handlers.SearchUserHandler)
-	mux.HandleFunc("/notifcation", handlers.Notifications)
+	mux.HandleFunc("/api/editor", handlers.Editor)
+	mux.HandleFunc("/api/gallery", handlers.GalleryHandler)
+
+	// ======= Stories & Media =======
 	mux.HandleFunc("/api/Getstories", handlers.GetStories)
 	mux.HandleFunc("/api/Createstories", handlers.CreateStories)
+	mux.HandleFunc("/api/videos", handlers.GetVedioHandler)
+
+	// ======= Notifications =======
+	mux.HandleFunc("/notifcation", handlers.Notifications)
+	mux.HandleFunc("/api/clearNotifications", handlers.ClearNotifications)
+
+	// ======= Messaging / WebSocket =======
 	mux.HandleFunc("/api/getmessages", handlers.GetMessagesHandler)
 	mux.HandleFunc("/api/getGroupMessages", handlers.GetGroupMessagesHandler)
 	mux.HandleFunc("/ws", handlers.Websocket)
-	mux.HandleFunc("/api/clearNotifications", handlers.ClearNotifications)
+
+	// ======= Groups =======
 	mux.HandleFunc("/myGroups", handlers.GetMyGroups)
 	mux.HandleFunc("/groups", handlers.GetAllGroups)
-	mux.HandleFunc("/group/like", handlers.LikesGroup)
-	mux.HandleFunc("/group/fetchComments", handlers.GetCommentGroup)
-	//mux.HandleFunc("/group/like", handlers.LikesGroup)
 	mux.HandleFunc("/api/groups/add", handlers.CreateGroupHandler)
 	mux.HandleFunc("/invitations/respond", handlers.GroupInvitationResponse)
 	mux.HandleFunc("/group/invitation/{id}", handlers.GroupInvitationRequest)
@@ -62,19 +72,18 @@ func Routes() http.Handler {
 	mux.HandleFunc("/group/fetchPosts/{id}", handlers.GetAllPostsGroup)
 	mux.HandleFunc("/group/fetchPost/{id}", handlers.GetPostGroup)
 	mux.HandleFunc("/group/addComment", handlers.CreateCommentGroup)
-	mux.HandleFunc("/api/videos", handlers.GetVedioHandler)
-	mux.HandleFunc("/api/myevents",handlers.MyEavents)
-//mux.HandleFunc("/group/fetchPost/{id}", handlers.GetPostGroup)
+	mux.HandleFunc("/group/fetchComments", handlers.GetCommentGroup)
+	mux.HandleFunc("/group/like/{id}/{groupId}", handlers.LikesGroup)
 	mux.HandleFunc("/group/updatepost/{id}/{groupId}", handlers.GetGroupPostByID)
 	mux.HandleFunc("/group/Getcomments/{id}/{offset}/{groupId}", handlers.GetCommentsGroup)
-	 mux.HandleFunc("/group/getlastcomment/{id}/{groupId}", handlers.GetlastcommnetGroup)
+	mux.HandleFunc("/group/getlastcomment/{id}/{groupId}", handlers.GetlastcommnetGroup)
+	mux.HandleFunc("/api/groupeInvitation", handlers.GroupeInvitation)
 
+	// ======= Events =======
+	mux.HandleFunc("/api/getEvents/", handlers.GetEvents)
+	mux.HandleFunc("/api/createEvent/", handlers.CreateEvent)
+	mux.HandleFunc("/api/event/action/", handlers.EventAction)
+	mux.HandleFunc("/api/myevents", handlers.MyEavents)
 
 	return mux
 }
-
-// {
-//     "title": "Group 1",
-//     "description": "group for developpers",
-//     "invitedUsers": []
-// }
