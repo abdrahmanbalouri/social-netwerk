@@ -16,8 +16,6 @@ func MeHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Perform the query
-
 	rows, err := repository.Db.Query("SELECT user_id ,expires_at  FROM sessions WHERE token=?", c.Value)
 	if err != nil {
 		w.WriteHeader(http.StatusUnauthorized)
