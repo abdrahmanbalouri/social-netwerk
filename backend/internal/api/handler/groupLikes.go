@@ -30,6 +30,11 @@ func LikesGroup(w http.ResponseWriter, r *http.Request) {
 	}
 	postID := pathParts[3]
 	groupID := pathParts[4]
+	 err = helper.CheckUserInGroup(userID, groupID)
+		if err != nil {
+			helper.RespondWithError(w, http.StatusForbidden, "You are not a member of this group")
+			return
+		}
 
 	// check if the user is a member of the group
 	query := `
@@ -49,6 +54,7 @@ func LikesGroup(w http.ResponseWriter, r *http.Request) {
 		helper.RespondWithError(w, http.StatusUnauthorized, "User is not a member of the group")
 		return
 	}
+
 
 	// check if the post exists in the group
 	var exists bool
