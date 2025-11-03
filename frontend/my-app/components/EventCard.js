@@ -1,14 +1,21 @@
 "use client";
 
 export default function EventCard({ ev, goingEvent }) {
-  const isExpired = new Date(ev.time) - new Date() < 0;
+  
+  const d = new Date(ev.time);
+  
+  //let now = new Date()
+  d.setHours(d.getHours()-1);
+  const isExpired = new Date(d) - new Date() < 0;
+  
+
 
   return (
    <div className="events-list" key={ev.id}>
                <div className="event-card">
                  <div className="event-header">
                    <h3 className="event-title">{ev.title}</h3>
-                   <span className="event-datetime">{new Date(ev.time).toLocaleString()}</span>
+                   <span className="event-datetime">{d.toLocaleString()}</span>
                  </div>
    
                  <p className="event-description">{ev.description}</p>

@@ -3,6 +3,7 @@ package handlers
 import (
 	"database/sql"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"strings"
 	"time"
@@ -63,12 +64,17 @@ func EventAction(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	currentTime := time.Now()
-
-	if eventTime.Before(currentTime) {
+	currentTime := time.Now().UTC().Add(time.Hour.Abs())
+	
+	fmt.Println("eventTime:", eventTime)
+	fmt.Println("currentTime:", currentTime)
+	if (eventTime).Before(currentTime) {
 		helper.RespondWithError(w, http.StatusBadRequest, "Event date and time must be in the future 222 ")
 		return
 	}
+
+
+
 
 	var status string
 	err = repository.Db.QueryRow(`select  action    from event_actions where event_id = ? and  user_id= ? `, req.EventID, UserID).Scan(&status)

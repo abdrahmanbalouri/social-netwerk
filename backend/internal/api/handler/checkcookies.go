@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"net/http"
+	"time"
 
 	"social-network/internal/helper"
 	"social-network/internal/repository"
@@ -16,7 +17,8 @@ func MeHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Perform the query
-	rows, err := repository.Db.Query("SELECT user_id FROM sessions WHERE token=?", c.Value)
+
+	rows, err := repository.Db.Query("SELECT user_id ,expires_at  FROM sessions WHERE token=?", c.Value)
 	if err != nil {
 		w.WriteHeader(http.StatusUnauthorized)
 		w.Write([]byte(`{"message":"unauthorized"}`))
@@ -31,15 +33,37 @@ func MeHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var userId string
-	if err := rows.Scan(&userId); err != nil {
+	var exiredAt string
+
+	if err := rows.Scan(&userId, &exiredAt); err != nil {
 
 		w.WriteHeader(http.StatusUnauthorized)
 		w.Write([]byte(`{"message":"unauthorized"}`))
 		return
 	}
+
+now := time.Now()
+
+expiredAtTime, err := time.Parse(time.RFC3339, exiredAt)
+if err != nil {
+    w.WriteHeader(http.StatusBadRequest)
+    w.Write([]byte(`{"message":"Invalid date format"}`))
+    return
+}
+
+if expiredAtTime.Before(now) {
+
+
+
+repository.Db.Exec("DELETE FROM sessions WHERE token=?", c.Value)
+    w.WriteHeader(http.StatusUnauthorized)
+    w.Write([]byte(`{"message":"unauthorized"}`))
+    return
+}
+
 	ret := struct {
 		Message string `json:"message"`
-		UserID  string    `json:"user_id"`
+		UserID  string `json:"user_id"`
 	}{
 		Message: "authorized",
 		UserID:  userId,
