@@ -13,6 +13,10 @@ import { useDarkMode } from "../../../context/darkMod.js";
 import Comment from "../../../components/coment.js";
 import { middleware } from "../../../middleware/middelware.js";
 import EventCard from "../../../components/EventCard.js";
+import { useWS } from "../../../context/wsContext.js";
+import AddReactionIcon from "@mui/icons-material/AddReaction";
+import { FileText, SendIcon } from "lucide-react";
+import "../../../styles/chat.css";
 
 // Global sendRequest (can be moved to a service file later)
 async function sendRequest(invitedUserID, grpID) {
@@ -442,4 +446,217 @@ export async function CreatePost(groupId, formData) {
     console.error("CreatePost error:", error);
     throw error;
   }
+}
+
+export function GroupChat({ groupId }) {
+  console.log("group chat component rendered");
+  const [id, setId] = useState(null);
+  const [messages, setMessages] = useState([]);
+  const [input, setInput] = useState("");
+  const [showEmojis, setShowEmojis] = useState(false);
+  const inputRef = useRef(null);
+  const chatEndRef = useRef(null);
+  const { sendMessage, addListener, removeListener } = useWS();
+  useEffect(() => {
+    fetch("http://localhost:8080/api/me", {
+      credentials: "include",
+      method: "GET",
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log("user id in group chat------------ : ", data.user_id);
+        setId(data.user_id)
+      })
+      .catch((err) => console.error(err));
+  });
+
+  setTimeout(() => {
+    inputRef.current?.focus();
+  }, 0);
+
+  useEffect(() => {
+    const fetchMessages = async () => {
+      try {
+        const response = await fetch(
+          `http://localhost:8080/api/getGroupMessages?groupId=${groupId}`,
+          { credentials: "include", method: "GET" }
+        );
+        if (!response.ok) throw new Error("Failed to fetch messages");
+        const data = await response.json();
+        if (data.messages) {
+          console.log("user id in group chat message listener23131 : ", id);
+
+          const formattedMessages = data.messages
+            .map((msg) => ({
+              text: msg.content,
+              sender: msg.senderId !== id ? "them" : "me",
+              time: new Date(msg.createdAt).toLocaleString(),
+            }))
+            .reverse();
+
+          setMessages(formattedMessages);
+        }
+      } catch (error) {
+        console.error("Error fetching messages:", error);
+      }
+    };
+    fetchMessages();
+  }, [id]);
+
+  useEffect(() => {
+    const handleIncomingMessage = (data) => {
+      console.log("user id in group chat message listener : ", id);
+      setMessages((prev) => [
+        ...prev,
+        {
+          text: data.content,
+          sender: data.senderId !== id ? "them" : "me",
+          time: data.time,
+        },
+      ]);
+    };
+
+    addListener("group_message", handleIncomingMessage);
+    return () => removeListener("group_message", handleIncomingMessage);
+  }, [addListener, removeListener, id]);
+
+  // 👇 Scroll to bottom whenever messages change
+  useEffect(() => {
+    if (chatEndRef.current) {
+      chatEndRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [messages]);
+
+  const emojiArray = [
+    "😀",
+    "😃",
+    "😄",
+    "😁",
+    "😆",
+    "😅",
+    "🤣",
+    "😂",
+    "🚀",
+    "💡",
+    "😊",
+    "😇",
+    "🙂",
+    "🙃",
+    "😉",
+    "😍",
+    "🥰",
+    "😘",
+    "😗",
+    "😋",
+    "😛",
+    "😜",
+    "🤪",
+    "😝",
+    "🤑",
+    "🤗",
+    "🤭",
+    "🤔",
+    "🤨",
+    "😐",
+    "😑",
+    "😶",
+    "😏",
+    "😒",
+    "🙄",
+    "😬",
+    "😔",
+    "😪",
+    "🤤",
+    "😴",
+    "😷",
+    "🤒",
+    "🤕",
+    "🤢",
+    "🤮",
+    "🥴",
+    "😵",
+    "🤯",
+    "😎",
+    "🤓",
+  ];
+
+  function handleSendGroupChatMessage() {
+    console.log("=========", typeof groupId);
+    if (input.trim() === "") return;
+    const payload = {
+      groupID: groupId,
+      messageContent: input,
+      type: "group_message",
+    };
+    sendMessage(payload);
+    setInput("");
+    setShowEmojis(false);
+  }
+
+  const addEmoji = (emoji) => {
+    const cursorPos = inputRef.current.selectionStart;
+    const newText = input.slice(0, cursorPos) + input.slice(cursorPos) + emoji;
+    setInput(newText);
+    setTimeout(() => {
+      inputRef.current.focus();
+      const end = inputRef.current.value.length;
+      inputRef.current.setSelectionRange(end, end);
+    }, 0);
+  };
+
+  return (
+    <div className="group-chat-container">
+      {/* Chat box */}
+      <div className="chat-box">
+        {messages.length === 0 ? (
+          <p className="no-msg">No messages yet</p>
+        ) : (
+          messages.map((msg, index) => (
+            <div key={index} className={`message ${msg.sender}`}>
+              <div className="msg-content">{msg.text}</div>
+              <div className="info-time">
+                <span className="time">
+                  {new Date(msg.time).toLocaleTimeString("en-US")}
+                </span>
+              </div>
+            </div>
+          ))
+        )}
+        <div ref={chatEndRef}></div>
+      </div>
+
+      {/* Emoji panel */}
+      {showEmojis && (
+        <div className="emoji-panel">
+          {emojiArray.map((emoji, i) => (
+            <span key={i} className="emoji" onClick={() => addEmoji(emoji)}>
+              {emoji}
+            </span>
+          ))}
+        </div>
+      )}
+
+      {/* Input area */}
+      <div className="input-area">
+        <button
+          className="emoji-toggle"
+          onClick={() => setShowEmojis(!showEmojis)}
+        >
+          <AddReactionIcon />
+        </button>
+
+        <input
+          ref={inputRef}
+          type="text"
+          placeholder="Type a message..."
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          onKeyDown={(e) => e.key === "Enter" && handleSendGroupChatMessage()}
+        />
+        <button onClick={handleSendGroupChatMessage}>
+          <SendIcon />
+        </button>
+      </div>
+    </div>
+  );
 }
