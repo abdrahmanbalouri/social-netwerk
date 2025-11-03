@@ -175,7 +175,110 @@ export function Events() {
 }
 
 
+export function EventForm({ closeForm, fetchEvents }) {
+  const params = useParams();
+  const grpID = params.id;
+  const [errors, setErrors] = useState(null);
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [dateTime, setDateTime] = useState("");
+  const [error, setError] = useState("");
 
+  async function createEvent(e) {
+    e.preventDefault();
+
+    const Data = {
+      title: title,
+      description: description,
+      dateTime: dateTime
+    }
+
+    if (!title || !description || !dateTime) {
+      setErrors("All fields are required");
+      return;
+    }
+
+    if ((title.length < 5 || title.length > 50)) {
+      setErrors(" Title must be between 5 and 50 characters");
+      return;
+    }
+
+    if (description.length < 10 || description.length > 300) {
+      setErrors("Description must be between 10 and 300 characters");
+      return;
+    }
+
+
+    if (new Date(dateTime) <= new Date()) {
+      setErrors("Event date and time must be in the future");
+      return;
+    }
+
+    try {
+      const res = await fetch(`http://localhost:8080/api/createEvent/${grpID}`, {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(Data),
+      });
+
+      if (!res.ok) {
+        let err = await res.text();
+        setErrors(err);
+        return;
+      }
+
+      await fetchEvents();
+
+      closeForm();
+
+      setErrors(null);
+
+
+
+
+    } catch (error) {
+      setErrors(error.message);
+    }
+
+
+  }
+
+
+
+  return (
+
+    <div className="events-container">
+      <div className="create-event-card">
+        <h2 className="card-title">Create Event</h2>
+        <form className="event-form">
+          <div className="form-group">
+            <label htmlFor="event-title">Title</label>
+            <input type="text" id="event-title" placeholder="Event title..." onChange={(e) => { setTitle(e.target.value) }} />
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="event-description">Description</label>
+            <textarea id="event-description" rows="3" placeholder="Event description..." onChange={(e) => { setDescription(e.target.value) }}></textarea>
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="event-datetime">Day/Time</label>
+            <input type="datetime-local" id="event-datetime" onChange={(e) => { setDateTime(e.target.value) }} />
+          </div>
+          <span className="error" style={{ color: "red" }}> {errors}</span>
+          <button type="submit" className="btn-create" onClick={createEvent}>Create Event</button>
+        </form>
+        <p className="error-message" style={{ color: "red", alignItems: 'center' }}>{error}</p>
+      </div>
+
+
+    </div>
+  )
+
+}
 // AllPosts Component
 export function AllPosts() {
   const [posts, setPost] = useState([]);
