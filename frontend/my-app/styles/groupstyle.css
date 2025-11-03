@@ -65,7 +65,7 @@
 .group-tab-button.active {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
-  box-shadow: 0 4px 12px rgba(102, 126, 234, .3);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
 }
 
 .group-tab-button.inactive {
@@ -888,4 +888,15 @@ legend.form-label {
   .content-area {
     gap: 1rem;
   }
+}
+
+.group-chat-container {
+  position: sticky;
+  top: 70px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 100px);
+  max-width: 900px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
 }

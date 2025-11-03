@@ -1,10 +1,14 @@
+"use client";
 import { useState } from "react";
-import { Events } from "../app/groups/[id]/page";
+import { AllPosts, GroupChat } from "../app/groups/[id]/page";
 import { Calendar, FileText, MessageCircle } from "lucide-react";
-import { AllPosts } from "../app/groups/[id]/page";
+import { useParams } from "next/navigation";
 
 export function GroupPostChat() {
   const [activeTab, setActiveTab] = useState("posts");
+  const { id } = useParams();
+  console.log("---------------",typeof id,id);
+  
   return (
     <div className="group-container">
       <div className="max-width-wrapper">
@@ -37,17 +41,13 @@ export function GroupPostChat() {
         </div>
 
         {/* <div className="group-container"> */}
-        {
-          activeTab === "posts" && (
-            <AllPosts />
-          )
-        }
-        {
-          activeTab === "event" && (
-            <Events />
-          )
-        }
-      </div >
-    </div >
+        {activeTab === "posts" ? (
+          <AllPosts grpID={id} />
+        ) : (
+          <GroupChat groupId={id} />
+        )}
+        {/* </div> */}
+      </div>
+    </div>
   );
 }
