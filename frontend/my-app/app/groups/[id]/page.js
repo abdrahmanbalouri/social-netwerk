@@ -390,7 +390,7 @@ export function AllPosts() {
   const handleLike = async (postId) => {
 
     try {
-      const res = await fetch(`http://localhost:8080/api/like/${postId}/${grpID}`, {
+      const res = await fetch(`http://localhost:8080/group/like/${postId}/${grpID}`, {
         method: "POST",
         credentials: "include",
       });

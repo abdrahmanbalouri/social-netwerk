@@ -1,14 +1,14 @@
 
 -- +migrate Up
-CREATE TABLE IF NOT EXISTS likes (
+CREATE TABLE IF NOT EXISTS likesgroups (
     id TEXT PRIMARY KEY,
     user_id TEXT NOT NULL,
     liked_item_id TEXT NOT NULL,
     liked_item_type TEXT NOT NULL,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (user_id) REFERENCES users(id)
-    FOREIGN KEY (liked_item_id) REFERENCES posts(id)
+    FOREIGN KEY (user_id) REFERENCES users(id),
+    FOREIGN KEY (liked_item_id) REFERENCES group_posts(id)
 );
 
 -- +migrate Down
-DROP TABLE IF EXISTS likes;
+DROP TABLE IF EXISTS likesgroups;

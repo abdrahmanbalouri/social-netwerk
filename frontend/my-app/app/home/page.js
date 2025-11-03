@@ -152,7 +152,7 @@ export default function Home() {
   }
   async function Handlelik(postId) {
     try {
-      const res = await fetch(`http://localhost:8080/api/like/${postId}/${"-9999"}`, {
+      const res = await fetch(`http://localhost:8080/api/like/${postId}`, {
         method: "POST",
         credentials: "include",
       });
