@@ -25,6 +25,8 @@ func CreateStories(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
 	}
+	const maxFileSize = 1 * 1024 * 1024 * 1024 // 1 gb bazaf yak
+
 
 	userID, err := helper.AuthenticateUser(r)
 	if err != nil {
@@ -58,6 +60,7 @@ func CreateStories(w http.ResponseWriter, r *http.Request) {
 
 	}
 
+
 	var imagePath string
 
 	if imgErr == nil {
@@ -75,12 +78,17 @@ func CreateStories(w http.ResponseWriter, r *http.Request) {
 			helper.RespondWithError(w, http.StatusBadRequest, "Invalid image type")
 			return
 		}
+		if imageHeader.Size > maxFileSize {
+			helper.RespondWithError(w, http.StatusBadRequest, "File too large, max 1 GB")
+			return
+		}
 
 		uploadDir := "../frontend/my-app/public/uploads/stories"
 		if err := os.MkdirAll(uploadDir, os.ModePerm); err != nil {
 			helper.RespondWithError(w, http.StatusInternalServerError, "Failed to create upload directory")
 			return
 		}
+		   
 
 		ext := filepath.Ext(imageHeader.Filename)
 		if ext == "" {
