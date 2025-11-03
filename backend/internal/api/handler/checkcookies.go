@@ -58,7 +58,6 @@ repository.Db.Exec("DELETE FROM sessions WHERE token=?", c.Value)
     w.Write([]byte(`{"message":"unauthorized"}`))
     return
 }
-
 	ret := struct {
 		Message string `json:"message"`
 		UserID  string `json:"user_id"`
@@ -66,7 +65,6 @@ repository.Db.Exec("DELETE FROM sessions WHERE token=?", c.Value)
 		Message: "authorized",
 		UserID:  userId,
 	}
-
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	helper.RespondWithJSON(w, http.StatusOK, ret)
