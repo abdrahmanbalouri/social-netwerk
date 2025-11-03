@@ -496,8 +496,6 @@ export default function Home() {
                 post={post}
                 onGetComments={GetComments}
                 ondolike={Handlelik}
-                ref={el => commentRefs.current[post.id] = el}
-
               />
             ))
           )}
