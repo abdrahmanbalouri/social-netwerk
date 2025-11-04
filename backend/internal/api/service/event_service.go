@@ -28,7 +28,7 @@ func CreateGroupEvent(userID, groupID, title, description, dateTimeStr string) (
 		return 0, errors.New("event date and time must be in the future")
 	}
 
-	event := model.Event{
+	event := model.Eventt{
 		GroupID:     groupID,
 		Title:       title,
 		Description: description,
