@@ -72,7 +72,7 @@ func Routes() http.Handler {
 	mux.HandleFunc("/group/fetchPosts/{id}", handlers.GetAllPostsGroup) // dart
 	//mux.HandleFunc("/group/fetchPost/{id}", handlers.GetPostGroup)
 	mux.HandleFunc("/group/like/{id}/{groupId}", handlers.LikesGroup) // dart
-	mux.HandleFunc("/group/updatepost/{id}/{groupId}", handlers.GetGroupPostByID)
+	mux.HandleFunc("/group/updatepost/{id}/{groupId}", handlers.GetGroupPostByID) // dart
 	mux.HandleFunc("/group/Getcomments/{id}/{offset}/{groupId}", handlers.GetCommentsGroup)
 	mux.HandleFunc("/group/getlastcomment/{id}/{groupId}", handlers.GetlastcommnetGroup)
 	mux.HandleFunc("/api/groupeInvitation", handlers.GroupeInvitation)

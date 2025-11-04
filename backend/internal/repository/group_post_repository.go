@@ -1,10 +1,11 @@
 package repository
 
 import (
-	"social-network/internal/utils"
+	"database/sql"
 	"time"
-)
 
+	"social-network/internal/utils"
+)
 
 func InsertGroupPost(id, userID, groupID, title, content, imagePath string, createdAt time.Time) error {
 	_, err := Db.Exec(`
@@ -15,7 +16,7 @@ func InsertGroupPost(id, userID, groupID, title, content, imagePath string, crea
 	return err
 }
 
-func GetGroupPostByID(postID, userID string) (map[string]interface{}, error) {
+func GetGroupPostByID1(postID, userID string) (map[string]interface{}, error) {
 	post := make(map[string]interface{})
 	query := `
 	SELECT  
@@ -62,6 +63,7 @@ func GetGroupPostByID(postID, userID string) (map[string]interface{}, error) {
 
 	return post, nil
 }
+
 func GetAllGroupPosts(groupID, userID string) ([]utils.GroupPost, error) {
 	query := `
 	SELECT 
@@ -105,4 +107,39 @@ func GetAllGroupPosts(groupID, userID string) ([]utils.GroupPost, error) {
 		posts = append(posts, p)
 	}
 	return posts, nil
+}
+
+func GetGroupPostByID(db *sql.DB, userID, postID string) (utils.GroupPost, error) {
+	var post utils.GroupPost
+
+	query := `
+	SELECT 
+		gp.id, 
+		gp.user_id, 
+		gp.title, 
+		gp.content, 
+		gp.image_path, 
+		gp.created_at, 
+		u.first_name,
+		u.last_name,
+		u.image AS profile,
+		COUNT(DISTINCT l.id) AS like_count,
+		COUNT(DISTINCT CASE WHEN l.user_id = ? THEN l.id END) AS liked_by_user,
+		COUNT(DISTINCT c.id) AS comments_count
+	FROM group_posts gp
+	JOIN users u ON gp.user_id = u.id
+	LEFT JOIN likesgroups l ON gp.id = l.liked_item_id AND l.liked_item_type = 'post'
+	LEFT JOIN comments_groups c ON gp.id = c.post_id
+	WHERE gp.id = ?
+	GROUP BY 
+		gp.id, gp.user_id, gp.title, gp.content, gp.image_path, gp.created_at, 
+		u.first_name, u.last_name, u.image
+	`
+
+	err := db.QueryRow(query, userID, postID).Scan(
+		&post.ID, &post.UserID, &post.Title, &post.Content, &post.ImagePath, &post.CreatedAt,
+		&post.FirstName, &post.LastName, &post.Profile,
+		&post.LikeCount, &post.LikedByUser, &post.CommentsCount,
+	)
+	return post, err
 }
