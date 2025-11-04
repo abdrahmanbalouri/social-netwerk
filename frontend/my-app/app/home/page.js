@@ -60,13 +60,7 @@ export default function Home() {
     }
     checkAuth();
   }, [])
-  function scrollToPost(postId) {
 
-    const el = postRefs.current[postId];
-    if (el) {
-      el.scrollIntoView({ behavior: "smooth", block: "start" });
-    }
-  }
   function handleUserSelect(userId) {
     setSelectedUsers((prevSelected) =>
       prevSelected.includes(userId)
@@ -75,8 +69,6 @@ export default function Home() {
     );
   }
   useEffect(() => {
-    console.log(offsetpsot.current);
-
 
     const reachedBottom =
       window.innerHeight + window.scrollY >= document.body.scrollHeight - 20;
@@ -140,7 +132,7 @@ export default function Home() {
 
       setFollowers(data);
     } catch (err) {
-      setError(err.message);
+        showToast(err.message)
     } finally {
       setLoadingFollowers(false);
     }
