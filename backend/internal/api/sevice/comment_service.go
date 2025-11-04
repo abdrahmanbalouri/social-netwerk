@@ -96,6 +96,8 @@ func CreateComment(userID, postID, content, whatis, groupID string, mediaFileHea
 }
 
 func FetchComments(postID string, offset int) ([]repository.CommentAPI, error) {
+
+	
 	return repository.GetComments(repository.Db, postID, offset)
 }
 
