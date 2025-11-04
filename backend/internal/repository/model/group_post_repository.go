@@ -1,14 +1,15 @@
-package repository
+package model
 
 import (
 	"database/sql"
 	"time"
 
+	"social-network/internal/repository"
 	"social-network/internal/utils"
 )
 
 func InsertGroupPost(id, userID, groupID, title, content, imagePath string, createdAt time.Time) error {
-	_, err := Db.Exec(`
+	_, err := repository.Db.Exec(`
 		INSERT INTO group_posts (id, user_id, group_id, title, content, image_path, created_at)
 		VALUES (?, ?, ?, ?, ?, ?, ?)`,
 		id, userID, groupID, title, content, imagePath, createdAt,
@@ -40,7 +41,7 @@ func GetGroupPostByID1(postID, userID string) (map[string]interface{}, error) {
 		likeCount, likedByUser, commentsCount                               int
 	)
 
-	err := Db.QueryRow(query, userID, postID).Scan(
+	err := repository.Db.QueryRow(query, userID, postID).Scan(
 		&id, &userId, &title, &content, &imagePath, &createdAt,
 		&firstName, &lastName, &profile, &likeCount, &likedByUser, &commentsCount,
 	)
@@ -87,7 +88,7 @@ func GetAllGroupPosts(groupID, userID string) ([]utils.GroupPost, error) {
 		u.first_name, u.last_name, u.image
 	ORDER BY gp.created_at DESC;`
 
-	rows, err := Db.Query(query, userID, groupID)
+	rows, err := repository.Db.Query(query, userID, groupID)
 	if err != nil {
 		return nil, err
 	}

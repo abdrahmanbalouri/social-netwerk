@@ -11,6 +11,7 @@ import (
 
 	"social-network/internal/helper"
 	"social-network/internal/repository"
+	"social-network/internal/repository/model"
 
 	"github.com/google/uuid"
 )
@@ -83,7 +84,7 @@ func CreatePost(userID, title, content, visibility, allowedUsers string, fileHea
 	}
 
 	postID := uuid.New().String()
-	post := repository.Post{
+	post := model.Post{
 		ID:           postID,
 		UserID:       userID,
 		Title:        title,
@@ -93,12 +94,12 @@ func CreatePost(userID, title, content, visibility, allowedUsers string, fileHea
 		AllowedUsers: allowed,
 	}
 
-	if err := repository.InsertPost(repository.Db, post); err != nil {
+	if err := model.InsertPost(repository.Db, post); err != nil {
 		return "", err
 	}
 
 	if visibility == "private" {
-		if err := repository.InsertAllowedUsers(repository.Db, postID, userID, allowed); err != nil {
+		if err := model.InsertAllowedUsers(repository.Db, postID, userID, allowed); err != nil {
 			return "", err
 		}
 	}
@@ -106,7 +107,7 @@ func CreatePost(userID, title, content, visibility, allowedUsers string, fileHea
 	return postID, nil
 }
 
-func FormatPosts(posts []repository.Post) []map[string]interface{} {
+func FormatPosts(posts []model.Post) []map[string]interface{} {
 	var formatted []map[string]interface{}
 	for _, p := range posts {
 		postMap := map[string]interface{}{
@@ -140,7 +141,7 @@ func nilIfEmpty(s string) interface{} {
 
 // FetchPostsByUser fetch posts from repository and format for frontend
 func FetchPostsByUser(db *sql.DB, authUserID, userID string, offset, limit int) ([]map[string]interface{}, error) {
-	posts, err := repository.GetPostsByUser(db, authUserID, userID, offset, limit)
+	posts, err := model.GetPostsByUser(db, authUserID, userID, offset, limit)
 	if err != nil {
 		return nil, err
 	}
@@ -152,7 +153,7 @@ func FetchPost(db *sql.DB, postID, authUserID string) (PostResponse, error) {
 	if !ok {
 		return PostResponse{}, err
 	}
-	postDB, err := repository.GetPostByID(db, postID, authUserID)
+	postDB, err := model.GetPostByID(db, postID, authUserID)
 	if err != nil {
 		return PostResponse{}, err
 	}
@@ -177,7 +178,7 @@ func FetchPost(db *sql.DB, postID, authUserID string) (PostResponse, error) {
 }
 
 func FetchVideoPosts(authUserID string, db *sql.DB) ([]map[string]interface{}, error) {
-	posts, err := repository.GetVideoPosts(db, authUserID)
+	posts, err := model.GetVideoPosts(db, authUserID)
 	if err != nil {
 		return nil, err
 	}

@@ -2,6 +2,7 @@ package service
 
 import (
 	"social-network/internal/repository"
+	"social-network/internal/repository/model"
 	"social-network/internal/utils"
 )
 
@@ -10,7 +11,7 @@ func GetFollowersService(useID string) ([]utils.User, error) {
 	// 1. Authenticate user
 
 	// 2. Fetch followers from DB
-	followers, err := repository.GetFollowersByUser(repository.Db, useID)
+	followers, err := model.GetFollowersByUser(repository.Db, useID)
 	if err != nil {
 		return nil, err
 	}

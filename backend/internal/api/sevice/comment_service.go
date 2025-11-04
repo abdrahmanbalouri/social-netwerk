@@ -10,6 +10,7 @@ import (
 
 	"social-network/internal/helper"
 	"social-network/internal/repository"
+	"social-network/internal/repository/model"
 
 	"github.com/google/uuid"
 )
@@ -76,7 +77,7 @@ func CreateComment(userID, postID, content, whatis, groupID string, mediaFileHea
 	}
 
 	commentID := uuid.New().String()
-	comment := repository.Comment{
+	comment := model.Comment{
 		ID:        commentID,
 		PostID:    postID,
 		UserID:    userID,
@@ -87,7 +88,7 @@ func CreateComment(userID, postID, content, whatis, groupID string, mediaFileHea
 	}
 
 	// Save to database
-	err := repository.InsertComment(repository.Db, comment)
+	err := model.InsertComment(repository.Db, comment)
 	if err != nil {
 		return "", "", err
 	}
@@ -95,10 +96,10 @@ func CreateComment(userID, postID, content, whatis, groupID string, mediaFileHea
 	return commentID, mediaPath, nil
 }
 
-func FetchComments(postID string, offset int) ([]repository.CommentAPI, error) {
-	return repository.GetComments(repository.Db, postID, offset)
+func FetchComments(postID string, offset int) ([]model.CommentAPI, error) {
+	return model.GetComments(repository.Db, postID, offset)
 }
 
-func GetComment(commentID string) (repository.CommentAPI, error) {
-	return repository.GetCommentByID(repository.Db, commentID)
+func GetComment(commentID string) (model.CommentAPI, error) {
+	return model.GetCommentByID(repository.Db, commentID)
 }
