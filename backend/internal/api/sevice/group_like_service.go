@@ -8,7 +8,7 @@ import (
 	"time"
 
 	"social-network/internal/helper"
-	"social-network/internal/repository"
+	"social-network/internal/repository/model"
 )
 
 func LikesGroupService(r *http.Request, userID string) (map[string]string, error) {
@@ -24,7 +24,7 @@ func LikesGroupService(r *http.Request, userID string) (map[string]string, error
 		return nil, fmt.Errorf("you are not a member of this group")
 	}
 
-	exists, err := repository.DoesPostExistInGroup(postID, groupID)
+	exists, err := model.DoesPostExistInGroup(postID, groupID)
 	if err != nil {
 		return nil, fmt.Errorf("database error")
 	}
@@ -32,14 +32,14 @@ func LikesGroupService(r *http.Request, userID string) (map[string]string, error
 		return nil, fmt.Errorf("post not found in this group")
 	}
 
-	existingLikeID, err := repository.GetExistingLikeGroup(userID, postID)
+	existingLikeID, err := model.GetExistingLikeGroup(userID, postID)
 	if err != nil && err != sql.ErrNoRows {
 		return nil, fmt.Errorf("database error")
 	}
 
 	if existingLikeID != "" {
 		// Remove like
-		if err := repository.RemoveLikeGroup(existingLikeID); err != nil {
+		if err := model.RemoveLikeGroup(existingLikeID); err != nil {
 			return nil, fmt.Errorf("failed to remove like")
 		}
 		return map[string]string{"message": "Like removed"}, nil
@@ -47,7 +47,7 @@ func LikesGroupService(r *http.Request, userID string) (map[string]string, error
 
 	// Add like
 	likeId := helper.GenerateUUID()
-	if err := repository.AddLikeGroup(likeId.String(), userID, postID, time.Now()); err != nil {
+	if err := model.AddLikeGroup(likeId.String(), userID, postID, time.Now()); err != nil {
 		return nil, fmt.Errorf("failed to add like")
 	}
 

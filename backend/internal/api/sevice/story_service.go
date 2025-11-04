@@ -9,12 +9,13 @@ import (
 	"strings"
 
 	"social-network/internal/repository"
+	"social-network/internal/repository/model"
 
 	"github.com/google/uuid"
 )
 
 const maxFileSize = 1 * 1024 * 1024 * 1024 // 1 GB
-func FormatStories(stories []repository.Storyapi) []map[string]interface{} {
+func FormatStories(stories []model.Storyapi) []map[string]interface{} {
 	var formatted []map[string]interface{}
 
 	for _, s := range stories {
@@ -42,7 +43,7 @@ func FormatStories(stories []repository.Storyapi) []map[string]interface{} {
 
 // FetchStories fetches and formats stories for frontend
 func FetchStories(authUserID string, db *sql.DB) ([]map[string]interface{}, error) {
-	stories, err := repository.GetActiveStories(db, authUserID)
+	stories, err := model.GetActiveStories(db, authUserID)
 	if err != nil {
 		return nil, err
 	}
@@ -91,14 +92,14 @@ func CreateStory(userID, content, bgColor string, imageFile io.ReadCloser, filen
 		}
 	}
 
-	story := repository.Story{
+	story := model.Story{
 		UserID:   userID,
 		Content:  content,
 		ImageURL: imagePath,
 		BgColor:  bgColor,
 	}
 
-	if err := repository.InsertStory(repository.Db, story); err != nil {
+	if err := model.InsertStory(repository.Db, story); err != nil {
 		// Delete saved image if DB insert fails
 		if imagePath != "" {
 			os.Remove(filepath.Join("../frontend/my-app/public/uploads/stories", filepath.Base(imagePath)))

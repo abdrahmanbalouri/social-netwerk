@@ -7,6 +7,7 @@ import (
 
 	"social-network/internal/helper"
 	"social-network/internal/repository"
+	"social-network/internal/repository/model"
 )
 
 func GetCommentsGroup(userID, groupID, postID string, offset int) ([]map[string]interface{}, error) {
@@ -23,7 +24,7 @@ func GetCommentsGroup(userID, groupID, postID string, offset int) ([]map[string]
 		MediaPath string
 	}
 
-	repoComments, err := repository.FetchCommentsGroup(repository.Db, postID, offset)
+	repoComments, err := model.FetchCommentsGroup(repository.Db, postID, offset)
 	if err != nil {
 		return nil, err
 	}
@@ -49,7 +50,7 @@ func GetLastCommentGroup(commentId string, userID string, groupID string) (map[s
 		return nil, err
 	}
 
-	repoComment, err := repository.GetCommentByIDlast(repository.Db, commentId)
+	repoComment, err := model.GetCommentByIDlast(repository.Db, commentId)
 	if err != nil {
 		return nil, err
 	}
