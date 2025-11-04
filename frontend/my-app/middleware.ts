@@ -28,7 +28,6 @@ export default async function middleware(request: NextRequest) {
 
     return NextResponse.next();
   } catch (err) {
-    console.error("Middleware Error:", err);
     if (pathname === "/login" || pathname === "/register") {
       return NextResponse.next();
     }
