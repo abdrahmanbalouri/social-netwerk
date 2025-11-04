@@ -162,3 +162,10 @@ func FetchPost(db *sql.DB, postID, authUserID string) (PostResponse, error) {
 		CommentsCount: postDB.CommentsCount,
 	}, nil
 }
+func FetchVideoPosts(authUserID string, db *sql.DB) ([]map[string]interface{}, error) {
+	posts, err := repository.GetVideoPosts(db, authUserID)
+	if err != nil {
+		return nil, err
+	}
+	return FormatPosts(posts), nil
+}
