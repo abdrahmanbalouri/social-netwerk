@@ -33,8 +33,8 @@ type PostResponse struct {
 	CommentsCount int         `json:"comments_count"`
 }
 
-// maxFileSize = 1 * 1024 * 1024 * 1024 // 1GB
-func CreatePost(userID, title, content, visibility, allowedUsers string, fileHeader io.ReadCloser, filename string) (string, error) {
+func CreatePost(userID, title, content, visibility, allowedUsers string, fileHeader io.ReadCloser, filename string , size int64) (string, error) {
+	const  maxFileSize = 1 * 1024 * 1024 * 1024 // 1GB
 	// Validate title
 	if len(title) > 20 {
 		return "", errors.New("title must be between 2 and 20 characters")
@@ -57,6 +57,10 @@ func CreatePost(userID, title, content, visibility, allowedUsers string, fileHea
 		allowedExts := map[string]bool{
 			".jpg": true, ".jpeg": true, ".png": true, ".gif": true,
 			".mp4": true, ".mov": true, ".avi": true,
+		}
+        if size >= maxFileSize{
+		return "", errors.New("unsupported thsis size data beacuase is bigggg")
+
 		}
 		if !allowedExts[ext] {
 			return "", errors.New("unsupported media format")
