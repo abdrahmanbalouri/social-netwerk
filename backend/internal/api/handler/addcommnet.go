@@ -9,7 +9,6 @@ import (
 )
 
 func CreateCommentHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("666666666666666666")
 	if r.Method != "POST" {
 		helper.RespondWithError(w, http.StatusMethodNotAllowed, "Method Not Allowed")
 		return

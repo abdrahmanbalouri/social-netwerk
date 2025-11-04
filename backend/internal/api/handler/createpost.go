@@ -34,13 +34,15 @@ func Createpost(w http.ResponseWriter, r *http.Request) {
 
 	var fileHeader io.ReadCloser
 	var filename string
+	var size int64
 	file, header, err := r.FormFile("image")
 	if err == nil {
 		fileHeader = file
 		filename = header.Filename
+		size = header.Size
 	}
 
-	postID, err := service.CreatePost(userID, title, content, visibility, allowedUsers, fileHeader, filename)
+	postID, err := service.CreatePost(userID, title, content, visibility, allowedUsers, fileHeader, filename, size)
 	if err != nil {
 		helper.RespondWithError(w, http.StatusBadRequest, err.Error())
 		return

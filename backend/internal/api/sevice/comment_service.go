@@ -37,12 +37,12 @@ func CreateComment(userID, postID, content, whatis, groupID string, mediaFileHea
 
 	// Handle media upload
 	var mediaPath string
-	size := mediaFileHeader["size"].(int64)
-	if size >= maxFileSize {
-		return "", "", errors.New("size of file bigg")
-	}
 
 	if mediaFileHeader != nil {
+		size := mediaFileHeader["size"].(int64)
+		if size >= maxFileSize {
+			return "", "", errors.New("size of file bigg")
+		}
 		file := mediaFileHeader["file"].(io.Reader)
 		filename := mediaFileHeader["filename"].(string)
 
@@ -96,8 +96,6 @@ func CreateComment(userID, postID, content, whatis, groupID string, mediaFileHea
 }
 
 func FetchComments(postID string, offset int) ([]repository.CommentAPI, error) {
-
-	
 	return repository.GetComments(repository.Db, postID, offset)
 }
 
