@@ -2,7 +2,7 @@
 import Navbar from "../../components/Navbar.js";
 import { useEffect, useState } from "react";
 import "../../styles/groupstyle.css";
-import { useRouter, useSelectedLayoutSegments } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { GroupCard } from "../../components/groupCard.js";
 import { GroupCreationTrigger } from "../../components/CreateGroup.js";
 import { GroupsTabs } from "../../components/groupTabs.js";
@@ -39,7 +39,7 @@ export function AllGroups() {
     })
       .then((res) => res.json())
       .then((data) => {
-        console.log("data is :", data);
+        console.log("data is----- :", data);
         setGroup(data);
         setLoading(false);
       })
@@ -76,8 +76,8 @@ export function AllGroups() {
             <div className="group-footer">
               <div className="group-members">
                 <Users />
-                <span className="members-text-full">{22} members</span>
-                <span className="members-text-short">{220} members</span>
+                <span className="members-text-full">{grp.MemberCount} members</span>
+                <span className="members-text-short">{grp.MemberCount} members</span>
               </div>
               <button className="view-button">
                 <span>Join</span>
@@ -131,6 +131,7 @@ export function MyGroups() {
       </div>
     );
   }
+  console.log("Groups data:", group);
   return (
     <>
       <GroupCreationTrigger setGroup={setGroup} />

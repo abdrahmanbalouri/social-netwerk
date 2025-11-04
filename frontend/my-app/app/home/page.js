@@ -60,13 +60,7 @@ export default function Home() {
     }
     checkAuth();
   }, [])
-  function scrollToPost(postId) {
 
-    const el = postRefs.current[postId];
-    if (el) {
-      el.scrollIntoView({ behavior: "smooth", block: "start" });
-    }
-  }
   function handleUserSelect(userId) {
     setSelectedUsers((prevSelected) =>
       prevSelected.includes(userId)
@@ -75,8 +69,6 @@ export default function Home() {
     );
   }
   useEffect(() => {
-    console.log(offsetpsot.current);
-
 
     const reachedBottom =
       window.innerHeight + window.scrollY >= document.body.scrollHeight - 20;
@@ -91,7 +83,7 @@ export default function Home() {
       }
     }
 
-    if (reachedBottom && !loading) {
+    if (reachedBottom && !loading && posts.length >= 10) {
       handlescrollhome();
     }
   }, [scroollhome]);
@@ -140,7 +132,7 @@ export default function Home() {
 
       setFollowers(data);
     } catch (err) {
-      setError(err.message);
+        showToast(err.message)
     } finally {
       setLoadingFollowers(false);
     }
@@ -156,13 +148,13 @@ export default function Home() {
         method: "POST",
         credentials: "include",
       });
-       const response = await res.json();
+      const response = await res.json();
       if (response.error) {
-        if (response.error == "Unauthorized"){
-        router.push("/login");
-        //sendMessage({ type: "logout" })
-        return 
-        }else{
+        if (response.error == "Unauthorized") {
+          router.push("/login");
+          //sendMessage({ type: "logout" })
+          return
+        } else {
           showToast(response.error)
           return
         }
@@ -203,12 +195,13 @@ export default function Home() {
 
       const data = await res.json() || [];
 
-      if (data.length >0) {
+      if (data.length > 0) {
         offsetpsot.current += 10
       } else {
         return false
       }
       
+
 
       setPosts([...posts, ...data]);
       return data[0].id
@@ -277,7 +270,6 @@ export default function Home() {
         body: formData,
       });
 
-     
       const res = await response.json();
        
       if (res.error) {
@@ -286,6 +278,17 @@ export default function Home() {
         //sendMessage({ type: "logout" })
         return 
         }else{
+          showToast(res.error)
+          return
+        }
+      }
+
+      if (res.error) {
+        if (res.error == "Unauthorized") {
+          router.push("/login");
+          //sendMessage({ type: "logout" })
+          return
+        } else {
           showToast(res.error)
           return
         }
@@ -302,7 +305,7 @@ export default function Home() {
       offsetpsot.current++
 
     } catch (err) {
-    //  console.error("Error creating post:", err);
+      //  console.error("Error creating post:", err);
     } finally {
       setLoading(false);
       // Reset form
@@ -321,10 +324,10 @@ export default function Home() {
         credentials: "include",
       });
 
-       
+
 
       const data = await res.json();
-      if(data.error){
+      if (data.error) {
         showToast(data.error)
         return
       }
@@ -379,10 +382,7 @@ export default function Home() {
     }
   }
 
-  useEffect(() => {
 
-
-  }, [])
 
   // Refresh comments after posting a new comment
   async function refreshComments(commentID) {
@@ -394,39 +394,39 @@ export default function Home() {
         credentials: "include",
       });
 
-        const data = await res.json();
-        if (data.error){
-          showToast(data.error)
-          return
+      const data = await res.json();
+      if (data.error) {
+        showToast(data.error)
+        return
+      }
+
+      let newcomment = [];
+
+      if (Array.isArray(data)) {
+        newcomment = data;
+      } else if (data && data.newcomment && Array.isArray(data.newcomment)) {
+        newcomment = data.newcomment;
+      } else if (data) {
+        newcomment = [data];
+      }
+
+
+      setComment([...newcomment, ...comment]);
+      offsetcomment.current++
+
+
+      const potsreplace = await fetchPosts(selectedPost.id)
+      for (let i = 0; i < posts.length; i++) {
+        if (posts[i].id == selectedPost.id) {
+          setPosts([
+            ...posts.slice(0, i),
+            potsreplace,
+            ...posts.slice(i + 1)
+          ]);
+          break
         }
+      }
 
-        let newcomment = [];
-
-        if (Array.isArray(data)) {
-          newcomment = data;
-        } else if (data && data.newcomment && Array.isArray(data.newcomment)) {
-          newcomment = data.newcomment;
-        } else if (data) {
-          newcomment = [data];
-        }
-
-
-        setComment([...newcomment, ...comment]);
-        offsetcomment.current++
-
-
-        const potsreplace = await fetchPosts(selectedPost.id)
-        for (let i = 0; i < posts.length; i++) {
-          if (posts[i].id == selectedPost.id) {
-            setPosts([
-              ...posts.slice(0, i),
-              potsreplace,
-              ...posts.slice(i + 1)
-            ]);
-            break
-          }
-        }
-      
     } catch (err) {
       console.error("Error refreshing comments:", err);
     }
@@ -499,8 +499,6 @@ export default function Home() {
                 post={post}
                 onGetComments={GetComments}
                 ondolike={Handlelik}
-                ref={el => commentRefs.current[post.id] = el}
-
               />
             ))
           )}
@@ -513,9 +511,9 @@ export default function Home() {
       {showModal && (
         <div
           className={`modal-overlay ${showModal ? 'is-open' : ''}`}
-          onMouseDown={(e) => {
-            if (e.target === e.currentTarget) setShowModal(false);
-            setVisibility("public")
+          onClick={() => {
+            setShowModal(false)
+            setVisibility('public')
           }}
         >
           <div
@@ -524,7 +522,7 @@ export default function Home() {
             aria-modal="true"
             aria-labelledby="create-post-title"
             className="modal-content"
-            onMouseDown={(e) => e.stopPropagation()}
+           onClick={(e) => e.stopPropagation()}
           >
             <button
               className="modal-close"
@@ -544,7 +542,6 @@ export default function Home() {
                 className="input"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
-                required
               />
               <input
                 type="file"
@@ -558,7 +555,6 @@ export default function Home() {
                 className="input"
                 value={content}
                 onChange={(e) => setContent(e.target.value)}
-                required
               />
               {/* Visibility Selection */}
               <div className="visibility-select">

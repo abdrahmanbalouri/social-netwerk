@@ -14,6 +14,7 @@ import { useWS } from "../../../context/wsContext.js";
 export default function FollowPage() {
   const [followers, setFollowers] = useState([]);
   const [following, setFollowing] = useState([]);
+  const [error, setError] = useState(null);
   const { darkMode } = useDarkMode();
   const params = useParams();
   const searchParams = useSearchParams();
@@ -46,10 +47,14 @@ export default function FollowPage() {
         });
 
 
+        if (res.status === 404) {
+          setError("User not found");
+          return;
+        }
         if (res.ok) {
-
           const data = await res.json();
           tab === "followers" ? setFollowers(data) : setFollowing(data);
+          setError(null);
         }
       } catch (error) {
         console.error(error);
@@ -88,6 +93,8 @@ export default function FollowPage() {
           </div>
 
           <div className="tabContent" style={{ marginTop: 20 }}>
+                  <span style={{color: "red"}}>{error}</span>
+
             {tab === "followers" ? (
               <div className="itemUsers"> {followers?.map((user) => (
                 <div key={user.id} className="userDiv">
@@ -100,7 +107,7 @@ export default function FollowPage() {
                     </Link>
                   </div>
                 </div>
-              )) || <div className="itemUsersR"> no user found </div>}
+              )) ||   <div className="itemUsersR"> no user found </div> }
               </div>
             ) : (
               <div className="itemUsers">
@@ -115,7 +122,7 @@ export default function FollowPage() {
                       </Link>
                     </div>
                   </div>
-                )) || <div className="itemUsersR"> no user found </div>}
+                )) || <div className="itemUsersR">  no user found </div>}
               </div>
             )}
           </div>

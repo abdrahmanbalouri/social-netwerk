@@ -1,9 +1,10 @@
 .group-container {
-  min-height: 100vh;
+  max-height: 90vh;
   width: 80%;
   max-width: 800px;
-  background-color: color-mix(in srgb,  var(--bg),  rgba(82, 81, 81, 0.637) 5%) ;
+  background-color: color-mix(in srgb, var(--bg), rgba(82, 81, 81, 0.637) 5%);
   border-radius: 12px;
+  overflow: auto;
 }
 
 .max-width-wrapper {
@@ -65,7 +66,7 @@
 .group-tab-button.active {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
-  box-shadow: 0 4px 12px rgba(102, 126, 234, .3);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
 }
 
 .group-tab-button.inactive {
@@ -514,8 +515,6 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.6);
-  backdrop-filter: blur(4px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -523,7 +522,21 @@
   padding: 20px;
   animation: fadeIn 0.3s ease;
 }
-
+.group-modal-overlay1{
+    position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: -1;
+  padding: 20px;
+  animation: fadeIn 0.3s ease;
+}
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -738,8 +751,8 @@ legend.form-label {
 }
 
 .form-textarea {
-    resize: vertical;
-    min-height: 100px;
+  resize: vertical;
+  min-height: 100px;
 }
 
 /* ===== المستخدمون المختارون ===== */
@@ -880,4 +893,15 @@ legend.form-label {
   .content-area {
     gap: 1rem;
   }
+}
+
+.group-chat-container {
+  position: sticky;
+  top: 70px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 215px);
+  max-width: 900px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
 }

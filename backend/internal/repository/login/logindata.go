@@ -4,6 +4,8 @@ import (
 	"database/sql"
 	"net/http"
 
+	"social-network/internal/repository"
+
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -30,4 +32,12 @@ func Checklogindata(nickname string, db *sql.DB, w http.ResponseWriter, dbPasswo
 	}
 
 	return ""
+}
+
+func CreateSession(userID, token string) error {
+	_, err := repository.Db.Exec(`
+		INSERT INTO sessions (user_id, token, expires_at)
+		VALUES (?, ?, DATETIME('now', '+1 hour'))
+	`, userID, token)
+	return err
 }
