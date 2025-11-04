@@ -3,6 +3,7 @@ package service
 import (
 	"errors"
 	"time"
+
 	"social-network/internal/helper"
 	"social-network/internal/repository"
 )
@@ -21,12 +22,11 @@ func GetCommentsGroup(userID, groupID, postID string, offset int) ([]map[string]
 		MediaPath string
 	}
 
-	repoComments, err := repository.FetchCommentsGroup( repository.Db ,postID, offset)
+	repoComments, err := repository.FetchCommentsGroup(repository.Db, postID, offset)
 	if err != nil {
 		return nil, err
 	}
 
-	// تحويل repo struct إلى map
 	var comments []map[string]interface{}
 	for _, c := range repoComments {
 		comments = append(comments, map[string]interface{}{
@@ -41,3 +41,26 @@ func GetCommentsGroup(userID, groupID, postID string, offset int) ([]map[string]
 
 	return comments, nil
 }
+
+func GetLastCommentGroup(commentId string, userID string, groupID string) (map[string]interface{}, error) {
+    if err := helper.CheckUserInGroup(userID, groupID); err != nil {
+        return nil, err
+    }
+
+    repoComment, err := repository.GetCommentByIDlast(repository.Db, commentId)
+    if err != nil {
+        return nil, err
+    }
+
+    comments := map[string]interface{}{
+        "id":         repoComment.ID,
+        "content":    repoComment.Content,
+        "created_at": repoComment.CreatedAt.Format(time.RFC3339),
+        "first_name": repoComment.FirstName,
+        "last_name":  repoComment.LastName,
+        "media_path": repoComment.MediaPath,
+    }
+
+    return comments, nil
+}
+

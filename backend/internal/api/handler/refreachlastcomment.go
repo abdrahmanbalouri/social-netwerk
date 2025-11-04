@@ -11,6 +11,7 @@ import (
 )
 
 func GetlastcommnetGroup(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("lkol")
 	if r.Method != "GET" {
 		helper.RespondWithError(w, http.StatusMethodNotAllowed, "Method Not Allowed")
 		return
