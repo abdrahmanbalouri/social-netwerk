@@ -1,10 +1,10 @@
 package repository
 
 import (
-	"time"
-
 	"social-network/internal/utils"
+	"time"
 )
+
 
 func InsertGroupPost(id, userID, groupID, title, content, imagePath string, createdAt time.Time) error {
 	_, err := Db.Exec(`
@@ -56,13 +56,12 @@ func GetGroupPostByID(postID, userID string) (map[string]interface{}, error) {
 	post["first_name"] = firstName
 	post["last_name"] = lastName
 	post["profile"] = profile
-	post["like_count"] = likeCount
+	post["like"] = likeCount
 	post["liked_by_user"] = likedByUser > 0
 	post["comments_count"] = commentsCount
 
 	return post, nil
 }
-
 func GetAllGroupPosts(groupID, userID string) ([]utils.GroupPost, error) {
 	query := `
 	SELECT 
@@ -103,7 +102,6 @@ func GetAllGroupPosts(groupID, userID string) ([]utils.GroupPost, error) {
 		if err != nil {
 			return nil, err
 		}
-		p.LikedByUser = p.LikeCount > 0
 		posts = append(posts, p)
 	}
 	return posts, nil

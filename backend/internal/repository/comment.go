@@ -2,6 +2,7 @@ package repository
 
 import (
 	"database/sql"
+	"fmt"
 	"time"
 )
 
@@ -30,6 +31,7 @@ type CommentAPI struct {
 // InsertComment saves the comment in the correct table
 func InsertComment(db *sql.DB, c Comment) error {
 	if c.IsGroup {
+		fmt.Println("hahahahahah")
 		_, err := db.Exec(`
 			INSERT INTO comments_groups (id, post_id, user_id, content, media_path)
 			VALUES (?, ?, ?, ?, ?)`,
