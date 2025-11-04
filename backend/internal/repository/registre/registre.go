@@ -1,9 +1,6 @@
 package regestire
 
-import (
-	"social-network/internal/repository"
-	
-)
+import "social-network/internal/repository"
 
 // add a repository-local User model to avoid importing the handler package
 type User struct {
