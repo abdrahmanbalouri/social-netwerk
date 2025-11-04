@@ -4,165 +4,186 @@ import (
 	"fmt"
 	"html"
 	"io"
+	"log"
 	"net/http"
 	"os"
+	"path/filepath"
 	"regexp"
 	"strconv"
 	"strings"
 	"time"
 
 	"social-network/internal/helper"
-	"social-network/internal/repository"
+	regestire "social-network/internal/repository/registre"
 
 	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
 )
 
 type User struct {
-	Nickname  string `json:"nickname"`
-	
-	DateBirth int64  `json:"dob"`
-	FirstName string `json:"firstName"`
-	LastName  string `json:"lastName"`
-	Email     string `json:"email"`
-	Password  string `json:"password"`
-	Image     string `json:"avatar"`
-	About     string `json:"aboutMe"`
-	Privacy   string `json:"privacy"`
+	ID        string
+	Nickname  string
+	DateBirth int64
+	FirstName string
+	LastName  string
+	Email     string
+	Password  []byte
+	Image     string
+	About     string
+	Privacy   string
+	CreatedAt int64
 }
 
 func RegisterHandler(w http.ResponseWriter, r *http.Request) {
+	// Parse form and files
 	err := r.ParseMultipartForm(10 << 20)
 	if err != nil {
-		http.Error(w, "Error parsing form", http.StatusBadRequest)
+		helper.RespondWithError(w, http.StatusBadRequest, "Error parsing form")
 		return
 	}
 
-	userInformation := User{
-		Nickname:  r.FormValue("nickname"),
-		FirstName: r.FormValue("firstName"),
-		LastName:  r.FormValue("lastName"),
-		Email:     r.FormValue("email"),
-		Password:  r.FormValue("password"),
-		Image:     "",
-		About:     r.FormValue("aboutMe"),
-		Privacy:   r.FormValue("privacy"),
+	// Collect form data
+	nickname := r.FormValue("nickname")
+	firstName := r.FormValue("firstName")
+	lastName := r.FormValue("lastName")
+	email := r.FormValue("email")
+	password := r.FormValue("password")
+	about := r.FormValue("aboutMe")
+	privacy := r.FormValue("privacy")
+	dobStr := r.FormValue("dob")
+
+	// Validate required fields
+	if strings.TrimSpace(firstName) == "" || strings.TrimSpace(lastName) == "" || email == "" || password == "" {
+		helper.RespondWithError(w, http.StatusBadRequest, "Missing required fields")
+		return
 	}
-	file, handler, err := r.FormFile("avatar")
-	if err == nil {
-		defer file.Close()
-		uploadDir := "../frontend/my-app/public/uploads"
-		err = os.MkdirAll(uploadDir, os.ModePerm)
+
+	// Validate email
+	re := regexp.MustCompile(`^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$`)
+	if !re.MatchString(email) {
+		helper.RespondWithError(w, http.StatusBadRequest, "Invalid email")
+		return
+	}
+
+	// Parse DOB and validate age
+	var dob int64
+	if dobStr != "" {
+		dob, err = strconv.ParseInt(dobStr, 10, 64)
 		if err != nil {
+			helper.RespondWithError(w, http.StatusBadRequest, "Invalid date format")
 			return
 		}
-		filePath := fmt.Sprintf("%s/%s", uploadDir, handler.Filename)
-		dst, err := os.Create(filePath)
-		if err != nil {
+		age := time.Now().Year() - time.Unix(dob, 0).Year()
+		if age < 13 || age > 120 {
+			helper.RespondWithError(w, http.StatusBadRequest, "Invalid age")
+			return
+		}
+	}
+
+	// Check if user exists (use registre package)
+	exists, err := regestire.UserExists(email, nickname)
+	if err != nil {
+		log.Printf("UserExists DB error: %v", err)
+		helper.RespondWithError(w, http.StatusInternalServerError, "Database error")
+		return
+	}
+	if exists {
+		helper.RespondWithError(w, http.StatusConflict, "User already exists")
+		return
+	}
+
+	// Hash password
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+	if err != nil {
+		log.Printf("bcrypt error: %v", err)
+		helper.RespondWithError(w, http.StatusInternalServerError, "Password encryption failed")
+		return
+	}
+
+	// Handle avatar upload
+	var imageFileName string
+	file, handler, err := r.FormFile("avatar")
+	if err != nil {
+		// No file uploaded is acceptable; only fail on real errors
+		if err != http.ErrMissingFile {
+			log.Printf("FormFile error: %v", err)
+			helper.RespondWithError(w, http.StatusBadRequest, "Error retrieving avatar")
+			return
+		}
+	} else {
+		defer file.Close()
+		uploadDir := "../frontend/my-app/public/uploads"
+		if mkErr := os.MkdirAll(uploadDir, os.ModePerm); mkErr != nil {
+			log.Printf("mkdir error: %v", mkErr)
+			helper.RespondWithError(w, http.StatusInternalServerError, "Unable to create upload directory")
+			return
+		}
+
+		// sanitize filename and generate unique name
+		safeFilename := filepath.Base(handler.Filename)
+		ext := filepath.Ext(safeFilename)
+		newName := fmt.Sprintf("%s%s", uuid.New().String(), ext)
+		filePath := filepath.Join(uploadDir, newName)
+
+		dst, createErr := os.Create(filePath)
+		if createErr != nil {
+			log.Printf("create file error: %v", createErr)
+			helper.RespondWithError(w, http.StatusInternalServerError, "Unable to save avatar")
 			return
 		}
 		defer dst.Close()
-		_, err = io.Copy(dst, file)
-		if err != nil {
+
+		if _, copyErr := io.Copy(dst, file); copyErr != nil {
+			log.Printf("copy file error: %v", copyErr)
+			helper.RespondWithError(w, http.StatusInternalServerError, "Unable to save avatar")
 			return
 		}
-		userInformation.Image = handler.Filename
 
-	} else {
+		imageFileName = newName
 	}
 
-	dobStr := r.FormValue("dob")
-	if dobStr != "" {
-		unixDob, err := strconv.ParseInt(dobStr, 10, 64)
-		if err != nil {
-			http.Error(w, "Invalid date format for dob", http.StatusBadRequest)
-			return
-		}
-		userInformation.DateBirth = unixDob
+	// Prepare user struct (handler-local)
+	user := User{
+		ID:        uuid.New().String(),
+		Nickname:  html.EscapeString(nickname),
+		DateBirth: dob,
+		FirstName: html.EscapeString(firstName),
+		LastName:  html.EscapeString(lastName),
+		Email:     html.EscapeString(email),
+		Password:  hashedPassword,
+		Image:     imageFileName,
+		About:     "No description",
+		Privacy:   "public",
+		CreatedAt: time.Now().Unix(),
 	}
-	var exists int
-	err = repository.Db.QueryRow(
-		`SELECT COUNT(*) FROM users WHERE ( email = ? OR nickname = ? ) AND nickname != "" `,
-		html.EscapeString(userInformation.Email),
-		html.EscapeString(userInformation.Nickname),
-	).Scan(&exists)
-	if err != nil {
-		http.Error(w, "DB error", http.StatusInternalServerError)
+	if about != "" {
+		user.About = about
+	}
+	if privacy != "" {
+		user.Privacy = privacy
+	}
+
+	// convert handler.User -> repository-local User to avoid import cycle
+	regUser := regestire.User{
+		ID:        user.ID,
+		Nickname:  user.Nickname,
+		DateBirth: user.DateBirth,
+		FirstName: user.FirstName,
+		LastName:  user.LastName,
+		Email:     user.Email,
+		Password:  user.Password,
+		Image:     user.Image,
+		About:     user.About,
+		Privacy:   user.Privacy,
+		CreatedAt: user.CreatedAt,
+	}
+
+	// Insert user in DB
+	if err := regestire.CreateUser(regUser); err != nil {
+		log.Printf("CreateUser error: %v", err)
+		helper.RespondWithError(w, http.StatusInternalServerError, "Error creating user")
 		return
 	}
 
-	if exists > 0 {
-		http.Error(w, "User already exists", http.StatusConflict)
-		return
-	}
-
-	emailRegex := `^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$`
-	re := regexp.MustCompile(emailRegex)
-	if !re.MatchString(userInformation.Email) {
-		http.Error(w, "Invalid email", http.StatusBadRequest)
-		return
-	}
-
-	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(userInformation.Password), bcrypt.DefaultCost)
-	if err != nil {
-		http.Error(w, "Password encryption failed", http.StatusInternalServerError)
-		return
-	}
-
-	if 
-		len(strings.TrimSpace(userInformation.FirstName)) == 0 ||
-		len(strings.TrimSpace(userInformation.LastName)) == 0 ||
-		userInformation.Email == "" || userInformation.Password == "" {
-		http.Error(w, "Missing required fields", http.StatusBadRequest)
-		return
-	}
-
-	age := time.Now().Year() - time.Unix(userInformation.DateBirth, 0).Year()
-	if age < 13 || age > 120 {
-		http.Error(w, "Invalid age", http.StatusBadRequest)
-		return
-	}
-	id := uuid.New()
-	res, err := repository.Db.Exec(`
-	INSERT INTO users 
-	(id, nickname, date_birth, first_name, last_name, email, password, image, about, privacy, created_at)
-	VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-		id,
-		html.EscapeString(userInformation.Nickname),
-		userInformation.DateBirth,
-		html.EscapeString(userInformation.FirstName),
-		html.EscapeString(userInformation.LastName),
-		html.EscapeString(userInformation.Email),
-		hashedPassword,
-		func() string {
-			return userInformation.Image
-		}(),
-		func() string {
-			if userInformation.About == "" {
-				return "No description"
-			}
-			return userInformation.About
-		}(),
-		func() string {
-			if userInformation.Privacy == "" {
-				return "public"
-			}
-			return userInformation.Privacy
-		}(),
-		time.Now().Unix(),
-	)
-	if err != nil {
-		helper.RespondWithError(w, http.StatusInternalServerError, "Error executing query")
-
-		return
-	}
-	_, err = res.LastInsertId()
-	if err != nil {
-
-		http.Error(w, "Error retrieving user ID", http.StatusInternalServerError)
-		return
-	}
-
-	w.WriteHeader(http.StatusCreated)
-	w.Write([]byte(`{"message":"User registered successfully"}`))
+	helper.RespondWithJSON(w, http.StatusCreated, map[string]string{"message": "User registered successfully"})
 }
