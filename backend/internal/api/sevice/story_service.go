@@ -1,6 +1,7 @@
 package service
 
 import (
+	"database/sql"
 	"fmt"
 	"io"
 	"os"
@@ -13,6 +14,41 @@ import (
 )
 
 const maxFileSize = 1 * 1024 * 1024 * 1024 // 1 GB
+func FormatStories(stories []repository.Storyapi) []map[string]interface{} {
+	var formatted []map[string]interface{}
+
+	for _, s := range stories {
+
+		formatted = append(formatted, map[string]interface{}{
+			"id":         s.ID,
+			"user_id":    s.UserID,
+			"content":    s.Content,
+			"image_url":  s.ImageURL,
+			"bg_color":   s.BGColor,
+			"created_at": s.CreatedAt,
+			"expires_at": func() interface{} {
+				if s.ExpiresAt.Valid {
+					return s.ExpiresAt.Time
+				}
+				return nil
+			}(),
+			"first_name": s.FirstName,
+			"last_name":  s.LastName,
+			"profile":    s.Profile,
+		})
+	}
+	return formatted
+}
+
+// FetchStories fetches and formats stories for frontend
+func FetchStories(authUserID string, db *sql.DB) ([]map[string]interface{}, error) {
+	stories, err := repository.GetActiveStories(db, authUserID)
+	if err != nil {
+		return nil, err
+	}
+
+	return FormatStories(stories), nil
+}
 
 func CreateStory(userID, content, bgColor string, imageFile io.ReadCloser, filename string) (string, error) {
 	content = strings.TrimSpace(content)
