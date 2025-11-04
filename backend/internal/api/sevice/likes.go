@@ -4,12 +4,19 @@ import (
 	"database/sql"
 	"time"
 
+	"social-network/internal/helper"
 	"social-network/internal/repository"
 
 	"github.com/google/uuid"
 )
 
 func TogglePostLike(db *sql.DB, userID, postID string) (string, error) {
+
+	ok,err:= helper.Canshowdata(userID,postID)
+	if !ok {
+		return "", err
+
+	}
 	exists, likeID, err := repository.UserLikedPost(db, userID, postID)
 	if err != nil {
 		return "", err
