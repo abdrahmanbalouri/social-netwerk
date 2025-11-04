@@ -13,7 +13,23 @@ import (
 
 	"github.com/google/uuid"
 )
-
+type PostResponse struct {
+	ID            string      `json:"id"`
+	UserID        string      `json:"user_id"`
+	Title         string      `json:"title"`
+	Content       string      `json:"content"`
+	ImagePath     interface{} `json:"image_path"`
+	Visibility    string      `json:"visibility"`
+	CanSePerivite string      `json:"canseperivite"`
+	CreatedAt     string      `json:"created_at"`
+	FirstName     string      `json:"first_name"`
+	LastName      string      `json:"last_name"`
+	Privacy       string      `json:"privacy"`
+	Profile       interface{} `json:"profile"`
+	LikeCount     int         `json:"like"`
+	LikedByUser   bool        `json:"liked_by_user"`
+	CommentsCount int         `json:"comments_count"`
+}
 // maxFileSize = 1 * 1024 * 1024 * 1024 // 1GB
 func CreatePost(userID, title, content, visibility, allowedUsers string, fileHeader io.ReadCloser, filename string) (string, error) {
 	// Validate title
@@ -121,4 +137,28 @@ func FetchPostsByUser(db *sql.DB, authUserID, userID string, offset, limit int) 
 		return nil, err
 	}
 	return FormatPosts(posts), nil
+}
+func FetchPost(db *sql.DB, postID, authUserID string) (PostResponse, error) {
+	postDB, err := repository.GetPostByID(db, postID, authUserID)
+	if err != nil {
+		return PostResponse{}, err
+	}
+
+	return PostResponse{
+		ID:            postDB.ID,
+		UserID:        postDB.UserID,
+		Title:         postDB.Title,
+		Content:       postDB.Content,
+		ImagePath:     nilIfEmpty(postDB.ImagePath),
+		Visibility:    postDB.Visibility,
+		CanSePerivite: postDB.CanSePerivite,
+		CreatedAt:     postDB.CreatedAt.Format("2006-01-02 15:04:05"),
+		FirstName:     postDB.FirstName,
+		LastName:      postDB.LastName,
+		Privacy:       postDB.Privacy,
+		Profile:       nilIfEmpty(postDB.Profile),
+		LikeCount:     postDB.LikeCount,
+		LikedByUser:   postDB.LikedByUser ,
+		CommentsCount: postDB.CommentsCount,
+	}, nil
 }

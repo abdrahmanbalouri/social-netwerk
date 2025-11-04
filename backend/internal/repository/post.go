@@ -156,3 +156,27 @@ func GetPostsByUser(db *sql.DB, authUserID, userID string, offset, limit int) ([
 
 	return posts, nil
 }
+func GetPostByID(db *sql.DB, postID, authUserID string) (Post, error) {
+	var post Post
+	query := `
+		SELECT 
+			p.id, p.user_id, p.title, p.content, p.image_path, p.visibility, p.canseperivite,
+			p.created_at, u.first_name, u.last_name, u.privacy, u.image AS profile,
+			COUNT(DISTINCT l.id) AS like_count,
+			COUNT(DISTINCT CASE WHEN l.user_id = ? THEN l.id END) AS liked_by_user,
+			COUNT(DISTINCT c.id) AS comments_count
+		FROM posts p
+		JOIN users u ON p.user_id = u.id
+		LEFT JOIN likes l ON p.id = l.liked_item_id AND l.liked_item_type = 'post'
+		LEFT JOIN comments c ON p.id = c.post_id
+		WHERE p.id = ?
+		GROUP BY p.id, p.user_id, p.title, p.content, p.image_path, p.visibility, p.canseperivite,
+		         p.created_at, u.first_name, u.last_name, u.privacy, u.image
+	`
+	err := db.QueryRow(query, authUserID, postID).Scan(
+		&post.ID, &post.UserID, &post.Title, &post.Content, &post.ImagePath, &post.Visibility,
+		&post.CanSePerivite, &post.CreatedAt, &post.FirstName, &post.LastName,
+		&post.Privacy, &post.Profile, &post.LikeCount, &post.LikedByUser, &post.CommentsCount,
+	)
+	return post, err
+}
