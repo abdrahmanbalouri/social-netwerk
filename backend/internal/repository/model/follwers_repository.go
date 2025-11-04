@@ -8,8 +8,8 @@ func UserExists(id string) bool {
 	return err == nil
 }
 
-func GetPrivacyAndFollowing(currentUserID, targetUserID string) (privacy string, isFollowing int) {
-	_ = repository.Db.QueryRow(`
+func GetPrivacyAndFollowing(currentUserID, targetUserID string) (privacy string, isFollowing int, err error) {
+	err = repository.Db.QueryRow(`
 SELECT 
     u.privacy,
     CASE WHEN f.follower_id IS NOT NULL THEN 1 ELSE 0 END
