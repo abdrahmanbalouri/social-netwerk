@@ -1,6 +1,7 @@
 package service
 
 import (
+	"database/sql"
 	"errors"
 	"fmt"
 	"io"
@@ -13,11 +14,10 @@ import (
 	"github.com/google/uuid"
 )
 
- //maxFileSize = 1 * 1024 * 1024 * 1024 // 1GB
-
+// maxFileSize = 1 * 1024 * 1024 * 1024 // 1GB
 func CreatePost(userID, title, content, visibility, allowedUsers string, fileHeader io.ReadCloser, filename string) (string, error) {
 	// Validate title
-	if len(title) < 2 || len(title) > 20 {
+	if  len(title) > 20 {
 		return "", errors.New("title must be between 2 and 20 characters")
 	}
 
@@ -80,4 +80,45 @@ func CreatePost(userID, title, content, visibility, allowedUsers string, fileHea
 	}
 
 	return postID, nil
+}
+
+func FormatPosts(posts []repository.Post) []map[string]interface{} {
+	var formatted []map[string]interface{}
+	for _, p := range posts {
+		postMap := map[string]interface{}{
+			"id":             p.ID,
+			"user_id":        p.UserID,
+			"title":          p.Title,
+			"content":        p.Content,
+			"image_path":     nilIfEmpty(p.ImagePath),
+			"visibility":     p.Visibility,
+			"canseperivite":  p.CanSePerivite,
+			"privacy":        p.Privacy,
+			"created_at":     p.CreatedAt,
+			"first_name":     p.FirstName,
+			"last_name":      p.LastName,
+			"profile":        nilIfEmpty(p.Profile),
+			"like":           p.LikeCount,
+			"liked_by_user":  p.LikedByUser,
+			"comments_count": p.CommentsCount,
+		}
+		formatted = append(formatted, postMap)
+	}
+	return formatted
+}
+
+func nilIfEmpty(s string) interface{} {
+	if s == "" {
+		return nil
+	}
+	return s
+}
+
+// FetchPostsByUser fetch posts from repository and format for frontend
+func FetchPostsByUser(db *sql.DB, authUserID, userID string, offset, limit int) ([]map[string]interface{}, error) {
+	posts, err := repository.GetPostsByUser(db, authUserID, userID, offset, limit)
+	if err != nil {
+		return nil, err
+	}
+	return FormatPosts(posts), nil
 }

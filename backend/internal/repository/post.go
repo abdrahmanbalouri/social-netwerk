@@ -2,22 +2,32 @@ package repository
 
 import (
 	"database/sql"
+	"fmt"
 	"strings"
 	"time"
 )
 
+// Post represents a user post
 type Post struct {
-	ID           string
-	UserID       string
-	Title        string
-	Content      string
-	ImagePath    string
-	Visibility   string
-	AllowedUsers []string
-	CreatedAt    time.Time
+	ID            string
+	UserID        string
+	Title         string
+	Content       string
+	ImagePath     string
+	Visibility    string
+	AllowedUsers  []string
+	CanSePerivite string
+	CreatedAt     time.Time
+	FirstName     string
+	LastName      string
+	Privacy       string
+	Profile       string
+	LikeCount     int
+	LikedByUser   bool
+	CommentsCount int
 }
 
-// InsertPost inserts a post into the database
+// InsertPost saves a post
 func InsertPost(db *sql.DB, post Post) error {
 	_, err := db.Exec(`
 		INSERT INTO posts (id, user_id, title, content, image_path, visibility, canseperivite)
@@ -52,4 +62,97 @@ func InsertAllowedUsers(db *sql.DB, postID, authorID string, allowedUsers []stri
 		}
 	}
 	return nil
+}
+
+func GetPostsByUser(db *sql.DB, authUserID, userID string, offset, limit int) ([]Post, error) {
+	var query string
+	var rows *sql.Rows
+	var err error
+	fmt.Println(authUserID, userID, "----------------")
+
+	if authUserID == userID {
+		query = `
+			SELECT 
+				p.id, p.user_id, p.title, p.content, p.image_path,
+				p.visibility, p.canseperivite, p.created_at,
+				u.first_name,u.last_name, u.privacy, u.image AS profile,
+				COUNT(DISTINCT l.id) AS like_count,
+				COUNT(DISTINCT CASE WHEN l.user_id = ? THEN l.id END) AS liked_by_user,
+				COUNT(DISTINCT c.id) AS comments_count
+			FROM posts p
+			JOIN users u ON p.user_id = u.id
+			LEFT JOIN likes l ON p.id = l.liked_item_id AND l.liked_item_type = 'post'
+			LEFT JOIN comments c ON p.id = c.post_id
+			WHERE p.user_id = ?
+			GROUP BY 
+				p.id, p.user_id, p.title, p.content, p.image_path, p.visibility,
+				p.canseperivite, p.created_at, u.first_name,u.last_name, u.privacy, u.image
+			ORDER BY p.created_at DESC
+			LIMIT ? OFFSET ?;
+		`
+		rows, err = db.Query(query, authUserID, userID, limit, offset)
+	} else {
+		query = `
+			SELECT 
+				p.id, p.user_id, p.title, p.content, p.image_path,
+				p.visibility, p.canseperivite, p.created_at,
+				u.first_name,u.last_name, u.privacy, u.image AS profile,
+				COUNT(DISTINCT l.id) AS like_count,
+				COUNT(DISTINCT CASE WHEN l.user_id = ? THEN l.id END) AS liked_by_user,
+				COUNT(DISTINCT c.id) AS comments_count
+			FROM posts p
+			JOIN users u ON p.user_id = u.id
+			LEFT JOIN likes l ON p.id = l.liked_item_id AND l.liked_item_type = 'post'
+			LEFT JOIN comments c ON p.id = c.post_id
+			WHERE p.user_id = ?
+			  AND (
+					u.privacy = 'public'
+					OR (
+						u.privacy = 'private'
+						AND EXISTS (
+							SELECT 1 FROM followers f
+							WHERE f.user_id = p.user_id
+							  AND f.follower_id = ?
+						)
+					)
+				)
+			GROUP BY 
+				p.id, p.user_id, p.title, p.content, p.image_path, p.visibility,
+				p.canseperivite, p.created_at,u.first_name,u.last_name, u.privacy, u.image
+			ORDER BY p.created_at DESC
+			LIMIT ? OFFSET ?;
+		`
+		rows, err = db.Query(query, authUserID, userID, authUserID, limit, offset)
+	}
+
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var posts []Post
+	for rows.Next() {
+		var p Post
+		var imagePath, profile sql.NullString
+		var likedByUser int
+		err := rows.Scan(
+			&p.ID, &p.UserID, &p.Title, &p.Content, &imagePath,
+			&p.Visibility, &p.CanSePerivite, &p.CreatedAt,
+			&p.FirstName, &p.LastName, &p.Privacy, &profile,
+			&p.LikeCount, &likedByUser, &p.CommentsCount,
+		)
+		if err != nil {
+			return nil, err
+		}
+		p.ImagePath = imagePath.String
+		p.Profile = profile.String
+		p.LikedByUser = likedByUser > 0
+		posts = append(posts, p)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return posts, nil
 }

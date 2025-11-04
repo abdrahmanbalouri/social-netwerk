@@ -8,13 +8,13 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/google/uuid"
 	"social-network/internal/helper"
 	"social-network/internal/repository"
+
+	"github.com/google/uuid"
 )
 
-//const maxFileSize = 1 * 1024 * 1024 * 1024 // 1 GB
-
+// const maxFileSize = 1 * 1024 * 1024 * 1024 // 1 GB
 func CreateComment(userID, postID, content, whatis, groupID string, mediaFileHeader map[string]interface{}) (string, string, error) {
 	if postID == "" {
 		return "", "", errors.New("missing post ID")
@@ -88,4 +88,12 @@ func CreateComment(userID, postID, content, whatis, groupID string, mediaFileHea
 	}
 
 	return commentID, mediaPath, nil
+}
+
+func FetchComments(postID string, offset int) ([]repository.CommentAPI, error) {
+	return repository.GetComments(repository.Db, postID, offset)
+}
+
+func GetComment(commentID string) (repository.CommentAPI, error) {
+	return repository.GetCommentByID(repository.Db, commentID)
 }
