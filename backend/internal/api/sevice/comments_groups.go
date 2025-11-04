@@ -2,6 +2,7 @@ package service
 
 import (
 	"errors"
+	"fmt"
 	"time"
 
 	"social-network/internal/helper"
@@ -43,24 +44,24 @@ func GetCommentsGroup(userID, groupID, postID string, offset int) ([]map[string]
 }
 
 func GetLastCommentGroup(commentId string, userID string, groupID string) (map[string]interface{}, error) {
-    if err := helper.CheckUserInGroup(userID, groupID); err != nil {
-        return nil, err
-    }
+	fmt.Println("coococo")
+	if err := helper.CheckUserInGroup(userID, groupID); err != nil {
+		return nil, err
+	}
 
-    repoComment, err := repository.GetCommentByIDlast(repository.Db, commentId)
-    if err != nil {
-        return nil, err
-    }
+	repoComment, err := repository.GetCommentByIDlast(repository.Db, commentId)
+	if err != nil {
+		return nil, err
+	}
 
-    comments := map[string]interface{}{
-        "id":         repoComment.ID,
-        "content":    repoComment.Content,
-        "created_at": repoComment.CreatedAt.Format(time.RFC3339),
-        "first_name": repoComment.FirstName,
-        "last_name":  repoComment.LastName,
-        "media_path": repoComment.MediaPath,
-    }
+	comments := map[string]interface{}{
+		"id":         repoComment.ID,
+		"content":    repoComment.Content,
+		"created_at": repoComment.CreatedAt.Format(time.RFC3339),
+		"first_name": repoComment.FirstName,
+		"last_name":  repoComment.LastName,
+		"media_path": repoComment.MediaPath,
+	}
 
-    return comments, nil
+	return comments, nil
 }
-
