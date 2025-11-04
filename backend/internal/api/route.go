@@ -16,15 +16,15 @@ func Routes() http.Handler {
 	})
 
 	// ======= Static Files =======
-	mux.Handle("/uploads/", http.StripPrefix("/uploads/", http.FileServer(http.Dir("uploads"))))
+	mux.Handle("/uploads/", http.StripPrefix("/uploads/", http.FileServer(http.Dir("uploads")))) // hada mamahaloho mina i3rab
 
 	// ======= Auth & User =======
-	mux.HandleFunc("/api/register", handlers.RegisterHandler)
-	mux.HandleFunc("/api/login", handlers.LoginHandler)
-	mux.HandleFunc("/api/logout", handlers.LogoutHandler)
-	mux.HandleFunc("/api/me", handlers.MeHandler)
+	mux.HandleFunc("/api/register", handlers.RegisterHandler) // dart
+	mux.HandleFunc("/api/login", handlers.LoginHandler) // dart
+	mux.HandleFunc("/api/logout", handlers.LogoutHandler) // dart
+	mux.HandleFunc("/api/me", handlers.MeHandler) // dart
 	mux.HandleFunc("/api/profile", handlers.ProfileHandler)
-	mux.HandleFunc("/api/searchUser", handlers.SearchUserHandler)
+	mux.HandleFunc("/api/searchUser", handlers.SearchUserHandler) // dart
 	mux.HandleFunc("/api/GetUsersHandler", handlers.GetUsersHandler)
 
 	// ======= Followers / Following =======
@@ -33,26 +33,26 @@ func Routes() http.Handler {
 	mux.HandleFunc("/api/followRequest", handlers.FollowRequest)
 	mux.HandleFunc("/api/followRequest/action", handlers.FollowRequestAction)
 	mux.HandleFunc("/api/follow", handlers.FollowHandler)
-	mux.HandleFunc("/api/users/followers", handlers.Getfollowers)
+	mux.HandleFunc("/api/users/followers", handlers.Getfollowers) // dart 
 	mux.HandleFunc("/api/communfriends", handlers.GetCommunFriends)
 
 	// ======= Posts & Comments =======
-	mux.HandleFunc("/api/createpost", handlers.Createpost)
-	mux.HandleFunc("/api/Getpost/{id}", handlers.GetPostsHandler)
-	mux.HandleFunc("/api/Getallpost/{id}", handlers.AllpostsHandler)
-	mux.HandleFunc("/api/getmypost/{id}/{offset}", handlers.Getmypost)
-	mux.HandleFunc("/api/createcomment", handlers.CreateCommentHandler)
-	mux.HandleFunc("/api/Getcomments/{id}/{offset}", handlers.GetCommentsHandler)
-	mux.HandleFunc("/api/like/{id}", handlers.LikeHandler)
-	mux.HandleFunc("/api/getlastcomment/{id}", handlers.Getlastcommnet)
-	mux.HandleFunc("/api/editor", handlers.Editor)
-	mux.HandleFunc("/api/gallery", handlers.GalleryHandler)
+	mux.HandleFunc("/api/createpost", handlers.Createpost) // dart
+	mux.HandleFunc("/api/Getpost/{id}", handlers.GetPostsHandler)// dart 
+	mux.HandleFunc("/api/Getallpost/{id}", handlers.AllpostsHandler)// dart 
+	mux.HandleFunc("/api/getmypost/{id}/{offset}", handlers.Getmypost) // dart
+	mux.HandleFunc("/api/createcomment", handlers.CreateCommentHandler) // dart
+	mux.HandleFunc("/api/Getcomments/{id}/{offset}", handlers.GetCommentsHandler) // dart
+	mux.HandleFunc("/api/like/{id}", handlers.LikeHandler) 	// dart
+	mux.HandleFunc("/api/getlastcomment/{id}", handlers.Getlastcommnet) // dart
+	mux.HandleFunc("/api/editor", handlers.Editor) // dart
+	mux.HandleFunc("/api/gallery", handlers.GalleryHandler) // dart
 
 	// ======= Stories & Media =======
-	mux.HandleFunc("/api/Getstories", handlers.GetStories)
-	mux.HandleFunc("/api/Createstories", handlers.CreateStories)
-	mux.HandleFunc("/api/videos", handlers.GetVedioHandler)
-
+	mux.HandleFunc("/api/Getstories", handlers.GetStories) // dart
+	mux.HandleFunc("/api/Createstories", handlers.CreateStories) // dart
+	mux.HandleFunc("/api/videos", handlers.GetVideoHandler) 	 // dart
+ 
 	// ======= Notifications =======
 	mux.HandleFunc("/notifcation", handlers.Notifications)
 	mux.HandleFunc("/api/clearNotifications", handlers.ClearNotifications)
