@@ -25,7 +25,7 @@ func Routes() http.Handler {
 	mux.HandleFunc("/api/me", handlers.MeHandler) // dart
 	mux.HandleFunc("/api/profile", handlers.ProfileHandler)
 	mux.HandleFunc("/api/searchUser", handlers.SearchUserHandler) // dart
-	mux.HandleFunc("/api/GetUsersHandler", handlers.GetUsersHandler)
+	mux.HandleFunc("/api/GetUsersHandler", handlers.GetUsersHandler) // dart
 
 	// ======= Followers / Following =======
 	mux.HandleFunc("/api/followers/", handlers.FollowersHandler)
@@ -70,7 +70,7 @@ func Routes() http.Handler {
 	mux.HandleFunc("/group/invitation/{id}", handlers.GroupInvitationRequest)
 	mux.HandleFunc("/group/addPost/{id}", handlers.CreatePostGroup)
 	mux.HandleFunc("/group/fetchPosts/{id}", handlers.GetAllPostsGroup)
-	mux.HandleFunc("/group/fetchPost/{id}", handlers.GetPostGroup)
+	//mux.HandleFunc("/group/fetchPost/{id}", handlers.GetPostGroup)
 	mux.HandleFunc("/group/addComment", handlers.CreateCommentGroup)
 	mux.HandleFunc("/group/fetchComments", handlers.GetCommentGroup)
 	mux.HandleFunc("/group/like/{id}/{groupId}", handlers.LikesGroup)
@@ -81,7 +81,7 @@ func Routes() http.Handler {
 
 	// ======= Events =======
 	mux.HandleFunc("/api/getEvents/", handlers.GetEvents)
-	mux.HandleFunc("/api/createEvent/", handlers.CreateEvent)
+	mux.HandleFunc("/api/createEvent/", handlers.CreateEvent) // dart
 	mux.HandleFunc("/api/event/action/", handlers.EventAction)
 	mux.HandleFunc("/api/myevents", handlers.MyEavents)
 

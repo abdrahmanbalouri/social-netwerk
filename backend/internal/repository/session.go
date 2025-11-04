@@ -2,6 +2,7 @@ package repository
 
 import (
 	"database/sql"
+	"fmt"
 	"time"
 )
 
@@ -37,6 +38,7 @@ func GetSession(db *sql.DB, token string) (*Session, error) {
 
 // DeleteSession deletes a session by token
 func DeleteSession(db *sql.DB, token string) error {
-	_, err := db.Exec("DELETE FROM sessions WHERE token=?", token)
+	mllm, err := db.Exec("DELETE FROM sessions WHERE token=?", token)
+	fmt.Println(mllm)
 	return err
 }
