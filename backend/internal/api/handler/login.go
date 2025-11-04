@@ -6,7 +6,7 @@ import (
 
 	"social-network/internal/helper"
 	"social-network/internal/repository"
-	"social-network/internal/repository/logindata"
+	"social-network/internal/repository/login"
 	"social-network/internal/utils"
 )
 

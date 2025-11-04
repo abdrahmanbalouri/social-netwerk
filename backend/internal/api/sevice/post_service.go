@@ -13,6 +13,7 @@ import (
 
 	"github.com/google/uuid"
 )
+
 type PostResponse struct {
 	ID            string      `json:"id"`
 	UserID        string      `json:"user_id"`
@@ -30,23 +31,25 @@ type PostResponse struct {
 	LikedByUser   bool        `json:"liked_by_user"`
 	CommentsCount int         `json:"comments_count"`
 }
+
 // maxFileSize = 1 * 1024 * 1024 * 1024 // 1GB
 func CreatePost(userID, title, content, visibility, allowedUsers string, fileHeader io.ReadCloser, filename string) (string, error) {
 	// Validate title
-	if  len(title) > 20 {
+	if len(title) > 20 {
 		return "", errors.New("title must be between 2 and 20 characters")
 	}
 
 	var allowed []string
 	if visibility == "private" {
-		allowed = strings.Split(allowedUsers, ",")
-		if len(allowed) < 1 {
-			return "", errors.New("allowed users must be provided for private posts")
+		if len(allowedUsers) == 2 {
+			return "", errors.New("at least one allowed user must be specified for private posts")
 		}
+		allowed = strings.Split(allowedUsers, ",")
+
 	}
 
 	// Handle image upload
-	var imagePath string
+	imagePath := ""
 	if fileHeader != nil && filename != "" {
 		defer fileHeader.Close()
 		ext := strings.ToLower(filepath.Ext(filename))
@@ -138,6 +141,7 @@ func FetchPostsByUser(db *sql.DB, authUserID, userID string, offset, limit int) 
 	}
 	return FormatPosts(posts), nil
 }
+
 func FetchPost(db *sql.DB, postID, authUserID string) (PostResponse, error) {
 	postDB, err := repository.GetPostByID(db, postID, authUserID)
 	if err != nil {
@@ -158,10 +162,11 @@ func FetchPost(db *sql.DB, postID, authUserID string) (PostResponse, error) {
 		Privacy:       postDB.Privacy,
 		Profile:       nilIfEmpty(postDB.Profile),
 		LikeCount:     postDB.LikeCount,
-		LikedByUser:   postDB.LikedByUser ,
+		LikedByUser:   postDB.LikedByUser,
 		CommentsCount: postDB.CommentsCount,
 	}, nil
 }
+
 func FetchVideoPosts(authUserID string, db *sql.DB) ([]map[string]interface{}, error) {
 	posts, err := repository.GetVideoPosts(db, authUserID)
 	if err != nil {
