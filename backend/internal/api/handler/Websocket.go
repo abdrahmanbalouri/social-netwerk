@@ -118,7 +118,7 @@ func Loop(conn *websocket.Conn, currentUserID string) {
 		}
 
 		var first_name, last_name string
-		err := repository.Db.QueryRow(`SELECT first_name , last_name FROM users WHERE id = ?`, currentUserID).Scan(&first_name, last_name)
+		err := repository.Db.QueryRow(`SELECT first_name , last_name FROM users WHERE id = ?`, currentUserID).Scan(&first_name, &last_name)
 		if err != nil {
 			log.Println("DB error getting sender first_name && last_name:", err)
 			first_name = "Unknown"
