@@ -43,6 +43,7 @@ func CreateCommentHandler(w http.ResponseWriter, r *http.Request) {
 			"size":     header.Size,
 		}
 	}
+	fmt.Println(mediaFileHeader["size"])
 
 	commentID, mediaPath, err := service.CreateComment(userID, postID, content, whatis, groupID, mediaFileHeader)
 	if err != nil {

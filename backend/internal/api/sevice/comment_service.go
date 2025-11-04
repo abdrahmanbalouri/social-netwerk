@@ -14,8 +14,8 @@ import (
 	"github.com/google/uuid"
 )
 
-// const maxFileSize = 1 * 1024 * 1024 * 1024 // 1 GB
 func CreateComment(userID, postID, content, whatis, groupID string, mediaFileHeader map[string]interface{}) (string, string, error) {
+	const maxFileSize = 1 * 1024 * 1024 * 1024 // 1 GB
 	if postID == "" {
 		return "", "", errors.New("missing post ID")
 	}
@@ -37,6 +37,11 @@ func CreateComment(userID, postID, content, whatis, groupID string, mediaFileHea
 
 	// Handle media upload
 	var mediaPath string
+	size := mediaFileHeader["size"].(int64)
+	if size >= maxFileSize {
+		return "", "", errors.New("size of file bigg")
+	}
+
 	if mediaFileHeader != nil {
 		file := mediaFileHeader["file"].(io.Reader)
 		filename := mediaFileHeader["filename"].(string)
