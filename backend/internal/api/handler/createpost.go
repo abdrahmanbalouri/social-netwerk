@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"strings"
 
-	service "social-network/internal/api/sevice"
+	service "social-network/internal/api/service"
 	"social-network/internal/helper"
 	"social-network/internal/repository/middleware"
 )
