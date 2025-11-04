@@ -9,6 +9,7 @@ import (
 	"path/filepath"
 	"strings"
 
+	"social-network/internal/helper"
 	"social-network/internal/repository"
 
 	"github.com/google/uuid"
@@ -143,6 +144,10 @@ func FetchPostsByUser(db *sql.DB, authUserID, userID string, offset, limit int) 
 }
 
 func FetchPost(db *sql.DB, postID, authUserID string) (PostResponse, error) {
+	ok, err := helper.Canshowdata(authUserID, postID)
+	if !ok {
+		return PostResponse{}, err
+	}
 	postDB, err := repository.GetPostByID(db, postID, authUserID)
 	if err != nil {
 		return PostResponse{}, err
