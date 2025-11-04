@@ -40,3 +40,22 @@ func FetchCommentsGroup(db *sql.DB, postID string, offset int) ([]CommentRepo, e
 
 	return comments, nil
 }
+func GetCommentByIDlast(db *sql.DB, commentId string) (*CommentRepo, error) {
+    row := db.QueryRow(`
+        SELECT 
+            c.id, c.content, c.created_at,
+            u.first_name, u.last_name, c.media_path
+        FROM comments_groups c
+        JOIN users u ON c.user_id = u.id
+        WHERE c.id = ?
+    `, commentId)
+
+    var comment CommentRepo
+    err := row.Scan(&comment.ID, &comment.Content, &comment.CreatedAt,
+        &comment.FirstName, &comment.LastName, &comment.MediaPath)
+    if err != nil {
+        return nil, err
+    }
+
+    return &comment, nil
+}
