@@ -2,14 +2,14 @@ package service
 
 import (
 	"errors"
-	"time"
-
 	"social-network/internal/repository"
+	"social-network/internal/repository/model"
+	"time"
 )
 
 func CreateGroupEvent(userID, groupID, title, description, dateTimeStr string) (int64, error) {
 	// Validate user in group
-	inGroup, err := repository.CheckUserInGroup(repository.Db, userID, groupID)
+	inGroup, err := model.CheckUserInGroup(repository.Db, userID, groupID)
 	if err != nil {
 		return 0, err
 	}
@@ -28,7 +28,7 @@ func CreateGroupEvent(userID, groupID, title, description, dateTimeStr string) (
 		return 0, errors.New("event date and time must be in the future")
 	}
 
-	event := repository.Event{
+	event := model.Event{
 		GroupID:     groupID,
 		Title:       title,
 		Description: description,
@@ -36,7 +36,7 @@ func CreateGroupEvent(userID, groupID, title, description, dateTimeStr string) (
 	}
 
 	// Insert into DB
-	eventID, err := repository.InsertEvent(repository.Db, event)
+	eventID, err := model.InsertEvent(repository.Db, event)
 	if err != nil {
 		return 0, err
 	}

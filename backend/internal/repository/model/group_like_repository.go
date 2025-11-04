@@ -1,12 +1,13 @@
-package repository
+package model
 
 import (
+	"social-network/internal/repository"
 	"time"
 )
 
 func IsUserInGroup(userID, groupID string) (bool, error) {
 	var isMember bool
-	err := Db.QueryRow(`
+	err := repository.Db.QueryRow(`
 		SELECT EXISTS(
 			SELECT 1 FROM group_members gm WHERE gm.user_id = ? AND gm.group_id = ?
 		)
@@ -16,13 +17,13 @@ func IsUserInGroup(userID, groupID string) (bool, error) {
 
 func DoesPostExistInGroup(postID, groupID string) (bool, error) {
 	var exists bool
-	err := Db.QueryRow(`SELECT EXISTS(SELECT 1 FROM group_posts WHERE id = ? AND group_id = ?)`, postID, groupID).Scan(&exists)
+	err := repository.Db.QueryRow(`SELECT EXISTS(SELECT 1 FROM group_posts WHERE id = ? AND group_id = ?)`, postID, groupID).Scan(&exists)
 	return exists, err
 }
 
 func GetExistingLikeGroup(userID, postID string) (string, error) {
 	var likeID string
-	err := Db.QueryRow(`
+	err := repository.Db.QueryRow(`
 		SELECT id FROM likesgroups
 		WHERE user_id = ? AND liked_item_id = ? AND liked_item_type = 'post'
 	`, userID, postID).Scan(&likeID)
@@ -30,12 +31,12 @@ func GetExistingLikeGroup(userID, postID string) (string, error) {
 }
 
 func RemoveLikeGroup(likeID string) error {
-	_, err := Db.Exec(`DELETE FROM likesgroups WHERE id = ?`, likeID)
+	_, err := repository.Db.Exec(`DELETE FROM likesgroups WHERE id = ?`, likeID)
 	return err
 }
 
 func AddLikeGroup(likeID, userID, postID string, createdAt time.Time) error {
-	_, err := Db.Exec(`
+	_, err := repository.Db.Exec(`
 		INSERT INTO likesgroups (id, user_id, liked_item_id, liked_item_type, created_at)
 		VALUES (?, ?, ?, 'post', ?)
 	`, likeID, userID, postID, createdAt)

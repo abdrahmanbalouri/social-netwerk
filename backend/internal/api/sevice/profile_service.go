@@ -7,11 +7,12 @@ import (
 	"path/filepath"
 
 	"social-network/internal/repository"
+	"social-network/internal/repository/model"
 )
 
 func UpdateUserProfile(userID, displayName, privacy string, coverFile io.ReadCloser, coverName string, avatarFile io.ReadCloser, avatarName string) (string, string, error) {
 	// Fetch current files
-	oldCover, oldAvatar, err := repository.GetProfileFiles(repository.Db, userID)
+	oldCover, oldAvatar, err := model.GetProfileFiles(repository.Db, userID)
 	if err != nil {
 		return "", "", err
 	}
@@ -56,7 +57,7 @@ func UpdateUserProfile(userID, displayName, privacy string, coverFile io.ReadClo
 		avatarFilename = avatarName
 	}
 
-	profile := repository.Profile{
+	profile := model.Profile{
 		UserID:      userID,
 		DisplayName: displayName,
 		Privacy:     privacy,
@@ -64,7 +65,7 @@ func UpdateUserProfile(userID, displayName, privacy string, coverFile io.ReadClo
 		Avatar:      avatarFilename,
 	}
 
-	if err := repository.UpdateProfile(repository.Db, profile); err != nil {
+	if err := model.UpdateProfile(repository.Db, profile); err != nil {
 		return "", "", err
 	}
 

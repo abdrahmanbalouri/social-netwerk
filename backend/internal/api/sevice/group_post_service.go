@@ -12,6 +12,7 @@ import (
 
 	"social-network/internal/helper"
 	"social-network/internal/repository"
+	"social-network/internal/repository/model"
 	"social-network/internal/utils"
 
 	"github.com/google/uuid"
@@ -35,7 +36,7 @@ func CreateGroupPostService(r *http.Request, userID string) (interface{}, error)
 	description := r.FormValue("description")
 
 	// check membership
-	isMember, err := repository.CheckUserInGroup(repository.Db, userID, groupID)
+	isMember, err := model.CheckUserInGroup(repository.Db, userID, groupID)
 	if err != nil {
 		return nil, fmt.Errorf("failed to check membership: %v", err)
 	}
@@ -52,12 +53,12 @@ func CreateGroupPostService(r *http.Request, userID string) (interface{}, error)
 	postID := uuid.New().String()
 	createdAt := time.Now().UTC()
 
-	err = repository.InsertGroupPost(postID, userID, groupID, title, description, imagePath, createdAt)
+	err = model.InsertGroupPost(postID, userID, groupID, title, description, imagePath, createdAt)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create post: %v", err)
 	}
 
-	newPost, err := repository.GetGroupPostByID1(postID, userID)
+	newPost, err := model.GetGroupPostByID1(postID, userID)
 	if err != nil {
 		return nil, fmt.Errorf("post created but failed to fetch it: %v", err)
 	}
@@ -107,7 +108,7 @@ func GetAllGroupPostsService(r *http.Request, userID string) ([]utils.GroupPost,
 	}
 	groupID := parts[3]
 
-	isMember, err := repository.CheckUserInGroup(repository.Db, userID, groupID)
+	isMember, err := model.CheckUserInGroup(repository.Db, userID, groupID)
 	if err != nil {
 		return nil, fmt.Errorf("failed to check group membership")
 	}
@@ -115,7 +116,7 @@ func GetAllGroupPostsService(r *http.Request, userID string) ([]utils.GroupPost,
 		return nil, fmt.Errorf("you are not a member of this group")
 	}
 
-	posts, err := repository.GetAllGroupPosts(groupID, userID)
+	posts, err := model.GetAllGroupPosts(groupID, userID)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get group posts: %v", err)
 	}
@@ -128,7 +129,7 @@ func GetGroupPost(postID, userID, groupID string) (map[string]interface{}, error
 		return nil, errors.New("user not in group")
 	}
 
-	post, err := repository.GetGroupPostByID(repository.Db, userID, postID)
+	post, err := model.GetGroupPostByID(repository.Db, userID, postID)
 	if err != nil {
 		return nil, err
 	}

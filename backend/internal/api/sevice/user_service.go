@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"social-network/internal/repository"
+	"social-network/internal/repository/model"
 )
 
 func SearchUsers(query string) ([]map[string]any, error) {
@@ -12,9 +13,9 @@ func SearchUsers(query string) ([]map[string]any, error) {
 		return []map[string]any{}, nil
 	}
 	search := "%" + strings.ToLower(query) + "%"
-	return repository.SearchUsersInDB(repository.Db, search)
+	return model.SearchUsersInDB(repository.Db, search)
 }
 
-func GetUsers(db *sql.DB, currentUserID string) ([]repository.User, error) {
-	return repository.FetchAllUsers(db, currentUserID)
+func GetUsers(db *sql.DB, currentUserID string) ([]model.User, error) {
+	return model.FetchAllUsers(db, currentUserID)
 }
