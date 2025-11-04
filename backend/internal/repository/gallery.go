@@ -10,7 +10,7 @@ type PostGallery struct {
 
 // GetUserGallery fetches posts for a user
 func GetUserGallery(db *sql.DB, userID string) ([]PostGallery, error) {
-	query := `SELECT image_path, title FROM posts WHERE user_id = ? ORDER BY id DESC`
+query := `SELECT image_path, title FROM posts WHERE user_id = ? AND image_path != "" ORDER BY id DESC`
 	rows, err := db.Query(query, userID)
 	if err != nil {
 		return nil, err
