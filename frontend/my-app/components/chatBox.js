@@ -129,11 +129,7 @@ export default function ChatBox({ user }) {
     setInput("");
     setShowEmojis(false);
   };
-<<<<<<< HEAD
-  id
-=======
   
->>>>>>> origin/azraji
   const addEmoji = (emoji) => {
     const cursorPos = inputRef.current.selectionStart;
     const newText = input.slice(0, cursorPos) + input.slice(cursorPos) + emoji;
