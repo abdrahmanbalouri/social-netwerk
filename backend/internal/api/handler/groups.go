@@ -21,6 +21,7 @@ type Group struct {
 	ID          string
 	Title       string
 	Description string
+	MemberCount int
 }
 
 func CreateGroupHandler(w http.ResponseWriter, r *http.Request) {
@@ -32,7 +33,6 @@ func CreateGroupHandler(w http.ResponseWriter, r *http.Request) {
 
 	var newGroup GroupRequest
 	if err := json.NewDecoder(r.Body).Decode(&newGroup); err != nil {
-		
 		helper.RespondWithError(w, http.StatusBadRequest, "Invalid request format")
 		return
 	}
@@ -136,7 +136,6 @@ func CreateGroupHandler(w http.ResponseWriter, r *http.Request) {
 
 	err = repository.Db.QueryRow(queryGetGroup, grpID).Scan(
 		&createdGroup.ID, &createdGroup.Title, &createdGroup.Description,
-		
 	)
 	if err != nil {
 		fmt.Println("Failed to fetch created group:", err)
@@ -175,12 +174,17 @@ func GetAllGroups(w http.ResponseWriter, r *http.Request) {
 	query := `SELECT 
     g.id, 
     g.title, 
-    g.description
-	FROM groups g
-	WHERE g.id NOT IN (
+    g.description,
+    (
+        SELECT COUNT(*)
+        FROM group_members gm2
+        WHERE gm2.group_id = g.id
+    ) AS member_count
+FROM groups g
+WHERE g.id NOT IN (
     SELECT gm.group_id 
     FROM group_members gm 
-    WHERE gm.user_id = ? 
+    WHERE gm.user_id = ?
 );`
 	rows, err := repository.Db.Query(query, userID)
 	if err != nil {
@@ -192,7 +196,7 @@ func GetAllGroups(w http.ResponseWriter, r *http.Request) {
 	var GroupJson []Group
 	for rows.Next() {
 		var g Group
-		err := rows.Scan(&g.ID, &g.Title, &g.Description)
+		err := rows.Scan(&g.ID, &g.Title, &g.Description, &g.MemberCount)
 		if err != nil {
 			fmt.Println("Failed to get group infos : ", err)
 			helper.RespondWithError(w, http.StatusInternalServerError, "Failed to get group infos")
@@ -230,14 +234,19 @@ func GetMyGroups(w http.ResponseWriter, r *http.Request) {
 
 	// get all groups
 	query := `SELECT 
-    g.id, 
-    g.title, 
-    g.description
+    g.id,
+    g.title,
+    g.description,
+    (
+		SELECT COUNT(*)
+		FROM group_members gm2
+		WHERE gm2.group_id = g.id
+    ) AS member_count
 	FROM groups g
 	WHERE g.id IN (
-    SELECT gm.group_id 
-    FROM group_members gm 
-    WHERE gm.user_id = ? 
+		SELECT gm.group_id
+		FROM group_members gm
+		WHERE gm.user_id = ?
 );`
 	rows, err := repository.Db.Query(query, userID)
 	if err != nil {
@@ -249,7 +258,7 @@ func GetMyGroups(w http.ResponseWriter, r *http.Request) {
 	var GroupJson []Group
 	for rows.Next() {
 		var g Group
-		err := rows.Scan(&g.ID, &g.Title, &g.Description)
+		err := rows.Scan(&g.ID, &g.Title, &g.Description, &g.MemberCount)
 		if err != nil {
 			fmt.Println("Failed to get group infos (my groups handler): ", err)
 			helper.RespondWithError(w, http.StatusInternalServerError, "Failed to get group infos")

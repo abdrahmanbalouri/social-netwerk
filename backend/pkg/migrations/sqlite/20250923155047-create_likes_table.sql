@@ -7,6 +7,7 @@ CREATE TABLE IF NOT EXISTS likes (
     liked_item_type TEXT NOT NULL,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users(id)
+    FOREIGN KEY (liked_item_id) REFERENCES posts(id)
 );
 
 -- +migrate Down

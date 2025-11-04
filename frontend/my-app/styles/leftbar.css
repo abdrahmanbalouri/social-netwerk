@@ -193,6 +193,7 @@ button[aria-label="Logout"] i {
 @media (max-width: 768px) {
   .leftBar {
     display: none;
+    position: fixed;
   }
 
 }

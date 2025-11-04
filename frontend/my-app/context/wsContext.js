@@ -4,6 +4,8 @@ import { createContext, useContext, useEffect, useRef, useState } from "react";
 const WSContext = createContext(null);
 
 export function WSProvider({ children }) {
+  console.log(121211212121212121212121);
+  
   const [connected, setConnected] = useState(false);
   const ws = useRef(null);
   const listeners = useRef({});
@@ -43,7 +45,6 @@ export function WSProvider({ children }) {
       socket.onmessage = (event) => {
         try {
           const data = JSON.parse(event.data);
-          console.log("📩 Received:", data);
           // 🔥 Trigger any custom listeners
           if (listeners.current[data.type]) {
 

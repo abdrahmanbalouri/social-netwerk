@@ -39,7 +39,7 @@ const Stories = () => {
         //showToast(response.error);
         return
       }
-       
+
       setStories(Array.isArray(response) ? response : []);
     } catch (err) {    
       //showToast("Failed to load stories");
@@ -75,18 +75,31 @@ const Stories = () => {
 
   const groupedStories = groupStoriesByUser();
   
-   
-  const activeGrouped = groupedStories
-    .map(group => ({
-      ...group,
-      stories: group.stories.filter(s => !s.expires_at || new Date(s.expires_at) > new Date()),
-    }))
-    .filter(group => group.stories.length > 0);
+  
 
+const activeGrouped = groupedStories
+  .map(group => ({
+    ...group,
+     ...stories,
+  }))
+  .filter(group => group.stories.length > 0)
+  .sort((a, b) => {
+    if (!Profile?.id) return 0;
+    const aIsMine = a.user?.id === Profile.id;
+    const bIsMine = b.user?.id === Profile.id;
+
+    if (aIsMine && !bIsMine) return -1; 
+    if (!aIsMine && bIsMine) return 1;  
+    return 0;
+  });
   const allGroups = [...activeGrouped];
+  console.log(allGroups);
+  
+
 
   const myGroup = allGroups.find(g => g.user.id === Profile?.id);
   const hasMyStories = myGroup && myGroup.stories.length > 0;
+  
 
   const otherGroups = allGroups.filter(g => g.user.id !== Profile?.id);
 

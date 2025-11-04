@@ -44,8 +44,8 @@ export default function Gallery() {
           setImages(images);
           return
         }
-        if (data.length > 0) {
-          setImgIndex(`url(/${data[0].imagePath})`);
+        if (!data ||  data.length > 0) {
+          //setImgIndex(`url(/${data[0].imagePath})`);
         }
       })
       .catch((err) => console.error(err));
