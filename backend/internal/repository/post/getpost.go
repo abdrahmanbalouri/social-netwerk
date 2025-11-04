@@ -107,7 +107,6 @@ LIMIT ? OFFSET ?;
 			"created_at":     createdAt,
 			"first_name":         first_name,
 			"last_name":         last_name,
-
 			"profile":        NilIfEmpty(profile),
 			"like":           likeCount,
 			"liked_by_user":  likedByUser > 0,

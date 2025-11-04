@@ -1,9 +1,10 @@
 "use client"
 import { useState, useEffect, useRef } from "react"
-import { useRouter } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import "../styles/comment.css"
 
-export default function Comment({ comments, isOpen, onClose, postId, onCommentChange, lodinggg, ongetcomment, post, showToast }) {
+
+export default function Comment({ comments, isOpen, onClose, postId, onCommentChange, lodinggg, ongetcomment, post, showToast,ID }) {
   const [commentContent, setCommentContent] = useState("")
   const [selectedFile, setSelectedFile] = useState(null)
   const [loading, setLoading] = useState(false)
@@ -17,6 +18,10 @@ export default function Comment({ comments, isOpen, onClose, postId, onCommentCh
   const emojiRef = useRef(null)
   const textareaRef = useRef(null)
   const router = useRouter()
+  console.log(12121);
+  
+
+
 
   // Emojis organisés par catégories
   const emojiCategories = {
@@ -151,7 +156,10 @@ export default function Comment({ comments, isOpen, onClose, postId, onCommentCh
 
   async function handlePostComment(e) {
     e.preventDefault()
-    if (!commentContent.trim() && !selectedFile) return
+    if (!commentContent.trim() && !selectedFile){
+      showToast("Please enter a comment or select a file.")
+      return
+    }
 
     try {
       setLoading(true)
@@ -161,15 +169,18 @@ export default function Comment({ comments, isOpen, onClose, postId, onCommentCh
       if (selectedFile) {
         formData.append("media", selectedFile)
       }
+      formData.append("whatis",  window.location.href.split('/')[3])
+      
+      formData.append("groupId", ID)
 
-      const response = await fetch("http://localhost:8080/api/createcomment", {
+      const response = await fetch(`http://localhost:8080/api/createcomment`, {
         method: "POST",
         credentials: "include",
         body: formData,
       })
 
 
-      const res = await response.json()
+      const res = await response.json()      
       if (res.error) {
         if (res.error == "Unauthorized") {
           router.push("/login");

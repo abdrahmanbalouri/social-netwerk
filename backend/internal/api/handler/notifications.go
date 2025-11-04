@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"encoding/json"
-	"fmt"
 	"log"
 	"net/http"
 
@@ -70,7 +69,6 @@ func ClearNotifications(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Unauthorized", http.StatusUnauthorized)
 		return
 	}
-	fmt.Println("id", id)
 	_, err := repository.Db.Exec(`
 		DELETE FROM notifications WHERE receiver_id = ?
 	`, id)

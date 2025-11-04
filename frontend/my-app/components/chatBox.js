@@ -1,5 +1,5 @@
 "use client";
-import { useState, useRef, useEffect, use } from "react";
+import { useState, useRef, useEffect } from "react";
 import AddReactionIcon from "@mui/icons-material/AddReaction";
 import SendIcon from "@mui/icons-material/Send";
 import Link from "next/link";
@@ -129,7 +129,11 @@ export default function ChatBox({ user }) {
     setInput("");
     setShowEmojis(false);
   };
+<<<<<<< HEAD
   id
+=======
+  
+>>>>>>> origin/azraji
   const addEmoji = (emoji) => {
     const cursorPos = inputRef.current.selectionStart;
     const newText = input.slice(0, cursorPos) + input.slice(cursorPos) + emoji;

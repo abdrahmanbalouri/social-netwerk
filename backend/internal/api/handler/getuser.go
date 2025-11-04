@@ -3,43 +3,27 @@ package handlers
 import (
 	"net/http"
 
+	service "social-network/internal/api/sevice"
 	"social-network/internal/helper"
 	"social-network/internal/repository"
-	"social-network/internal/utils"
 )
 
 func GetUsersHandler(w http.ResponseWriter, r *http.Request) {
-	if r.Method != "GET" {
+	if r.Method != http.MethodGet {
 		helper.RespondWithError(w, http.StatusMethodNotAllowed, "Method Not Allowed")
 		return
 	}
-	userID, err := helper.AuthenticateUser(r)
+
+	currentUserID, err := helper.AuthenticateUser(r)
 	if err != nil {
 		helper.RespondWithError(w, http.StatusUnauthorized, "Authentication required")
 		return
 	}
-	rows, err := repository.Db.Query("SELECT id, first_name , last_name, image  FROM users")
+
+	users, err := service.GetUsers(repository.Db, currentUserID)
 	if err != nil {
 		helper.RespondWithError(w, http.StatusInternalServerError, "Failed to fetch users")
 		return
-	}
-	defer rows.Close()
-
-	var users []struct {
-		utils.User
-	}
-	for rows.Next() {
-		var user struct {
-			utils.User
-		}
-		if err := rows.Scan(&user.ID, &user.First_name , &user.Last_name, &user.Image); err != nil {
-			helper.RespondWithError(w, http.StatusInternalServerError, "Failed to process users")
-			return
-		}
-		if user.ID == userID {
-			continue
-		}
-		users = append(users, user)
 	}
 
 	helper.RespondWithJSON(w, http.StatusOK, users)
