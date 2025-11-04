@@ -107,14 +107,13 @@ export default function RightBar() {
 
 
 
-        if (!res.ok) {
-          throw new Error("Failed to fetch posts");
+        if (res.ok) {
+          const data = await res.json();
+          setFollowRequest(data);
         }
-        const data = await res.json();
 
 
 
-        setFollowRequest(data);
       } catch (err) {
         console.error(err);
       }

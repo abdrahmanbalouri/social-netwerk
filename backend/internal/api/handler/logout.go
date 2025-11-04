@@ -4,7 +4,7 @@ import (
 	"net/http"
 	"time"
 
-	service "social-network/internal/api/sevice"
+	service "social-network/internal/api/service"
 )
 
 func LogoutHandler(w http.ResponseWriter, r *http.Request) {
