@@ -53,15 +53,18 @@ export default function SignupPage() {
         method: "POST",
         body: formData,
       })
+  
 
-      if (response.ok) {
-        router.push("/login")
-      } else {
-        const data = await response.text()
-        seterror(data)
-      }
+      const res = await response.json()
+      if  (res.error){
+
+        seterror(res.error)
+        return 
+      } 
+
+      router.push('/login')
+
     } catch (error) {
-      seterror(error.message)
     }
   }
 
