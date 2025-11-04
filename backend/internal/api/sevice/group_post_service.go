@@ -1,6 +1,7 @@
 package service
 
 import (
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -9,6 +10,7 @@ import (
 	"strings"
 	"time"
 
+	"social-network/internal/helper"
 	"social-network/internal/repository"
 	"social-network/internal/utils"
 
@@ -55,7 +57,7 @@ func CreateGroupPostService(r *http.Request, userID string) (interface{}, error)
 		return nil, fmt.Errorf("failed to create post: %v", err)
 	}
 
-	newPost, err := repository.GetGroupPostByID(postID, userID)
+	newPost, err := repository.GetGroupPostByID1(postID, userID)
 	if err != nil {
 		return nil, fmt.Errorf("post created but failed to fetch it: %v", err)
 	}
@@ -105,7 +107,7 @@ func GetAllGroupPostsService(r *http.Request, userID string) ([]utils.GroupPost,
 	}
 	groupID := parts[3]
 
-	isMember, err := repository.CheckUserInGroup(repository.Db,userID, groupID)
+	isMember, err := repository.CheckUserInGroup(repository.Db, userID, groupID)
 	if err != nil {
 		return nil, fmt.Errorf("failed to check group membership")
 	}
@@ -119,4 +121,32 @@ func GetAllGroupPostsService(r *http.Request, userID string) ([]utils.GroupPost,
 	}
 
 	return posts, nil
+}
+
+func GetGroupPost(postID, userID, groupID string) (map[string]interface{}, error) {
+	if err := helper.CheckUserInGroup(userID, groupID); err != nil {
+		return nil, errors.New("user not in group")
+	}
+
+	post, err := repository.GetGroupPostByID(repository.Db, userID, postID)
+	if err != nil {
+		return nil, err
+	}
+
+	postMap := map[string]interface{}{
+		"id":             post.ID,
+		"user_id":        post.UserID,
+		"title":          post.Title,
+		"content":        post.Content,
+		"image_path":     post.ImagePath,
+		"created_at":     post.CreatedAt,
+		"first_name":     post.FirstName,
+		"last_name":      post.LastName,
+		"profile":        post.Profile,
+		"like":           post.LikeCount,
+		"liked_by_user":  post.LikedByUser ,
+		"comments_count": post.CommentsCount,
+	}
+
+	return postMap, nil
 }
