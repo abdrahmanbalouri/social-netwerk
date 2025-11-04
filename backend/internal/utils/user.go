@@ -28,7 +28,7 @@ type GroupPost struct {
 	FirstName     string    `json:"first_name"`
 	LastName      string    `json:"last_name"`
 	Profile       string    `json:"profile"`
-	LikeCount     int       `json:"like_count"`
+	LikeCount     int       `json:"like"`
 	LikedByUser   bool      `json:"liked_by_user"`
 	CommentsCount int       `json:"comments_count"`
 }
