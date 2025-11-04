@@ -13,7 +13,7 @@ import (
 	"social-network/internal/repository"
 )
 
-const maxFileSize = 1 * 1024 * 1024 * 1024 // 1 GB
+//const maxFileSize = 1 * 1024 * 1024 * 1024 // 1 GB
 
 func CreateComment(userID, postID, content, whatis, groupID string, mediaFileHeader map[string]interface{}) (string, string, error) {
 	if postID == "" {
