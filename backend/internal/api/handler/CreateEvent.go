@@ -4,10 +4,9 @@ import (
 	"encoding/json"
 	"net/http"
 	"strings"
-	"time"
 
+	service "social-network/internal/api/sevice"
 	"social-network/internal/helper"
-	"social-network/internal/repository"
 )
 
 func CreateEvent(w http.ResponseWriter, r *http.Request) {
@@ -22,73 +21,37 @@ func CreateEvent(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Extract group ID from URL path
 	parts := strings.Split(r.URL.Path, "/")
 	if len(parts) < 4 {
 		helper.RespondWithError(w, http.StatusNotFound, "Group not found")
 		return
 	}
-	GrpID := parts[3]
+	groupID := parts[3]
 
-	var exists string
-
-	err = repository.Db.QueryRow(`select  user_id from group_members where user_id = ? and group_id = ? `, userID, GrpID).Scan(&exists)
-	if err != nil {
-		helper.RespondWithError(w, http.StatusUnauthorized, "Unauthorized "+err.Error())
-		return
-	}
-
-	jsonDecoder := json.NewDecoder(r.Body)
-	var event struct {
+	// Decode request body
+	var payload struct {
 		Title       string `json:"title"`
 		Description string `json:"description"`
 		DateTime    string `json:"dateTime"`
 	}
-
-	err = jsonDecoder.Decode(&event)
-	if err != nil {
+	if err := json.NewDecoder(r.Body).Decode(&payload); err != nil {
 		helper.RespondWithError(w, http.StatusBadRequest, "Invalid request payload")
 		return
 	}
 
-	dateStr := event.DateTime
-
-	layout := "2006-01-02T15:04"
-	eventTime, err := time.Parse(layout, dateStr)
+	// Call service to create event
+	eventID, err := service.CreateGroupEvent(userID, groupID, payload.Title, payload.Description, payload.DateTime)
 	if err != nil {
-		helper.RespondWithError(w, http.StatusBadRequest, "Invalid date format")
+		helper.RespondWithError(w, http.StatusBadRequest, err.Error())
 		return
 	}
 
-	currentTime := time.Now()
-
-	if eventTime.Before(currentTime) {
-		helper.RespondWithError(w, http.StatusBadRequest, "Event date and time must be in the future")
-		return
-	}
-
-	result, err := repository.Db.Exec(`INSERT INTO events (group_id, title, description, time) VALUES (?, ?, ?,?)`, GrpID, event.Title, event.Description, event.DateTime)
-	if err != nil {
-		helper.RespondWithError(w, http.StatusInternalServerError, "Database insert error"+err.Error())
-		return
-	}
-
-	eventID, err := result.LastInsertId()
-	if err != nil {
-		helper.RespondWithError(w, http.StatusInternalServerError, "Database retrieval error")
-		return
-	}
-
-	type CreatedEvent struct {
-		ID          int64  `json:"id"`
-		Title       string `json:"title"`
-		Description string `json:"description"`
-		Date        string `json:"time"`
-	}
-
-	helper.RespondWithJSON(w, http.StatusOK, CreatedEvent{
-		ID:          eventID,
-		Title:       event.Title,
-		Description: event.Description,
-		Date:        event.DateTime,
+	// Respond with created event info
+	helper.RespondWithJSON(w, http.StatusOK, map[string]interface{}{
+		"id":          eventID,
+		"title":       payload.Title,
+		"description": payload.Description,
+		"time":        payload.DateTime,
 	})
 }
