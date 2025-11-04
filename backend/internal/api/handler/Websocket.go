@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"database/sql"
+	"fmt"
 	"log"
 	"net/http"
 	"sync"
@@ -215,7 +216,6 @@ func Loop(conn *websocket.Conn, currentUserID string) {
 				continue
 			}
 
-
 			_, err = repository.Db.Exec(`
 				INSERT INTO messages (group_id, sender_id, content)
 				VALUES (?, ?, ?)
@@ -233,18 +233,18 @@ func Loop(conn *websocket.Conn, currentUserID string) {
 				"time":     time.Now().Format(time.RFC3339),
 			})
 
-		// ===============================
-		//  HANDLE FOLLOW NOTIFICATION
-		// ===============================
-		msg.MessageContent="sent a message to the group"
-		BrodcastGroupMembersNotification(msg.GroupID, currentUserID, map[string]any{
-				"type":     "notification",
-				"subType":  "group_message",
-				"from":     currentUserID,
-				"groupID":  msg.GroupID,
-				"content":  msg.MessageContent,
-				"name":     first_name + " " + last_name,
-				"time":     time.Now().Format(time.RFC3339),
+			// ===============================
+			//  HANDLE FOLLOW NOTIFICATION
+			// ===============================
+			msg.MessageContent = "sent a message to the group"
+			BrodcastGroupMembersNotification(msg.GroupID, currentUserID, map[string]any{
+				"type":    "notification",
+				"subType": "group_message",
+				"from":    currentUserID,
+				"groupID": msg.GroupID,
+				"content": msg.MessageContent,
+				"name":    first_name + " " + last_name,
+				"time":    time.Now().Format(time.RFC3339),
 			})
 
 			// ✅ Insert message direct sans check dyal follows
@@ -300,7 +300,7 @@ func Loop(conn *websocket.Conn, currentUserID string) {
 				log.Println("DB error getting user info:", err)
 				continue
 			}
-			msg.MessageContent="has invited you to join a group"
+			msg.MessageContent = "has invited you to join a group"
 			q := `INSERT INTO notifications ( sender_id, receiver_id, type, message, created_at) VALUES (?, ?, ?, ?, ?) `
 			_, _ = repository.Db.Exec(q, currentUserID, msg.ReceiverId, msg.Type, msg.MessageContent, time.Now().Unix())
 			// Notify the invited user
@@ -404,7 +404,7 @@ func sendToUser(userID string, message map[string]any) {
 	}
 }
 
-func sendToGroupMembers(groupID string, senderID string, message map[string]any)  {
+func sendToGroupMembers(groupID string, senderID string, message map[string]any) {
 	ClientsMutex.Lock()
 	defer ClientsMutex.Unlock()
 

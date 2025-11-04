@@ -62,14 +62,9 @@ export default function NotBar({ notData }) {
                             <div
                                 key={noti.id || index}
                                 className={`notification-item ${!noti.isRead ? 'unread' : ''}`}
-<<<<<<< HEAD
-                            >
-                                <div className="notification-avatar">
-=======
                                 onClick={() => router.push(`/chat/${noti.sender_id}`)}
                             >
                                 <div className="notification-avatar" >
->>>>>>> origin/azraji
                                     <img
                                         src={noti?.photo ? `/uploads/${noti.photo}` : "/assets/default.png"}
                                         alt="user avatar"
