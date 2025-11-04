@@ -228,13 +228,12 @@ func GetVideoPosts(db *sql.DB, authUserID string) ([]Post, error) {
 	for rows.Next() {
 		var p Post
 		var imagePath, profile sql.NullString
-		var likedByUser int
 
 		err := rows.Scan(
 			&p.ID, &p.UserID, &p.Title, &p.Content, &imagePath,
 			&p.Visibility, &p.CanSePerivite, &p.CreatedAt,
 			&p.FirstName, &p.LastName, &p.Privacy, &profile,
-			&p.LikeCount, &likedByUser, &p.CommentsCount,
+			&p.LikeCount, &p.LikedByUser, &p.CommentsCount,
 		)
 		if err != nil {
 			continue
@@ -242,7 +241,7 @@ func GetVideoPosts(db *sql.DB, authUserID string) ([]Post, error) {
 
 		p.ImagePath = imagePath.String
 		p.Profile = profile.String
-		p.LikedByUser = likedByUser > 0
+	
 
 		posts = append(posts, p)
 	}
