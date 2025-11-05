@@ -131,22 +131,19 @@ func SendToGroupMembers(groupID string, senderID string, message map[string]any)
 	defer ClientsMutex.Unlock()
 
 	groupMembers, err := model.GetGroupMembers(groupID)
+	fmt.Println("=======", groupMembers)
 	if err != nil {
 		log.Println("DB error getting group members:", err)
 		return
 	}
-
+	fmt.Println("======================")
+	fmt.Println(Clients)
 	for _, userID := range groupMembers {
-		if userID == senderID {
-			continue // Skip sender
-		}
-
 		conns, exists := Clients[userID]
 		if !exists {
 			continue
 		}
 		for _, conn := range conns {
-			fmt.Println("======================================================")
 			if err := conn.WriteJSON(message); err != nil {
 				log.Println("WebSocket write error:", err)
 				if err := conn.Close(); err != nil {
