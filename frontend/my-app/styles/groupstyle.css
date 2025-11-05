@@ -318,7 +318,7 @@
 .group-title {
   font-weight: 700;
   font-size: 1rem;
-  color: #1f2937;
+  color: var(--textColor);
   margin-bottom: 0.375rem;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -335,7 +335,7 @@
 }
 
 .group-description {
-  color: #4b5563;
+  color: var(--textColorSoft);
   font-size: 0.75rem;
   margin-bottom: 0.75rem;
   overflow: hidden;

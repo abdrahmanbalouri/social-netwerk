@@ -24,7 +24,6 @@ type GroupInvitation struct {
 }
 
 func GroupInvitationResponse(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("Inside group invitation response")
 	if r.Method != http.MethodPost {
 		helper.RespondWithError(w, http.StatusMethodNotAllowed, "Method not allowed")
 		return
@@ -59,7 +58,6 @@ func GroupInvitationResponse(w http.ResponseWriter, r *http.Request) {
 	// start the transaction
 	tx, err := repository.Db.Begin()
 	if err != nil {
-		fmt.Println("Failed to start database transaction :", err)
 		helper.RespondWithError(w, http.StatusInternalServerError, "Failed to start database transaction")
 		return
 	}
@@ -86,7 +84,7 @@ func GroupInvitationResponse(w http.ResponseWriter, r *http.Request) {
 		query := `INSERT INTO group_members (user_id, group_id) VALUES (?, ?)`
 		_, err = tx.Exec(query, userID, groupID)
 		if err != nil {
-			fmt.Println("error is :", err)
+
 			helper.RespondWithError(w, http.StatusInternalServerError, "error inserting the user in the group member table")
 			return
 		}
@@ -94,13 +92,13 @@ func GroupInvitationResponse(w http.ResponseWriter, r *http.Request) {
 	query := `DELETE FROM group_invitations WHERE id = ?`
 	_, err = tx.Exec(query, newResponse.InvitationID)
 	if err != nil {
-		fmt.Println("error deleting the invitation from it table")
+
 		helper.RespondWithError(w, http.StatusInternalServerError, "error deleting the invitation from it table")
 		return
 	}
 
 	if err := tx.Commit(); err != nil {
-		fmt.Println("Failed to commit transaction")
+
 		helper.RespondWithError(w, http.StatusInternalServerError, "Failed to commit transaction")
 		return
 	}
@@ -132,7 +130,6 @@ func GroupInvitationRequest(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// fmt.Println("new invitation has :", newInvitation)
 	// find the user id
 	userID, IDerr := helper.AuthenticateUser(r)
 	if IDerr != nil { //////////////////////////////////////////////////////
@@ -248,7 +245,7 @@ func GroupInvitationRequest(w http.ResponseWriter, r *http.Request) {
 		"invitation_id": invitationId,
 		"message":       "Invitation successfully processed",
 	}
-	fmt.Println("everything went good ----")
+
 	helper.RespondWithJSON(w, http.StatusOK, response)
 }
 
@@ -322,7 +319,7 @@ func FetchFriendsForGroups(w http.ResponseWriter, r *http.Request) {
 	}
 
 	userID, IDerr := helper.AuthenticateUser(r)
-	if IDerr != nil { 
+	if IDerr != nil {
 		fmt.Println("User id error is:", IDerr) ////////////////////////////////////////////////////// (khas ttl3 error akhera)
 		return
 	}
