@@ -4,3 +4,6 @@ file="./backend/pkg/migrations/sqlite/${timestamp}-${migration_name}.sql"
 touch $file
 echo -e "-- +migrate Up\n\n-- +migrate Down" > $file
 echo "Created migration file: $file"
+
+
+###  cors policy  csrf 

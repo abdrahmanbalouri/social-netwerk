@@ -11,8 +11,8 @@ import { Toaster, toast } from "sonner"
 
 
 async function handleGroupRequest(invitationId, action, joinRequest, setJoinRequest) {
+    console.log("HANDLE GROUP REQUESTS ::::::");
     try {
-        console.log("wast l handle request dyal l groups");
         const res = await fetch("http://localhost:8080/invitations/respond", {
             method: "POST",
             credentials: "include",
@@ -43,7 +43,6 @@ async function handleGroupRequest(invitationId, action, joinRequest, setJoinRequ
     }
 }
 export default function RightBarGroup({ onClick }) {
-    // console.log("INSIIIIDE RIGHT BAR GROUP ");
     const [friends, setFriends] = useState([])
     const [grpID, setGrpID] = useState('')
     // const [users, setusers] = useState([])
@@ -52,8 +51,6 @@ export default function RightBarGroup({ onClick }) {
     // const [followRequest, setFollowRequest] = useState([])
     const [joinRequest, setJoinRequest] = useState([])
     const { sendMessage, addListener, removeListener } = useWS();
-    // const [invitations, setInvitations] = useState([]);
-
     useEffect(() => {
         const handleOlineUser = (data) => {
             setonlineUsers(data.users)
@@ -102,10 +99,19 @@ export default function RightBarGroup({ onClick }) {
     //     fetchFollowRequest();
     // }, []);
 
+
+    const params = useParams();
     useEffect(() => {
-        async function fetchfriends() {
+        console.log("wst had l3ibatika");
+        setGrpID(params.id);
+        console.log("params houmaaa :", params.id);
+    }, [params.id]);
+
+    useEffect(() => {
+        const temp = params.id
+        async function fetchfriends(groupID) {
             try {
-                const res = await fetch("http://localhost:8080/api/communfriends", {
+                const res = await fetch(`http://localhost:8080/api/fetchFriendsForGroups/${groupID}`, {
                     method: "GET",
                     credentials: "include",
                 });
@@ -114,6 +120,7 @@ export default function RightBarGroup({ onClick }) {
                     setFriends([]);
                     return;
                 }
+                console.log("frieeeeeeeeeends arrrreeee L", data);
                 if (data.error == "Unauthorized") {
                     window.location.href = "/login";
                     return;
@@ -123,15 +130,10 @@ export default function RightBarGroup({ onClick }) {
                 console.error(err);
             }
         }
-        fetchfriends();
+        console.log("group iddd is :", temp);
+        fetchfriends(temp);
     }, [])
 
-    const params = useParams();
-    useEffect(() => {
-        console.log("wst had l3ibatika");
-        setGrpID(params.id);
-        console.log("params houmaaa :", params.id);
-    }, [params.id]);
 
     useEffect(() => {
         if (!grpID) return;
@@ -160,7 +162,7 @@ export default function RightBarGroup({ onClick }) {
         <div className="rightBar">
             <Toaster position="bottom-right" richColors />
             <div className="item">
-                <span>Group Invitation </span>
+                <span>Join Requests </span>
                 {!joinRequest || joinRequest.length === 0 ? (
                     <h1>no Invitation for now</h1>
                 ) : (
@@ -187,7 +189,7 @@ export default function RightBarGroup({ onClick }) {
                         className={activeTab === "friends" ? "active" : ""}
                         onClick={() => setActiveTab("friends")}
                     >
-                        Friends
+                        Invite Your Friends
                     </h3>
                 </div>
                 {activeTab === "friends" && (

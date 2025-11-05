@@ -111,9 +111,14 @@
   overflow: hidden;
 }
 
+
+
+
 .post-media-video:focus {
   outline: none;
 }
+
+
 
 .post .details .date {
   font-size: 13px;

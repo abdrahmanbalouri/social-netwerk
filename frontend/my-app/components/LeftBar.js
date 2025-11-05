@@ -25,7 +25,7 @@ export default function LeftBar({ showSidebar }) {
   }
 
   const logoutStyle = {
-    width: '100%',
+    width: '90%',
     height: '40px',
     display: 'flex',
     alignItems: 'center',
@@ -33,17 +33,20 @@ export default function LeftBar({ showSidebar }) {
     background: 'var(--color-danger, #e53e3e)',
     color: 'white',
     border: 'none',
-    padding: '8px 12px',
+    padding: '0px 12px',
     borderRadius: '8px',
     cursor: 'pointer',
     fontWeight: 600,
-    marginTop: '12px'
+    marginTop: '12px',
+    bottom: '3%',
+    position: 'absolute'
   };
 
   return (
     <div className="leftBar" id="leftBar" style={{ display: showSidebar ? 'block' : 'none' }}>
       <div className="menu">
-        <div className="user">
+        <div className="user" onClick={() => router.push("/profile/0")}
+        >
           <img
             src={Profile?.image ? `/uploads/${Profile.image}` : '/assets/default.png'}
             alt="user avatar"
@@ -80,11 +83,12 @@ export default function LeftBar({ showSidebar }) {
       </div>
       <hr />
       <div className="menu">
-        <span>Your shortcuts</span>
-        <div className="item">
-          <img src="/icon/6.png" alt="" />
-          <span>Events</span>
-        </div>
+        <Link href='/Events'>
+          <div className="item">
+            <img src="/icon/6.png" alt="" />
+            <span>Events</span>
+          </div>
+        </Link>
         <Link href='/games'>
           <div className="item">
             <img src="/icon/7.png" alt="" />
