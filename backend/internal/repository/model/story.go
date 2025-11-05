@@ -2,7 +2,6 @@ package model
 
 import (
 	"database/sql"
-	"fmt"
 	"time"
 )
 
@@ -100,7 +99,6 @@ func GetActiveStories(db *sql.DB, authUserID string) ([]Storyapi, error) {
 
 		stories = append(stories, s)
 	}
-	fmt.Println(stories, "-----")
 
 	if err := rows.Err(); err != nil {
 		return nil, err

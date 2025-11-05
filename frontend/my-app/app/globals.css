@@ -584,7 +584,7 @@ textarea {
   font-size: 14px;
   font-weight: 500;
   margin-bottom: 5px;
-  color: #333;
+  color: var(--textColor);
 }
 
 .visibility-select select {
@@ -594,6 +594,7 @@ textarea {
   border-radius: 4px;
   font-size: 16px;
   background: var(--bg);
+  color: var(--textColor);
   cursor: pointer;
 }
 
