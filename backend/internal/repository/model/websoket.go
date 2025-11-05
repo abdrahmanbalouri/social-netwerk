@@ -112,6 +112,7 @@ func GetUserInfoByID(currentUserID string) (map[string]any, error) {
 	}
 	return user, nil
 }
+
 func IsFollowingReceiver(currentUserID string, msg Message) (bool, error) {
 	var exist int
 	err := repository.Db.QueryRow(`SELECT 1 FROM followers WHERE user_id = ? AND follower_id = ?`, msg.ReceiverId, currentUserID).Scan(&exist)
@@ -121,4 +122,10 @@ func IsFollowingReceiver(currentUserID string, msg Message) (bool, error) {
 		return false, err
 	}
 	return true, nil
+}
+
+func SaveGroupInvitationNotification(currentUserID string, msg Message) error {
+	q := `INSERT INTO notifications ( sender_id, receiver_id, type, message, created_at) VALUES (?, ?, ?, ?, ?) `
+	_, err := repository.Db.Exec(q, currentUserID, msg.ReceiverId, msg.Type, msg.MessageContent, time.Now().Unix())
+	return err
 }
