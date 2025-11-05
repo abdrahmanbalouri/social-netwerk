@@ -322,7 +322,7 @@ export function AllPosts() {
       })
       .then(data => {
 
-        if (data.error) {
+        if (data?.error) {
           showToast(data.error)
           setLoading(false);
           router.push("/login");
@@ -349,7 +349,7 @@ export function AllPosts() {
       });
 
       const data = await res.json();
-      if (data.error) {
+      if (data?.error) {
         showToast(data.error)
         return
       }
