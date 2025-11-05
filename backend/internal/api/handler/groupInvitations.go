@@ -13,12 +13,14 @@ import (
 )
 
 type GroupResponse struct {
-	InvitationID string `json:"invitation_id"`
-	Response     string `json:"response"`
+	invitationType string `json:"invitation_type"`
+	InvitationID   string `json:"invitation_id"`
+	Response       string `json:"response"`
 }
 type GroupInvitation struct {
 	// GroupID      string   `json:"groupID"`
-	InvitedUsers []string `json:"invitedUsers"`
+	InvitationType string   `json:"InvitationType"`
+	InvitedUsers   []string `json:"invitedUsers"`
 }
 
 func GroupInvitationResponse(w http.ResponseWriter, r *http.Request) {
@@ -27,29 +29,37 @@ func GroupInvitationResponse(w http.ResponseWriter, r *http.Request) {
 		helper.RespondWithError(w, http.StatusMethodNotAllowed, "Method not allowed")
 		return
 	}
-
-	// check user's id using his session
-	// check if the user is invited
-	// check ht existance of the group
-	// remove it from the group_invitations table
-	// add this user to the group_members table
-
 	var newResponse GroupResponse
 	if err := json.NewDecoder(r.Body).Decode(&newResponse); err != nil {
 		helper.RespondWithError(w, http.StatusBadRequest, "Invalid request format")
 		return
 	}
+	fmt.Println("RESPONSE IS :", newResponse)
+	var userID string
 
-	// find the user id
-	userID, IDerr := helper.AuthenticateUser(r)
-	if IDerr != nil {
-		return
+	if newResponse.invitationType == "invitation" {
+		// find the user id
+		var IDerr error
+		userID, IDerr = helper.AuthenticateUser(r)
+		if IDerr != nil {
+			return
+		}
+	} else {
+		query := `SELECT user_id 
+		FROM group_invitations 
+		WHERE id = ?;`
+		fmt.Println("newResponse.InvitationID :", newResponse.InvitationID)
+		err := repository.Db.QueryRow(query, newResponse.InvitationID).Scan(&userID)
+		if err != nil {
+			fmt.Println("Error fetching user ID:", err)
+			return
+		}
 	}
 
 	// start the transaction
 	tx, err := repository.Db.Begin()
 	if err != nil {
-		fmt.Println("Failed to start database transaction")
+		fmt.Println("Failed to start database transaction :", err)
 		helper.RespondWithError(w, http.StatusInternalServerError, "Failed to start database transaction")
 		return
 	}
@@ -102,6 +112,7 @@ func GroupInvitationResponse(w http.ResponseWriter, r *http.Request) {
 }
 
 func GroupInvitationRequest(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("INSIDE GROUP INVITATION REQUEST")
 	if r.Method != http.MethodPost {
 		helper.RespondWithError(w, http.StatusMethodNotAllowed, "Method not allowed")
 		return
@@ -115,94 +126,117 @@ func GroupInvitationRequest(w http.ResponseWriter, r *http.Request) {
 	GrpId := parts[3]
 
 	var newInvitation GroupInvitation
-	// fmt.Println("Body is :", json.NewDecoder(r.Body))
 	if err := json.NewDecoder(r.Body).Decode(&newInvitation); err != nil {
+		fmt.Println("Invalid request format :", err)
 		helper.RespondWithError(w, http.StatusBadRequest, "Invalid request format")
 		return
 	}
 
-	fmt.Println("new invitation has :", newInvitation)
+	// fmt.Println("new invitation has :", newInvitation)
 	// find the user id
 	userID, IDerr := helper.AuthenticateUser(r)
 	if IDerr != nil { //////////////////////////////////////////////////////
+		fmt.Println("User id error is:", IDerr)
 		return
 	}
 
 	// start the transaction
 	tx, err := repository.Db.Begin()
 	if err != nil {
+		fmt.Println("Failed to start database transaction :", err)
 		helper.RespondWithError(w, http.StatusInternalServerError, "Failed to start database transaction")
 		return
 	}
 	defer tx.Rollback()
 
-	// check if the user is a member of that group
-	var isMember bool
-	query := `SELECT EXISTS (SELECT 1 FROM group_members WHERE user_id = ? AND group_id = ?)`
-	if err := tx.QueryRow(query, userID, GrpId).Scan(&isMember); err != nil {
-		helper.RespondWithError(w, http.StatusInternalServerError, "Failed to check group membership")
-		return
-	}
-
-	if !isMember {
-		helper.RespondWithError(w, http.StatusUnauthorized, "You are not a member of this group")
-		return
-	}
 	invitationId := helper.GenerateUUID()
-
-	for _, user := range newInvitation.InvitedUsers {
-		// get the user's id
-		/* 	var invitedUserID string
-		invitedUserID = user */
-		/* 	fmt.Println("user to invite is :", user)
-		// bdelt     nicknamme bfirst naaaame  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-		query = `SELECT id FROM users WHERE nickname = ?`
-		err = tx.QueryRow(query, user).Scan(&invitedUserID)
+	if newInvitation.InvitationType == "join" {
+		//t2akd ila kayna aslan invitation b nafs l variables wla la
+		var exists bool
+		query := `SELECT EXISTS (
+					SELECT 1 
+					FROM group_invitations
+					WHERE user_id = ? 
+						AND group_id = ? 
+						AND request_type = 'join'
+					) AS has_invitation;`
+		err = tx.QueryRow(query, userID, GrpId).Scan(&exists)
 		if err != nil {
-			if err == sql.ErrNoRows {
-				continue
-			}
-			helper.RespondWithError(w, http.StatusInternalServerError, "Error finding the invited user")
-			return
-		} */
-		// check if this user is already in the group or has a pending invit
-		var exists1, exists2 bool
-		query = `SELECT EXISTS (
-			SELECT 1 FROM group_members WHERE user_id = ? AND group_id = ?
-			UNION ALL
-			SELECT 1 FROM group_invitations WHERE user_id = ? AND group_id = ?
-			)`
-		err = tx.QueryRow(query, user, GrpId, user, GrpId).Scan(&exists1)
-		if err != nil {
-			helper.RespondWithError(w, http.StatusInternalServerError, "Error checking for existing membership or invitation")
+			fmt.Println("EROORRRRRR :", err)
+			helper.RespondWithError(w, http.StatusInternalServerError, "Database error")
 			return
 		}
-		
-		if exists1 {
-			continue
-		} else {
-			query = `SELECT EXISTS (
-						SELECT 1
-						FROM users
-						WHERE id = $1
-						);`
-			err = tx.QueryRow(query, user).Scan(&exists2)
-			if err != nil {
-				fmt.Println("Database error is :", err)
-				helper.RespondWithError(w, http.StatusInternalServerError, "Database error")
-				return
+		fmt.Println("EXIST VALUE IS :", exists)
+		if exists {
+			response := map[string]any{
+				"invitation_id": invitationId,
+				"message":       "Invitation allready exist",
 			}
-			if !exists2 {
-				helper.RespondWithError(w, http.StatusBadRequest, "The invited user isn't a user of our website")
-				return
-			}
+			helper.RespondWithJSON(w, http.StatusOK, response)
+			return
 		}
 		createdAt := time.Now().UTC()
-		query = `INSERT INTO group_invitations (id, group_id, user_id, invited_by_user_id, status, created_at) VALUES (?, ?, ?, ?, ?, ?)`
-		_, err = tx.Exec(query, invitationId, GrpId, user, userID, "pending", createdAt)
+		query = `INSERT INTO group_invitations (id, group_id, user_id, invited_by_user_id, request_type, created_at) VALUES (?, ?, ?, ?, ?, ?)`
+		_, err = tx.Exec(query, invitationId, GrpId, userID, nil, "join", createdAt)
 		if err != nil {
+			fmt.Println("User id is :", userID)
+			fmt.Println("group id is :", GrpId)
+			fmt.Println("Error sending the invitation :", err)
 			helper.RespondWithError(w, http.StatusInternalServerError, "Error sending the invitation")
 			return
+		}
+	} else {
+		// check if the user is a member of that group
+		var isMember bool
+		query := `SELECT EXISTS (SELECT 1 FROM group_members WHERE user_id = ? AND group_id = ?)`
+		if err := tx.QueryRow(query, userID, GrpId).Scan(&isMember); err != nil {
+			helper.RespondWithError(w, http.StatusInternalServerError, "Failed to check group membership")
+			return
+		}
+
+		if !isMember {
+			helper.RespondWithError(w, http.StatusUnauthorized, "You are not a member of this group")
+			return
+		}
+		for _, user := range newInvitation.InvitedUsers {
+			// check if this user is already in the group or has a pending invit
+			var exists1, exists2 bool
+			query = `SELECT EXISTS (
+				SELECT 1 FROM group_members WHERE user_id = ? AND group_id = ?
+				UNION ALL
+				SELECT 1 FROM group_invitations WHERE user_id = ? AND group_id = ?
+				)`
+			err = tx.QueryRow(query, user, GrpId, user, GrpId).Scan(&exists1)
+			if err != nil {
+				helper.RespondWithError(w, http.StatusInternalServerError, "Error checking for existing membership or invitation")
+				return
+			}
+			if exists1 {
+				continue
+			} else {
+				query = `SELECT EXISTS (
+							SELECT 1
+							FROM users
+							WHERE id = $1
+							);`
+				err = tx.QueryRow(query, user).Scan(&exists2)
+				if err != nil {
+					fmt.Println("Database error is :", err)
+					helper.RespondWithError(w, http.StatusInternalServerError, "Database error")
+					return
+				}
+				if !exists2 {
+					helper.RespondWithError(w, http.StatusBadRequest, "The invited user isn't a user of our website")
+					return
+				}
+			}
+			createdAt := time.Now().UTC()
+			query = `INSERT INTO group_invitations (id, group_id, user_id, invited_by_user_id, request_type, created_at) VALUES (?, ?, ?, ?, ?, ?)`
+			_, err = tx.Exec(query, invitationId, GrpId, user, userID, "invitation", createdAt)
+			if err != nil {
+				helper.RespondWithError(w, http.StatusInternalServerError, "Error sending the invitation")
+				return
+			}
 		}
 	}
 
@@ -216,4 +250,129 @@ func GroupInvitationRequest(w http.ResponseWriter, r *http.Request) {
 	}
 	fmt.Println("everything went good ----")
 	helper.RespondWithJSON(w, http.StatusOK, response)
+}
+
+func FetchJoinRequests(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+	UserID, err := helper.AuthenticateUser(r)
+	if err != nil {
+		http.Error(w, "Unauthorized: "+err.Error(), http.StatusUnauthorized)
+		return
+	}
+	parts := strings.Split(r.URL.Path, "/")
+	if len(parts) < 4 {
+		helper.RespondWithError(w, http.StatusNotFound, "Group not found")
+		return
+	}
+	GrpId := parts[3]
+	fmt.Println("User id is :", UserID)
+	fmt.Println("Group id is :", GrpId)
+
+	Fquery := `SELECT 
+    gi.id AS invitation_id,
+    gi.user_id,
+    u.first_name,
+    u.last_name
+	FROM group_invitations gi
+	JOIN groups g ON gi.group_id = g.id
+	JOIN users u ON gi.user_id = u.id
+	WHERE g.admin_id = ? 
+	AND gi.request_type = 'join'
+	AND g.id = ?;
+	`
+	rows, err := repository.Db.Query(Fquery, UserID, GrpId)
+	if err != nil {
+		fmt.Println("error running the Fqueery :", err)
+		http.Error(w, "Database error: "+err.Error(), http.StatusInternalServerError)
+		return
+	}
+	defer rows.Close()
+
+	type JoinRequest struct {
+		InvitationID string
+		UserID       string
+		FirstName    string
+		LastName     string
+	}
+
+	var groupeInvitation []JoinRequest
+	for rows.Next() {
+		fmt.Println("INSIDE THE ROWS LOOP")
+		var req JoinRequest
+		if err := rows.Scan(&req.InvitationID, &req.UserID, &req.FirstName, &req.LastName); err != nil {
+			fmt.Println("Errooooooor is __:", err)
+			http.Error(w, "Database error: "+err.Error(), http.StatusInternalServerError)
+			return
+		}
+		groupeInvitation = append(groupeInvitation, req)
+	}
+	fmt.Println("group invitatioooooooooooons are :", groupeInvitation)
+
+	helper.RespondWithJSON(w, http.StatusOK, groupeInvitation)
+}
+
+func FetchFriendsForGroups(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("____________________________ 1111")
+	if r.Method != http.MethodGet {
+		helper.RespondWithError(w, http.StatusMethodNotAllowed, "Method not allowed")
+		return
+	}
+
+	userID, IDerr := helper.AuthenticateUser(r)
+	if IDerr != nil { 
+		fmt.Println("User id error is:", IDerr) ////////////////////////////////////////////////////// (khas ttl3 error akhera)
+		return
+	}
+
+	parts := strings.Split(r.URL.Path, "/")
+	if len(parts) < 4 {
+		helper.RespondWithError(w, http.StatusBadRequest, "Invalid URL format")
+		return
+	}
+	GrpID := parts[3]
+
+	query := `
+		SELECT u.id, u.first_name, u.last_name, u.image
+		FROM followers f
+		JOIN users u ON u.id = f.follower_id
+		WHERE f.user_id = ?
+		AND u.id NOT IN (
+			SELECT user_id FROM group_members WHERE group_id = ?
+		)
+	`
+
+	rows, err := repository.Db.Query(query, userID, GrpID)
+	if err != nil {
+		fmt.Println("Error fetching special followers :", err)
+		http.Error(w, "Database query failed: "+err.Error(), http.StatusInternalServerError)
+		return
+	}
+	defer rows.Close()
+
+	var users []map[string]any
+	for rows.Next() {
+		var id, firstName, lastName, image string
+		if err := rows.Scan(&id, &firstName, &lastName, &image); err != nil {
+			http.Error(w, "Error reading data: "+err.Error(), http.StatusInternalServerError)
+			return
+		}
+		users = append(users, map[string]any{
+			"id":         id,
+			"first_name": firstName,
+			"last_name":  lastName,
+			"image":      image,
+		})
+	}
+
+	if err = rows.Err(); err != nil {
+		http.Error(w, "Row iteration error: "+err.Error(), http.StatusInternalServerError)
+		return
+	}
+	fmt.Println("USers are :", users)
+	fmt.Println("__________________________22222")
+
+	helper.RespondWithJSON(w, http.StatusOK, users)
 }
