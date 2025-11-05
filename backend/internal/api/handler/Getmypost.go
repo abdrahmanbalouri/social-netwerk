@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"fmt"
 	"net/http"
 	"strconv"
 	"strings"
@@ -19,8 +18,6 @@ func Getmypost(w http.ResponseWriter, r *http.Request) {
 	}
 	authUserID := parts[3]
 
-
-
 	offset, _ := strconv.Atoi(parts[4])
 	userID, err := helper.AuthenticateUser(r)
 	if err != nil {
@@ -30,14 +27,12 @@ func Getmypost(w http.ResponseWriter, r *http.Request) {
 	if authUserID == "0" {
 		authUserID = userID
 	}
-		
-	
 
-	posts, err := service.FetchPostsByUser(repository.Db , userID, authUserID, offset,10)
+	posts, err := service.FetchPostsByUser(repository.Db, userID, authUserID, offset, 10)
 	if err != nil {
 		helper.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
-	fmt.Println(posts)
+
 	helper.RespondWithJSON(w, http.StatusOK, posts)
 }

@@ -2,7 +2,6 @@ package model
 
 import (
 	"database/sql"
-	"fmt"
 	"strings"
 	"time"
 )
@@ -68,7 +67,6 @@ func GetPostsByUser(db *sql.DB, authUserID, userID string, offset, limit int) ([
 	var query string
 	var rows *sql.Rows
 	var err error
-	fmt.Println(authUserID, userID, "----------------")
 
 	if authUserID == userID {
 		query = `
@@ -156,6 +154,7 @@ func GetPostsByUser(db *sql.DB, authUserID, userID string, offset, limit int) ([
 
 	return posts, nil
 }
+
 func GetPostByID(db *sql.DB, postID, authUserID string) (Post, error) {
 	var post Post
 	query := `
@@ -241,7 +240,6 @@ func GetVideoPosts(db *sql.DB, authUserID string) ([]Post, error) {
 
 		p.ImagePath = imagePath.String
 		p.Profile = profile.String
-	
 
 		posts = append(posts, p)
 	}
