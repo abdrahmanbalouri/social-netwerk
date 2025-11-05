@@ -1,6 +1,6 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 
-export default async function middleware(request: NextRequest) {
+export default async function middleware(request) {
   const pathname = request.nextUrl.pathname;
   const API ="http://localhost:8080/";
 
@@ -49,6 +49,5 @@ export const config = {
     '/Follow/:path*',
     '/Events',
     '/Watch',
-    
   ],
 };
