@@ -80,7 +80,7 @@ func Routes() http.Handler {
 	// ======= Events =======
 	mux.HandleFunc("/api/getEvents/", handlers.GetEvents)      // dart
 	mux.HandleFunc("/api/createEvent/", handlers.CreateEvent)  // dart
-	mux.HandleFunc("/api/event/action/", handlers.EventAction) 
+	mux.HandleFunc("/api/event/action/", handlers.EventAction) // dart
 	mux.HandleFunc("/api/myevents", handlers.MyEavents)
 
 	return mux
