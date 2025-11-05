@@ -16,7 +16,6 @@ import EventCard from "../../../components/EventCard.js";
 import { useWS } from "../../../context/wsContext.js";
 import AddReactionIcon from "@mui/icons-material/AddReaction";
 import SendIcon from "@mui/icons-material/Send";
-
 import "../../../styles/chat.css";
 
 // Global sendRequest (can be moved to a service file later)
@@ -157,9 +156,8 @@ export function Events() {
       ) : (
         <div className="privacy-overlay">
 
-          <div className="backLayer" onClick={showEvent}></div>
           <EventForm ShowEventForm={ShowEventForm} closeForm={showEvent}
-            fetchEvents={fetchEvents}
+            fetchEvents={fetchEvents} showEvent={showEvent}
           />
         </div>
       )}
@@ -176,7 +174,7 @@ export function Events() {
 }
 
 
-export function EventForm({ closeForm, fetchEvents }) {
+export function EventForm({ closeForm, fetchEvents, showEvent }) {
   const params = useParams();
   const grpID = params.id;
   const [errors, setErrors] = useState(null);
@@ -255,22 +253,23 @@ export function EventForm({ closeForm, fetchEvents }) {
       <div className="create-event-card">
         <h2 className="card-title">Create Event</h2>
         <form className="event-form">
-          <div className="form-group">
+          <div className="form-grp">
             <label htmlFor="event-title">Title</label>
             <input type="text" id="event-title" placeholder="Event title..." onChange={(e) => { setTitle(e.target.value) }} />
           </div>
 
-          <div className="form-group">
+          <div className="form-grp">
             <label htmlFor="event-description">Description</label>
             <textarea id="event-description" rows="3" placeholder="Event description..." onChange={(e) => { setDescription(e.target.value) }}></textarea>
           </div>
 
-          <div className="form-group">
+          <div className="form-grp">
             <label htmlFor="event-datetime">Day/Time</label>
             <input type="datetime-local" id="event-datetime" onChange={(e) => { setDateTime(e.target.value) }} />
           </div>
           <span className="error" style={{ color: "red" }}> {errors}</span>
           <button type="submit" className="btn-create" onClick={createEvent}>Create Event</button>
+          <button type="button" className="cancel-btn" onClick={showEvent}>Cancel</button>
         </form>
         <p className="error-message" style={{ color: "red", alignItems: 'center' }}>{error}</p>
       </div>
