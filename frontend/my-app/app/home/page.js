@@ -327,7 +327,7 @@ export default function Home() {
 
 
       const data = await res.json();
-      if (data.error) {
+      if (data?.error) {
         showToast(data.error)
         return
       }
@@ -395,7 +395,7 @@ export default function Home() {
       });
 
       const data = await res.json();
-      if (data.error) {
+      if (data?.error) {
         showToast(data.error)
         return
       }
