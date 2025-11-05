@@ -1,6 +1,6 @@
 // import { Users, ChevronRight } from "lucide-react";
 
-export function GroupCard({ group, onShow }) {
+export function GroupCard({ groupID, group, onShow }) {
     return (
         <div className="group-card">
             <div className="group-content">

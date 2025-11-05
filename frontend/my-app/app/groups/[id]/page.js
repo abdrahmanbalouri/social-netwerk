@@ -95,6 +95,8 @@ export function AllPosts() {
         setComment([]);
     }
 
+    console.log("group id howaaaa :", grpID);
+
     useEffect(() => {
         if (!grpID) {
             setLoading(false);
@@ -248,11 +250,11 @@ export function AllPosts() {
 
             {loading ? (
                 <div>Loading posts...</div>
-            ) : posts.length === 0 ? (
+            ) : posts && posts.length === 0 ? (
                 <div>There is no post yet.</div>
             ) : (
                 <div className="posts-list">
-                    {posts.map((post) => (
+                    { posts && posts.map((post) => (
                         <Post
                             key={post.id}
                             post={post}
