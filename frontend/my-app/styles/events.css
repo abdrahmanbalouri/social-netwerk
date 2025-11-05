@@ -6,7 +6,7 @@
 
 /* Create Event Card */
 .create-event-card {
-  background: #2a2a2a;
+  background: var(--bg);
   border-radius: 12px;
   padding: 24px;
   margin-bottom: 24px;
@@ -20,6 +20,19 @@
   margin: 0 0 20px 0;
 }
 
+.cancel-btn {
+  flex: 1;
+  padding: 14px 24px;
+  border: none;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background: var(--bgSoft);
+  color: #64748b;
+}
+
 /* Form Styles */
 .event-form {
   display: flex;
@@ -27,43 +40,42 @@
   gap: 16px;
 }
 
-.form-group {
+.form-grp {
   display: flex;
   flex-direction: column;
   gap: 8px;
 }
 
-.form-group label {
+.form-grp label {
   color: #b0b0b0;
   font-size: 14px;
   font-weight: 500;
 }
 
-.form-group input,
-.form-group textarea {
-  background: #1a1a1a;
-  border: 1px solid #3a3a3a;
+.form-grp input,
+.form-grp textarea {
+  background: var(--bgSoft);
+  border: 1px solid var(--bgSoft);
   border-radius: 8px;
   padding: 12px;
-  color: #fff;
+  color: var(--textColor);
   font-size: 14px;
   font-family: inherit;
   transition: border-color 0.2s;
 }
 
-.form-group input:focus,
-.form-group textarea:focus {
+.form-grp input:focus,
+.form-grp textarea:focus {
   outline: none;
   border-color: #7c6bea;
 }
 
-.form-group textarea {
-  resize: vertical;
+.form-grp textarea {
   min-height: 80px;
 }
 
-.form-group input::placeholder,
-.form-group textarea::placeholder {
+.form-grp input::placeholder,
+.form-grp textarea::placeholder {
   color: #666;
 }
 
@@ -93,7 +105,7 @@
 
 /* Event Card */
 .event-card {
-  background: #2a2a2a;
+  background: var(--bg);
   border-radius: 12px;
   padding: 20px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
@@ -200,88 +212,88 @@
   .events-container {
     padding: 16px;
   }
-  
+
   .create-event-card,
   .event-card {
 
-  /* Dark mode support: when the root has .theme-dark, prefer darker backgrounds and adjusted colors */
-  .theme-dark .events-container,
-  .theme-dark .create-event-card,
-  .theme-dark .event-card,
-  .theme-dark .events-list,
-  .theme-dark .events-container .card-title {
-    background: transparent;
+    /* Dark mode support: when the root has .theme-dark, prefer darker backgrounds and adjusted colors */
+    .theme-dark .events-container,
+    .theme-dark .create-event-card,
+    .theme-dark .event-card,
+    .theme-dark .events-list,
+    .theme-dark .events-container .card-title {
+      background: transparent;
+    }
+
+    .theme-dark .events-container {
+      padding: 20px;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .theme-dark .create-event-card {
+      background: #191919;
+      color: #eaeaea;
+      border-color: #222;
+      box-shadow: 0 6px 30px rgba(0, 0, 0, 0.6);
+    }
+
+    .theme-dark .card-title {
+      color: #fff;
+    }
+
+    .theme-dark .form-grp input,
+    .theme-dark .form-grp textarea {
+      background: #0f0f0f;
+      border: 1px solid #2b2b2b;
+      color: #e6e6e6;
+    }
+
+    .theme-dark .form-grp label,
+    .theme-dark .event-description,
+    .theme-dark .event-datetime,
+    .theme-dark .stat-going,
+    .theme-dark .stat-not-going {
+      color: #bdbdbd;
+    }
+
+    .theme-dark .event-card {
+      background: #121212;
+      color: #e6e6e6;
+      box-shadow: 0 6px 24px rgba(0, 0, 0, 0.65);
+    }
+
+    .theme-dark .btn-create,
+    .theme-dark .Showbutton {
+      background: #6f5be6;
+    }
+
+    .theme-dark .btn-going {
+      background: #213221;
+      color: #8be98b;
+      border-color: #2f5a2f;
+    }
+
+    .theme-dark .btn-not-going {
+      background: #3a2424;
+      color: #f19b9b;
+      border-color: #5a3a3a;
+    }
+
+    .theme-dark .privacy-overlay {
+      background: rgba(0, 0, 0, 0.85);
+      backdrop-filter: blur(6px);
+    }
+
+    .theme-dark .backLayer {
+      background: rgba(0, 0, 0, 0.6);
+    }
   }
 
-  .theme-dark .events-container {
-    padding: 20px;
-    max-width: 800px;
-    margin: 0 auto;
-  }
-
-  .theme-dark .create-event-card {
-    background: #191919;
-    color: #eaeaea;
-    border-color: #222;
-    box-shadow: 0 6px 30px rgba(0,0,0,0.6);
-  }
-
-  .theme-dark .card-title {
-    color: #fff;
-  }
-
-  .theme-dark .form-group input,
-  .theme-dark .form-group textarea {
-    background: #0f0f0f;
-    border: 1px solid #2b2b2b;
-    color: #e6e6e6;
-  }
-
-  .theme-dark .form-group label,
-  .theme-dark .event-description,
-  .theme-dark .event-datetime,
-  .theme-dark .stat-going,
-  .theme-dark .stat-not-going {
-    color: #bdbdbd;
-  }
-
-  .theme-dark .event-card {
-    background: #121212;
-    color: #e6e6e6;
-    box-shadow: 0 6px 24px rgba(0,0,0,0.65);
-  }
-
-  .theme-dark .btn-create,
-  .theme-dark .Showbutton {
-    background: #6f5be6;
-  }
-
-  .theme-dark .btn-going {
-    background: #213221;
-    color: #8be98b;
-    border-color: #2f5a2f;
-  }
-
-  .theme-dark .btn-not-going {
-    background: #3a2424;
-    color: #f19b9b;
-    border-color: #5a3a3a;
-  }
-
-  .theme-dark .privacy-overlay {
-    background: rgba(0,0,0,0.85);
-    backdrop-filter: blur(6px);
-  }
-
-  .theme-dark .backLayer {
-    background: rgba(0,0,0,0.6);
-  }
-  }
-  
   .event-header {
     flex-direction: column;
   }
-  
+
   .event-datetime {
     align-self: flex-start;
   }
@@ -292,7 +304,6 @@
   width: 100vw;
   height: 100vh;
   position: fixed;
-  background: rgba(0, 0, 0, 0.7);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -321,7 +332,6 @@
 
 /* Create Event Card */
 .create-event-card {
-  background: #2a2a2a;
   border-radius: 12px;
   padding: 24px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
@@ -342,43 +352,42 @@
   gap: 16px;
 }
 
-.form-group {
+.form-grp {
   display: flex;
   flex-direction: column;
   gap: 8px;
 }
 
-.form-group label {
+.form-grp label {
   color: #b0b0b0;
   font-size: 14px;
   font-weight: 500;
 }
 
-.form-group input,
-.form-group textarea {
-  background: #1a1a1a;
+.form-grp input,
+.form-grp textarea {
+  background: var(--bgSoft);
   border: 1px solid #3a3a3a;
   border-radius: 8px;
   padding: 12px;
-  color: #fff;
+  color: var(--textColor);
   font-size: 14px;
   font-family: inherit;
   transition: border-color 0.2s;
 }
 
-.form-group input:focus,
-.form-group textarea:focus {
+.form-grp input:focus,
+.form-grp textarea:focus {
   outline: none;
   border-color: #7c6bea;
 }
 
-.form-group textarea {
-  resize: vertical;
+.form-grp textarea {
   min-height: 80px;
 }
 
-.form-group input::placeholder,
-.form-group textarea::placeholder {
+.form-grp input::placeholder,
+.form-grp textarea::placeholder {
   color: #666;
 }
 
@@ -518,23 +527,23 @@
   .events-container {
     width: 95%;
   }
-  
+
   .create-event-card {
     padding: 20px;
   }
-  
+
   .events-list {
     padding: 16px;
   }
-  
+
   .event-card {
     padding: 16px;
   }
-  
+
   .event-header {
     flex-direction: column;
   }
-  
+
   .event-datetime {
     align-self: flex-start;
   }
@@ -633,8 +642,8 @@
 /* Going Button - Clicked State */
 .btn-going.buttonClicked {
   border-color: #059669;
-  box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.2), 
-              0 8px 20px rgba(16, 185, 129, 0.3);
+  box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.2),
+    0 8px 20px rgba(16, 185, 129, 0.3);
   transform: translateY(-1px);
 }
 
@@ -681,8 +690,8 @@
 /* Not Going Button - Clicked State */
 .btn-not-going.buttonClicked {
   border-color: #dc2626;
-  box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.2), 
-              0 8px 20px rgba(239, 68, 68, 0.3);
+  box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.2),
+    0 8px 20px rgba(239, 68, 68, 0.3);
   transform: translateY(-1px);
 }
 
@@ -733,9 +742,11 @@
     transform: scale(0) rotate(-45deg);
     opacity: 0;
   }
+
   50% {
     transform: scale(1.2) rotate(10deg);
   }
+
   100% {
     transform: scale(1) rotate(0deg);
     opacity: 1;
@@ -752,6 +763,7 @@
     transform: scale(0);
     opacity: 0.6;
   }
+
   100% {
     transform: scale(2);
     opacity: 0;

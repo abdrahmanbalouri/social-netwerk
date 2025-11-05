@@ -120,7 +120,6 @@ textarea {
   backdrop-filter: blur(10px);
   font-family: inherit;
   color: #2d3748;
-  resize: none;
   position: relative;
   
 }
@@ -129,7 +128,6 @@ textarea {
 
 /* Textarea specific */
 textarea {
-  resize: none;
   min-height: 120px;
   font-family: inherit;
   line-height: 1.6;
