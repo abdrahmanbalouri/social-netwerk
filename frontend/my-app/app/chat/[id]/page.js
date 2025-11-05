@@ -16,7 +16,6 @@ export default function ChatPage() {
     let { id } = useParams();
     const [user, setUser] = useState(null);
     const { sendMessage } = useWS();
-    const [chat, setChat] = useState(true);
     useEffect(() => {
         async function fetchusers() {
             try {
@@ -37,7 +36,6 @@ export default function ChatPage() {
         }
         fetchusers().then((data) => {
             if (!data.includes(id) && id !== "0") {
-                setChat(false);
                 router.push("/chat/0");
             }
         });
@@ -54,7 +52,6 @@ export default function ChatPage() {
         };
         checkAuth();
     }, []);
-    useEffect(() => { }, []);
 
     useEffect(() => {
         async function fetchUser() {
@@ -82,7 +79,7 @@ export default function ChatPage() {
             <main className="content">
                 <LeftBar showSidebar={true} />
 
-                {user && chat ? (
+                {user ? (
                     <ChatBox user={user} />
                 ) : (
                     <p className="loading">Loading user...</p>
