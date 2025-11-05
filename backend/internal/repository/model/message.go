@@ -5,12 +5,17 @@ import (
 )
 
 type Message struct {
-	Content    string `json:"content"`
-	SenderId   string `json:"senderId"`
-	ReceiverId string `json:"receiverId"`
-	CreatedAt  string `json:"createdAt"`
-	First_name string `json:"first_name"`
-	Last_name  string `json:"last_name"`
+	Type           string `json:"type"`
+	SubType        string `json:"subType"`
+	SenderId       string `json:"senderId"`
+	ReceiverId     string `json:"receiverId"`
+	Content        string `json:"content"`
+	MessageContent string `json:"messageContent"`
+	CreatedAt      string `json:"createdAt"`
+	First_name     string `json:"first_name"`
+	Last_name      string `json:"last_name"`
+	GroupID        string `json:"groupID"`
+	Photo          string `json:"photo"`
 }
 
 func GetMessages(currentUserID, reciverId string) ([]Message, error) {
