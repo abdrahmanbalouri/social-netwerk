@@ -3,10 +3,11 @@ package helper
 import (
 	"database/sql"
 	"fmt"
+
 	"social-network/internal/repository"
 )
 
-func CanViewComments(userID, postID string) (bool, error) {
+func Canshowdata(userID, postID string) (bool, error) {
 	var (
 		postUserID  string
 		visibility  string

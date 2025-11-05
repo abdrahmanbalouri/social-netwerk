@@ -4,6 +4,9 @@ import "../styles/post.css"
 
 
 export default function Post({ post, onGetComments, ondolike }) {
+
+
+
   return (
     <div className="post">
       <div className="container">
@@ -49,7 +52,10 @@ export default function Post({ post, onGetComments, ondolike }) {
           </div>
           <div className="item" onClick={() => {
             onGetComments(post)
+
+
           }
+
           }>
             <i className="fa-solid fa-comment"></i> {post.comments_count || 0} Comments
           </div>

@@ -25,7 +25,7 @@ export default function ChatPage() {
                     credentials: "include",
                 });
                 if (!res.ok) {
-                    throw new Error("Failed to fetch posts");
+                    throw new Error("Failed to fetch users");
                 }
                 const data = (await res.json()) || [];
 

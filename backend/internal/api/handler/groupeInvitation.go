@@ -9,6 +9,7 @@ import (
 )
 
 func GroupeInvitation(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("WAST HAD LBATAAAAAL")
 	if r.Method != http.MethodGet {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
@@ -18,6 +19,7 @@ func GroupeInvitation(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Unauthorized: "+err.Error(), http.StatusUnauthorized)
 		return
 	}
+	fmt.Println("UserID :::::", UserID)
 
 	Fquery := `SELECT 
     g.id AS group_id,
@@ -50,7 +52,7 @@ func GroupeInvitation(w http.ResponseWriter, r *http.Request) {
 		}
 		groupeInvitation = append(groupeInvitation, groups)
 	}
-	fmt.Println("group invitatioooooooooooons are :", groupeInvitation)
+	// fmt.Println("group invitatioooooooooooons are :", groupeInvitation)
 
 	helper.RespondWithJSON(w, http.StatusOK, groupeInvitation)
 }

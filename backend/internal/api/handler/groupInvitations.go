@@ -34,6 +34,7 @@ func GroupInvitationResponse(w http.ResponseWriter, r *http.Request) {
 		helper.RespondWithError(w, http.StatusBadRequest, "Invalid request format")
 		return
 	}
+	fmt.Println("RESPONSE IS :", newResponse)
 	var userID string
 
 	if newResponse.invitationType == "invitation" {
@@ -166,7 +167,7 @@ func GroupInvitationRequest(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		fmt.Println("EXIST VALUE IS :", exists)
-		if exists{
+		if exists {
 			response := map[string]any{
 				"invitation_id": invitationId,
 				"message":       "Invitation allready exist",
@@ -274,8 +275,7 @@ func FetchJoinRequests(w http.ResponseWriter, r *http.Request) {
     gi.id AS invitation_id,
     gi.user_id,
     u.first_name,
-    u.last_name,
-    g.title AS group_name
+    u.last_name
 	FROM group_invitations gi
 	JOIN groups g ON gi.group_id = g.id
 	JOIN users u ON gi.user_id = u.id
@@ -293,7 +293,6 @@ func FetchJoinRequests(w http.ResponseWriter, r *http.Request) {
 
 	type JoinRequest struct {
 		InvitationID string
-		GrpName      string
 		UserID       string
 		FirstName    string
 		LastName     string
@@ -303,15 +302,77 @@ func FetchJoinRequests(w http.ResponseWriter, r *http.Request) {
 	for rows.Next() {
 		fmt.Println("INSIDE THE ROWS LOOP")
 		var req JoinRequest
-		if err := rows.Scan(&req.InvitationID, &req.GrpName, &req.UserID, &req.FirstName, &req.LastName); err != nil {
+		if err := rows.Scan(&req.InvitationID, &req.UserID, &req.FirstName, &req.LastName); err != nil {
 			fmt.Println("Errooooooor is __:", err)
 			http.Error(w, "Database error: "+err.Error(), http.StatusInternalServerError)
 			return
 		}
-
 		groupeInvitation = append(groupeInvitation, req)
 	}
 	fmt.Println("group invitatioooooooooooons are :", groupeInvitation)
 
 	helper.RespondWithJSON(w, http.StatusOK, groupeInvitation)
+}
+
+func FetchFriendsForGroups(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("____________________________ 1111")
+	if r.Method != http.MethodGet {
+		helper.RespondWithError(w, http.StatusMethodNotAllowed, "Method not allowed")
+		return
+	}
+
+	userID, IDerr := helper.AuthenticateUser(r)
+	if IDerr != nil { 
+		fmt.Println("User id error is:", IDerr) ////////////////////////////////////////////////////// (khas ttl3 error akhera)
+		return
+	}
+
+	parts := strings.Split(r.URL.Path, "/")
+	if len(parts) < 4 {
+		helper.RespondWithError(w, http.StatusBadRequest, "Invalid URL format")
+		return
+	}
+	GrpID := parts[3]
+
+	query := `
+		SELECT u.id, u.first_name, u.last_name, u.image
+		FROM followers f
+		JOIN users u ON u.id = f.follower_id
+		WHERE f.user_id = ?
+		AND u.id NOT IN (
+			SELECT user_id FROM group_members WHERE group_id = ?
+		)
+	`
+
+	rows, err := repository.Db.Query(query, userID, GrpID)
+	if err != nil {
+		fmt.Println("Error fetching special followers :", err)
+		http.Error(w, "Database query failed: "+err.Error(), http.StatusInternalServerError)
+		return
+	}
+	defer rows.Close()
+
+	var users []map[string]any
+	for rows.Next() {
+		var id, firstName, lastName, image string
+		if err := rows.Scan(&id, &firstName, &lastName, &image); err != nil {
+			http.Error(w, "Error reading data: "+err.Error(), http.StatusInternalServerError)
+			return
+		}
+		users = append(users, map[string]any{
+			"id":         id,
+			"first_name": firstName,
+			"last_name":  lastName,
+			"image":      image,
+		})
+	}
+
+	if err = rows.Err(); err != nil {
+		http.Error(w, "Row iteration error: "+err.Error(), http.StatusInternalServerError)
+		return
+	}
+	fmt.Println("USers are :", users)
+	fmt.Println("__________________________22222")
+
+	helper.RespondWithJSON(w, http.StatusOK, users)
 }

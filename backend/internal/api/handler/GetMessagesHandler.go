@@ -1,12 +1,11 @@
 package handlers
 
 import (
-	"encoding/json"
-	"fmt"
+	"database/sql"
 	"net/http"
 
 	"social-network/internal/helper"
-	"social-network/internal/repository"
+	"social-network/internal/repository/model"
 )
 
 func GetMessagesHandler(w http.ResponseWriter, r *http.Request) {
@@ -19,7 +18,6 @@ func GetMessagesHandler(w http.ResponseWriter, r *http.Request) {
 	// w.Header().Set("Content-Type", "application/json")
 	currentUserID, err := helper.AuthenticateUser(r)
 	if err != nil {
-		fmt.Println("Authentication error:", err)
 		http.Error(w, "Unauthorized", http.StatusUnauthorized)
 		return
 	}
@@ -29,52 +27,20 @@ func GetMessagesHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Missing receiverId parameter", http.StatusBadRequest)
 		return
 	}
-	query := `
-		SELECT m.content, m.sender_id, m.receiver_id, m.sent_at FROM messages m
-		WHERE (m.sender_id = ? AND m.receiver_id = ?) OR (m.sender_id = ? AND m.receiver_id = ?)
-		ORDER BY m.sent_at DESC
-		`
 
-	rows, err := repository.Db.Query(query, currentUserID, reciverId, reciverId, currentUserID)
-	if err != nil {
-		http.Error(w, "Database error: "+err.Error(), http.StatusInternalServerError)
+	messages, err := model.GetMessages(currentUserID, reciverId)
+	if err == sql.ErrNoRows {
+		helper.RespondWithError(w, http.StatusNotFound, "No messages found")
+		return
+	} else if err != nil {
+		helper.RespondWithError(w, http.StatusInternalServerError, "Error fetching messages: "+err.Error())
 		return
 	}
-	defer rows.Close()
-	type Message struct {
-		Content    string `json:"content"`
-		SenderId   string `json:"senderId"`
-		ReceiverId string `json:"receiverId"`
-		CreatedAt  string `json:"createdAt"`
-		First_name   string `json:"first_name"`
-		Last_name   string `json:"last_name"`
 
-	}
-
-	var messages []Message
-	for rows.Next() {
-		var msg Message
-		err = repository.Db.QueryRow("SELECT first_name , last_name FROM users WHERE id = ?", currentUserID).Scan(&msg.First_name , &msg.Last_name)
-		if err != nil {
-			http.Error(w, "Database error: "+err.Error(), http.StatusInternalServerError)
-			return
-		}
-		if err := rows.Scan(&msg.Content, &msg.SenderId, &msg.ReceiverId, &msg.CreatedAt); err != nil {
-			http.Error(w, "Database error: "+err.Error(), http.StatusInternalServerError)
-			return
-		}
-		messages = append(messages, msg)
-	}
-
-	if err := rows.Err(); err != nil {
-		http.Error(w, "Database error: "+err.Error(), http.StatusInternalServerError)
-		return
-	}
-	// Return messages as JSON
 	response := map[string]interface{}{
 		"type":     "messages",
 		"messages": messages,
 	}
 
-	json.NewEncoder(w).Encode(response)
+	helper.RespondWithJSON(w, http.StatusOK, response)
 }

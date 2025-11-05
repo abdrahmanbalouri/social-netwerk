@@ -2,21 +2,12 @@ package handlers
 
 import (
 	"encoding/json"
-	"fmt"
 	"io"
 	"net/http"
-	"os"
 
+	service "social-network/internal/api/service"
 	"social-network/internal/helper"
-	"social-network/internal/repository"
 )
-
-type ProfilePayload struct {
-	DisplayName string `json:"displayName"`
-	Privacy     string `json:"privacy"`
-	Cover       string `json:"cover"`
-	Avatar      string `json:"avatar"`
-}
 
 func Editor(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
@@ -24,78 +15,39 @@ func Editor(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err := r.ParseMultipartForm(10 << 20) // 10MB
+	userID, err := helper.AuthenticateUser(r)
 	if err != nil {
-		http.Error(w, "Error parsing form: "+err.Error(), http.StatusBadRequest)
+		http.Error(w, "Unauthorized", http.StatusUnauthorized)
 		return
 	}
 
-	userid, err := helper.AuthenticateUser(r)
+	err = r.ParseMultipartForm(10 << 20) // 10MB
 	if err != nil {
-		http.Error(w, "Unauthorized", http.StatusUnauthorized)
+		http.Error(w, "Error parsing form: "+err.Error(), http.StatusBadRequest)
 		return
 	}
 
 	displayName := r.FormValue("displayName")
 	privacy := r.FormValue("privacy")
 
-	var oldCover, oldAvatar string
-	err = repository.Db.QueryRow("SELECT cover, image FROM users WHERE id = ?", userid).Scan(&oldCover, &oldAvatar)
+	var coverFile, avatarFile io.ReadCloser
+	var coverName, avatarName string
+
+	cFile, cHeader, cErr := r.FormFile("cover")
+	if cErr == nil {
+		coverFile = cFile
+		coverName = cHeader.Filename
+	}
+
+	aFile, aHeader, aErr := r.FormFile("avatar")
+	if aErr == nil {
+		avatarFile = aFile
+		avatarName = aHeader.Filename
+	}
+
+	coverFilename, avatarFilename, err := service.UpdateUserProfile(userID, displayName, privacy, coverFile, coverName, avatarFile, avatarName)
 	if err != nil {
-		http.Error(w, "DB fetch error: "+err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	coverFile, coverHeader, err := r.FormFile("cover")
-	var coverFilename string
-	uploadDir := "../frontend/my-app/public/uploads"
-	if err == nil {
-
-		defer coverFile.Close()
-		coverPath := "../frontend/my-app/public/uploads/" + coverHeader.Filename
-		err = os.MkdirAll(uploadDir, os.ModePerm)
-		if err != nil {
-			fmt.Println("Error creating directory:", err)
-			return
-		}
-		out, _ := os.Create(coverPath)
-		defer out.Close()
-		io.Copy(out, coverFile)
-		coverFilename = coverHeader.Filename
-	} else {
-		coverFilename = oldCover
-	}
-
-	avatarFile, avatarHeader, err := r.FormFile("avatar")
-	var avatarFilename string
-	if err == nil {
-		defer avatarFile.Close()
-		avatarPath := "../frontend/my-app/public/uploads/" + avatarHeader.Filename
-		err = os.MkdirAll(uploadDir, os.ModePerm)
-		if err != nil {
-			fmt.Println("Error creating directory:", err)
-			return
-		}
-		out, _ := os.Create(avatarPath)
-		defer out.Close()
-		io.Copy(out, avatarFile)
-		avatarFilename = avatarHeader.Filename
-	} else {
-		avatarFilename = oldAvatar
-	}
-
-	_, err = repository.Db.Exec(`
-		UPDATE users
-		SET about = ?, privacy = ?, cover = ?, image = ?
-		WHERE id = ?`,
-		displayName,
-		privacy,
-		coverFilename,
-		avatarFilename,
-		userid,
-	)
-	if err != nil {
-		http.Error(w, "DB update error: "+err.Error(), http.StatusInternalServerError)
+		http.Error(w, "Failed to update profile: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
 
