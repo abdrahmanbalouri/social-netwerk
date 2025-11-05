@@ -10,7 +10,7 @@ import { useParams } from "next/navigation";
 import { Toaster, toast } from "sonner"
 
 
-async function handleGroupRequest(invitationId, action) {
+async function handleGroupRequest(invitationId, action, joinRequest, setJoinRequest) {
     try {
         console.log("wast l handle request dyal l groups");
         const res = await fetch("http://localhost:8080/invitations/respond", {
@@ -144,7 +144,7 @@ export default function RightBarGroup({ onClick }) {
                     credentials: "include",
                 });
                 const data = await res.json();
-                console.log("malkiiiii :", data);
+                // console.log("malkiiiii :", data);
                 setJoinRequest(data);
                 // setInvitations(data)
             } catch (err) {
@@ -172,7 +172,7 @@ export default function RightBarGroup({ onClick }) {
                                     <span>{req.FirstName} {req.LastName}</span>
                                 </div>
                                 <div className="buttons">
-                                    <button onClick={() => { handleGroupRequest(req.InvitationID, "accept") }} >accept</button>
+                                    <button onClick={() => { handleGroupRequest(req.InvitationID, "accept", joinRequest, setJoinRequest) }} >accept</button>
                                     <button onClick={() => { handleGroupRequest(req.InvitationID, "reject") }} >reject</button>
                                 </div>
                             </div>

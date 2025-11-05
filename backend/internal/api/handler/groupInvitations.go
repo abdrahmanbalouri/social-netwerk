@@ -58,7 +58,7 @@ func GroupInvitationResponse(w http.ResponseWriter, r *http.Request) {
 	// start the transaction
 	tx, err := repository.Db.Begin()
 	if err != nil {
-		fmt.Println("Failed to start database transaction")
+		fmt.Println("Failed to start database transaction :", err)
 		helper.RespondWithError(w, http.StatusInternalServerError, "Failed to start database transaction")
 		return
 	}

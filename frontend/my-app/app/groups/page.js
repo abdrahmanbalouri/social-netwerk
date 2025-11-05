@@ -131,8 +131,9 @@ export function MyGroups() {
   const [loading, setLoading] = useState(true);
   const router = useRouter()
 
-  const handleShow = (group) => {
-    router.push(`/groups/${group}`);
+  const handleShow = (groupId) => {
+    // console.log("l grouuup howaaaa :", group);
+    router.push(`/groups/${groupId}`);
   };
 
   useEffect(() => {
@@ -142,6 +143,7 @@ export function MyGroups() {
     })
       .then(res => res.json())
       .then(data => {
+        console.log("DATA !! ", data);
         setGroup(data || []);
         setLoading(false);
       })
@@ -150,13 +152,8 @@ export function MyGroups() {
         setLoading(false);
       });
   }, [])
-  if (!group) {
-    return (
-      <div>
-        <GroupCreationTrigger setGroup={setGroup} />
-      </div>
-    )
-  }
+  console.log("groups areeeee :", group);
+
   return (
     <div className="group-container">
       <GroupCreationTrigger
@@ -188,23 +185,23 @@ export async function createGroup(formData) {
         // console.log("result :", res);
         // console.log("result  :",await res.text());
         const groupIS = await res.json();
-        // console.log("new group is :", groupIS);
-        const SendInvitations = await fetch(
-          `http://localhost:8080/group/invitation/${groupIS.ID}`,
-          {
-            method: "POST",
-            credentials: "include",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              InvitationType: "invitation",
-              invitedUsers: formData.invitedUsers,
-            }),
-          }
-        );
+        // // console.log("new group is :", groupIS);
+        // const SendInvitations = await fetch(
+        //   `http://localhost:8080/group/invitation/${groupIS.ID}`,
+        //   {
+        //     method: "POST",
+        //     credentials: "include",
+        //     headers: {
+        //       "Content-Type": "application/json",
+        //     },
+        //     body: JSON.stringify({
+        //       InvitationType: "invitation",
+        //       invitedUsers: formData.invitedUsers,
+        //     }),
+        //   }
+        // );
 
-        console.log("SendInvitations ::", await SendInvitations.json());
+        // console.log("SendInvitations ::", await SendInvitations.json());
         return groupIS;
       })
       // .then(createdGroup => { return createdGroup })

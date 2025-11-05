@@ -24,7 +24,6 @@ type Group struct {
 }
 
 func CreateGroupHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("11111")
 	if r.Method != http.MethodPost {
 		helper.RespondWithError(w, http.StatusMethodNotAllowed, "Method not allowed")
 		return
@@ -70,7 +69,6 @@ func CreateGroupHandler(w http.ResponseWriter, r *http.Request) {
 
 	grpID := helper.GenerateUUID()
 
-	fmt.Println("22222")
 	// Insert new group
 	query1 := `INSERT INTO groups (id, title, description, admin_id) VALUES (?, ?, ?, ?)`
 	if _, err := tx.Exec(query1, grpID, newGroup.Title, newGroup.Description, adminID); err != nil {
@@ -87,22 +85,14 @@ func CreateGroupHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Process all invited users
-	for _, nickname := range newGroup.InvitedUsers {
-		var userID string
-
-		err := tx.QueryRow(`SELECT id FROM users WHERE nickname = ?`, nickname).Scan(&userID)
-		if err != nil {
-			if err == sql.ErrNoRows {
-				continue
-			}
-			helper.RespondWithError(w, http.StatusInternalServerError, "Failed to retrieve invited user's ID")
-			return
-		}
-
-		query3 := `INSERT INTO group_invitations (id, group_id, user_id, invited_by_user_id, status, created_at) VALUES (?, ?, ?, ?, ?, ?)`
+	fmt.Println("INVITED USER ARE :", newGroup.InvitedUsers)
+	for _, userID := range newGroup.InvitedUsers {
+		// var userID string
+		query3 := `INSERT INTO group_invitations (id, group_id, user_id, invited_by_user_id,request_type ,created_at) VALUES (?, ?, ?, ?, ?, ?)`
 		rowId := helper.GenerateUUID()
 		createdAt := time.Now().UTC()
-		if _, err := tx.Exec(query3, rowId, grpID, userID, adminID, "pending", createdAt); err != nil {
+		if _, err := tx.Exec(query3, rowId, grpID, userID, adminID,"invitation" ,createdAt); err != nil {
+			fmt.Println("Failed to insert invited user into group_invitation table :", err)
 			helper.RespondWithError(w, http.StatusInternalServerError, "Failed to insert invited user into group_invitation table")
 			return
 		}
@@ -114,16 +104,6 @@ func CreateGroupHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fmt.Println("333333")
-	// var createdGroup struct {
-	// 	ID          string `json:"id"`
-	// 	Title       string `json:"title"`
-	// 	Description string `json:"description"`
-	// 	AdminID     string `json:"admin_id"`
-	// 	AdminName   string `json:"admin_name"`
-	// 	CreatedAt   string `json:"created_at"`
-	// 	MemberCount int    `json:"member_count"`
-	// }
 	var createdGroup Group
 
 	queryGetGroup := `
