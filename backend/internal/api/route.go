@@ -60,7 +60,7 @@ func Routes() http.Handler {
 	// ======= Messaging / WebSocket =======
 	mux.HandleFunc("/api/getmessages", handlers.GetMessagesHandler) // dart
 	mux.HandleFunc("/api/getGroupMessages", handlers.GetGroupMessagesHandler) // dart
-	mux.HandleFunc("/ws", handlers.Websocket)
+	mux.HandleFunc("/ws", handlers.Websocket) // dart
 
 	// ======= Groups =======
 	mux.HandleFunc("/myGroups", handlers.GetMyGroups)
