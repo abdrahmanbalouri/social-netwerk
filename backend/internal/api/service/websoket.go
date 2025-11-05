@@ -1,7 +1,6 @@
 package service
 
 import (
-	"fmt"
 	"log"
 	"net/http"
 	"sync"
@@ -137,16 +136,11 @@ func SendToGroupMembers(groupID string, senderID string, message map[string]any)
 	}
 
 	for _, userID := range groupMembers {
-		if userID == senderID {
-			continue // Skip sender
-		}
-
 		conns, exists := Clients[userID]
 		if !exists {
 			continue
 		}
 		for _, conn := range conns {
-			fmt.Println("======================================================")
 			if err := conn.WriteJSON(message); err != nil {
 				log.Println("WebSocket write error:", err)
 				if err := conn.Close(); err != nil {
