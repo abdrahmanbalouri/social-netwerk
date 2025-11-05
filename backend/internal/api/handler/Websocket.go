@@ -7,7 +7,6 @@ import (
 
 	"social-network/internal/api/service"
 	"social-network/internal/helper"
-	"social-network/internal/repository"
 	"social-network/internal/repository/model"
 
 	"github.com/gorilla/websocket"
@@ -202,8 +201,11 @@ func Loop(conn *websocket.Conn, currentUserID string) {
 			} else if !exict && privaci == "public" {
 				msg.SubType = "follow"
 				msg.MessageContent = "has following you"
-				q := `INSERT INTO notifications ( sender_id, receiver_id, type, message, created_at) VALUES (?, ?, ?, ?, ?) `
-				_, _ = repository.Db.Exec(q, currentUserID, msg.ReceiverId, msg.Type, msg.MessageContent, time.Now().Unix())
+				err = model.SaveFollowNotification(currentUserID, msg)
+				if err != nil {
+					log.Println("DB error saving follow notification:", err)
+					continue
+				}
 			} else {
 				continue
 			}
