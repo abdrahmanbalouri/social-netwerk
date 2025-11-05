@@ -11,7 +11,7 @@ CREATE TABLE eventsAction_new (
 
 
 
-.DROP TABLE event_Actions;
+DROP TABLE event_Actions;
 
 ALTER TABLE eventsAction_new RENAME TO event_Actions;
 -- +migrate Down
