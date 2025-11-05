@@ -249,7 +249,6 @@ export function EventForm({ closeForm, fetchEvents, showEvent }) {
 
   return (
 
-    <div className="events-container">
       <div className="create-event-card">
         <h2 className="card-title">Create Event</h2>
         <form className="event-form">
@@ -275,7 +274,6 @@ export function EventForm({ closeForm, fetchEvents, showEvent }) {
       </div>
 
 
-    </div>
   )
 
 }
