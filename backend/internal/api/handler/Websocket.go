@@ -221,24 +221,21 @@ func Loop(conn *websocket.Conn, currentUserID string) {
 				"time":    time.Now().Format(time.RFC3339),
 			})
 		case "invite_to_group":
-			var first_name, last_name, photo string
 
-			err = repository.Db.QueryRow(`SELECT first_name , last_name, image FROM users WHERE id = ?`, currentUserID).Scan(&first_name, &last_name, &photo)
+			msg.MessageContent = "has invited you to join a group"
+			err := model.SaveGroupInvitationNotification(currentUserID, msg)
 			if err != nil {
-				log.Println("DB error getting user info:", err)
+				log.Println("DB error saving group invitation notification:", err)
 				continue
 			}
-			msg.MessageContent = "has invited you to join a group"
-			q := `INSERT INTO notifications ( sender_id, receiver_id, type, message, created_at) VALUES (?, ?, ?, ?, ?) `
-			_, _ = repository.Db.Exec(q, currentUserID, msg.ReceiverId, msg.Type, msg.MessageContent, time.Now().Unix())
 			// Notify the invited user
 			service.BrodcastNotification(msg.ReceiverId, map[string]any{
 				"type":       "notification",
 				"subType":    "group_invite",
 				"from":       currentUserID,
-				"first_name": first_name,
-				"last_name":  last_name,
-				"photo":      photo,
+				"first_name": msg.First_name,
+				"last_name":  msg.Last_name,
+				"photo":      msg.Photo,
 				"content":    msg.MessageContent,
 				"time":       time.Now().Format(time.RFC3339),
 			})
