@@ -131,13 +131,11 @@ func SendToGroupMembers(groupID string, senderID string, message map[string]any)
 	defer ClientsMutex.Unlock()
 
 	groupMembers, err := model.GetGroupMembers(groupID)
-	fmt.Println("=======", groupMembers)
 	if err != nil {
 		log.Println("DB error getting group members:", err)
 		return
 	}
-	fmt.Println("======================")
-	fmt.Println(Clients)
+
 	for _, userID := range groupMembers {
 		conns, exists := Clients[userID]
 		if !exists {
