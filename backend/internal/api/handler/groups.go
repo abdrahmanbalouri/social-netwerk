@@ -79,7 +79,7 @@ func CreateGroupHandler(w http.ResponseWriter, r *http.Request) {
 	// Insert the admin as a member of the group with is_admin set to true
 	query2 := `INSERT INTO group_members (user_id, group_id) VALUES (?, ?)`
 	if _, err := tx.Exec(query2, adminID, grpID); err != nil {
-		fmt.Println("the error is : ", err)
+
 		helper.RespondWithError(w, http.StatusInternalServerError, "Failed to insert admin into group members table")
 		return
 	}
@@ -91,7 +91,7 @@ func CreateGroupHandler(w http.ResponseWriter, r *http.Request) {
 		query3 := `INSERT INTO group_invitations (id, group_id, user_id, invited_by_user_id,request_type ,created_at) VALUES (?, ?, ?, ?, ?, ?)`
 		rowId := helper.GenerateUUID()
 		createdAt := time.Now().UTC()
-		if _, err := tx.Exec(query3, rowId, grpID, userID, adminID,"invitation" ,createdAt); err != nil {
+		if _, err := tx.Exec(query3, rowId, grpID, userID, adminID, "invitation", createdAt); err != nil {
 			fmt.Println("Failed to insert invited user into group_invitation table :", err)
 			helper.RespondWithError(w, http.StatusInternalServerError, "Failed to insert invited user into group_invitation table")
 			return
@@ -104,6 +104,15 @@ func CreateGroupHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// var createdGroup struct {
+	// 	ID          string `json:"id"`
+	// 	Title       string `json:"title"`
+	// 	Description string `json:"description"`
+	// 	AdminID     string `json:"admin_id"`
+	// 	AdminName   string `json:"admin_name"`
+	// 	CreatedAt   string `json:"created_at"`
+	// 	MemberCount int    `json:"member_count"`
+	// }
 	var createdGroup Group
 
 	queryGetGroup := `
@@ -118,11 +127,10 @@ func CreateGroupHandler(w http.ResponseWriter, r *http.Request) {
 		&createdGroup.ID, &createdGroup.Title, &createdGroup.Description,
 	)
 	if err != nil {
-		fmt.Println("Failed to fetch created group:", err)
+
 		helper.RespondWithError(w, http.StatusInternalServerError, "Group created but failed to fetch it")
 		return
 	}
-	fmt.Println("Created groups is :::", createdGroup)
 
 	helper.RespondWithJSON(w, http.StatusCreated, createdGroup)
 }
@@ -139,7 +147,7 @@ func GetAllGroups(w http.ResponseWriter, r *http.Request) {
 		helper.RespondWithError(w, http.StatusUnauthorized, "No valid session found")
 		return
 	}
-	// fmt.Println("session is :::", c)
+	//
 	var userID string
 	if err := repository.Db.QueryRow("SELECT user_id FROM sessions WHERE token = ?", c.Value).Scan(&userID); err != nil {
 		if err == sql.ErrNoRows {
@@ -168,7 +176,7 @@ WHERE g.id NOT IN (
 );`
 	rows, err := repository.Db.Query(query, userID)
 	if err != nil {
-		fmt.Println("error is :", err)
+
 		helper.RespondWithError(w, http.StatusInternalServerError, "error getting all valid groups")
 		return
 	}
@@ -178,7 +186,7 @@ WHERE g.id NOT IN (
 		var g Group
 		err := rows.Scan(&g.ID, &g.Title, &g.Description, &g.MemberCount)
 		if err != nil {
-			fmt.Println("Failed to get group infos : ", err)
+
 			helper.RespondWithError(w, http.StatusInternalServerError, "Failed to get group infos")
 			return
 		}
@@ -201,7 +209,7 @@ func GetMyGroups(w http.ResponseWriter, r *http.Request) {
 		helper.RespondWithError(w, http.StatusUnauthorized, "No valid session found")
 		return
 	}
-	// fmt.Println("session is :::", c)
+	//
 	var userID string
 	if err := repository.Db.QueryRow("SELECT user_id FROM sessions WHERE token = ?", c.Value).Scan(&userID); err != nil {
 		if err == sql.ErrNoRows {
@@ -230,7 +238,7 @@ func GetMyGroups(w http.ResponseWriter, r *http.Request) {
 );`
 	rows, err := repository.Db.Query(query, userID)
 	if err != nil {
-		fmt.Println("error is (my groups handler):", err)
+
 		helper.RespondWithError(w, http.StatusInternalServerError, "error getting all valid groups")
 		return
 	}
@@ -240,7 +248,6 @@ func GetMyGroups(w http.ResponseWriter, r *http.Request) {
 		var g Group
 		err := rows.Scan(&g.ID, &g.Title, &g.Description, &g.MemberCount)
 		if err != nil {
-			fmt.Println("Failed to get group infos (my groups handler): ", err)
 			helper.RespondWithError(w, http.StatusInternalServerError, "Failed to get group infos")
 			return
 		}

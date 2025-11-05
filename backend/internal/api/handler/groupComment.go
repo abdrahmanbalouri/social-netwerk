@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"database/sql"
-	"fmt"
 	"net/http"
 	"strings"
 	"time"
@@ -27,7 +26,6 @@ type Comment struct {
 // }
 
 func GetCommentGroup(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("INSIDE GET COMMENTS")
 	if r.Method != http.MethodGet {
 		helper.RespondWithError(w, http.StatusMethodNotAllowed, "Method not allowed")
 		return
@@ -35,7 +33,7 @@ func GetCommentGroup(w http.ResponseWriter, r *http.Request) {
 
 	parts := strings.Split(r.URL.Path, "/")
 	if len(parts) < 4 {
-		fmt.Println("POST NOT FOOUND")
+
 		helper.RespondWithError(w, http.StatusNotFound, "post not found")
 		return
 	}
@@ -43,7 +41,7 @@ func GetCommentGroup(w http.ResponseWriter, r *http.Request) {
 
 	userID, err := helper.AuthenticateUser(r)
 	if err != nil {
-		fmt.Println("Authentication failed : ", err)
+
 		helper.RespondWithError(w, http.StatusUnauthorized, "Authentication failed")
 		return
 	}
@@ -54,14 +52,12 @@ func GetCommentGroup(w http.ResponseWriter, r *http.Request) {
 	var isMember bool
 	err = repository.Db.QueryRow(query, userID, PostID).Scan(&grpID, &isMember)
 	if err == sql.ErrNoRows {
-		fmt.Println("No post found with that ID")
 		return
 	} else if err != nil {
-		fmt.Println("Database error:", err)
 		return
 	}
 	if !isMember {
-		fmt.Println("User is not a member of the group")
+
 		helper.RespondWithError(w, http.StatusUnauthorized, "User is not a member of the group")
 		return
 	}
@@ -70,7 +66,7 @@ func GetCommentGroup(w http.ResponseWriter, r *http.Request) {
 	query = `SELECT id, content, created_at FROM comments WHERE post_id = ?`
 	rows, err := repository.Db.Query(query, PostID)
 	if err != nil {
-		fmt.Println("Failed to get comments : ", err)
+
 		helper.RespondWithError(w, http.StatusInternalServerError, "Failed to get comments")
 		return
 	}
@@ -81,7 +77,7 @@ func GetCommentGroup(w http.ResponseWriter, r *http.Request) {
 		var c Comment
 		err := rows.Scan(&c.ID, &c.Content, &c.CreatedAt)
 		if err != nil {
-			fmt.Println("Failed to get comments : ", err)
+
 			helper.RespondWithError(w, http.StatusInternalServerError, "Failed to comments comments")
 			return
 		}

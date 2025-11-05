@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"fmt"
 	"net/http"
 
 	service "social-network/internal/api/service"
@@ -11,14 +10,14 @@ import (
 func MeHandler(w http.ResponseWriter, r *http.Request) {
 	c, err := r.Cookie("session")
 	if err != nil {
-		fmt.Println("laaaa")
+
 		helper.RespondWithError(w, http.StatusUnauthorized, "unauthorized")
 		return
 	}
 
 	userID, err := service.ValidateSession(c.Value)
 	if err != nil {
-		fmt.Println("kkkkkk")
+
 		helper.RespondWithError(w, http.StatusUnauthorized, "unauthorized")
 		return
 	}
@@ -30,6 +29,6 @@ func MeHandler(w http.ResponseWriter, r *http.Request) {
 		Message: "authorized",
 		UserID:  userID,
 	}
-	fmt.Println(resp)
+
 	helper.RespondWithJSON(w, http.StatusOK, resp)
 }
