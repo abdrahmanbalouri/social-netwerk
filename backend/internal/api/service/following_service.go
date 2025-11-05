@@ -2,6 +2,7 @@ package service
 
 import (
 	"errors"
+
 	"social-network/internal/repository/model"
 )
 
@@ -12,7 +13,10 @@ func GetFollowing(currentUserID, targetUserID string) ([]map[string]interface{},
 	}
 
 	// 2) Check privacy rules
-	privacy, isFollowing := model.GetPrivacyAndFollowing(currentUserID, targetUserID)
+	privacy, isFollowing, err := model.GetPrivacyAndFollowing(currentUserID, targetUserID)
+	if err != nil {
+		return nil, err
+	}
 	if privacy == "private" && isFollowing == 0 && currentUserID != targetUserID {
 		return nil, errors.New("This account is private")
 	}
