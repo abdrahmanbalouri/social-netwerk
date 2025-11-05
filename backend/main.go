@@ -5,7 +5,7 @@ import (
 	"log"
 	"net/http"
 
-	"social-network/internal/api"
+	"social-network/internal/router"
 	"social-network/internal/repository"
 	// "social-network/pkg/middlewares"
 	// "social-network/pkg/ratelimiter"
