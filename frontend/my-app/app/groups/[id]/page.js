@@ -20,18 +20,18 @@ import "../../../styles/chat.css";
 
 // Global sendRequest (can be moved to a service file later)
 async function sendRequest(invitedUserID, grpID) {
-
-  try {
-    const res = await fetch(`http://localhost:8080/group/invitation/${grpID}`, {
-      method: 'POST',
-      credentials: 'include',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        invitedUsers: [invitedUserID],
-      }),
-    });
+    try {
+        const res = await fetch(`http://localhost:8080/group/invitation/${grpID}`, {
+            method: 'POST',
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                InvitationType: "invitation",
+                invitedUsers: [invitedUserID],
+            }),
+        });
 
     const temp = await res.json();
     console.log("temp is :", temp);
@@ -46,22 +46,19 @@ async function sendRequest(invitedUserID, grpID) {
 
 // Main Page Component
 export default function GroupPage() {
-  const { darkMode } = useDarkMode();
-  const router = useRouter();
-  const params = useParams();
-  const grpID = params.id;
-  useEffect(() => {
-
-    const checkAuth = async () => {
-      const auth = await middleware();
-      if (!auth) {
-
-        router.push("/login");
-
-      }
-    }
-    checkAuth();
-  }, [grpID])
+    const { darkMode } = useDarkMode();
+    const router = useRouter();
+    const params = useParams();
+    const grpID = params.id;
+    useEffect(() => {
+        const checkAuth = async () => {
+            const auth = await middleware();
+            if (!auth) {
+                router.push("/login");
+            }
+        }
+        checkAuth();
+    }, [grpID])
 
   return (
     <div className={darkMode ? "theme-dark" : "theme-light"}>
@@ -486,20 +483,20 @@ export function AllPosts() {
         </div>
       )}
 
-      {loading ? (
-        <div>Loading posts...</div>
-      ) : posts.length === 0 ? (
-        <div>There is no post yet.</div>
-      ) : (
-        <div className="posts-list">
-          {posts.map((post) => (
-            <Post
-              key={post.id}
-              post={post}
-              onGetComments={GetComments}
-              ondolike={handleLike}
-            />
-          ))}
+            {loading ? (
+                <div>Loading posts...</div>
+            ) : posts && posts.length === 0 ? (
+                <div>There is no post yet.</div>
+            ) : (
+                <div className="posts-list">
+                    { posts && posts.map((post) => (
+                        <Post
+                            key={post.id}
+                            post={post}
+                            onGetComments={GetComments}
+                            ondolike={handleLike}
+                        />
+                    ))}
 
           <Comment
             comments={comment}

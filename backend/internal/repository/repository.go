@@ -29,6 +29,21 @@ func ApplyMigrations(db *sql.DB) error {
 		Dir: "pkg/migrations/sqlite",
 	}
 
+	_, err := db.Exec("PRAGMA foreign_keys = ON;")
+	if err != nil {
+		fmt.Errorf("failed to enable foreign keys PRAGMA: %w", err)
+		return nil
+	}
+
+	row := db.QueryRow("PRAGMA foreign_keys;")
+	var enabled int
+	err = row.Scan(&enabled)
+	if err != nil {
+		fmt.Println("Error:", err)
+	} else {
+		fmt.Println("Foreign keys enabled:", enabled)
+	}
+
 	n, err := migrate.Exec(db, "sqlite3", migrations, migrate.Up)
 	if err != nil {
 		return fmt.Errorf("error while executing the migration: %v", err)
