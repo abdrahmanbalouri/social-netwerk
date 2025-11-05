@@ -2,7 +2,7 @@
 import { useEffect, useRef, useState } from 'react';
 import Navbar from '../../../components/Navbar.js';
 import { useDarkMode } from '../../../context/darkMod.js';
-import './profile.css';
+import '../../../styles/profile.css';
 import LeftBar from '../../../components/LeftBar.js';
 import RightBar from '../../../components/RightBar.js';
 import { useParams, useRouter } from 'next/navigation.js';
@@ -158,36 +158,12 @@ export default function Profile() {
     setShowPrivacy(!showPrivacy);
   }
 
+ 
+ 
+  
 
-  useEffect(() => {
-    async function midle() {
-      try {
-        const response = await fetch("http://localhost:8080/api/me", {
-          credentials: "include",
-          method: "GET",
-        }, {});
-        if (!response.ok) {
-          router.replace("/login");
-          return null;
-        }
-      } catch (error) {
-        router.replace("/login");
-        return null;
-      }
-    }
-    midle()
-  }, [])
-  function handleUserSelect(userId) {
-    setSelectedUsers((prevSelected) =>
-      prevSelected.includes(userId)
-        ? prevSelected.filter((id) => id !== userId)
-        : [...prevSelected, userId]
-    );
-  }
   useEffect(() => {  
-    console.log(scroollhome);
-    
-    console.log(loading);
+ 
     
     const reachedBottom =
       window.innerHeight + window.scrollY >= document.body.scrollHeight - 20;
@@ -276,7 +252,7 @@ export default function Profile() {
       boleanofset.current = true
     }
     try {
-     setLoading(true);
+      setLoading(true);
       const res = await fetch(`http://localhost:8080/api/getmypost/${params.id}/${offsetpsot.current}`, {
         method: "GET",
         credentials: "include",
@@ -290,11 +266,9 @@ export default function Profile() {
 
       const data = await res.json();
       
-
-
       if (!data) {
-        return} 
-      console.log(data,"/*/**");
+        return
+      } 
       
       
       offsetpsot.current += 10
@@ -417,7 +391,7 @@ export default function Profile() {
     }
   }
 
-  async function GetComments(post) {
+   async function GetComments(post) {
     setLoadingcomment(true)
 
     try {
@@ -428,7 +402,7 @@ export default function Profile() {
         content: post.content,
         author: post.first_name + " " + post.last_name
       });
-
+      setShowComments(true);
       // Fetch comments
       const res = await fetch(`http://localhost:8080/api/Getcomments/${post.id}/${offsetcomment.current}`, {
         method: "GET",
@@ -438,24 +412,11 @@ export default function Profile() {
       if (!res.ok) {
         return false
       }
-      const data = await res.json();
-      let comments = [];
-      if (Array.isArray(data)) {
-        comments = data;
-      } else if (data && typeof data === 'object' && data.comments && Array.isArray(data.comments)) {
-        comments = data.comments;
-      } else if (data && typeof data === 'object') {
-        comments = [data];
-      }
-      comments = comments.map(comment => ({
-        id: comment.id || Math.random(),
-        author: comment.first_name + " " + comment.last_name || "Anonymous",
-        content: comment.content || comment.text || "",
-        created_at: comment.created_at || comment.createdAt || new Date().toISOString()
-      }));
-      setShowComments(true);
+      const data = await res.json() || [];
 
-      if (comments.length == 0) {
+
+
+      if (data.length == 0) {
         return false
       } else {
         offsetcomment.current += 10
@@ -463,8 +424,8 @@ export default function Profile() {
       }
 
 
-      setComment([...comment, ...comments]);
-      return comments[0].id
+      setComment([...comment, ...data]);
+      return data[0].id
 
     } catch (err) {
       return false
@@ -473,11 +434,6 @@ export default function Profile() {
       setLoadingcomment(false);
     }
   }
-
-  useEffect(() => {
-
-
-  }, [])
 
   // Refresh comments after posting a new comment
   async function refreshComments(commentID) {
@@ -508,7 +464,10 @@ export default function Profile() {
 
 
         const potsreplace = await fetchPosts(selectedPost.id)
+        console.log(posts.length);
+        
         for (let i = 0; i < posts.length; i++) {
+          
           if (posts[i].id == selectedPost.id) {
             setPosts([
               ...posts.slice(0, i),

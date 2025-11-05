@@ -36,12 +36,12 @@ func main() {
 		return
 	}
 
-	defer func() {
-		if err := recover(); err != nil {
-			db.Close()
-			log.Fatal("Error: ", err)
-		}
-	}()
+	// defer func() {
+	// 	if err := recover(); err != nil {
+	// 		db.Close()
+	// 		log.Fatal("Error: ", err)
+	// 	}
+	// }()
 
 	if err := repository.ApplyMigrations(db); err != nil {
 		panic("Migration failed: " + err.Error())

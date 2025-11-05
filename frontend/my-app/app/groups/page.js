@@ -1,14 +1,15 @@
 "use client";
 import Navbar from "../../components/Navbar.js";
 import { useEffect, useState } from "react";
-import "../../styles/groupstyle.css"
-import { useRouter, useSelectedLayoutSegments } from 'next/navigation'
-import { GroupCreationTrigger } from '../../components/CreateGroup.js';
-import { GroupsTabs } from '../../components/groupTabs.js';
-import LeftBar from '../../components/LeftBar.js';
-import RightBarGroup from '../../components/RightBarGroups.js';
-import { useDarkMode } from '../../context/darkMod.js';
+import "../../styles/groupstyle.css";
+import { useRouter } from "next/navigation";
 import { GroupCard } from "../../components/groupCard.js";
+import { GroupCreationTrigger } from "../../components/CreateGroup.js";
+import { GroupsTabs } from "../../components/groupTabs.js";
+import LeftBar from "../../components/LeftBar.js";
+import RightBar from "../../components/RightBar.js";
+import { useDarkMode } from "../../context/darkMod.js";
+import { Users, ChevronRight } from "lucide-react";
 import { Toaster, toast } from "sonner"
 
 // import RightBarGroup from '../../components/RightBarGroups.js';
@@ -17,16 +18,16 @@ export default function () {
   const { darkMode } = useDarkMode();
 
   return (
-    <div id="div" className={darkMode ? 'theme-dark' : 'theme-light'}>
+    <div id="div" className={darkMode ? "theme-dark" : "theme-light"}>
       <Navbar />
       {/* main content area */}
       <main className="content" id="contentgroups">
         <LeftBar showSidebar={true} />
         <GroupsTabs />
-        <RightBarGroup />
+        <RightBar />
       </main>
     </div>
-  )
+  );
 }
 
 async function JoinGroup(grpID, setJoining) {
@@ -70,7 +71,7 @@ export function AllGroups() {
     })
       .then((res) => res.json())
       .then((data) => {
-        console.log("data is :", data);
+        console.log("data is----- :", data);
         setGroup(data);
         setLoading(false);
       })
@@ -82,7 +83,7 @@ export function AllGroups() {
   if (!group) {
     return (
       <div className="group-empty-state">
-        {/* <Users /> */}
+        <Users />
         <p className="group-empty-state-title">No groups found</p>
         <p className="group-empty-state-text">
           Check back later for more groups
@@ -98,7 +99,7 @@ export function AllGroups() {
           <div className="group-header">
             <div className="group-icon-wrapper">
               <div className="group-icon">
-                {/* <Users /> */}
+                <Users />
               </div>
             </div>
           </div>
@@ -107,16 +108,16 @@ export function AllGroups() {
             <p className="group-description">{grp.Description}</p>
             <div className="group-footer">
               <div className="group-members">
-                {/* <Users /> */}
-                <span className="members-text-full">{22} members</span>
-                <span className="members-text-short">{220} members</span>
+                <Users />
+                <span className="members-text-full">{grp.MemberCount} members</span>
+                <span className="members-text-short">{grp.MemberCount} members</span>
               </div>
               <button className="view-button" onClick={() => {
                 toast.success("Join request sent!");
                 JoinGroup(grp.ID, setJoining)
                 }}>
                 <span>Join</span>
-                {/* <ChevronRight /> */}
+                <ChevronRight />
               </button>
             </div>
           </div>
