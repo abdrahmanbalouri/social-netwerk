@@ -50,7 +50,7 @@ func CreatePostGroupHandler(w http.ResponseWriter, r *http.Request) {
 
 	post, err := service.CreateGroupPostService(r, userID)
 	if err != nil {
-		helper.RespondWithError(w, http.StatusInternalServerError, err.Error())
+		helper.RespondWithError(w, http.StatusBadRequest, err.Error())
 		return
 	}
 

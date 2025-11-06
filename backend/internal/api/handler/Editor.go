@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"fmt"
 	"io"
 	"net/http"
 
@@ -21,7 +22,9 @@ func Editor(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = r.ParseMultipartForm(10 << 20) // 10MB
+	fmt.Println(10 << 20,"------------------+++++++++++")
+
+	err = r.ParseMultipartForm(1024*1024) // 10MB // 10485760
 	if err != nil {
 		http.Error(w, "Error parsing form: "+err.Error(), http.StatusBadRequest)
 		return

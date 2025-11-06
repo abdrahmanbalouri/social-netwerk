@@ -2,9 +2,9 @@
 import { useState } from 'react';
 import { CreatePost } from '../app/groups/[id]/page.js';
 // import "../styles/groupstyle.css"
-import { useParams } from "next/navigation";
+import { RedirectType, useParams } from "next/navigation";
 
-export function CreatePostForm({ onSubmit, onCancel }) {
+export function CreatePostForm({ onSubmit, onCancel ,err }) {
   const [PostTitle, setPostTitle] = useState('');
   const [PostDescription, setPostDescription] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
@@ -123,6 +123,7 @@ export function CreatePostForm({ onSubmit, onCancel }) {
                 Create post
               </button>
             </div>
+            {err}
           </div>
 
         </form>
@@ -133,6 +134,7 @@ export function CreatePostForm({ onSubmit, onCancel }) {
 
 export function PostCreationTrigger({ setPost }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [err ,seterr] = useState("")
   // const [posts, setPost] = useState([])
   const { id } = useParams();
 
@@ -145,6 +147,11 @@ export function PostCreationTrigger({ setPost }) {
   const handleSubmit = async (formData) => {
     try {
       const newpost = await CreatePost(id, formData);
+      if (newpost.error){
+        seterr(newpost.error)
+        return
+      }
+      
       setIsModalOpen(false);
       // setShowForm(false)
       setPost(prev => {
@@ -172,7 +179,8 @@ export function PostCreationTrigger({ setPost }) {
             className="create-input"
             onClick={handlePostClick}
             readOnly
-          />
+            />
+            
         </div>
       </div>
       {isModalOpen && (
@@ -180,6 +188,7 @@ export function PostCreationTrigger({ setPost }) {
           users={userList}
           onSubmit={handleSubmit}
           onCancel={handleCancel}
+          err = {err}
         />
       )}
     </>
