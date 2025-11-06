@@ -20,21 +20,20 @@ import "../../../styles/chat.css";
 
 // Global sendRequest (can be moved to a service file later)
 async function sendRequest(invitedUserID, grpID) {
-
-  try {
-    const res = await fetch(`http://localhost:8080/group/invitation/${grpID}`, {
-      method: 'POST',
-      credentials: 'include',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        invitedUsers: [invitedUserID],
-      }),
-    });
+    try {
+        const res = await fetch(`http://localhost:8080/group/invitation/${grpID}`, {
+            method: 'POST',
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                InvitationType: "invitation",
+                invitedUsers: [invitedUserID],
+            }),
+        });
 
     const temp = await res.json();
-    console.log("temp is :", temp);
     return temp;
   } catch (error) {
     console.error("error sending invitation to the user :", error);
@@ -46,22 +45,19 @@ async function sendRequest(invitedUserID, grpID) {
 
 // Main Page Component
 export default function GroupPage() {
-  const { darkMode } = useDarkMode();
-  const router = useRouter();
-  const params = useParams();
-  const grpID = params.id;
-  useEffect(() => {
-
-    const checkAuth = async () => {
-      const auth = await middleware();
-      if (!auth) {
-
-        router.push("/login");
-
-      }
-    }
-    checkAuth();
-  }, [grpID])
+    const { darkMode } = useDarkMode();
+    const router = useRouter();
+    const params = useParams();
+    const grpID = params.id;
+    useEffect(() => {
+        const checkAuth = async () => {
+            const auth = await middleware();
+            if (!auth) {
+                router.push("/login");
+            }
+        }
+        checkAuth();
+    }, [grpID])
 
   return (
     <div className={darkMode ? "theme-dark" : "theme-light"}>
@@ -105,7 +101,6 @@ export function Events() {
 
       const data = await response.json() || [];
 
-      console.log('Fetched events:', data);
       setEventList(data);
     } catch (error) {
       console.error('Error fetching events:', error);
@@ -319,7 +314,7 @@ export function AllPosts() {
       })
       .then(data => {
 
-        if (data.error) {
+        if (data?.error) {
           showToast(data.error)
           setLoading(false);
           router.push("/login");
@@ -346,7 +341,7 @@ export function AllPosts() {
       });
 
       const data = await res.json();
-      if (data.error) {
+      if (data?.error) {
         showToast(data.error)
         return
       }
@@ -392,7 +387,6 @@ export function AllPosts() {
         credentials: "include",
       });
       const response = await res.json();
-      console.log(response);
 
 
       if (response.error) {
@@ -403,7 +397,6 @@ export function AllPosts() {
       }
 
       const updatedPost = await fetchPostById(postId);
-      //console.log(updatedPost);
 
 
       if (updatedPost) {
@@ -423,7 +416,6 @@ export function AllPosts() {
         credentials: "include",
       });
       const data = await res.json();
-      console.log(data);
 
       return data.error ? null : data;
     } catch (err) {
@@ -486,20 +478,20 @@ export function AllPosts() {
         </div>
       )}
 
-      {loading ? (
-        <div>Loading posts...</div>
-      ) : posts.length === 0 ? (
-        <div>There is no post yet.</div>
-      ) : (
-        <div className="posts-list">
-          {posts.map((post) => (
-            <Post
-              key={post.id}
-              post={post}
-              onGetComments={GetComments}
-              ondolike={handleLike}
-            />
-          ))}
+            {loading ? (
+                <div>Loading posts...</div>
+            ) : posts && posts.length === 0 ? (
+                <div>There is no post yet.</div>
+            ) : (
+                <div className="posts-list">
+                    { posts && posts.map((post) => (
+                        <Post
+                            key={post.id}
+                            post={post}
+                            onGetComments={GetComments}
+                            ondolike={handleLike}
+                        />
+                    ))}
 
           <Comment
             comments={comment}
@@ -543,7 +535,6 @@ export async function CreatePost(groupId, formData) {
 }
 
 export function GroupChat({ groupId }) {
-  console.log("group chat component rendered");
   const [id, setId] = useState(null);
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
@@ -558,7 +549,6 @@ export function GroupChat({ groupId }) {
     })
       .then((res) => res.json())
       .then((data) => {
-        console.log("user id in group chat------------ : ", data.user_id);
         setId(data.user_id)
       })
       .catch((err) => console.error(err));
@@ -578,7 +568,6 @@ export function GroupChat({ groupId }) {
         if (!response.ok) throw new Error("Failed to fetch messages");
         const data = await response.json();
         if (data.messages) {
-          console.log("user id in group chat message listener23131 : ", id);
 
           const formattedMessages = data.messages
             .map((msg) => ({
@@ -599,7 +588,6 @@ export function GroupChat({ groupId }) {
 
   useEffect(() => {
     const handleIncomingMessage = (data) => {
-      console.log("user id in group chat message listener : ", id);
       setMessages((prev) => [
         ...prev,
         {
@@ -675,7 +663,6 @@ export function GroupChat({ groupId }) {
   ];
 
   function handleSendGroupChatMessage() {
-    console.log("=========", typeof groupId);
     if (input.trim() === "") return;
     const payload = {
       groupID: groupId,

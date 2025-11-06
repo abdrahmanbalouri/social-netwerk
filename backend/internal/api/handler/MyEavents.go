@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 
 	"social-network/internal/helper"
@@ -41,7 +40,7 @@ func MyEavents(w http.ResponseWriter, r *http.Request) {
 	defer rows.Close()
 	var events []Event
 	for rows.Next() {
-		fmt.Println("111111111111")
+
 		var event Event
 		err := rows.Scan(
 			&event.ID,

@@ -8,7 +8,7 @@ import (
 )
 
 func GroupeInvitation(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodGet{
+	if r.Method != http.MethodGet {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
 	}
@@ -24,7 +24,7 @@ func GroupeInvitation(w http.ResponseWriter, r *http.Request) {
     i.id AS invitation_id
 	FROM groups g
 	JOIN group_invitations i ON i.group_id = g.id
-	WHERE i.user_id = ?;
+	WHERE i.user_id = ? AND i.request_type = 'invitation';
 	`
 	rows, err := repository.Db.Query(Fquery, UserID)
 	if err != nil {
@@ -41,8 +41,8 @@ func GroupeInvitation(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		groups := map[string]interface{}{
-			"group_id":    idG,
-			"title": title,
+			"group_id":      idG,
+			"title":         title,
 			"invitation_id": invitationID,
 		}
 		groupeInvitation = append(groupeInvitation, groups)
