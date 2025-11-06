@@ -157,6 +157,7 @@ export default function RightBarGroup({ onClick }) {
         fetchJoinRequest(grpID);
     }, [grpID]);
 
+    console.log("Join requests are ", joinRequest);
 
     return (
         <div className="rightBar">
@@ -167,15 +168,15 @@ export default function RightBarGroup({ onClick }) {
                     <h1>no Invitation for now</h1>
                 ) : (
                     joinRequest.map((req) => (
-                        <div key={req.InvitationID} className="user">
+                        <div key={req.invitation_id} className="user">
                             <div className="userInfo">
                                 <div className="userDetails">
                                     <i className="fa-solid fa-people-group"></i>
-                                    <span>{req.FirstName} {req.LastName}</span>
+                                    <span>{req.first_name} {req.last_name}</span>
                                 </div>
                                 <div className="buttons">
-                                    <button onClick={() => { handleGroupRequest(req.InvitationID, "accept", joinRequest, setJoinRequest) }} >accept</button>
-                                    <button onClick={() => { handleGroupRequest(req.InvitationID, "reject") }} >reject</button>
+                                    <button onClick={() => { handleGroupRequest(req.invitation_id, "accept", joinRequest, setJoinRequest) }} >accept</button>
+                                    <button onClick={() => { handleGroupRequest(req.invitation_id, "reject") }} >reject</button>
                                 </div>
                             </div>
                         </div>
