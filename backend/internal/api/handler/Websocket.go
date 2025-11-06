@@ -244,13 +244,13 @@ func Loop(conn *websocket.Conn, currentUserID string) {
 		case "joinRequest":
 
 			msg.MessageContent = "has requested to join your group"
-			err := model.SaveGroupJoinRequestNotification(currentUserID, msg)
+			err,receiver:= model.SaveGroupJoinRequestNotification(currentUserID, msg)
 			if err != nil {
 				log.Println("DB error saving group join request notification:", err)
 				continue
 			}
 			// Notify the group admin
-			service.BrodcastNotification(msg.ReceiverId, map[string]any{
+			service.BrodcastNotification(receiver, map[string]any{
 				"type":       "notification",
 				"subType":    "group_join_request",
 				"from":       currentUserID,
