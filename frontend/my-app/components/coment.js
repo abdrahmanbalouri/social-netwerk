@@ -18,7 +18,6 @@ export default function Comment({ comments, isOpen, onClose, postId, onCommentCh
   const emojiRef = useRef(null)
   const textareaRef = useRef(null)
   const router = useRouter()
-  console.log(12121);
   
 
 

@@ -7,7 +7,6 @@ import { useParams } from "next/navigation";
 export function GroupPostChat() {
   const [activeTab, setActiveTab] = useState("posts");
   const { id } = useParams();
-  console.log("---------------", typeof id, id);
 
   return (
     <div className="group-container">

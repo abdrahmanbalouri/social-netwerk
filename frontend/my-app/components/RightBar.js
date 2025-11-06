@@ -191,7 +191,6 @@ export default function RightBar() {
     fetchfriends();
   }, [])
 
-  console.log(" groupeInvitation ARE :", groupeInvitation);
 
 
 
