@@ -1,8 +1,5 @@
-"use client";
-import { useRouter } from "next/navigation";
+import { redirect } from "next/navigation";
 
 export default function ChatPage() {
-    const router = useRouter();
-    
-    router.push("/chat/0");
+  redirect("/chat/0");
 }
