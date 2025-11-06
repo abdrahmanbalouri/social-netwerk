@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"fmt"
 	"net/http"
 
 	service "social-network/internal/api/service"
@@ -17,12 +16,10 @@ func GetStories(w http.ResponseWriter, r *http.Request) {
 	}
 
 	stories, err := service.FetchStories(authUserID, repository.Db)
-	fmt.Println(stories, "=============================")
 	if err != nil {
 		helper.RespondWithError(w, http.StatusInternalServerError, "Failed to fetch stories")
 		return
 	}
-	fmt.Println(stories, "----------------------------")
 
 	helper.RespondWithJSON(w, http.StatusOK, stories)
 }
