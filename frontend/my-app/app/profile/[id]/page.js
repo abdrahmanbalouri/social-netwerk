@@ -12,7 +12,6 @@ import { useProfile } from '../../../context/profile.js';
 import ProfileCardEditor from '../../../components/ProfileCardEditor.js';
 import { useWS } from "../../../context/wsContext.js";
 import Link from 'next/link';
-import { middleware } from '../../../middleware/middelware.js';
 
 export default function Profile() {
   const { Profile } = useProfile();
@@ -54,17 +53,6 @@ export default function Profile() {
       setToast(null);
     }, duration);
   };
-  // Authentication check
-  useEffect(() => {
-    const checkAuth = async () => {
-      const auth = await middleware();
-      if (!auth) {
-        router.push("/login");
-        sendMessage({ type: "logout" })
-      }
-    }
-    checkAuth();
-  }, [])
 
   const [theprofile, setProfile] = useState(null);
 
