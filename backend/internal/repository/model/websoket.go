@@ -145,3 +145,8 @@ func SaveGroupJoinRequestNotification(currentUserID string, msg Message) (error 
 	_, err = repository.Db.Exec(`INSERT INTO notifications ( sender_id, receiver_id, type, message, created_at) VALUES (?, ?, ?, ?, ?) `, currentUserID, adminID, msg.Type, msg.MessageContent, time.Now().Unix())
 	return err , adminID
 }
+func SaveFollowRequestNotification(currentUserID string, msg Message) error {
+	q := `INSERT INTO notifications ( sender_id, receiver_id, type, message, created_at) VALUES (?, ?, ?, ?, ?) `
+	_, err := repository.Db.Exec(q, currentUserID, msg.ReceiverId, msg.Type, msg.MessageContent, time.Now().Unix())
+	return err
+}
