@@ -48,7 +48,6 @@ export default function Profile() {
   const [toast, setToast] = useState(null);
 
   const showToast = (message, type = "error", duration = 3000) => {
-    console.log(8889898);
 
     setToast({ message, type });
     setTimeout(() => {
@@ -80,7 +79,6 @@ export default function Profile() {
       );
       if (res.ok) {
         const json = await res.json();
-        console.log("profile daaaataa", json);
 
 
         setProfile(json);
@@ -113,9 +111,6 @@ export default function Profile() {
       );
       if (res.ok) {
         let followw = await res.json();
-
-
-        console.log("folllllow data ", followw);
 
         setProfile((prevProfile) => ({
           ...prevProfile,
@@ -257,7 +252,6 @@ export default function Profile() {
         method: "GET",
         credentials: "include",
       });
-           console.log(res);
            
       if (!res.ok) {
         throw new Error(`Failed to fetch posts: ${res.status}`); 
@@ -464,7 +458,6 @@ export default function Profile() {
 
 
         const potsreplace = await fetchPosts(selectedPost.id)
-        console.log(posts.length);
         
         for (let i = 0; i < posts.length; i++) {
           

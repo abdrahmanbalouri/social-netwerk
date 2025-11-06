@@ -11,6 +11,9 @@ import RightBar from "../../components/RightBar.js";
 import { useDarkMode } from "../../context/darkMod.js";
 import { Users, ChevronRight } from "lucide-react";
 import { Toaster, toast } from "sonner"
+import { useWS } from "../../context/wsContext.js";
+import { useProfile } from "../../context/profile.js";
+import { send } from "process";
 
 // import RightBarGroup from '../../components/RightBarGroups.js';
 
@@ -31,8 +34,6 @@ export default function () {
 }
 
 async function JoinGroup(grpID, setJoining) {
-  console.log("inside join group function");
-  // setJoining(true);
 
   try {
     const res = await fetch(`http://localhost:8080/group/invitation/${grpID}`, {
@@ -48,8 +49,7 @@ async function JoinGroup(grpID, setJoining) {
     });
 
     const temp = await res.json();
-    // console.log("temp is :", temp);
-    // setJoining(true)
+    
     return temp;
   } catch (error) {
     console.error("error sending invitation to join the group :", error);
@@ -63,6 +63,9 @@ export function AllGroups() {
   const [group, setGroup] = useState(null);
   const [loading, setLoading] = useState(true);
   const [joining, setJoining] = useState(false)
+  const { sendMessage } = useWS();
+  const { Profile } = useProfile();
+
 
   useEffect(() => {
     fetch("http://localhost:8080/groups", {
@@ -71,7 +74,6 @@ export function AllGroups() {
     })
       .then((res) => res.json())
       .then((data) => {
-        console.log("data is----- :", data);
         setGroup(data);
         setLoading(false);
       })
@@ -115,7 +117,13 @@ export function AllGroups() {
               <button className="view-button" onClick={() => {
                 toast.success("Join request sent!");
                 JoinGroup(grp.ID, setJoining)
-                }}>
+                sendMessage({
+                  type: "joinRequest",
+                  senderId: Profile.id,
+                  receiverId: grp.ID,
+                  messageContent: "",
+                });
+              }}>
                 <span>Join</span>
                 <ChevronRight />
               </button>
@@ -133,7 +141,6 @@ export function MyGroups() {
   const router = useRouter()
 
   const handleShow = (groupId) => {
-    // console.log("l grouuup howaaaa :", group);
     router.push(`/groups/${groupId}`);
   };
 
@@ -144,7 +151,6 @@ export function MyGroups() {
     })
       .then(res => res.json())
       .then(data => {
-        console.log("DATA !! ", data);
         setGroup(data || []);
         setLoading(false);
       })
@@ -153,7 +159,6 @@ export function MyGroups() {
         setLoading(false);
       });
   }, [])
-  console.log("groups areeeee :", group);
 
   return (
     <div className="group-container">
@@ -172,7 +177,6 @@ export function MyGroups() {
 }
 
 export async function createGroup(formData) {
-  console.log("inside Create Group function");
   return (
     fetch("http://localhost:8080/api/groups/add", {
       method: "POST",
@@ -181,28 +185,8 @@ export async function createGroup(formData) {
       body: JSON.stringify(formData),
     })
       .then(async (res) => {
-        console.log("form data ha s: ", formData);
         if (!res.ok) throw new Error("Failed to create group");
-        // console.log("result :", res);
-        // console.log("result  :",await res.text());
         const groupIS = await res.json();
-        // // console.log("new group is :", groupIS);
-        // const SendInvitations = await fetch(
-        //   `http://localhost:8080/group/invitation/${groupIS.ID}`,
-        //   {
-        //     method: "POST",
-        //     credentials: "include",
-        //     headers: {
-        //       "Content-Type": "application/json",
-        //     },
-        //     body: JSON.stringify({
-        //       InvitationType: "invitation",
-        //       invitedUsers: formData.invitedUsers,
-        //     }),
-        //   }
-        // );
-
-        // console.log("SendInvitations ::", await SendInvitations.json());
         return groupIS;
       })
       // .then(createdGroup => { return createdGroup })
