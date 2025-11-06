@@ -1,8 +1,8 @@
 package handlers
 
 import (
-	"fmt"
 	"net/http"
+	"strings"
 
 	service "social-network/internal/api/service"
 	"social-network/internal/helper"
@@ -30,6 +30,7 @@ func CreateCommentHandler(w http.ResponseWriter, r *http.Request) {
 	content := r.FormValue("content")
 	whatis := r.FormValue("whatis")
 	groupID := r.FormValue("groupId")
+	content = helper.Skip(strings.TrimSpace(content))
 
 	// Extract media file if exists
 	var mediaFileHeader map[string]interface{}
@@ -42,7 +43,6 @@ func CreateCommentHandler(w http.ResponseWriter, r *http.Request) {
 			"size":     header.Size,
 		}
 	}
-	fmt.Println(mediaFileHeader["size"])
 
 	commentID, mediaPath, err := service.CreateComment(userID, postID, content, whatis, groupID, mediaFileHeader)
 	if err != nil {

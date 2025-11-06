@@ -11,14 +11,12 @@ import (
 func MeHandler(w http.ResponseWriter, r *http.Request) {
 	c, err := r.Cookie("session")
 	if err != nil {
-		fmt.Println("laaaa")
 		helper.RespondWithError(w, http.StatusUnauthorized, "unauthorized")
 		return
 	}
 
 	userID, err := service.ValidateSession(c.Value)
 	if err != nil {
-		fmt.Println("kkkkkk")
 		helper.RespondWithError(w, http.StatusUnauthorized, "unauthorized")
 		return
 	}

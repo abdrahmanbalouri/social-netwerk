@@ -43,7 +43,7 @@ func CreatePost(userID, title, content, visibility, allowedUsers string, fileHea
 
 	var allowed []string
 	if visibility == "private" {
-		if len(allowedUsers) == 2 {
+		if len(allowedUsers) == 0 {
 			return "", errors.New("at least one allowed user must be specified for private posts")
 		}
 		allowed = strings.Split(allowedUsers, ",")
@@ -97,7 +97,7 @@ func CreatePost(userID, title, content, visibility, allowedUsers string, fileHea
 	if err := model.InsertPost(repository.Db, post); err != nil {
 		return "", err
 	}
-
+  
 	if visibility == "private" {
 		if err := model.InsertAllowedUsers(repository.Db, postID, userID, allowed); err != nil {
 			return "", err
