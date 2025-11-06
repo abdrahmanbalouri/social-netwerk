@@ -25,7 +25,7 @@ export default function RightBar() {
   useEffect(() => {
     async function fetchGroupeInvitation() {
       try {
-        const res = await fetch("http://localhost:8080/api/groupeInvitation", {
+        const res = await fetch("http://localhost:8080/api/fetchGroupInvitation", {
           method: "GET",
           credentials: "include",
         });
@@ -93,6 +93,29 @@ export default function RightBar() {
     } catch (err) {
     }
   }
+  async function handleGroupRequest(invitaitonId, action) {
+    try {
+        const res = await fetch("http://localhost:8080/invitations/respond", {
+            method: "POST",
+            credentials: "include",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                invitation_id: invitaitonId,
+                response: action,
+            }),
+        });
+
+        if (!res.ok) {
+            const errMsg = await res.text();
+            throw new Error("Action failed: " + errMsg);
+        }
+        const data = await res.json();
+        setgroupeInvitation((prev) => (prev || []).filter((req) => req.invitation_id !== invitaitonId));
+    } catch (err) {
+    }
+}
 
 
 
@@ -170,6 +193,7 @@ export default function RightBar() {
 
 
 
+
   return (
     <div className="rightBar">
       <div className="item">
@@ -232,7 +256,7 @@ export default function RightBar() {
                     <div className="userInfo">
                       <div className="userDetails">
                         {/* <Link href={`/profile/${group.id}`} className="userLink"> */}
-                         {/*  <img
+                        {/*  <img
                             src={group?.image ? `/uploads/${group.image}` : "/assets/default.png"}
                             alt="user avatar"
                           />  */}
@@ -244,8 +268,8 @@ export default function RightBar() {
                       </div>
 
                       <div className="buttons">
-                        <button onClick={() => { handleFollowRequest(group.id, "accept") }} >accept</button>
-                        <button onClick={() => { handleFollowRequest(group.id, "reject") }} >reject</button>
+                        <button onClick={() => { handleGroupRequest(group.invitation_id, "accept") }} >accept</button>
+                        <button onClick={() => { handleGroupRequest(group.invitation_id, "reject") }} >reject</button>
                       </div>
                     </div>
                   </div>
