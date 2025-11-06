@@ -11,6 +11,9 @@ import RightBar from "../../components/RightBar.js";
 import { useDarkMode } from "../../context/darkMod.js";
 import { Users, ChevronRight } from "lucide-react";
 import { Toaster, toast } from "sonner"
+import { useWS } from "../../context/wsContext.js";
+import { useProfile } from "../../context/profile.js";
+import { send } from "process";
 
 // import RightBarGroup from '../../components/RightBarGroups.js';
 
@@ -63,6 +66,9 @@ export function AllGroups() {
   const [group, setGroup] = useState(null);
   const [loading, setLoading] = useState(true);
   const [joining, setJoining] = useState(false)
+  const { sendMessage } = useWS();
+  const { Profile } = useProfile();
+
 
   useEffect(() => {
     fetch("http://localhost:8080/groups", {
@@ -115,7 +121,13 @@ export function AllGroups() {
               <button className="view-button" onClick={() => {
                 toast.success("Join request sent!");
                 JoinGroup(grp.ID, setJoining)
-                }}>
+                sendMessage({
+                  type: "joinRequest",
+                  senderId: Profile.id,
+                  receiverId: grp.ID,
+                  messageContent: "",
+                });
+              }}>
                 <span>Join</span>
                 <ChevronRight />
               </button>

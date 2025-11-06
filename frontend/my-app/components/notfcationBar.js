@@ -35,10 +35,28 @@ export default function NotBar({ notData }) {
             default: return { icon: '🔔', className: 'icon-like' };
         }
     };
-
+    const notificationtype = (noti) => {
+        switch (noti.type) {
+            case 'like':
+            case 'comment':
+            case 'message':
+                router.push(`/chat/${noti.sender_id}`)
+                break;
+            case 'follow':
+                router.push(`/profile/${noti.sender_id}`)
+                break;
+            case 'invite_to_group':
+                router.push(`/profile/${noti.sender_id}`)
+                break;
+            case 'joinRequest':
+                router.push(`/groups`)
+                break;
+            default:
+                break;
+        }
+    }
     const filteredNotifications = getFilteredNotifications();
-    console.log(filteredNotifications);
-    
+
     return (
         <div className="dropdown-menu show">
             <div className="dropdown-header">
@@ -62,7 +80,7 @@ export default function NotBar({ notData }) {
                             <div
                                 key={noti.id || index}
                                 className={`notification-item ${!noti.isRead ? 'unread' : ''}`}
-                                onClick={() => router.push(`/chat/${noti.sender_id}`)}
+                                onClick={() => notificationtype(noti)}
                             >
                                 <div className="notification-avatar" >
                                     <img
