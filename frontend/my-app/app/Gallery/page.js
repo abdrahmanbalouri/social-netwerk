@@ -40,10 +40,8 @@ export default function Gallery() {
       .then((data) => {
 
         if (data) {
-          console.log(data);
           
           let images = data.filter(img => img.ImagePath);
-          console.log("img",images);
           
           setImages(images);
           return

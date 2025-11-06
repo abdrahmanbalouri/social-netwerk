@@ -77,7 +77,6 @@ export default function Home() {
     async function handlescrollhome() {
 
       let b = await fetchingposts();
-      console.log(b);
            
     }
 

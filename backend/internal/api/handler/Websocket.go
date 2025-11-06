@@ -70,7 +70,6 @@ func Loop(conn *websocket.Conn, currentUserID string) {
 			log.Println("DB error getting user info:", err)
 			continue
 		}
-
 		msg.First_name = user["first_name"].(string)
 		msg.Last_name = user["last_name"].(string)
 		msg.Photo = user["photo"].(string)
@@ -130,12 +129,13 @@ func Loop(conn *websocket.Conn, currentUserID string) {
 
 			// send notification to receiver
 			service.BrodcastNotification(msg.ReceiverId, map[string]any{
-				"type":    "notification",
-				"subType": "message",
-				"from":    currentUserID,
-				"content": "sent you a message",
-				"name":    msg.First_name + " " + msg.Last_name,
-				"time":    time.Now().Format(time.RFC3339),
+				"type":       "notification",
+				"subType":    "message",
+				"from":       currentUserID,
+				"content":    "sent you a message",
+				"first_name": msg.First_name,
+				"last_name":  msg.Last_name,
+				"time":       time.Now().Format(time.RFC3339),
 			})
 
 		// ===============================
@@ -177,13 +177,14 @@ func Loop(conn *websocket.Conn, currentUserID string) {
 			// ===============================
 			msg.MessageContent = "sent a message to the group"
 			service.BrodcastGroupMembersNotification(msg.GroupID, currentUserID, map[string]any{
-				"type":    "notification",
-				"subType": "group_message",
-				"from":    currentUserID,
-				"groupID": msg.GroupID,
-				"content": msg.MessageContent,
-				"name":    msg.First_name + " " + msg.Last_name,
-				"time":    time.Now().Format(time.RFC3339),
+				"type":       "notification",
+				"subType":    "group_message",
+				"from":       currentUserID,
+				"groupID":    msg.GroupID,
+				"content":    msg.MessageContent,
+				"first_name": msg.First_name,
+				"last_name":  msg.Last_name,
+				"time":       time.Now().Format(time.RFC3339),
 			})
 
 			// ✅ Insert message direct sans check dyal follows
