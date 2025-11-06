@@ -364,6 +364,7 @@ const activeGrouped = groupedStories
               onChange={e => setNewStory({ ...newStory, bgColor: e.target.value })}
             />
             <input
+            className="form-input"
               type="file"
               accept="image/*"
               onChange={e => {
