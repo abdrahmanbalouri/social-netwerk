@@ -40,7 +40,11 @@ export default function Gallery() {
       .then((data) => {
 
         if (data) {
-          let images = data.filter(img => img.imagePath);
+          console.log(data);
+          
+          let images = data.filter(img => img.ImagePath);
+          console.log("img",images);
+          
           setImages(images);
           return
         }
@@ -89,7 +93,7 @@ export default function Gallery() {
                   <div
                     className="gallery-item"
                     key={index}
-                    style={{ backgroundImage: `url(/${img.imagePath})` }}
+                    style={{ backgroundImage: `url(/${img.ImagePath})` }}
                   >
                     <div className="gallery-content">
                       <div className="gallery-title">{img.title || "No Title"}</div>
