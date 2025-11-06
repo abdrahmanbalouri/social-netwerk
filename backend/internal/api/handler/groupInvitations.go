@@ -139,6 +139,7 @@ func GroupInvitationRequest(w http.ResponseWriter, r *http.Request) {
 		fmt.Println("User id error is:", IDerr)
 		return
 	}
+	fmt.Println("USER ID ISSS :", userID)
 
 	// start the transaction
 	tx, err := repository.Db.Begin()
@@ -158,7 +159,6 @@ func GroupInvitationRequest(w http.ResponseWriter, r *http.Request) {
 					FROM group_invitations
 					WHERE user_id = ? 
 						AND group_id = ? 
-						AND request_type = 'join'
 					) AS has_invitation;`
 		err = tx.QueryRow(query, userID, GrpId).Scan(&exists)
 		if err != nil {
@@ -166,13 +166,20 @@ func GroupInvitationRequest(w http.ResponseWriter, r *http.Request) {
 			helper.RespondWithError(w, http.StatusInternalServerError, "Database error")
 			return
 		}
-		fmt.Println("EXIST VALUE IS :", exists)
 		if exists {
-			response := map[string]any{
-				"invitation_id": invitationId,
-				"message":       "Invitation allready exist",
-			}
-			helper.RespondWithJSON(w, http.StatusOK, response)
+			helper.RespondWithJSON(w, http.StatusBadRequest, "there is another invitation with the same credientials..")
+			return
+		}
+		// check if the user is a member of that group
+		var isMember bool
+		query = `SELECT EXISTS (SELECT 1 FROM group_members WHERE user_id = ? AND group_id = ?)`
+		if err := tx.QueryRow(query, userID, GrpId).Scan(&isMember); err != nil {
+			helper.RespondWithError(w, http.StatusInternalServerError, "Failed to check group membership")
+			return
+		}
+
+		if isMember {
+			helper.RespondWithError(w, http.StatusBadRequest, "You are already a member of this group")
 			return
 		}
 		createdAt := time.Now().UTC()
@@ -186,22 +193,10 @@ func GroupInvitationRequest(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	} else {
-		// check if the user is a member of that group
-		var isMember bool
-		query := `SELECT EXISTS (SELECT 1 FROM group_members WHERE user_id = ? AND group_id = ?)`
-		if err := tx.QueryRow(query, userID, GrpId).Scan(&isMember); err != nil {
-			helper.RespondWithError(w, http.StatusInternalServerError, "Failed to check group membership")
-			return
-		}
-
-		if !isMember {
-			helper.RespondWithError(w, http.StatusUnauthorized, "You are not a member of this group")
-			return
-		}
 		for _, user := range newInvitation.InvitedUsers {
 			// check if this user is already in the group or has a pending invit
 			var exists1, exists2 bool
-			query = `SELECT EXISTS (
+			query := `SELECT EXISTS (
 				SELECT 1 FROM group_members WHERE user_id = ? AND group_id = ?
 				UNION ALL
 				SELECT 1 FROM group_invitations WHERE user_id = ? AND group_id = ?
@@ -322,7 +317,7 @@ func FetchFriendsForGroups(w http.ResponseWriter, r *http.Request) {
 	}
 
 	userID, IDerr := helper.AuthenticateUser(r)
-	if IDerr != nil { 
+	if IDerr != nil {
 		fmt.Println("User id error is:", IDerr) ////////////////////////////////////////////////////// (khas ttl3 error akhera)
 		return
 	}
