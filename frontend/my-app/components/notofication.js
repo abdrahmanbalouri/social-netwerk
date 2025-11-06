@@ -6,7 +6,6 @@ export default function Notification({ data }) {
 
     const { darkMode } = useDarkMode();
 
-    console.log("Notification data:", data, "darkMode:", darkMode);
 
     return (
         <div className={`notification ${darkMode ? 'theme-dark' : 'theme-light'}`}>

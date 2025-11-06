@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"fmt"
 	"net/http"
 
 	"social-network/internal/helper"
@@ -9,7 +8,6 @@ import (
 )
 
 func GroupeInvitation(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("WAST HAD LBATAAAAAL")
 	if r.Method != http.MethodGet {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
@@ -19,7 +17,6 @@ func GroupeInvitation(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Unauthorized: "+err.Error(), http.StatusUnauthorized)
 		return
 	}
-	fmt.Println("UserID :::::", UserID)
 
 	Fquery := `SELECT 
     g.id AS group_id,
@@ -31,7 +28,6 @@ func GroupeInvitation(w http.ResponseWriter, r *http.Request) {
 	`
 	rows, err := repository.Db.Query(Fquery, UserID)
 	if err != nil {
-		fmt.Println("error running the Fqueeeery :", err)
 		http.Error(w, "Database error: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -39,7 +35,6 @@ func GroupeInvitation(w http.ResponseWriter, r *http.Request) {
 
 	var groupeInvitation []map[string]interface{}
 	for rows.Next() {
-		fmt.Println("INSIDE THE ROWS LOOOOP")
 		var title, idG, invitationID string
 		if err := rows.Scan(&idG, &title, &invitationID); err != nil {
 			http.Error(w, "Database error: "+err.Error(), http.StatusInternalServerError)
@@ -52,7 +47,6 @@ func GroupeInvitation(w http.ResponseWriter, r *http.Request) {
 		}
 		groupeInvitation = append(groupeInvitation, groups)
 	}
-	// fmt.Println("group invitatioooooooooooons are :", groupeInvitation)
 
 	helper.RespondWithJSON(w, http.StatusOK, groupeInvitation)
 }

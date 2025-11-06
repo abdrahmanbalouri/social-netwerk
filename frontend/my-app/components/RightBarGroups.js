@@ -11,7 +11,6 @@ import { Toaster, toast } from "sonner"
 
 
 async function handleGroupRequest(invitationId, action, joinRequest, setJoinRequest) {
-    console.log("HANDLE GROUP REQUESTS ::::::");
     try {
         const res = await fetch("http://localhost:8080/invitations/respond", {
             method: "POST",
@@ -31,12 +30,8 @@ async function handleGroupRequest(invitationId, action, joinRequest, setJoinRequ
             throw new Error("Action failed: " + errMsg);
         }
         const data = await res.json();
-        console.log("invitaiton id is :", invitationId);
 
-        console.log("BEfore :", joinRequest);
         setJoinRequest((prev) => (prev || []).filter((req) => {
-            console.log("request is ::", req);
-            console.log("req.invitation_id is :", req.InvitationID);
             req.InvitationID !== invitationId
         }));
     } catch (err) {
@@ -73,38 +68,11 @@ export default function RightBarGroup({ onClick }) {
         return () => removeListener("logout", handleLogout)
     }, [addListener, removeListener])
 
-    console.log("After :", joinRequest);
-
-    // useEffect(() => {
-    //     async function fetchFollowRequest() {
-    //         try {
-    //             const res = await fetch("http://localhost:8080/api/groupeInvitation", {
-    //                 method: "GET",
-    //                 credentials: "include",
-    //             });
-
-    //             const data = await res.json();
-    //             console.log(data);
-
-    //             // if (data.error == "Unauthorized") {
-    //             //     window.location.href = "/login";
-    //             //     return;
-    //             // }
-    //             setFollowRequest(data);
-    //             // setInvitations(data)
-    //         } catch (err) {
-    //             console.error(err);
-    //         }
-    //     }
-    //     fetchFollowRequest();
-    // }, []);
 
 
     const params = useParams();
     useEffect(() => {
-        console.log("wst had l3ibatika");
         setGrpID(params.id);
-        console.log("params houmaaa :", params.id);
     }, [params.id]);
 
     useEffect(() => {
@@ -120,7 +88,6 @@ export default function RightBarGroup({ onClick }) {
                     setFriends([]);
                     return;
                 }
-                console.log("frieeeeeeeeeends arrrreeee L", data);
                 if (data.error == "Unauthorized") {
                     window.location.href = "/login";
                     return;
@@ -130,7 +97,6 @@ export default function RightBarGroup({ onClick }) {
                 console.error(err);
             }
         }
-        console.log("group iddd is :", temp);
         fetchfriends(temp);
     }, [])
 
@@ -138,19 +104,14 @@ export default function RightBarGroup({ onClick }) {
     useEffect(() => {
         if (!grpID) return;
         async function fetchJoinRequest(grpID) {
-            console.log("INSIDE FETCH JOIN FUNC");
-            console.log("group id is :", grpID);
             try {
                 const res = await fetch(`http://localhost:8080/api/fetchJoinRequests/${grpID}`, {
                     method: "GET",
                     credentials: "include",
                 });
                 const data = await res.json();
-                // console.log("malkiiiii :", data);
                 setJoinRequest(data);
-                // setInvitations(data)
             } catch (err) {
-                console.log("error is :", err);
                 console.error(err);
             }
         }
