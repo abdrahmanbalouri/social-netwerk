@@ -4,16 +4,16 @@ import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
 export default function ClientFetchInterceptor() {
-    const router = useRouter(); // safe now because this is a client component
+    const router = useRouter(); 
 
     useEffect(() => {
-        const originalFetch = window.fetch.bind(window);
+        const originalFetch = window.fetch.bind(window); // just copy
 
         window.fetch = async (...args) => {
             try {
                 const response = await originalFetch(...args);
                 if (response.status === 401) {
-                    router.push('/login'); // redirect if unauthorized
+                    router.push('/login'); // rediret 
                 }
                 return response;
             } catch (err) {
