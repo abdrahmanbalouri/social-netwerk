@@ -63,11 +63,11 @@ func Routes() http.Handler {
 	mux.HandleFunc("/ws", handlers.Websocket)
 
 	// ======= Groups =======
-	mux.HandleFunc("/myGroups", handlers.GetMyGroups)
-	mux.HandleFunc("/groups", handlers.GetAllGroups)
-	mux.HandleFunc("/api/groups/add", handlers.CreateGroupHandler)
-	mux.HandleFunc("/invitations/respond", handlers.GroupInvitationResponse)
-	mux.HandleFunc("/group/invitation/{id}", handlers.GroupInvitationRequest)
+	mux.HandleFunc("/myGroups", handlers.GetMyGroups) //dart
+	mux.HandleFunc("/groups", handlers.GetAllGroups) //dart
+	mux.HandleFunc("/api/groups/add", handlers.CreateGroupHandler) //dart
+	mux.HandleFunc("/invitations/respond", handlers.GroupInvitationResponse) //dart
+	mux.HandleFunc("/group/invitation/{id}", handlers.GroupInvitationRequest) //dart
 	mux.HandleFunc("/group/addPost/{id}", handlers.CreatePostGroupHandler) // dart
 	mux.HandleFunc("/group/fetchPosts/{id}", handlers.GetAllPostsGroup)    // dart
 	// mux.HandleFunc("/group/fetchPost/{id}", handlers.GetPostGroup)
@@ -75,8 +75,8 @@ func Routes() http.Handler {
 	mux.HandleFunc("/group/updatepost/{id}/{groupId}", handlers.GetGroupPostByID)           // dart
 	mux.HandleFunc("/group/Getcomments/{id}/{offset}/{groupId}", handlers.GetCommentsGroup) // dart
 	mux.HandleFunc("/group/getlastcomment/{id}/{groupId}", handlers.GetlastcommnetGroup)    // dart
-	mux.HandleFunc("/api/fetchJoinRequests/{id}", handlers.FetchJoinRequests)
-	mux.HandleFunc("/api/fetchGroupInvitation", handlers.GroupeInvitation)
+	mux.HandleFunc("/api/fetchJoinRequests/{id}", handlers.FetchJoinRequests) //dart
+	mux.HandleFunc("/api/fetchGroupInvitation", handlers.GroupeInvitation) //dart
 	mux.HandleFunc("/api/fetchFriendsForGroups/{id}", handlers.FetchFriendsForGroups)
 
 	// ======= Events =======
