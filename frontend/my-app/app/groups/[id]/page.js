@@ -34,7 +34,6 @@ async function sendRequest(invitedUserID, grpID) {
         });
 
     const temp = await res.json();
-    console.log("temp is :", temp);
     return temp;
   } catch (error) {
     console.error("error sending invitation to the user :", error);
@@ -102,7 +101,6 @@ export function Events() {
 
       const data = await response.json() || [];
 
-      console.log('Fetched events:', data);
       setEventList(data);
     } catch (error) {
       console.error('Error fetching events:', error);
@@ -389,7 +387,6 @@ export function AllPosts() {
         credentials: "include",
       });
       const response = await res.json();
-      console.log(response);
 
 
       if (response.error) {
@@ -400,7 +397,6 @@ export function AllPosts() {
       }
 
       const updatedPost = await fetchPostById(postId);
-      //console.log(updatedPost);
 
 
       if (updatedPost) {
@@ -420,7 +416,6 @@ export function AllPosts() {
         credentials: "include",
       });
       const data = await res.json();
-      console.log(data);
 
       return data.error ? null : data;
     } catch (err) {
@@ -527,8 +522,6 @@ export async function CreatePost(groupId, formData) {
     });
 
     const text = await res.text();
-    console.log("Raw response:", text);
-
     if (!res.ok) {
       throw new Error(`Failed to create post: ${res.status} ${text}`);
     }
@@ -541,7 +534,6 @@ export async function CreatePost(groupId, formData) {
 }
 
 export function GroupChat({ groupId }) {
-  console.log("group chat component rendered");
   const [id, setId] = useState(null);
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
@@ -556,7 +548,6 @@ export function GroupChat({ groupId }) {
     })
       .then((res) => res.json())
       .then((data) => {
-        console.log("user id in group chat------------ : ", data.user_id);
         setId(data.user_id)
       })
       .catch((err) => console.error(err));
@@ -576,7 +567,6 @@ export function GroupChat({ groupId }) {
         if (!response.ok) throw new Error("Failed to fetch messages");
         const data = await response.json();
         if (data.messages) {
-          console.log("user id in group chat message listener23131 : ", id);
 
           const formattedMessages = data.messages
             .map((msg) => ({
@@ -597,7 +587,6 @@ export function GroupChat({ groupId }) {
 
   useEffect(() => {
     const handleIncomingMessage = (data) => {
-      console.log("user id in group chat message listener : ", id);
       setMessages((prev) => [
         ...prev,
         {
@@ -673,7 +662,6 @@ export function GroupChat({ groupId }) {
   ];
 
   function handleSendGroupChatMessage() {
-    console.log("=========", typeof groupId);
     if (input.trim() === "") return;
     const payload = {
       groupID: groupId,

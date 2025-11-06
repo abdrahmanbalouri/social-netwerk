@@ -39,9 +39,7 @@ func ApplyMigrations(db *sql.DB) error {
 	var enabled int
 	err = row.Scan(&enabled)
 	if err != nil {
-		fmt.Println("Error:", err)
 	} else {
-		fmt.Println("Foreign keys enabled:", enabled)
 	}
 
 	n, err := migrate.Exec(db, "sqlite3", migrations, migrate.Up)

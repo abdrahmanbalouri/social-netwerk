@@ -17,7 +17,6 @@ export function ProfileProvider({ children }) {
         const json = await res.json();
 
         setProfile(json);
-        console.log(json);
         
       }
     } catch (err) {
