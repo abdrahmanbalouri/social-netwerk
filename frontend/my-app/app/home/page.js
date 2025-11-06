@@ -9,8 +9,6 @@ import { useDarkMode } from '../../context/darkMod';
 import Stories from '../../components/stories.js';
 import Comment from '../../components/coment.js';
 import Post from '../../components/Post.js';
-import { middleware } from "../../middleware/middelware.js";
-import { useWS } from "../../context/wsContext.js";
 import CreatePost from "../../components/createPost.js";
 
 export default function Home() {
@@ -40,7 +38,6 @@ export default function Home() {
 //  const postRefs = useRef({});
   const router = useRouter();
   const { darkMode } = useDarkMode();
-  const sendMessage = useWS()
   const [toast, setToast] = useState(null);
   const showToast = (message, type = "error", duration = 3000) => {
     setToast({ message, type });
@@ -48,18 +45,6 @@ export default function Home() {
       setToast(null);
     }, duration);
   };
-  // Authentication check
-  useEffect(() => {
-    const checkAuth = async () => {
-      const auth = await middleware();
-      if (!auth) {
-        router.push("/login");
-        sendMessage({ type: "logout" })
-
-      }
-    }
-    checkAuth();
-  }, [])
 
   function handleUserSelect(userId) {
     setSelectedUsers((prevSelected) =>

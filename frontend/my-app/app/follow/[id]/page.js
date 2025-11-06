@@ -7,7 +7,6 @@ import LeftBar from "../../../components/LeftBar.js";
 import RightBar from "../../../components/RightBar.js";
 import { useDarkMode } from "../../../context/darkMod.js";
 import "../../../styles/follow.css";
-import { middleware } from "../../../middleware/middelware.js";
 import { useWS } from "../../../context/wsContext.js";
 
 
@@ -22,17 +21,6 @@ export default function FollowPage() {
   const userId = params.id;
   const tab = searchParams.get("tab") || "followers";
   const sendMessage = useWS()
-  // Authentication check
-  useEffect(() => {
-    const checkAuth = async () => {
-      const auth = await middleware();
-      if (!auth) {
-        router.push("/login");
-        sendMessage({ type: "logout" })
-      }
-    }
-    checkAuth();
-  }, [])
 
   useEffect(() => {
     const fetchData = async () => {

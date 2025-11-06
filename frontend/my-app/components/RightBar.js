@@ -43,6 +43,26 @@ export default function RightBar() {
 
     fetchGroupeInvitation();
   }, []);
+ async function fetchFollowRequest() {
+      try {
+        const res = await fetch("http://localhost:8080/api/followRequest", {
+          method: "GET",
+          credentials: "include",
+        });
+
+
+
+        if (res.ok) {
+          const data = await res.json();
+          setFollowRequest(data);
+        }
+
+
+
+      } catch (err) {
+        console.error(err);
+      }
+    }
 
 
 
@@ -83,6 +103,7 @@ export default function RightBar() {
       });
 
       if (!res.ok) {
+        fetchFollowRequest()
         const errMsg = await res.text();
         throw new Error("Action failed: " + errMsg);
       }
@@ -121,27 +142,7 @@ export default function RightBar() {
 
 
   useEffect(() => {
-    async function fetchFollowRequest() {
-      try {
-        const res = await fetch("http://localhost:8080/api/followRequest", {
-          method: "GET",
-          credentials: "include",
-        });
-
-
-
-        if (res.ok) {
-          const data = await res.json();
-          setFollowRequest(data);
-        }
-
-
-
-      } catch (err) {
-        console.error(err);
-      }
-    }
-
+   
     fetchFollowRequest();
   }, []);
 
