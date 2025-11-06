@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import { CreatePost } from '../app/groups/[id]/page.js';
 // import "../styles/groupstyle.css"
-import { RedirectType, useParams } from "next/navigation";
+import { RedirectType, useParams, useRouter } from "next/navigation";
 
 export function CreatePostForm({ onSubmit, onCancel ,err }) {
   const [PostTitle, setPostTitle] = useState('');
@@ -135,6 +135,7 @@ export function CreatePostForm({ onSubmit, onCancel ,err }) {
 export function PostCreationTrigger({ setPost }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [err ,seterr] = useState("")
+  const router  = useRouter()
   // const [posts, setPost] = useState([])
   const { id } = useParams();
 
@@ -148,6 +149,9 @@ export function PostCreationTrigger({ setPost }) {
     try {
       const newpost = await CreatePost(id, formData);
       if (newpost.error){
+        if (newpost.error =="Authentication required"){
+          router.push('/login')
+        } 
         seterr(newpost.error)
         return
       }
