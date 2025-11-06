@@ -23,7 +23,7 @@ func Routes() http.Handler {
 	mux.HandleFunc("/api/login", handlers.LoginHandler)       // dart
 	mux.HandleFunc("/api/logout", handlers.LogoutHandler)     // dart
 	mux.HandleFunc("/api/me", handlers.MeHandler)             // dart
-	mux.HandleFunc("/api/profile", handlers.ProfileHandler)
+	mux.HandleFunc("/api/profile", handlers.ProfileHandler)  // dart
 	mux.HandleFunc("/api/searchUser", handlers.SearchUserHandler)    // dart
 	mux.HandleFunc("/api/GetUsersHandler", handlers.GetUsersHandler) // dart
 
@@ -54,8 +54,8 @@ func Routes() http.Handler {
 	mux.HandleFunc("/api/videos", handlers.GetVideoHandler)      // dart
 
 	// ======= Notifications =======
-	mux.HandleFunc("/notifcation", handlers.Notifications)
-	mux.HandleFunc("/api/clearNotifications", handlers.ClearNotifications)
+	mux.HandleFunc("/notifcation", handlers.Notifications) 	 // dart
+	mux.HandleFunc("/api/clearNotifications", handlers.ClearNotifications) // dart
 
 	// ======= Messaging / WebSocket =======
 	mux.HandleFunc("/api/getmessages", handlers.GetMessagesHandler) // dart
