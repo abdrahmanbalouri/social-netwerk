@@ -113,6 +113,10 @@
   padding: 0.75rem;
   margin-bottom: 1rem;
 }
+.no-data{
+  text-align: center;
+  color: var(--textColor);
+}
 
 @media (min-width: 640px) {
   .create-card {

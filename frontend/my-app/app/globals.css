@@ -182,7 +182,7 @@ main {
   font-family: inherit;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   background: var(--bgSoft);
-  color: #1e293b;
+  color: var(--textColor);
   font-weight: 500;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
 }
@@ -587,6 +587,8 @@ textarea {
   color: var(--textColor);
 }
 
+
+
 .visibility-select select {
   width: 100%;
   padding: 10px;
@@ -597,6 +599,7 @@ textarea {
   color: var(--textColor);
   cursor: pointer;
 }
+
 
 .visibility-select select:focus {
   outline: none;
