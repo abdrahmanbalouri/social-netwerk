@@ -1,7 +1,6 @@
 import { Users, ChevronRight } from "lucide-react";
 
 export function GroupCard({ group, onShow }) {
-  console.log("inside groupCard function/component");
   return (
     <div className="group-card">
       <div className="group-header">

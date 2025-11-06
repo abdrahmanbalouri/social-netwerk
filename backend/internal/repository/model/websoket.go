@@ -135,3 +135,13 @@ func SaveGroupInvitationNotification(currentUserID string, msg Message) error {
 	_, err := repository.Db.Exec(q, currentUserID, msg.ReceiverId, msg.Type, msg.MessageContent, time.Now().Unix())
 	return err
 }
+
+func SaveGroupJoinRequestNotification(currentUserID string, msg Message) (error ,string ){
+	var adminID string
+	err := repository.Db.QueryRow(`SELECT admin_id FROM groups WHERE id = ?`, msg.ReceiverId).Scan(&adminID)
+	if err != nil {
+		return err,""
+	}
+	_, err = repository.Db.Exec(`INSERT INTO notifications ( sender_id, receiver_id, type, message, created_at) VALUES (?, ?, ?, ?, ?) `, currentUserID, adminID, msg.Type, msg.MessageContent, time.Now().Unix())
+	return err , adminID
+}

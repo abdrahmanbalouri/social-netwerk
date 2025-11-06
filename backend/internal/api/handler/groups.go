@@ -3,7 +3,6 @@ package handlers
 import (
 	"database/sql"
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"strings"
 	"time"
@@ -85,14 +84,12 @@ func CreateGroupHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Process all invited users
-	fmt.Println("INVITED USER ARE :", newGroup.InvitedUsers)
 	for _, userID := range newGroup.InvitedUsers {
 		// var userID string
 		query3 := `INSERT INTO group_invitations (id, group_id, user_id, invited_by_user_id,request_type ,created_at) VALUES (?, ?, ?, ?, ?, ?)`
 		rowId := helper.GenerateUUID()
 		createdAt := time.Now().UTC()
 		if _, err := tx.Exec(query3, rowId, grpID, userID, adminID, "invitation", createdAt); err != nil {
-			fmt.Println("Failed to insert invited user into group_invitation table :", err)
 			helper.RespondWithError(w, http.StatusInternalServerError, "Failed to insert invited user into group_invitation table")
 			return
 		}

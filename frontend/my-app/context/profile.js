@@ -17,6 +17,7 @@ export function ProfileProvider({ children }) {
         const json = await res.json();
 
         setProfile(json);
+        
       }
     } catch (err) {
       console.error("loadProfile", err);

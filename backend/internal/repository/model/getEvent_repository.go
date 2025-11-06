@@ -14,7 +14,7 @@ type Event struct {
 	UserAction  string `json:"userAction"`
 }
 func GetGroupEvents(GrpID string, UserId string) ([]Event, error) {
-
+	//  COUNT(*) FILTER (WHERE action = 'going') AS going // bhalha 
 	var Events []Event
 	Fquery := `SELECT e.id, e.title, e.description,e.time,
   SUM(CASE WHEN A.action = 'going' THEN 1 ELSE 0 END) AS going,
