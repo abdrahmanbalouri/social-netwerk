@@ -41,10 +41,10 @@ func Createpost(w http.ResponseWriter, r *http.Request) {
 		filename = header.Filename
 		size = header.Size
 	}
-	 if file== nil &&title=="" && content=="" {
+	if file == nil && title == "" && content == "" {
 		helper.RespondWithError(w, http.StatusBadRequest, "Post must contain at least an image, title, or content")
 		return
-	} 
+	}
 
 	postID, err := service.CreatePost(userID, title, content, visibility, allowedUsers, fileHeader, filename, size)
 	if err != nil {
