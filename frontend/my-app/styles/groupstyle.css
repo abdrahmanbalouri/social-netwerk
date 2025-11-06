@@ -162,7 +162,6 @@
   border-radius: 9999px;
   cursor: pointer;
   transition: background-color 0.2s;
-  color: #4b5563;
   font-size: 0.875rem;
   min-width: 0;
   border: none;
@@ -456,7 +455,7 @@
 }
 
 .group-empty-state {
-  background-color: white;
+  background-color: var(--bgSoft);
   border-radius: 0.5rem;
   box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
   padding: 2rem;
@@ -474,7 +473,7 @@
   height: 40px;
   margin: 0 auto 0.75rem;
   opacity: 0.5;
-  color: #d1d5db;
+  color: var(--textColor);
 }
 
 @media (min-width: 640px) {
@@ -485,7 +484,7 @@
 }
 
 .group-empty-state-title {
-  color: #6b7280;
+  color: var(--textColor);
   font-size: 1rem;
   margin-bottom: 0.5rem;
 }
@@ -497,7 +496,7 @@
 }
 
 .group-empty-state-text {
-  color: #9ca3af;
+  color: var(--textColor);
   font-size: 0.75rem;
 }
 
@@ -607,7 +606,7 @@ fieldset.form-group {
   display: block;
   font-size: 14px;
   font-weight: 600;
-  color: #334155;
+  color: var(--textColor);
   margin-bottom: 8px;
 }
 
@@ -615,7 +614,7 @@ legend.form-label {
   display: block;
   font-size: 14px;
   font-weight: 600;
-  color: #334155;
+  color: var(--textColor);
   margin-bottom: 8px;
   padding: 0;
 }
@@ -626,7 +625,7 @@ legend.form-label {
   border: 2px solid var(--bgSoft);
   border-radius: 12px;
   font-size: 15px;
-  color: #1e293b;
+  color: var(--textColor);
   background: var(--bgSoft);
   transition: all 0.3s ease;
   font-family: inherit;
@@ -646,11 +645,24 @@ legend.form-label {
   border: 2px solid var(--bgSoft);
   border-radius: 12px;
   font-size: 15px;
-  color: #1e293b;
+  color: var(--textColor);
   background: var(--bgSoft);
   transition: all 0.3s ease;
   font-family: inherit;
   outline: none;
+}
+
+.invitaionnn {
+  display: block;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--textColor);
+  margin-bottom: 18px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: -0.3px;
 }
 
 @media (min-width: 640px) {
