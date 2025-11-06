@@ -47,7 +47,7 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <Providers>
-          {/* <ClientFetchInterceptor /> */}
+          <ClientFetchInterceptor />
           {children}
         </Providers>
       </body>
