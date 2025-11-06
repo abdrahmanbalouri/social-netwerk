@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"fmt"
 	"net/http"
 
 	service "social-network/internal/api/service"
@@ -28,6 +27,6 @@ func MeHandler(w http.ResponseWriter, r *http.Request) {
 		Message: "authorized",
 		UserID:  userID,
 	}
-	fmt.Println(resp)
+
 	helper.RespondWithJSON(w, http.StatusOK, resp)
 }

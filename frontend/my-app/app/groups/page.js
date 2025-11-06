@@ -10,6 +10,11 @@ import LeftBar from "../../components/LeftBar.js";
 import RightBar from "../../components/RightBar.js";
 import { useDarkMode } from "../../context/darkMod.js";
 import { Users, ChevronRight } from "lucide-react";
+import { Toaster, toast } from "sonner"
+import { useWS } from "../../context/wsContext.js";
+import { useProfile } from "../../context/profile.js";
+import { send } from "process";
+
 // import RightBarGroup from '../../components/RightBarGroups.js';
 
 export default function () {
@@ -28,9 +33,39 @@ export default function () {
   );
 }
 
+async function JoinGroup(grpID, setJoining) {
+
+  try {
+    const res = await fetch(`http://localhost:8080/group/invitation/${grpID}`, {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        InvitationType: "join",
+        invitedUsers: [],
+      }),
+    });
+
+    const temp = await res.json();
+    
+    return temp;
+  } catch (error) {
+    console.error("error sending invitation to join the group :", error);
+    return { error: error.message };
+  } finally {
+    setJoining(false);
+  }
+}
+
 export function AllGroups() {
   const [group, setGroup] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [joining, setJoining] = useState(false)
+  const { sendMessage } = useWS();
+  const { Profile } = useProfile();
+
 
   useEffect(() => {
     fetch("http://localhost:8080/groups", {
@@ -39,7 +74,6 @@ export function AllGroups() {
     })
       .then((res) => res.json())
       .then((data) => {
-        console.log("data is----- :", data);
         setGroup(data);
         setLoading(false);
       })
@@ -61,6 +95,7 @@ export function AllGroups() {
   }
   return (
     <div className="groups-grid">
+      <Toaster position="bottom-right" richColors />
       {group.map((grp) => (
         <div key={grp.ID} className="group-card">
           <div className="group-header">
@@ -79,7 +114,16 @@ export function AllGroups() {
                 <span className="members-text-full">{grp.MemberCount} members</span>
                 <span className="members-text-short">{grp.MemberCount} members</span>
               </div>
-              <button className="view-button">
+              <button className="view-button" onClick={() => {
+                toast.success("Join request sent!");
+                JoinGroup(grp.ID, setJoining)
+                sendMessage({
+                  type: "joinRequest",
+                  senderId: Profile.id,
+                  receiverId: grp.ID,
+                  messageContent: "",
+                });
+              }}>
                 <span>Join</span>
                 <ChevronRight />
               </button>
@@ -92,60 +136,47 @@ export function AllGroups() {
 }
 
 export function MyGroups() {
-  console.log("MyGroups rendered");
   const [group, setGroup] = useState([]);
   const [loading, setLoading] = useState(true);
-  const router = useRouter();
+  const router = useRouter()
 
-  const handleShow = (group) => {
-    router.push(`/groups/${group}`);
+  const handleShow = (groupId) => {
+    router.push(`/groups/${groupId}`);
   };
 
   useEffect(() => {
-    fetch("http://localhost:8080/myGroups", {
-      method: "GET",
-      credentials: "include",
+    fetch('http://localhost:8080/myGroups', {
+      method: 'GET',
+      credentials: 'include',
     })
-      .then((res) => res.json())
-      .then((data) => {
+      .then(res => res.json())
+      .then(data => {
         setGroup(data || []);
         setLoading(false);
       })
-      .catch((error) => {
+      .catch(error => {
         console.error("Failed to fetch group data:", error);
         setLoading(false);
       });
-  }, []);
+  }, [])
 
-  if (!group) {
-    return (
-      <div>
-        <GroupCreationTrigger setGroup={setGroup} />
-        <div className="group-empty-state">
-          <Users />
-          <p className="group-empty-state-title">No groups found</p>
-          <p className="group-empty-state-text">
-            Create your first group to get started!
-          </p>
-        </div>
-      </div>
-    );
-  }
-  console.log("Groups data:", group);
   return (
-    <>
-      <GroupCreationTrigger setGroup={setGroup} />
-      <div className="groups-grid">
-        {group.map((grp) => (
-          <GroupCard key={grp.ID} group={grp} onShow={handleShow} />
-        ))}
-      </div>
-    </>
-  );
+    <div className="group-container">
+      <GroupCreationTrigger
+        setGroup={setGroup}
+      />
+      {group.map(grp => (
+        <GroupCard
+          key={grp.ID}
+          group={grp}
+          onShow={handleShow}
+        />
+      ))}
+    </div>
+  )
 }
 
 export async function createGroup(formData) {
-  console.log("inside Create Group function");
   return (
     fetch("http://localhost:8080/api/groups/add", {
       method: "POST",
@@ -154,27 +185,8 @@ export async function createGroup(formData) {
       body: JSON.stringify(formData),
     })
       .then(async (res) => {
-        console.log("form data ha s: ", formData);
         if (!res.ok) throw new Error("Failed to create group");
-        // console.log("result :", res);
-        // console.log("result  :",await res.text());
         const groupIS = await res.json();
-        // console.log("new group is :", groupIS);
-        const SendInvitations = await fetch(
-          `http://localhost:8080/group/invitation/${groupIS.ID}`,
-          {
-            method: "POST",
-            credentials: "include",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              invitedUsers: formData.invitedUsers,
-            }),
-          }
-        );
-
-        console.log("SendInvitations ::", await SendInvitations.json());
         return groupIS;
       })
       // .then(createdGroup => { return createdGroup })

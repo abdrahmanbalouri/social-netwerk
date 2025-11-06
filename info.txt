@@ -1,9 +1,0 @@
-migration_name="add_group_post_id_to_comments"
-timestamp=$(date +"%Y%m%d%H%M%S")
-file="./backend/pkg/migrations/sqlite/${timestamp}-${migration_name}.sql"
-touch $file
-echo -e "-- +migrate Up\n\n-- +migrate Down" > $file
-echo "Created migration file: $file"
-
-
-###  cors policy  csrf 

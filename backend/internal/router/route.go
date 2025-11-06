@@ -60,7 +60,7 @@ func Routes() http.Handler {
 	// ======= Messaging / WebSocket =======
 	mux.HandleFunc("/api/getmessages", handlers.GetMessagesHandler) // dart
 	mux.HandleFunc("/api/getGroupMessages", handlers.GetGroupMessagesHandler) // dart
-	mux.HandleFunc("/ws", handlers.Websocket)
+	mux.HandleFunc("/ws", handlers.Websocket) // dart
 
 	// ======= Groups =======
 	mux.HandleFunc("/myGroups", handlers.GetMyGroups)
@@ -75,7 +75,9 @@ func Routes() http.Handler {
 	mux.HandleFunc("/group/updatepost/{id}/{groupId}", handlers.GetGroupPostByID)           // dart
 	mux.HandleFunc("/group/Getcomments/{id}/{offset}/{groupId}", handlers.GetCommentsGroup) // dart
 	mux.HandleFunc("/group/getlastcomment/{id}/{groupId}", handlers.GetlastcommnetGroup)    // dart
-	mux.HandleFunc("/api/groupeInvitation", handlers.GroupeInvitation)
+	mux.HandleFunc("/api/fetchJoinRequests/{id}", handlers.FetchJoinRequests)
+	mux.HandleFunc("/api/fetchGroupInvitation", handlers.GroupeInvitation)
+	mux.HandleFunc("/api/fetchFriendsForGroups/{id}", handlers.FetchFriendsForGroups)
 
 	// ======= Events =======
 	mux.HandleFunc("/api/getEvents/", handlers.GetEvents)      // dart

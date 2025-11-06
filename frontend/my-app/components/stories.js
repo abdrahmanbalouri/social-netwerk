@@ -93,7 +93,6 @@ const activeGrouped = groupedStories
     return 0;
   });
   const allGroups = [...activeGrouped];
-  console.log(allGroups);
   
 
 

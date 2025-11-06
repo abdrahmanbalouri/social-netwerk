@@ -24,7 +24,6 @@ export default function EventsPage() {
         })
             .then((response) => response.json())
             .then((data) => {
-                console.log('event', data);
 
                 setMyEvents(data);
             })
