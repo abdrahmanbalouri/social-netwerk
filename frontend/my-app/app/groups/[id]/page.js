@@ -158,7 +158,7 @@ export function Events() {
       )}
 
       {EventList?.length === 0 ? (
-        <div>No events yet. Be the first to create one!</div>
+        <div  className="no-data">No events yet. Be the first to create one!</div>
       ) : (
         EventList.map((ev) => (
           <EventCard key={ev.id} ev={ev} goingEvent={goingEvent} />
@@ -481,7 +481,7 @@ export function AllPosts() {
             {loading ? (
                 <div>Loading posts...</div>
             ) : posts && posts.length === 0 ? (
-                <div>There is no post yet.</div>
+                <div className="no-data">There is no post yet.</div>
             ) : (
                 <div className="posts-list">
                     { posts && posts.map((post) => (

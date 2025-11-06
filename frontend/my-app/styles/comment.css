@@ -57,7 +57,7 @@
 .cm-heading {
   font-size: 1.25rem;
   font-weight: 600;
-  color: #1a1a1a;
+  color: var(--textColor);
   margin: 0;
   word-wrap: break-word;
   white-space: normal;
@@ -169,7 +169,7 @@
 
 .cm-name {
   font-weight: 600;
-  color: #1a1a1a;
+  color: var(--textColor);
   font-size: 0.9rem;
 }
 
@@ -251,7 +251,7 @@
 /* Input style Instagram */
 .cm-input-wrap {
   display: flex;
-  align-items: flex-end;
+  align-items: center;
   gap: 8px;
   background: var(--bg);
   border: 1px solid var(--bgSoft);
@@ -264,9 +264,7 @@
   overflow: hidden;
 }
 
-.cm-input-wrap:focus-within {
-  border-color: #a8a8a8;
-}
+
 
 .cm-input {
   flex: 1;
@@ -275,7 +273,7 @@
   font-family: inherit;
   font-size: 0.95rem;
   line-height: 1.5;
-  color: #262626;
+  color: var(--textColor);
   background: transparent;
   max-height: 100px;
   min-height: 24px;
@@ -284,7 +282,6 @@
   padding: 0;
   margin: 0;
   transition: height 0.2s ease;
-  /* Scroll automatique */
   overflow-y: auto;
   scroll-behavior: smooth;
 }
@@ -307,11 +304,6 @@
   background: #c7c7c7;
 }
 
-/* Pour Firefox */
-.cm-input {
-  scrollbar-width: thin;
-  scrollbar-color: #dbdbdb transparent;
-}
 
 .cm-input::placeholder {
   color: #8e8e8e;

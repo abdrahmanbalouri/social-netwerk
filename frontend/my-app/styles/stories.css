@@ -17,7 +17,7 @@
   gap: 16px;
   justify-content: flex-start;
   max-width: 800px;
-  margin:  auto;
+  margin: auto;
   margin-bottom: 10px;
   border-radius: 12px;
 }
@@ -48,7 +48,7 @@
   margin: 0 auto 6px;
   border: 2px solid transparent;
   background: linear-gradient(white, white) padding-box,
-              linear-gradient(45deg, #f58529, #dd2a7b, #8134af, #f58529) border-box;
+    linear-gradient(45deg, #f58529, #dd2a7b, #8134af, #f58529) border-box;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -85,7 +85,7 @@
 
 .my-story.has-story .story-image-wrapper {
   background: linear-gradient(white, white) padding-box,
-              linear-gradient(45deg, #f58529, #dd2a7b, #8134af, #f58529) border-box;
+    linear-gradient(45deg, #f58529, #dd2a7b, #8134af, #f58529) border-box;
   border: 2px solid transparent;
 }
 
@@ -110,6 +110,7 @@
   z-index: 5;
   transition: all 0.2s ease;
 }
+
 /* Toast Notification */
 
 
@@ -150,13 +151,18 @@
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
 }
 
 /* Modal Content */
 .story-modal {
-  background: #fff;
+  background: var(--bg);
   border-radius: 16px;
   width: 90%;
   max-width: 400px;
@@ -166,11 +172,12 @@
 }
 
 @keyframes slideUp {
-  from { 
+  from {
     opacity: 0;
     transform: translateY(20px);
   }
-  to { 
+
+  to {
     opacity: 1;
     transform: translateY(0);
   }
@@ -181,7 +188,7 @@
   margin-bottom: 16px;
   font-size: 18px;
   font-weight: 600;
-  color: #262626;
+  color: var(--textColor);
 }
 
 /* Preview */
@@ -220,31 +227,33 @@
   width: 100%;
   padding: 12px;
   margin: 8px 0;
-  border: 1px solid #dbdbdb;
+  border: 1px solid var(--bgSoft);
   border-radius: 8px;
   font-size: 14px;
-  background: #fafafa;
+  background: var(--bgSoft);
   transition: all 0.2s ease;
 }
 
-.story-modal input[type="text"]:focus {
-  border-color: #0095f6;
-  background: white;
-  outline: none;
-}
+
 
 .story-modal input[type="color"] {
   width: 100%;
   height: 44px;
   margin: 8px 0;
   border: none;
-  border-radius: 8px;
+  border-radius: 500px;
   cursor: pointer;
   transition: transform 0.2s ease;
+  background-color: transparent;
 }
 
-.story-modal input[type="color"]:hover {
-  transform: scale(1.02);
+input[type="color"]::-webkit-color-swatch-wrapper {
+  padding: 0;
+}
+
+input[type="color"]::-webkit-color-swatch {
+  border: none;
+  border-radius: 10%;
 }
 
 .story-modal input[type="file"] {
@@ -273,15 +282,13 @@
 }
 
 .modal-buttons button:first-child {
-  background: #0095f6;
-  color: #fff;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: var(--textColor);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+  transform: translateY(-1px);
   border: none;
 }
 
-.modal-buttons button:first-child:hover {
-  background: #0077c5;
-  transform: translateY(-1px);
-}
 
 .modal-buttons button:last-child {
   background: #efefef;
@@ -356,8 +363,13 @@
 }
 
 @keyframes countdown {
-  from { width: 100%; }
-  to { width: 0%; }
+  from {
+    width: 100%;
+  }
+
+  to {
+    width: 0%;
+  }
 }
 
 /* User Info Overlay - Instagram Style */
@@ -381,6 +393,7 @@
     opacity: 0;
     transform: translateY(-10px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -434,7 +447,8 @@
   position: relative;
   width: 100%;
   height: 100%;
-  padding: 60px 20px 80px; /* Space for header and bottom */
+  padding: 60px 20px 80px;
+  /* Space for header and bottom */
 }
 
 /* Centered Image - Instagram Style */
@@ -511,8 +525,13 @@
   cursor: pointer;
 }
 
-.tap-left { left: 0; }
-.tap-right { right: 0; }
+.tap-left {
+  left: 0;
+}
+
+.tap-right {
+  right: 0;
+}
 
 /* Close Button */
 .story-close-btn {
@@ -562,8 +581,13 @@
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 /* Empty State */
@@ -594,64 +618,64 @@
     gap: 14px;
     max-width: 100%;
   }
-  
+
   .story-item {
     width: 70px;
     height: 90px;
   }
-  
+
   .story-image-wrapper {
     width: 60px;
     height: 60px;
   }
-  
+
   .story-label {
     font-size: 11px;
     max-width: 60px;
   }
-  
+
   .story-add-btn.add-more {
     width: 18px;
     height: 18px;
     font-size: 12px;
     bottom: 20px;
   }
-  
+
   .story-modal {
     width: 95%;
     padding: 16px;
   }
-  
+
   .create-cover-preview {
     height: 180px;
   }
-  
+
   .story-text-content {
     font-size: 20px;
     padding: 16px;
   }
-  
+
   .story-user-info {
     top: 26px;
     left: 12px;
     padding: 5px 10px;
   }
-  
+
   .story-user-avatar {
     width: 24px;
     height: 24px;
   }
-  
+
   .story-user-name {
     font-size: 12px;
   }
-  
+
   .stories-progress-container {
     top: 14px;
     left: 12px;
     right: 12px;
   }
-  
+
   .story-content-container {
     padding: 50px 15px 70px;
   }
@@ -678,7 +702,7 @@
   .story-nav-btn {
     display: none;
   }
-  
+
   .tap-left,
   .tap-right {
     display: block;
@@ -689,7 +713,7 @@
   .story-nav-btn {
     display: flex;
   }
-  
+
   .tap-left,
   .tap-right {
     display: none;
@@ -701,12 +725,12 @@
   .story-image-wrapper {
     border: 2px solid #000;
   }
-  
+
   .story-user-info {
     background: rgba(0, 0, 0, 0.8);
     border: 1px solid #fff;
   }
-  
+
   .story-close-btn {
     background: rgba(0, 0, 0, 0.8);
     border: 1px solid #fff;
@@ -720,11 +744,11 @@
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
-  
+
   .story-segment-fill {
     transition: none;
   }
-  
+
   .story-segment-bar.active .story-segment-fill {
     animation: none;
   }

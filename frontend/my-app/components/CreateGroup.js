@@ -33,12 +33,6 @@ export function CreateGroupForm({ users, onSubmit, onCancel }) {
       invitedUsers: selectedUsers.map((u) => u.id),
     };
 
-    const handleUserSelect = (user) => {
-      if (!selectedUsers.find((u) => u.id === user.id)) {
-        setSelectedUsers([...selectedUsers, user]);
-        setSearchQuery("");
-      }
-    };
 
     onSubmit(groupData);
     onSubmit(selectedUsers);
@@ -103,7 +97,7 @@ export function CreateGroupForm({ users, onSubmit, onCancel }) {
                   {selectedUsers.map((user) => (
                     <li key={user.id} className="selected-user-tag">
                       <span className="user-avatar-small" aria-hidden="true">
-                        {user.nickname.charAt(0).toUpperCase()}
+                        {user?.first_name?.charAt(0).toUpperCase() + user?.last_name?.charAt(0).toUpperCase()}
                       </span>
                       <span>{user.name}</span>
                       <button
@@ -147,10 +141,10 @@ export function CreateGroupForm({ users, onSubmit, onCancel }) {
                         className="user-suggestion-item"
                       >
                         <span className="user-avatar-small" aria-hidden="true">
-                          {user.nickname.charAt(0).toUpperCase()}
+                          {user?.first_name?.charAt(0).toUpperCase() + user?.last_name?.charAt(0).toUpperCase()}
                         </span>
                         <div className="user-info">
-                          <div className="user-name">{user.nickname}</div>
+                          <div className="user-name">{user?.first_name + user?.last_name}</div>
                         </div>
                       </div>
                     ))}
