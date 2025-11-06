@@ -37,7 +37,7 @@ export default function Home() {
   const modalRef = useRef(null);
   const modalRefhome = useRef(null)
   const boleanofset = useRef(false)
-  const postRefs = useRef({});
+//  const postRefs = useRef({});
   const router = useRouter();
   const { darkMode } = useDarkMode();
   const sendMessage = useWS()
@@ -78,9 +78,8 @@ export default function Home() {
     async function handlescrollhome() {
 
       let b = await fetchingposts();
-      if (b) {
-        scrollToPost(b);
-      }
+      console.log(b);
+           
     }
 
     if (reachedBottom && !loading && posts.length >= 10) {
@@ -261,7 +260,8 @@ export default function Home() {
 
 
       if (visibility === 'private') {
-        formData.append("allowed_users", JSON.stringify(selectedUsers.join(',')));
+        formData.append("allowed_users", selectedUsers);
+        
       }
 
       const response = await fetch("http://localhost:8080/api/createpost", {
