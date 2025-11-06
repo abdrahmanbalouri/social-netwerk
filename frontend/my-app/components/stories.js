@@ -396,7 +396,6 @@ const activeGrouped = groupedStories
                   : isActive
                     ? `${((6 - timeLeft) / 6) * 100}%`
                     : "0%";
-
                 return (
                   <div
                     key={`${currentGroupIdx}-${segIdx}`}
@@ -417,7 +416,7 @@ const activeGrouped = groupedStories
             {/* User Info */}
             <div className="story-user-info">
               <img
-                src={currentGroup.user.profile ? `/uploads/${currentGroup.user.profile}` : "/avatar.png"}
+                src={currentGroup.user.profile ? `/uploads/${currentGroup.user.profile}` : "/assets/default.png"}
                 alt={currentGroup.user.first_name}
                 className="story-user-avatar"
               />
