@@ -67,7 +67,7 @@ export default function Navbar() {
       setSearchResults([]);
       return;
     }
-
+  // clearTimeout(delay)    
     const delay = setTimeout(async () => {
       try {
         const res = await fetch(`http://localhost:8080/api/searchUser?query=${encodeURIComponent(searchTerm)}`, {
@@ -114,8 +114,6 @@ export default function Navbar() {
             placeholder="Search..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            onFocus={() => setShowResults(true)}
-            onBlur={() => setTimeout(() => setShowResults(false), 150)}
           />
 
           {showResults && Array.isArray(searchResults) && searchResults.length > 0 && (

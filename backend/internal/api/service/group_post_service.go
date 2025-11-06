@@ -34,6 +34,11 @@ func CreateGroupPostService(r *http.Request, userID string) (interface{}, error)
 
 	title := r.FormValue("title")
 	description := r.FormValue("description")
+	title = helper.Skip(strings.TrimSpace(title))
+	description = helper.Skip(strings.TrimSpace(description))
+	if len(title) > 20 || len(description) > 20 {
+		return nil, fmt.Errorf("title or description to bigg")
+	}
 
 	// check membership
 	isMember, err := model.CheckUserInGroup(repository.Db, userID, groupID)
@@ -45,7 +50,7 @@ func CreateGroupPostService(r *http.Request, userID string) (interface{}, error)
 	}
 
 	// handle file upload
-	imagePath, err := handleGroupPostMedia(r, maxFileSize)
+	imagePath, err := handleGroupPostMedia(r, maxFileSize, title, description)
 	if err != nil {
 		return nil, err
 	}
@@ -66,12 +71,15 @@ func CreateGroupPostService(r *http.Request, userID string) (interface{}, error)
 	return newPost, nil
 }
 
-func handleGroupPostMedia(r *http.Request, maxSize int64) (string, error) {
+func handleGroupPostMedia(r *http.Request, maxSize int64, title string, descreption string) (string, error) {
 	file, header, err := r.FormFile("image")
 	if err != nil {
 		return "", nil // no file uploaded
 	}
 	defer file.Close()
+	if file == nil && len(title) == 0 && len(descreption) == 0 {
+		return "", fmt.Errorf("you need to do tile or descreption or image ")
+	}
 
 	ext := strings.ToLower(filepath.Ext(header.Filename))
 	allowed := map[string]bool{".jpg": true, ".jpeg": true, ".png": true, ".gif": true, ".mp4": true, ".mov": true, ".avi": true}
@@ -145,7 +153,7 @@ func GetGroupPost(postID, userID, groupID string) (map[string]interface{}, error
 		"last_name":      post.LastName,
 		"profile":        post.Profile,
 		"like":           post.LikeCount,
-		"liked_by_user":  post.LikedByUser ,
+		"liked_by_user":  post.LikedByUser,
 		"comments_count": post.CommentsCount,
 	}
 

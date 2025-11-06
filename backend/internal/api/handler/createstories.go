@@ -3,6 +3,7 @@ package handlers
 import (
 	"io"
 	"net/http"
+	"strings"
 	"time"
 
 	service "social-network/internal/api/service"
@@ -28,6 +29,7 @@ func CreateStories(w http.ResponseWriter, r *http.Request) {
 
 	content := r.FormValue("content")
 	bgColor := r.FormValue("bg_color")
+	content = helper.Skip(strings.TrimSpace(content))
 
 	var file io.ReadCloser
 	var filename string

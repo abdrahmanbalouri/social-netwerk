@@ -2,11 +2,14 @@
   position: sticky;
   top: 70px;
   max-height: 90vh;
-  width: 80%;
+  width: 100%;
   max-width: 800px;
   background-color: color-mix(in srgb, var(--bg), rgba(82, 81, 81, 0.637) 5%);
   border-radius: 12px;
   overflow: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
 }
 
 .max-width-wrapper {

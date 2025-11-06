@@ -33,6 +33,5 @@ func Getmypost(w http.ResponseWriter, r *http.Request) {
 		helper.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
-
 	helper.RespondWithJSON(w, http.StatusOK, posts)
 }
