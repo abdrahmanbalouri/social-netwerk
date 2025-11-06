@@ -42,7 +42,6 @@ export default function RightBarGroup({ onClick }) {
     const [grpID, setGrpID] = useState('')
     // const [users, setusers] = useState([])
     const [onlineUsers, setonlineUsers] = useState([])
-    const [activeTab, setActiveTab] = useState("friends");
     // const [followRequest, setFollowRequest] = useState([])
     const [joinRequest, setJoinRequest] = useState([])
     const { sendMessage, addListener, removeListener } = useWS();
@@ -145,47 +144,42 @@ export default function RightBarGroup({ onClick }) {
             </div>
 
             <div className="item">
-                <div className="sections">
-                    <h3
-                        className={activeTab === "friends" ? "active" : ""}
-                        onClick={() => setActiveTab("friends")}
-                    >
+                <div className="sectionss">
+                    <span className="invitaionnn">
                         Invite Your Friends
-                    </h3>
+                    </span>
                 </div>
-                {activeTab === "friends" && (
-                    <div>
-                        {!friends ? (
-                            <p>No friends yet</p>
-                        ) : (
-                            friends.map((user) => (
-                                <div key={user.id} className="user">
-                                    <div className="userInfo">
-                                        <div className="userDetails">
-                                            <Link href={`/profile/${user.id}`}>
+                <div>
+                    {friends.length == 0 ? (
+                        <p>No friends yet</p>
+                    ) : (
+                        friends.map((user) => (
+                            <div key={user.id} className="user">
+                                <div className="userInfo">
+                                    <div className="userDetails">
+                                        <Link href={`/profile/${user.id}`}>
                                             <img
                                                 src={user?.image ? `/uploads/${user.image}` : "/assets/default.png"}
                                                 alt="user avatar"
                                             />
-                                            </Link>
-                                            <div className={onlineUsers.includes(user.id) ? "online" : "offline"} />
-                                            <Link href={`/profile/${user.id}`}>
-                                                <span>{user.first_name + " " + user.last_name}</span>
-                                            </Link>
-                                        </div>
-                                        <div onClick={() => {
-                                            toast.success("invitaiton sent ")
-                                            onClick(user.id, grpID)
-                                            sendMessage({ type: "invite_to_group", ReceiverId: user.id, groupID: grpID })
-                                        }}>
-                                            <PersonAddAltIcon className="userIcon" />
-                                        </div>
+                                        </Link>
+                                        <div className={onlineUsers.includes(user.id) ? "online" : "offline"} />
+                                        <Link href={`/profile/${user.id}`}>
+                                            <span>{user.first_name + " " + user.last_name}</span>
+                                        </Link>
+                                    </div>
+                                    <div onClick={() => {
+                                        toast.success("invitaiton sent ")
+                                        onClick(user.id, grpID)
+                                        sendMessage({ type: "invite_to_group", ReceiverId: user.id, groupID: grpID })
+                                    }}>
+                                        <PersonAddAltIcon className="userIcon" />
                                     </div>
                                 </div>
-                            ))
-                        )}
-                    </div>
-                )}
+                            </div>
+                        ))
+                    )}
+                </div>
             </div>
         </div>
     );
