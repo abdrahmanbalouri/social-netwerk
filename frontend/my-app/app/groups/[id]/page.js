@@ -529,14 +529,13 @@ export async function CreatePost(groupId, formData) {
       body: formData,
     });
 
-    const text = await res.text();
-    console.log("Raw response:", text);
+    const text = await res.json();
 
-    if (!res.ok) {
-      throw new Error(`Failed to create post: ${res.status} ${text}`);
-    }
+     if (text.error){
+       return  text
+     }
 
-    return JSON.parse(text);
+    return text ;
   } catch (error) {
     console.error("CreatePost error:", error);
     throw error;
