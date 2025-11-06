@@ -7,6 +7,7 @@ import (
 
 	"social-network/internal/repository"
 	api "social-network/internal/router"
+	middlewares "social-network/midlwere"
 	// "social-network/pkg/middlewares"
 	// "social-network/pkg/ratelimiter"
 )
@@ -35,14 +36,6 @@ func main() {
 		log.Fatal("Error: ", err)
 		return
 	}
-
-	// defer func() {
-	// 	if err := recover(); err != nil {
-	// 		db.Close()
-	// 		log.Fatal("Error: ", err)
-	// 	}
-	// }()
-
 	if err := repository.ApplyMigrations(db); err != nil {
 		panic("Migration failed: " + err.Error())
 	}
@@ -50,7 +43,7 @@ func main() {
 	baseHandler := api.Routes()
 
 	// Wrap the API routes with CORS
-	handler := enableCORS(baseHandler)
+	handler := enableCORS(middlewares.SessionMiddleware(repository.Db, baseHandler))
 
 	server := &http.Server{
 		Addr:    ":8080",
