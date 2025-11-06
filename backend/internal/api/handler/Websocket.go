@@ -170,6 +170,7 @@ func Loop(conn *websocket.Conn, currentUserID string) {
 				"groupID":  msg.GroupID,
 				"content":  msg.MessageContent,
 				"time":     time.Now().Format(time.RFC3339),
+				"name":     msg.First_name + " " + msg.Last_name,
 			})
 
 			// ===============================
@@ -244,7 +245,7 @@ func Loop(conn *websocket.Conn, currentUserID string) {
 		case "joinRequest":
 
 			msg.MessageContent = "has requested to join your group"
-			err,receiver:= model.SaveGroupJoinRequestNotification(currentUserID, msg)
+			err, receiver := model.SaveGroupJoinRequestNotification(currentUserID, msg)
 			if err != nil {
 				log.Println("DB error saving group join request notification:", err)
 				continue

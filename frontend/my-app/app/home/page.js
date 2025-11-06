@@ -5,7 +5,7 @@ import { useEffect, useState, useRef } from "react";
 import Navbar from '../../components/Navbar.js';
 import LeftBar from '../../components/LeftBar.js';
 import RightBar from '../../components/RightBar.js';
-import { useDarkMode } from '../../context/darkMod';
+import { useDarkMode } from '../../context/darkMod.js';
 import Stories from '../../components/stories.js';
 import Comment from '../../components/coment.js';
 import Post from '../../components/Post.js';

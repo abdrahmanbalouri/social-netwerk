@@ -17,21 +17,23 @@ import { useWS } from "../../../context/wsContext.js";
 import AddReactionIcon from "@mui/icons-material/AddReaction";
 import SendIcon from "@mui/icons-material/Send";
 import "../../../styles/chat.css";
+import { useProfile } from "../../../context/profile.js";
+
 
 // Global sendRequest (can be moved to a service file later)
 async function sendRequest(invitedUserID, grpID) {
-    try {
-        const res = await fetch(`http://localhost:8080/group/invitation/${grpID}`, {
-            method: 'POST',
-            credentials: 'include',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                InvitationType: "invitation",
-                invitedUsers: [invitedUserID],
-            }),
-        });
+  try {
+    const res = await fetch(`http://localhost:8080/group/invitation/${grpID}`, {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        InvitationType: "invitation",
+        invitedUsers: [invitedUserID],
+      }),
+    });
 
     const temp = await res.json();
     return temp;
@@ -45,19 +47,19 @@ async function sendRequest(invitedUserID, grpID) {
 
 // Main Page Component
 export default function GroupPage() {
-    const { darkMode } = useDarkMode();
-    const router = useRouter();
-    const params = useParams();
-    const grpID = params.id;
-    useEffect(() => {
-        const checkAuth = async () => {
-            const auth = await middleware();
-            if (!auth) {
-                router.push("/login");
-            }
-        }
-        checkAuth();
-    }, [grpID])
+  const { darkMode } = useDarkMode();
+  const router = useRouter();
+  const params = useParams();
+  const grpID = params.id;
+  useEffect(() => {
+    const checkAuth = async () => {
+      const auth = await middleware();
+      if (!auth) {
+        router.push("/login");
+      }
+    }
+    checkAuth();
+  }, [grpID])
 
   return (
     <div className={darkMode ? "theme-dark" : "theme-light"}>
@@ -158,7 +160,7 @@ export function Events() {
       )}
 
       {EventList?.length === 0 ? (
-        <div  className="no-data">No events yet. Be the first to create one!</div>
+        <div className="no-data">No events yet. Be the first to create one!</div>
       ) : (
         EventList.map((ev) => (
           <EventCard key={ev.id} ev={ev} goingEvent={goingEvent} />
@@ -244,29 +246,29 @@ export function EventForm({ closeForm, fetchEvents, showEvent }) {
 
   return (
 
-      <div className="create-event-card">
-        <h2 className="card-title">Create Event</h2>
-        <form className="event-form">
-          <div className="form-grp">
-            <label htmlFor="event-title">Title</label>
-            <input type="text" id="event-title" placeholder="Event title..." onChange={(e) => { setTitle(e.target.value) }} />
-          </div>
+    <div className="create-event-card">
+      <h2 className="card-title">Create Event</h2>
+      <form className="event-form">
+        <div className="form-grp">
+          <label htmlFor="event-title">Title</label>
+          <input type="text" id="event-title" placeholder="Event title..." onChange={(e) => { setTitle(e.target.value) }} />
+        </div>
 
-          <div className="form-grp">
-            <label htmlFor="event-description">Description</label>
-            <textarea id="event-description" rows="3" placeholder="Event description..." onChange={(e) => { setDescription(e.target.value) }}></textarea>
-          </div>
+        <div className="form-grp">
+          <label htmlFor="event-description">Description</label>
+          <textarea id="event-description" rows="3" placeholder="Event description..." onChange={(e) => { setDescription(e.target.value) }}></textarea>
+        </div>
 
-          <div className="form-grp">
-            <label htmlFor="event-datetime">Day/Time</label>
-            <input type="datetime-local" id="event-datetime" onChange={(e) => { setDateTime(e.target.value) }} />
-          </div>
-          <span className="error" style={{ color: "red" }}> {errors}</span>
-          <button type="submit" className="btn-create" onClick={createEvent}>Create Event</button>
-          <button type="button" className="cancel-btn" onClick={showEvent}>Cancel</button>
-        </form>
-        <p className="error-message" style={{ color: "red", alignItems: 'center' }}>{error}</p>
-      </div>
+        <div className="form-grp">
+          <label htmlFor="event-datetime">Day/Time</label>
+          <input type="datetime-local" id="event-datetime" onChange={(e) => { setDateTime(e.target.value) }} />
+        </div>
+        <span className="error" style={{ color: "red" }}> {errors}</span>
+        <button type="submit" className="btn-create" onClick={createEvent}>Create Event</button>
+        <button type="button" className="cancel-btn" onClick={showEvent}>Cancel</button>
+      </form>
+      <p className="error-message" style={{ color: "red", alignItems: 'center' }}>{error}</p>
+    </div>
 
 
   )
@@ -478,20 +480,20 @@ export function AllPosts() {
         </div>
       )}
 
-            {loading ? (
-                <div>Loading posts...</div>
-            ) : posts && posts.length === 0 ? (
-                <div className="no-data">There is no post yet.</div>
-            ) : (
-                <div className="posts-list">
-                    { posts && posts.map((post) => (
-                        <Post
-                            key={post.id}
-                            post={post}
-                            onGetComments={GetComments}
-                            ondolike={handleLike}
-                        />
-                    ))}
+      {loading ? (
+        <div>Loading posts...</div>
+      ) : posts && posts.length === 0 ? (
+        <div className="no-data">There is no post yet.</div>
+      ) : (
+        <div className="posts-list">
+          {posts && posts.map((post) => (
+            <Post
+              key={post.id}
+              post={post}
+              onGetComments={GetComments}
+              ondolike={handleLike}
+            />
+          ))}
 
           <Comment
             comments={comment}
@@ -523,11 +525,11 @@ export async function CreatePost(groupId, formData) {
 
     const text = await res.json();
 
-     if (text.error){
-       return  text
-     }
+    if (text.error) {
+      return text
+    }
 
-    return text ;
+    return text;
   } catch (error) {
     console.error("CreatePost error:", error);
     throw error;
@@ -542,6 +544,10 @@ export function GroupChat({ groupId }) {
   const inputRef = useRef(null);
   const chatEndRef = useRef(null);
   const { sendMessage, addListener, removeListener } = useWS();
+  const { Profile } = useProfile();
+  console.log("13",Profile);
+
+
   useEffect(() => {
     fetch("http://localhost:8080/api/me", {
       credentials: "include",
@@ -549,6 +555,8 @@ export function GroupChat({ groupId }) {
     })
       .then((res) => res.json())
       .then((data) => {
+        console.log("dataaaaaaaaaaaaaaaaaa", data);
+
         setId(data.user_id)
       })
       .catch((err) => console.error(err));
@@ -574,6 +582,8 @@ export function GroupChat({ groupId }) {
               text: msg.content,
               sender: msg.senderId !== id ? "them" : "me",
               time: new Date(msg.createdAt).toLocaleString(),
+              name: msg.first_name + " " + msg.last_name,
+              image: msg.photo
             }))
             .reverse();
 
@@ -588,12 +598,16 @@ export function GroupChat({ groupId }) {
 
   useEffect(() => {
     const handleIncomingMessage = (data) => {
+      console.log(data);
+      
       setMessages((prev) => [
         ...prev,
         {
           text: data.content,
           sender: data.senderId !== id ? "them" : "me",
           time: data.time,
+          name: data.name,
+          image: data.image
         },
       ]);
     };
@@ -668,6 +682,8 @@ export function GroupChat({ groupId }) {
       groupID: groupId,
       messageContent: input,
       type: "group_message",
+      name: Profile.first_name,
+      image: Profile.image
     };
     sendMessage(payload);
     setInput("");
@@ -694,6 +710,8 @@ export function GroupChat({ groupId }) {
         ) : (
           messages.map((msg, index) => (
             <div key={index} className={`message ${msg.sender}`}>
+              <img src={msg?.image ? `/uploads/${msg?.image}` : "/assets/default.png"} alt="profile picture" className="profilePic" />
+              <div className="rrrr">{msg.name}</div>
               <div className="msg-content">{msg.text}</div>
               <div className="info-time">
                 <span className="time">
