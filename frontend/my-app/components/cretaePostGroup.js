@@ -148,10 +148,8 @@ export function PostCreationTrigger({ setPost }) {
       setIsModalOpen(false);
       // setShowForm(false)
       setPost(prev => {
-        // console.log("posts before are :", prev);
         const exists = prev.some(p => p.id === newpost.id);
         const temp = [newpost, ...prev]
-        // console.log("posts after are :", temp);
         return exists ? prev : [newpost, ...prev];
       })
     } catch (err) {

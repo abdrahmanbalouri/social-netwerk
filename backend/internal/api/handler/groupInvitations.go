@@ -3,7 +3,6 @@ package handlers
 import (
 	"database/sql"
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"strings"
 	"time"
@@ -33,7 +32,6 @@ func GroupInvitationResponse(w http.ResponseWriter, r *http.Request) {
 		helper.RespondWithError(w, http.StatusBadRequest, "Invalid request format")
 		return
 	}
-	fmt.Println("RESPONSE IS :", newResponse)
 	var userID string
 
 	if newResponse.invitationType == "invitation" {
@@ -47,10 +45,8 @@ func GroupInvitationResponse(w http.ResponseWriter, r *http.Request) {
 		query := `SELECT user_id 
 		FROM group_invitations 
 		WHERE id = ?;`
-		fmt.Println("newResponse.InvitationID :", newResponse.InvitationID)
 		err := repository.Db.QueryRow(query, newResponse.InvitationID).Scan(&userID)
 		if err != nil {
-			fmt.Println("Error fetching user ID:", err)
 			return
 		}
 	}
@@ -110,7 +106,6 @@ func GroupInvitationResponse(w http.ResponseWriter, r *http.Request) {
 }
 
 func GroupInvitationRequest(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("INSIDE GROUP INVITATION REQUEST")
 	if r.Method != http.MethodPost {
 		helper.RespondWithError(w, http.StatusMethodNotAllowed, "Method not allowed")
 		return
@@ -125,7 +120,6 @@ func GroupInvitationRequest(w http.ResponseWriter, r *http.Request) {
 
 	var newInvitation GroupInvitation
 	if err := json.NewDecoder(r.Body).Decode(&newInvitation); err != nil {
-		fmt.Println("Invalid request format :", err)
 		helper.RespondWithError(w, http.StatusBadRequest, "Invalid request format")
 		return
 	}
@@ -133,14 +127,12 @@ func GroupInvitationRequest(w http.ResponseWriter, r *http.Request) {
 	// find the user id
 	userID, IDerr := helper.AuthenticateUser(r)
 	if IDerr != nil { //////////////////////////////////////////////////////
-		fmt.Println("User id error is:", IDerr)
 		return
 	}
 
 	// start the transaction
 	tx, err := repository.Db.Begin()
 	if err != nil {
-		fmt.Println("Failed to start database transaction :", err)
 		helper.RespondWithError(w, http.StatusInternalServerError, "Failed to start database transaction")
 		return
 	}
@@ -148,7 +140,7 @@ func GroupInvitationRequest(w http.ResponseWriter, r *http.Request) {
 
 	invitationId := helper.GenerateUUID()
 	if newInvitation.InvitationType == "join" {
-		//t2akd ila kayna aslan invitation b nafs l variables wla la
+		// t2akd ila kayna aslan invitation b nafs l variables wla la
 		var exists bool
 		query := `SELECT EXISTS (
 					SELECT 1 
@@ -159,11 +151,9 @@ func GroupInvitationRequest(w http.ResponseWriter, r *http.Request) {
 					) AS has_invitation;`
 		err = tx.QueryRow(query, userID, GrpId).Scan(&exists)
 		if err != nil {
-			fmt.Println("EROORRRRRR :", err)
 			helper.RespondWithError(w, http.StatusInternalServerError, "Database error")
 			return
 		}
-		fmt.Println("EXIST VALUE IS :", exists)
 		if exists {
 			response := map[string]any{
 				"invitation_id": invitationId,
@@ -176,9 +166,6 @@ func GroupInvitationRequest(w http.ResponseWriter, r *http.Request) {
 		query = `INSERT INTO group_invitations (id, group_id, user_id, invited_by_user_id, request_type, created_at) VALUES (?, ?, ?, ?, ?, ?)`
 		_, err = tx.Exec(query, invitationId, GrpId, userID, nil, "join", createdAt)
 		if err != nil {
-			fmt.Println("User id is :", userID)
-			fmt.Println("group id is :", GrpId)
-			fmt.Println("Error sending the invitation :", err)
 			helper.RespondWithError(w, http.StatusInternalServerError, "Error sending the invitation")
 			return
 		}
@@ -218,7 +205,6 @@ func GroupInvitationRequest(w http.ResponseWriter, r *http.Request) {
 							);`
 				err = tx.QueryRow(query, user).Scan(&exists2)
 				if err != nil {
-					fmt.Println("Database error is :", err)
 					helper.RespondWithError(w, http.StatusInternalServerError, "Database error")
 					return
 				}
@@ -265,8 +251,6 @@ func FetchJoinRequests(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	GrpId := parts[3]
-	fmt.Println("User id is :", UserID)
-	fmt.Println("Group id is :", GrpId)
 
 	Fquery := `SELECT 
     gi.id AS invitation_id,
@@ -282,7 +266,6 @@ func FetchJoinRequests(w http.ResponseWriter, r *http.Request) {
 	`
 	rows, err := repository.Db.Query(Fquery, UserID, GrpId)
 	if err != nil {
-		fmt.Println("error running the Fqueery :", err)
 		http.Error(w, "Database error: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -297,22 +280,18 @@ func FetchJoinRequests(w http.ResponseWriter, r *http.Request) {
 
 	var groupeInvitation []JoinRequest
 	for rows.Next() {
-		fmt.Println("INSIDE THE ROWS LOOP")
 		var req JoinRequest
 		if err := rows.Scan(&req.InvitationID, &req.UserID, &req.FirstName, &req.LastName); err != nil {
-			fmt.Println("Errooooooor is __:", err)
 			http.Error(w, "Database error: "+err.Error(), http.StatusInternalServerError)
 			return
 		}
 		groupeInvitation = append(groupeInvitation, req)
 	}
-	fmt.Println("group invitatioooooooooooons are :", groupeInvitation)
 
 	helper.RespondWithJSON(w, http.StatusOK, groupeInvitation)
 }
 
 func FetchFriendsForGroups(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("____________________________ 1111")
 	if r.Method != http.MethodGet {
 		helper.RespondWithError(w, http.StatusMethodNotAllowed, "Method not allowed")
 		return
@@ -320,7 +299,6 @@ func FetchFriendsForGroups(w http.ResponseWriter, r *http.Request) {
 
 	userID, IDerr := helper.AuthenticateUser(r)
 	if IDerr != nil {
-		fmt.Println("User id error is:", IDerr) ////////////////////////////////////////////////////// (khas ttl3 error akhera)
 		return
 	}
 
@@ -343,7 +321,6 @@ func FetchFriendsForGroups(w http.ResponseWriter, r *http.Request) {
 
 	rows, err := repository.Db.Query(query, userID, GrpID)
 	if err != nil {
-		fmt.Println("Error fetching special followers :", err)
 		http.Error(w, "Database query failed: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -368,8 +345,6 @@ func FetchFriendsForGroups(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Row iteration error: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
-	fmt.Println("USers are :", users)
-	fmt.Println("__________________________22222")
 
 	helper.RespondWithJSON(w, http.StatusOK, users)
 }

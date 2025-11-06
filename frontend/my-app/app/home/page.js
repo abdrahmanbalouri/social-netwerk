@@ -73,7 +73,6 @@ export default function Home() {
     const reachedBottom =
       window.innerHeight + window.scrollY >= document.body.scrollHeight - 20;
 
-    console.log(reachedBottom);
 
     async function handlescrollhome() {
 
