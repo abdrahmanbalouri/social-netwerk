@@ -23,7 +23,6 @@ func GetPostByUserHandler(w http.ResponseWriter, r *http.Request) {
 		  return
 	  }
 	parts := strings.Split(r.URL.Path, "/")
-	fmt.Println("parts:", parts)
 	if len(parts) < 4 {
 		helper.RespondWithError(w, http.StatusNotFound, "Post not found")
 		return
