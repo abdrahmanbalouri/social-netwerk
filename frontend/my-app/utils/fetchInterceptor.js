@@ -1,35 +1,27 @@
-"use client";
+'use client'; // for Next.js 13+ app directory
 
-import { useEffect } from "react";
-import { useRouter } from "next/router";
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 
 export default function ClientFetchInterceptor() {
-    const router = useRouter()
-  useEffect(() => {
-    const originalFetch = window.fetch.bind(window);
+    const router = useRouter(); // safe now because this is a client component
 
-    window.fetch = async (...args) => {
-      const [input, init] = args;
+    useEffect(() => {
+        const originalFetch = window.fetch.bind(window);
 
-      const url = typeof input === "string" ? input : input.url;
-      console.log(url);
-      
+        window.fetch = async (...args) => {
+            try {
+                const response = await originalFetch(...args);
+                if (response.status === 401) {
+                    router.push('/login'); // redirect if unauthorized
+                }
+                return response;
+            } catch (err) {
+                console.error(err);
+                throw err;
+            }
+        };
+    }, [router]);
 
-      const excludedPaths = ["http://localhost:8080/api/login", "http://localhost:8080/api/register"];
-      if (excludedPaths.some((path) => url.includes(path))) {
-        return originalFetch(...args);
-      }
-
-      const response = await originalFetch(...args);
-
-      if (response.status === 401) {
-        router.replace('/login')
-         
-      }
-
-      return response;
-    };
-  }, []);
-
-  return null;
+    return null; 
 }
