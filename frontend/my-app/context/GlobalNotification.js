@@ -19,7 +19,7 @@ export default function GlobalNotification() {
           setToast(payload);
           break;
         case "message":
-          if (pathname !== `/ chat / ${payload.from} `) {
+          if (pathname !== `/chat/${payload.from}`) {
             setToast(payload);
           }
           break;
