@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"fmt"
 	"net/http"
 
 	"social-network/internal/helper"
@@ -9,8 +8,6 @@ import (
 )
 
 func GroupeInvitation(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("WAST HAD LBATAAAAAL")
-
 	if r.Method != http.MethodGet {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
@@ -21,8 +18,6 @@ func GroupeInvitation(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Unauthorized: "+err.Error(), http.StatusUnauthorized)
 		return
 	}
-
-	fmt.Println("UserID :::::", userID)
 
 	groupInvitations, err := model.FetchGroupInvitations(userID)
 	if err != nil {

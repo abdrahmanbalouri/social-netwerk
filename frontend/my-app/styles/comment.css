@@ -24,7 +24,7 @@
 
 /* Modal */
 .cm-modal {
-  background: white;
+  background: var(--bg);
   border-radius: 16px;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
   width: 100%;
@@ -47,8 +47,8 @@
   align-items: center;
   justify-content: space-between;
   padding: 24px 24px 16px;
-  border-bottom: 1px solid #f0f0f0;
-  background: white;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg);
   position: sticky;
   top: 0;
   z-index: 10;
@@ -57,7 +57,7 @@
 .cm-heading {
   font-size: 1.25rem;
   font-weight: 600;
-  color: #1a1a1a;
+  color: var(--textColor);
   margin: 0;
   word-wrap: break-word;
   white-space: normal;
@@ -65,7 +65,7 @@
 }
 
 .cm-close {
-  background: #f8f9fa;
+  background: var(--bgSoft);
   border: none;
   border-radius: 8px;
   width: 40px;
@@ -79,10 +79,6 @@
   order: 2;
 }
 
-.cm-close:hover {
-  background: #e5e7eb;
-  color: #374151;
-}
 
 .cm-close:active {
   transform: scale(0.95);
@@ -144,7 +140,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: white;
+  color: var(--textColor);
   font-weight: 600;
   font-size: 0.9rem;
   flex-shrink: 0;
@@ -173,7 +169,7 @@
 
 .cm-name {
   font-weight: 600;
-  color: #1a1a1a;
+  color: var(--textColor);
   font-size: 0.9rem;
 }
 
@@ -243,8 +239,8 @@
 /* Form */
 .cm-form-wrap {
   padding: 20px 24px 24px;
-  border-top: 1px solid #f0f0f0;
-  background: #fafafa;
+  border-top: 1px solid var(--bgSoft);
+  background: var(--bg);
   position: relative;
 }
 
@@ -255,10 +251,10 @@
 /* Input style Instagram */
 .cm-input-wrap {
   display: flex;
-  align-items: flex-end;
+  align-items: center;
   gap: 8px;
-  background: white;
-  border: 1px solid #dbdbdb;
+  background: var(--bg);
+  border: 1px solid var(--bgSoft);
   border-radius: 22px;
   padding: 8px 16px;
   transition: all 0.2s ease;
@@ -268,19 +264,16 @@
   overflow: hidden;
 }
 
-.cm-input-wrap:focus-within {
-  border-color: #a8a8a8;
-}
+
 
 .cm-input {
   flex: 1;
   border: none;
   outline: none;
-  resize: none;
   font-family: inherit;
   font-size: 0.95rem;
   line-height: 1.5;
-  color: #262626;
+  color: var(--textColor);
   background: transparent;
   max-height: 100px;
   min-height: 24px;
@@ -289,7 +282,6 @@
   padding: 0;
   margin: 0;
   transition: height 0.2s ease;
-  /* Scroll automatique */
   overflow-y: auto;
   scroll-behavior: smooth;
 }
@@ -312,11 +304,6 @@
   background: #c7c7c7;
 }
 
-/* Pour Firefox */
-.cm-input {
-  scrollbar-width: thin;
-  scrollbar-color: #dbdbdb transparent;
-}
 
 .cm-input::placeholder {
   color: #8e8e8e;

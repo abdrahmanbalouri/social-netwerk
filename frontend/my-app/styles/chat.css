@@ -44,7 +44,7 @@
 }
 
 
-.chat-header img {
+.chat-header img ,.profilePic{
   width: 42px;
   height: 42px;
   border-radius: 50%;

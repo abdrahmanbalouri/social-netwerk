@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"fmt"
 	"net/http"
 	"strings"
 	"time"
@@ -50,7 +49,7 @@ func CreatePostGroupHandler(w http.ResponseWriter, r *http.Request) {
 
 	post, err := service.CreateGroupPostService(r, userID)
 	if err != nil {
-		helper.RespondWithError(w, http.StatusInternalServerError, err.Error())
+		helper.RespondWithError(w, http.StatusBadRequest, err.Error())
 		return
 	}
 
@@ -136,7 +135,7 @@ func GetPostGroup(w http.ResponseWriter, r *http.Request) {
 `
 	rows, err := repository.Db.Query(query, userID, GrpId)
 	if err != nil {
-		fmt.Println("Failed to get the latest post :", err)
+
 		helper.RespondWithError(w, http.StatusInternalServerError, "Failed to get posts")
 		return
 	}
@@ -145,7 +144,7 @@ func GetPostGroup(w http.ResponseWriter, r *http.Request) {
 	var p Post
 	err = rows.Scan(&p.ID, &p.UserID, &p.Title, &p.Content, &p.ImagePath, &p.CreatedAt, &p.FirstName, &p.LastName, &p.Profile, &p.Like, &p.LikedByUSer, &p.CommentsCount)
 	if err != nil {
-		fmt.Println("heeeeeeeeeere :", err)
+
 		helper.RespondWithError(w, http.StatusInternalServerError, "Failed to scan posts")
 		return
 	}

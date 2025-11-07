@@ -6,7 +6,6 @@ import { useDarkMode } from "../../context/darkMod";
 import Navbar from "../../components/Navbar";
 import LeftBar from "../../components/LeftBar";
 import RightBar from "../../components/RightBar";
-import { middleware } from "../../middleware/middelware";
 import { useWS } from "../../context/wsContext";
 import { useRouter } from "next/navigation";
 
@@ -18,17 +17,6 @@ export default function Gallery() {
   const { darkMode } = useDarkMode();
   const router = useRouter();
   const sendMessage = useWS()
-  // Authentication check
-  useEffect(() => {
-    const checkAuth = async () => {
-      const auth = await middleware();
-      if (!auth) {
-        router.push("/login");
-        sendMessage({ type: "logout" })
-      }
-    }
-    checkAuth();
-  }, [])
 
   useEffect(() => {
     if (!Profile?.id) return;
@@ -40,7 +28,11 @@ export default function Gallery() {
       .then((data) => {
 
         if (data) {
-          let images = data.filter(img => img.imagePath);
+          console.log(data);
+          
+          let images = data.filter(img => img.ImagePath);
+          console.log("img",images);
+          
           setImages(images);
           return
         }
@@ -89,7 +81,7 @@ export default function Gallery() {
                   <div
                     className="gallery-item"
                     key={index}
-                    style={{ backgroundImage: `url(/${img.imagePath})` }}
+                    style={{ backgroundImage: `url(/${img.ImagePath})` }}
                   >
                     <div className="gallery-content">
                       <div className="gallery-title">{img.title || "No Title"}</div>

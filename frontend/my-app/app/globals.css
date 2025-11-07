@@ -45,7 +45,6 @@
   --logo: #5271ff;
   --bgSoft: #333;
   --textColorSoft: lightgray;
-  --border: #afadad;
   --bg-chat: #18191a;
   --bg-primary: #242526;
   --text-primary: #e4e6eb;
@@ -107,7 +106,7 @@ main {
 
 /* Modal Content */
 .modal-content {
-  background: linear-gradient(135deg, #ffffff 0%, #f8faff 100%);
+  background: var(--bg);
   border-radius: 24px;
   width: 90%;
   max-width: 600px;
@@ -130,8 +129,8 @@ main {
   position: absolute;
   top: 18px;
   right: 18px;
-  background: linear-gradient(135deg, #f8fafc, #f1f5f9);
-  border: 2px solid #e2e8f0;
+  background: var(--bg);
+  border: 2px solid var(--bgSoft);
   width: 42px;
   height: 42px;
   border-radius: 50%;
@@ -182,8 +181,8 @@ main {
   font-size: 15px;
   font-family: inherit;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  background: #ffffff;
-  color: #1e293b;
+  background: var(--bgSoft);
+  color: var(--textColor);
   font-weight: 500;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
 }
@@ -199,20 +198,23 @@ main {
 
 .modal-content textarea.input {
   min-height: 140px;
-  resize: none;
   line-height: 1.6;
+}
+
+textarea {
+  resize: none;
 }
 
 .modal-content input[type="file"].input {
   padding: 14px;
-  border: dashed 2px #cbd5e1;
-  background: #f8fafc;
+  background: var(--bgSoft);
 }
 
-.modal-content input[type="file"].input::file-selector-button {
+.modal-content input[type="file"].input::file-selector-button,
+.form-input::file-selector-button {
   padding: 11px 22px;
   background: linear-gradient(135deg, #5271ff, #7c3aed);
-  color: white;
+  color: var(--textColor);
   border: none;
   border-radius: 10px;
   cursor: pointer;
@@ -347,7 +349,7 @@ main {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  color: white;
+  color: var(--textColor);
   font-size: 14px;
   font-weight: bold;
 }
@@ -499,9 +501,9 @@ main {
 }
 
 .modal-actions .btn.cancel {
-  background: linear-gradient(135deg, #f8fafc, #f1f5f9);
+  background: var(--bgSoft);
   color: #475569;
-  border: 2px solid #e2e8f0;
+  border: 2px solid var(--bgSoft);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
@@ -582,18 +584,22 @@ main {
   font-size: 14px;
   font-weight: 500;
   margin-bottom: 5px;
-  color: #333;
+  color: var(--textColor);
 }
+
+
 
 .visibility-select select {
   width: 100%;
   padding: 10px;
-  border: 1px solid #ddd;
+  border: 1px solid var(--border);
   border-radius: 4px;
   font-size: 16px;
-  background: #fff;
+  background: var(--bg);
+  color: var(--textColor);
   cursor: pointer;
 }
+
 
 .visibility-select select:focus {
   outline: none;
@@ -700,6 +706,7 @@ a {
     font-size: 14px;
   }
 }
+
 .toast {
   position: fixed;
   top: 20px;
@@ -750,6 +757,7 @@ a {
     opacity: 0;
     transform: translateX(-50%) translateY(-20px);
   }
+
   to {
     opacity: 1;
     transform: translateX(-50%) translateY(0);

@@ -6,24 +6,9 @@ import RightBar from "../../components/RightBar.js";
 import { useDarkMode } from "../../context/darkMod.js";
 import Link from "next/link.js";
 import "../../styles/games.css";
-import { useWS } from "../../context/wsContext.js";
-import { middleware } from "../../middleware/middelware.js";
 import { useRouter } from "next/navigation";
 
 export default function Game() {
-  const router = useRouter();
-  const sendMessage = useWS()
-  // Authentication check
-  useEffect(() => {
-    const checkAuth = async () => {
-      const auth = await middleware();
-      if (!auth) {
-        router.push("/login");
-        sendMessage({ type: "logout" })
-      }
-    }
-    checkAuth();
-  }, [])
   const { darkMode } = useDarkMode();
   const [showSidebar, setShowSidebar] = React.useState(true);
   return (

@@ -13,7 +13,7 @@ export default function RightBar() {
   const [activeTab, setActiveTab] = useState("friends");
   const [activeTabRequests, setActiveTabRequests] = useState("followRequests");
 
-  const  [groupeInvitation, setgroupeInvitation] = useState([])
+  const [groupeInvitation, setgroupeInvitation] = useState([])
 
   const [followRequest, setFollowRequest] = useState([])
   const { sendMessage, addListener, removeListener } = useWS();
@@ -43,6 +43,24 @@ export default function RightBar() {
 
     fetchGroupeInvitation();
   }, []);
+
+
+  async function fetchFollowRequest() {
+    try {
+      const res = await fetch("http://localhost:8080/api/followRequest", {
+        method: "GET",
+        credentials: "include",
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        setFollowRequest(data);
+      }
+
+    } catch (err) {
+      console.error(err);
+    }
+  }
 
 
 
@@ -83,6 +101,7 @@ export default function RightBar() {
       });
 
       if (!res.ok) {
+        fetchFollowRequest()
         const errMsg = await res.text();
         throw new Error("Action failed: " + errMsg);
       }
@@ -93,55 +112,33 @@ export default function RightBar() {
     } catch (err) {
     }
   }
+
   async function handleGroupRequest(invitaitonId, action) {
     try {
-        const res = await fetch("http://localhost:8080/invitations/respond", {
-            method: "POST",
-            credentials: "include",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-                invitation_id: invitaitonId,
-                response: action,
-            }),
-        });
+      const res = await fetch("http://localhost:8080/invitations/respond", {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          invitation_id: invitaitonId,
+          response: action,
+        }),
+      });
 
-        if (!res.ok) {
-            const errMsg = await res.text();
-            throw new Error("Action failed: " + errMsg);
-        }
-        const data = await res.json();
-        setgroupeInvitation((prev) => (prev || []).filter((req) => req.invitation_id !== invitaitonId));
+      if (!res.ok) {
+        const errMsg = await res.text();
+        throw new Error("Action failed: " + errMsg);
+      }
+      const data = await res.json();
+      setgroupeInvitation((prev) => (prev || []).filter((req) => req.invitation_id !== invitaitonId));
     } catch (err) {
     }
-}
-
-
+  }
 
 
   useEffect(() => {
-    async function fetchFollowRequest() {
-      try {
-        const res = await fetch("http://localhost:8080/api/followRequest", {
-          method: "GET",
-          credentials: "include",
-        });
-
-
-
-        if (res.ok) {
-          const data = await res.json();
-          setFollowRequest(data);
-        }
-
-
-
-      } catch (err) {
-        console.error(err);
-      }
-    }
-
     fetchFollowRequest();
   }, []);
 
@@ -154,14 +151,10 @@ export default function RightBar() {
           credentials: "include",
         });
 
-
-
         if (!res.ok) {
           throw new Error("Failed to fetch posts");
         }
         const data = await res.json();
-
-
 
         setusers(data);
       } catch (err) {
@@ -171,6 +164,7 @@ export default function RightBar() {
 
     fetchusers();
   }, []);
+
   useEffect(() => {
     async function fetchfriends() {
       try {
@@ -190,8 +184,6 @@ export default function RightBar() {
 
     fetchfriends();
   }, [])
-
-  console.log(" groupeInvitation ARE :", groupeInvitation);
 
 
 
@@ -217,7 +209,7 @@ export default function RightBar() {
         {activeTabRequests === "followRequests" && (
 
           <div>
-            {!followRequest || followRequest .length === 0? (<p>no follow reuqets found  </p>) : (
+            {!followRequest || followRequest.length === 0 ? (<p>no follow reuqets found  </p>) : (
               followRequest.map((user) => (
                 <div key={user.id} className="user">
                   <div className="userInfo">
@@ -247,25 +239,16 @@ export default function RightBar() {
         )}
 
         {activeTabRequests === "groupeInvitation" && (
-
           <div>
 
             {!groupeInvitation ? (<p> no groupe invitation found </p>) :
               (
                 groupeInvitation.map((group) => (
-                  <div key={group.id} className="user">
+                  <div key={group.group_id} className="user">
                     <div className="userInfo">
                       <div className="userDetails">
-                        {/* <Link href={`/profile/${group.id}`} className="userLink"> */}
-                        {/*  <img
-                            src={group?.image ? `/uploads/${group.image}` : "/assets/default.png"}
-                            alt="user avatar"
-                          />  */}
-                          <i className="fa-solid fa-people-group"></i>
-                       {/*  </Link> */}
-                        {/* <Link href={`/profile/${group.id}`}> */}
-                          <span>{group.title}</span>
-                      {/*   </Link> */}
+                        <i className="fa-solid fa-people-group"></i>
+                        <span>{group.title}</span>
                       </div>
 
                       <div className="buttons">
@@ -283,7 +266,6 @@ export default function RightBar() {
 
 
       </div>
-
       <div className="item">
         <div className="sections">
           <h3
