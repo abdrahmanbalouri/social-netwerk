@@ -1,10 +1,15 @@
 .group-container {
+  position: sticky;
+  top: 70px;
   max-height: 90vh;
-  width: 80%;
+  width: 100%;
   max-width: 800px;
   background-color: color-mix(in srgb, var(--bg), rgba(82, 81, 81, 0.637) 5%);
   border-radius: 12px;
   overflow: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
 }
 
 .max-width-wrapper {
@@ -25,7 +30,7 @@
 }
 
 .tabs-container {
-  background-color: white;
+  background-color: var(--bgSoft);
   border-radius: 0.5rem;
   box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
   margin-bottom: 1rem;
@@ -70,13 +75,10 @@
 }
 
 .group-tab-button.inactive {
-  color: #4b5563;
+  color: var(--textColor);
   background-color: transparent;
 }
 
-.group-tab-button.inactive:hover {
-  background-color: #f3f4f6;
-}
 
 .tab-icon {
   width: 18px;
@@ -98,17 +100,22 @@
   .tab-text-full {
     display: inline;
   }
+
   .tab-text-short {
     display: none;
   }
 }
 
 .create-card {
-  background-color: white;
+  background-color: var(--bgSoft);
   border-radius: 0.5rem;
   box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
   padding: 0.75rem;
   margin-bottom: 1rem;
+}
+.no-data{
+  text-align: center;
+  color: var(--textColor);
 }
 
 @media (min-width: 640px) {
@@ -155,11 +162,10 @@
 .create-input {
   flex: 1;
   padding: 0.5rem 0.75rem;
-  background-color: #f3f4f6;
+  background-color: var(--bg);
   border-radius: 9999px;
   cursor: pointer;
   transition: background-color 0.2s;
-  color: #4b5563;
   font-size: 0.875rem;
   min-width: 0;
   border: none;
@@ -173,9 +179,7 @@
   }
 }
 
-.create-input:hover {
-  background-color: #e5e7eb;
-}
+
 
 .create-button {
   width: 2.5rem;
@@ -200,9 +204,6 @@
   }
 }
 
-.create-button:hover {
-  background-color: #2563eb;
-}
 
 .create-icon {
   width: 20px;
@@ -219,7 +220,8 @@
 .groups-grid {
   display: grid;
 }
-.groups-grid > * {
+
+.groups-grid>* {
   grid-column: 1 / -1;
 }
 
@@ -237,17 +239,14 @@
 }
 
 .group-card {
-  background-color: white;
+  background-color: var(--bgSoft);
   border-radius: 0.5rem;
-  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
   transition: all 0.2s;
-  overflow: hidden;
   cursor: pointer;
-}
-
-.group-card:hover {
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
 }
+
+
 
 .group-header {
   height: 5rem;
@@ -324,7 +323,7 @@
 .group-title {
   font-weight: 700;
   font-size: 1rem;
-  color: #1f2937;
+  color: var(--textColor);
   margin-bottom: 0.375rem;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -341,7 +340,7 @@
 }
 
 .group-description {
-  color: #4b5563;
+  color: var(--textColorSoft);
   font-size: 0.75rem;
   margin-bottom: 0.75rem;
   overflow: hidden;
@@ -409,6 +408,7 @@
   .members-text-full {
     display: inline;
   }
+
   .members-text-short {
     display: none;
   }
@@ -458,7 +458,7 @@
 }
 
 .group-empty-state {
-  background-color: white;
+  background-color: var(--bgSoft);
   border-radius: 0.5rem;
   box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
   padding: 2rem;
@@ -476,7 +476,7 @@
   height: 40px;
   margin: 0 auto 0.75rem;
   opacity: 0.5;
-  color: #d1d5db;
+  color: var(--textColor);
 }
 
 @media (min-width: 640px) {
@@ -487,7 +487,7 @@
 }
 
 .group-empty-state-title {
-  color: #6b7280;
+  color: var(--textColor);
   font-size: 1rem;
   margin-bottom: 0.5rem;
 }
@@ -499,7 +499,7 @@
 }
 
 .group-empty-state-text {
-  color: #9ca3af;
+  color: var(--textColor);
   font-size: 0.75rem;
 }
 
@@ -511,43 +511,29 @@
 
 .group-modal-overlay {
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  inset: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 1000;
+  z-index: 999999;
   padding: 20px;
   animation: fadeIn 0.3s ease;
 }
-.group-modal-overlay1{
-    position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.6);
-  backdrop-filter: blur(4px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: -1;
-  padding: 20px;
-  animation: fadeIn 0.3s ease;
-}
+
+
+
 @keyframes fadeIn {
   from {
     opacity: 0;
   }
+
   to {
     opacity: 1;
   }
 }
 
 .group-modal-content {
-  background: white;
+  background: var(--bg);
   border-radius: 20px;
   padding: 32px;
   max-width: 600px;
@@ -557,16 +543,19 @@
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
   animation: slideUp 0.4s ease;
 }
+
 @media (min-width: 640px) {
   .group-modal-content {
     padding: 32px;
   }
 }
+
 @keyframes slideUp {
   from {
     opacity: 0;
     transform: translateY(30px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -620,7 +609,7 @@ fieldset.form-group {
   display: block;
   font-size: 14px;
   font-weight: 600;
-  color: #334155;
+  color: var(--textColor);
   margin-bottom: 8px;
 }
 
@@ -628,7 +617,7 @@ legend.form-label {
   display: block;
   font-size: 14px;
   font-weight: 600;
-  color: #334155;
+  color: var(--textColor);
   margin-bottom: 8px;
   padding: 0;
 }
@@ -636,11 +625,11 @@ legend.form-label {
 .form-input {
   width: 100%;
   padding: 12px 16px;
-  border: 2px solid #e2e8f0;
+  border: 2px solid var(--bgSoft);
   border-radius: 12px;
   font-size: 15px;
-  color: #1e293b;
-  background: #f8f9fa;
+  color: var(--textColor);
+  background: var(--bgSoft);
   transition: all 0.3s ease;
   font-family: inherit;
   outline: none;
@@ -649,7 +638,6 @@ legend.form-label {
 .form-input:focus {
   outline: none;
   border-color: #667eea;
-  background: white;
   box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
 }
 
@@ -657,15 +645,27 @@ legend.form-label {
   width: 100%;
   height: 120px;
   padding: 12px 16px;
-  border: 2px solid #e2e8f0;
+  border: 2px solid var(--bgSoft);
   border-radius: 12px;
   font-size: 15px;
-  color: #1e293b;
-  background: #f8f9fa;
+  color: var(--textColor);
+  background: var(--bgSoft);
   transition: all 0.3s ease;
   font-family: inherit;
-  resize: none;
   outline: none;
+}
+
+.invitaionnn {
+  display: block;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--textColor);
+  margin-bottom: 18px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: -0.3px;
 }
 
 @media (min-width: 640px) {
@@ -677,7 +677,6 @@ legend.form-label {
 .form-textarea:focus {
   outline: none;
   border-color: #667eea;
-  background: white;
   box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
 }
 
@@ -697,6 +696,7 @@ legend.form-label {
     padding-top: 24px;
   }
 }
+
 .cancel-button {
   flex: 1;
   padding: 14px 24px;
@@ -706,9 +706,10 @@ legend.form-label {
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
-  background: #f1f5f9;
+  background: var(--bgSoft);
   color: #64748b;
 }
+
 
 @media (min-width: 640px) {
   .cancel-button {
@@ -731,7 +732,20 @@ legend.form-label {
   cursor: pointer;
   transition: all 0.3s ease;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
+  color: var(--textColor);
+}
+
+.remove-image-btn {
+  flex: 1;
+  padding: 8px 15px;
+  border: none;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background: linear-gradient(135deg, #d14b41 0%, #ee0707 100%);
+  color: var(--textColor);
 }
 
 @media (min-width: 640px) {
@@ -751,7 +765,6 @@ legend.form-label {
 }
 
 .form-textarea {
-  resize: vertical;
   min-height: 100px;
 }
 
@@ -870,7 +883,7 @@ legend.form-label {
 .user-suggestion-item:focus {
   outline: 2px solid #667eea;
   outline-offset: -2px;
-  background: #f8f9fa;
+  background: var(--bgSoft);
 }
 
 .user-info {
@@ -896,8 +909,6 @@ legend.form-label {
 }
 
 .group-chat-container {
-  position: sticky;
-  top: 70px;
   flex: 1;
   display: flex;
   flex-direction: column;

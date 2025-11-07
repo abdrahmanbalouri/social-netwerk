@@ -5,12 +5,10 @@ import { useEffect, useState, useRef } from "react";
 import Navbar from '../../components/Navbar.js';
 import LeftBar from '../../components/LeftBar.js';
 import RightBar from '../../components/RightBar.js';
-import { useDarkMode } from '../../context/darkMod';
+import { useDarkMode } from '../../context/darkMod.js';
 import Stories from '../../components/stories.js';
 import Comment from '../../components/coment.js';
 import Post from '../../components/Post.js';
-import { middleware } from "../../middleware/middelware.js";
-import { useWS } from "../../context/wsContext.js";
 import CreatePost from "../../components/createPost.js";
 
 export default function Home() {
@@ -37,10 +35,9 @@ export default function Home() {
   const modalRef = useRef(null);
   const modalRefhome = useRef(null)
   const boleanofset = useRef(false)
-  const postRefs = useRef({});
+//  const postRefs = useRef({});
   const router = useRouter();
   const { darkMode } = useDarkMode();
-  const sendMessage = useWS()
   const [toast, setToast] = useState(null);
   const showToast = (message, type = "error", duration = 3000) => {
     setToast({ message, type });
@@ -48,18 +45,6 @@ export default function Home() {
       setToast(null);
     }, duration);
   };
-  // Authentication check
-  useEffect(() => {
-    const checkAuth = async () => {
-      const auth = await middleware();
-      if (!auth) {
-        router.push("/login");
-        sendMessage({ type: "logout" })
-
-      }
-    }
-    checkAuth();
-  }, [])
 
   function handleUserSelect(userId) {
     setSelectedUsers((prevSelected) =>
@@ -73,14 +58,12 @@ export default function Home() {
     const reachedBottom =
       window.innerHeight + window.scrollY >= document.body.scrollHeight - 20;
 
-    console.log(reachedBottom);
 
     async function handlescrollhome() {
 
       let b = await fetchingposts();
-      if (b) {
-        scrollToPost(b);
-      }
+      console.log(b);
+           
     }
 
     if (reachedBottom && !loading && posts.length >= 10) {
@@ -261,7 +244,8 @@ export default function Home() {
 
 
       if (visibility === 'private') {
-        formData.append("allowed_users", JSON.stringify(selectedUsers.join(',')));
+        formData.append("allowed_users", selectedUsers);
+        
       }
 
       const response = await fetch("http://localhost:8080/api/createpost", {

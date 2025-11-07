@@ -32,7 +32,7 @@ func CreateGroupHandler(w http.ResponseWriter, r *http.Request) {
 	adminID, err := helper.AuthenticateUser(r)
 	if err != nil {
 		helper.RespondWithError(w, http.StatusUnauthorized, "No valid session found")
-		return 
+		return
 	}
 
 	group, err := service.CreateNewGroup(adminID, newGroup)
@@ -63,7 +63,7 @@ func GetAllGroups(w http.ResponseWriter, r *http.Request) {
 
 	groups, err := service.GetAllAvailableGroups(userID)
 	if err != nil {
-		fmt.Println("error is :", err)
+
 		helper.RespondWithError(w, http.StatusInternalServerError, "error getting all valid groups")
 		return
 	}
@@ -85,7 +85,7 @@ func GetMyGroups(w http.ResponseWriter, r *http.Request) {
 
 	groups, err := service.GetUserGroups(userID)
 	if err != nil {
-		fmt.Println("error is (my groups handler):", err)
+
 		helper.RespondWithError(w, http.StatusInternalServerError, "error getting all valid groups")
 		return
 	}

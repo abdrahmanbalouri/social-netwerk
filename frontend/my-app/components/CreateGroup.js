@@ -5,7 +5,6 @@ import { GroupCard } from "./groupCard";
 
 import { Plus } from "lucide-react";
 export function CreateGroupForm({ users, onSubmit, onCancel }) {
-  console.log("insife CreateGroupform ");
 
   const [groupTitle, setGroupTitle] = useState("");
   const [groupDescription, setGroupDescription] = useState("");
@@ -13,18 +12,6 @@ export function CreateGroupForm({ users, onSubmit, onCancel }) {
   const [selectedUsers, setSelectedUsers] = useState([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
 
-  // Filter users based on search query
-  // useEffect(() => {
-  //     if (searchQuery.trim()) {
-  //         const filtered = users.filter(user =>
-  //             user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-  //             user.username.toLowerCase().includes(searchQuery.toLowerCase())
-  //         );
-  //         setFilteredUsers(filtered);
-  //     } else {
-  //         setFilteredUsers([]);
-  //     }
-  // }, [searchQuery, users]);
 
   const handleUserSelect = (user) => {
     if (!selectedUsers.find((u) => u.id === user.id)) {
@@ -46,12 +33,6 @@ export function CreateGroupForm({ users, onSubmit, onCancel }) {
       invitedUsers: selectedUsers.map((u) => u.id),
     };
 
-    const handleUserSelect = (user) => {
-      if (!selectedUsers.find((u) => u.id === user.id)) {
-        setSelectedUsers([...selectedUsers, user]);
-        setSearchQuery("");
-      }
-    };
 
     onSubmit(groupData);
     onSubmit(selectedUsers);
@@ -63,7 +44,6 @@ export function CreateGroupForm({ users, onSubmit, onCancel }) {
     setSearchQuery("");
   };
 
-  console.log("filterd users areeeee---------- :", users);
 
   return (
     <div className="group-modal-overlay">
@@ -143,6 +123,7 @@ export function CreateGroupForm({ users, onSubmit, onCancel }) {
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Search users to invite..."
                   className="form-input search-input"
+                  autoComplete="off"
                 />
                 
 
@@ -195,7 +176,6 @@ export function CreateGroupForm({ users, onSubmit, onCancel }) {
 }
 
 export function GroupCreationTrigger({ setGroup }) {
-  // console.log("inside GroupCreationTrigger");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [showNoGroups, setShowNoGroups] = useState(true);
   const [userList, setUserList] = useState([]);
@@ -213,7 +193,6 @@ export function GroupCreationTrigger({ setGroup }) {
     try {
       const newGroup = await createGroup(groupData);
       setGroup((prev) => {
-        console.log("groups before are :", prev);
         const exists = prev.some((g) => g.ID === newGroup.ID);
         return exists ? prev : [newGroup, ...prev];
       });

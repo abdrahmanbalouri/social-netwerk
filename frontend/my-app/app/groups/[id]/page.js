@@ -16,26 +16,26 @@ import EventCard from "../../../components/EventCard.js";
 import { useWS } from "../../../context/wsContext.js";
 import AddReactionIcon from "@mui/icons-material/AddReaction";
 import SendIcon from "@mui/icons-material/Send";
-
 import "../../../styles/chat.css";
+import { useProfile } from "../../../context/profile.js";
+
 
 // Global sendRequest (can be moved to a service file later)
 async function sendRequest(invitedUserID, grpID) {
-    try {
-        const res = await fetch(`http://localhost:8080/group/invitation/${grpID}`, {
-            method: 'POST',
-            credentials: 'include',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                InvitationType: "invitation",
-                invitedUsers: [invitedUserID],
-            }),
-        });
+  try {
+    const res = await fetch(`http://localhost:8080/group/invitation/${grpID}`, {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        InvitationType: "invitation",
+        invitedUsers: [invitedUserID],
+      }),
+    });
 
     const temp = await res.json();
-    console.log("temp is :", temp);
     return temp;
   } catch (error) {
     console.error("error sending invitation to the user :", error);
@@ -47,19 +47,19 @@ async function sendRequest(invitedUserID, grpID) {
 
 // Main Page Component
 export default function GroupPage() {
-    const { darkMode } = useDarkMode();
-    const router = useRouter();
-    const params = useParams();
-    const grpID = params.id;
-    useEffect(() => {
-        const checkAuth = async () => {
-            const auth = await middleware();
-            if (!auth) {
-                router.push("/login");
-            }
-        }
-        checkAuth();
-    }, [grpID])
+  const { darkMode } = useDarkMode();
+  const router = useRouter();
+  const params = useParams();
+  const grpID = params.id;
+  useEffect(() => {
+    const checkAuth = async () => {
+      const auth = await middleware();
+      if (!auth) {
+        router.push("/login");
+      }
+    }
+    checkAuth();
+  }, [grpID])
 
   return (
     <div className={darkMode ? "theme-dark" : "theme-light"}>
@@ -103,7 +103,6 @@ export function Events() {
 
       const data = await response.json() || [];
 
-      console.log('Fetched events:', data);
       setEventList(data);
     } catch (error) {
       console.error('Error fetching events:', error);
@@ -154,15 +153,14 @@ export function Events() {
       ) : (
         <div className="privacy-overlay">
 
-          <div className="backLayer" onClick={showEvent}></div>
           <EventForm ShowEventForm={ShowEventForm} closeForm={showEvent}
-            fetchEvents={fetchEvents}
+            fetchEvents={fetchEvents} showEvent={showEvent}
           />
         </div>
       )}
 
       {EventList?.length === 0 ? (
-        <div>No events yet. Be the first to create one!</div>
+        <div className="no-data">No events yet. Be the first to create one!</div>
       ) : (
         EventList.map((ev) => (
           <EventCard key={ev.id} ev={ev} goingEvent={goingEvent} />
@@ -173,7 +171,7 @@ export function Events() {
 }
 
 
-export function EventForm({ closeForm, fetchEvents }) {
+export function EventForm({ closeForm, fetchEvents, showEvent }) {
   const params = useParams();
   const grpID = params.id;
   const [errors, setErrors] = useState(null);
@@ -248,32 +246,31 @@ export function EventForm({ closeForm, fetchEvents }) {
 
   return (
 
-    <div className="events-container">
-      <div className="create-event-card">
-        <h2 className="card-title">Create Event</h2>
-        <form className="event-form">
-          <div className="form-group">
-            <label htmlFor="event-title">Title</label>
-            <input type="text" id="event-title" placeholder="Event title..." onChange={(e) => { setTitle(e.target.value) }} />
-          </div>
+    <div className="create-event-card">
+      <h2 className="card-title">Create Event</h2>
+      <form className="event-form">
+        <div className="form-grp">
+          <label htmlFor="event-title">Title</label>
+          <input type="text" id="event-title" placeholder="Event title..." onChange={(e) => { setTitle(e.target.value) }} />
+        </div>
 
-          <div className="form-group">
-            <label htmlFor="event-description">Description</label>
-            <textarea id="event-description" rows="3" placeholder="Event description..." onChange={(e) => { setDescription(e.target.value) }}></textarea>
-          </div>
+        <div className="form-grp">
+          <label htmlFor="event-description">Description</label>
+          <textarea id="event-description" rows="3" placeholder="Event description..." onChange={(e) => { setDescription(e.target.value) }}></textarea>
+        </div>
 
-          <div className="form-group">
-            <label htmlFor="event-datetime">Day/Time</label>
-            <input type="datetime-local" id="event-datetime" onChange={(e) => { setDateTime(e.target.value) }} />
-          </div>
-          <span className="error" style={{ color: "red" }}> {errors}</span>
-          <button type="submit" className="btn-create" onClick={createEvent}>Create Event</button>
-        </form>
-        <p className="error-message" style={{ color: "red", alignItems: 'center' }}>{error}</p>
-      </div>
-
-
+        <div className="form-grp">
+          <label htmlFor="event-datetime">Day/Time</label>
+          <input type="datetime-local" id="event-datetime" onChange={(e) => { setDateTime(e.target.value) }} />
+        </div>
+        <span className="error" style={{ color: "red" }}> {errors}</span>
+        <button type="submit" className="btn-create" onClick={createEvent}>Create Event</button>
+        <button type="button" className="cancel-btn" onClick={showEvent}>Cancel</button>
+      </form>
+      <p className="error-message" style={{ color: "red", alignItems: 'center' }}>{error}</p>
     </div>
+
+
   )
 
 }
@@ -392,7 +389,6 @@ export function AllPosts() {
         credentials: "include",
       });
       const response = await res.json();
-      console.log(response);
 
 
       if (response.error) {
@@ -403,7 +399,6 @@ export function AllPosts() {
       }
 
       const updatedPost = await fetchPostById(postId);
-      //console.log(updatedPost);
 
 
       if (updatedPost) {
@@ -423,7 +418,6 @@ export function AllPosts() {
         credentials: "include",
       });
       const data = await res.json();
-      console.log(data);
 
       return data.error ? null : data;
     } catch (err) {
@@ -486,20 +480,20 @@ export function AllPosts() {
         </div>
       )}
 
-            {loading ? (
-                <div>Loading posts...</div>
-            ) : posts && posts.length === 0 ? (
-                <div>There is no post yet.</div>
-            ) : (
-                <div className="posts-list">
-                    { posts && posts.map((post) => (
-                        <Post
-                            key={post.id}
-                            post={post}
-                            onGetComments={GetComments}
-                            ondolike={handleLike}
-                        />
-                    ))}
+      {loading ? (
+        <div>Loading posts...</div>
+      ) : posts && posts.length === 0 ? (
+        <div className="no-data">There is no post yet.</div>
+      ) : (
+        <div className="posts-list">
+          {posts && posts.map((post) => (
+            <Post
+              key={post.id}
+              post={post}
+              onGetComments={GetComments}
+              ondolike={handleLike}
+            />
+          ))}
 
           <Comment
             comments={comment}
@@ -529,14 +523,13 @@ export async function CreatePost(groupId, formData) {
       body: formData,
     });
 
-    const text = await res.text();
-    console.log("Raw response:", text);
+    const text = await res.json();
 
-    if (!res.ok) {
-      throw new Error(`Failed to create post: ${res.status} ${text}`);
+    if (text.error) {
+      return text
     }
 
-    return JSON.parse(text);
+    return text;
   } catch (error) {
     console.error("CreatePost error:", error);
     throw error;
@@ -544,7 +537,6 @@ export async function CreatePost(groupId, formData) {
 }
 
 export function GroupChat({ groupId }) {
-  console.log("group chat component rendered");
   const [id, setId] = useState(null);
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
@@ -552,6 +544,10 @@ export function GroupChat({ groupId }) {
   const inputRef = useRef(null);
   const chatEndRef = useRef(null);
   const { sendMessage, addListener, removeListener } = useWS();
+  const { Profile } = useProfile();
+  console.log("13",Profile);
+
+
   useEffect(() => {
     fetch("http://localhost:8080/api/me", {
       credentials: "include",
@@ -559,7 +555,8 @@ export function GroupChat({ groupId }) {
     })
       .then((res) => res.json())
       .then((data) => {
-        console.log("user id in group chat------------ : ", data.user_id);
+        console.log("dataaaaaaaaaaaaaaaaaa", data);
+
         setId(data.user_id)
       })
       .catch((err) => console.error(err));
@@ -579,13 +576,14 @@ export function GroupChat({ groupId }) {
         if (!response.ok) throw new Error("Failed to fetch messages");
         const data = await response.json();
         if (data.messages) {
-          console.log("user id in group chat message listener23131 : ", id);
 
           const formattedMessages = data.messages
             .map((msg) => ({
               text: msg.content,
               sender: msg.senderId !== id ? "them" : "me",
               time: new Date(msg.createdAt).toLocaleString(),
+              name: msg.first_name + " " + msg.last_name,
+              image: msg.photo
             }))
             .reverse();
 
@@ -600,13 +598,16 @@ export function GroupChat({ groupId }) {
 
   useEffect(() => {
     const handleIncomingMessage = (data) => {
-      console.log("user id in group chat message listener : ", id);
+      console.log(data);
+      
       setMessages((prev) => [
         ...prev,
         {
           text: data.content,
           sender: data.senderId !== id ? "them" : "me",
           time: data.time,
+          name: data.name,
+          image: data.image
         },
       ]);
     };
@@ -676,12 +677,13 @@ export function GroupChat({ groupId }) {
   ];
 
   function handleSendGroupChatMessage() {
-    console.log("=========", typeof groupId);
     if (input.trim() === "") return;
     const payload = {
       groupID: groupId,
       messageContent: input,
       type: "group_message",
+      name: Profile.first_name,
+      image: Profile.image
     };
     sendMessage(payload);
     setInput("");
@@ -708,6 +710,8 @@ export function GroupChat({ groupId }) {
         ) : (
           messages.map((msg, index) => (
             <div key={index} className={`message ${msg.sender}`}>
+              <img src={msg?.image ? `/uploads/${msg?.image}` : "/assets/default.png"} alt="profile picture" className="profilePic" />
+              <div className="rrrr">{msg.name}</div>
               <div className="msg-content">{msg.text}</div>
               <div className="info-time">
                 <span className="time">

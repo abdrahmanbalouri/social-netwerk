@@ -5,12 +5,17 @@ import (
 )
 
 type Message struct {
-	Content    string `json:"content"`
-	SenderId   string `json:"senderId"`
-	ReceiverId string `json:"receiverId"`
-	CreatedAt  string `json:"createdAt"`
-	First_name string `json:"first_name"`
-	Last_name  string `json:"last_name"`
+	Type           string `json:"type"`
+	SubType        string `json:"subType"`
+	SenderId       string `json:"senderId"`
+	ReceiverId     string `json:"receiverId"`
+	Content        string `json:"content"`
+	MessageContent string `json:"messageContent"`
+	CreatedAt      string `json:"createdAt"`
+	First_name     string `json:"first_name"`
+	Last_name      string `json:"last_name"`
+	GroupID        string `json:"groupID"`
+	Photo          string `json:"photo"`
 }
 
 func GetMessages(currentUserID, reciverId string) ([]Message, error) {
@@ -70,7 +75,7 @@ func GetGroupMessages(currentUserID, groupId string) ([]Message, error) {
 		if err := rows.Scan(&msg.Content, &msg.SenderId, &msg.CreatedAt); err != nil {
 			return nil, err
 		}
-		err = repository.Db.QueryRow("SELECT first_name , last_name FROM users WHERE id = ?", msg.SenderId).Scan(&msg.First_name, &msg.Last_name)
+		err = repository.Db.QueryRow("SELECT first_name , last_name, image FROM users WHERE id = ?", msg.SenderId).Scan(&msg.First_name, &msg.Last_name,&msg.Photo)
 		if err != nil {
 			return nil, err
 		}

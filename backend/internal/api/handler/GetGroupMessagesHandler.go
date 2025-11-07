@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"database/sql"
-	"fmt"
 	"net/http"
 
 	"social-network/internal/helper"
@@ -19,7 +18,7 @@ func GetGroupMessagesHandler(w http.ResponseWriter, r *http.Request) {
 
 	currentUserID, err := helper.AuthenticateUser(r)
 	if err != nil {
-		fmt.Println("Authentication error:", err)
+
 		helper.RespondWithError(w, http.StatusUnauthorized, "Unauthorized")
 		return
 	}

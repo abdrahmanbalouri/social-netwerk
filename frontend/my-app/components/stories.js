@@ -93,7 +93,6 @@ const activeGrouped = groupedStories
     return 0;
   });
   const allGroups = [...activeGrouped];
-  console.log(allGroups);
   
 
 
@@ -365,6 +364,7 @@ const activeGrouped = groupedStories
               onChange={e => setNewStory({ ...newStory, bgColor: e.target.value })}
             />
             <input
+            className="form-input"
               type="file"
               accept="image/*"
               onChange={e => {
@@ -397,7 +397,6 @@ const activeGrouped = groupedStories
                   : isActive
                     ? `${((6 - timeLeft) / 6) * 100}%`
                     : "0%";
-
                 return (
                   <div
                     key={`${currentGroupIdx}-${segIdx}`}
@@ -418,7 +417,7 @@ const activeGrouped = groupedStories
             {/* User Info */}
             <div className="story-user-info">
               <img
-                src={currentGroup.user.profile ? `/uploads/${currentGroup.user.profile}` : "/avatar.png"}
+                src={currentGroup.user.profile ? `/uploads/${currentGroup.user.profile}` : "/assets/default.png"}
                 alt={currentGroup.user.first_name}
                 className="story-user-avatar"
               />
