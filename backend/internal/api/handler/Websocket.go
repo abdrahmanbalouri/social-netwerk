@@ -170,6 +170,7 @@ func Loop(conn *websocket.Conn, currentUserID string) {
 				"groupID":  msg.GroupID,
 				"content":  msg.MessageContent,
 				"time":     time.Now().Format(time.RFC3339),
+				"name":     msg.First_name + " " + msg.Last_name,
 			})
 
 			// ===============================

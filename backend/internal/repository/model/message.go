@@ -75,7 +75,7 @@ func GetGroupMessages(currentUserID, groupId string) ([]Message, error) {
 		if err := rows.Scan(&msg.Content, &msg.SenderId, &msg.CreatedAt); err != nil {
 			return nil, err
 		}
-		err = repository.Db.QueryRow("SELECT first_name , last_name FROM users WHERE id = ?", msg.SenderId).Scan(&msg.First_name, &msg.Last_name)
+		err = repository.Db.QueryRow("SELECT first_name , last_name, image FROM users WHERE id = ?", msg.SenderId).Scan(&msg.First_name, &msg.Last_name,&msg.Photo)
 		if err != nil {
 			return nil, err
 		}
