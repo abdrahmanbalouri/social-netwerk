@@ -20,11 +20,11 @@ type Message struct {
 
 func GetMessages(currentUserID, reciverId string) ([]Message, error) {
 	query := `
-		SELECT m.content, m.sender_id, m.receiver_id, m.sent_at FROM messages m
+		SELECT m.content, m.sender_id, m.receiver_id, m.sent_at , u.first_name,u.last_name,u.image FROM messages m
+		LEFT JOIN users u ON u.id = m.sender_id
 		WHERE (m.sender_id = ? AND m.receiver_id = ?) OR (m.sender_id = ? AND m.receiver_id = ?)
 		ORDER BY m.sent_at DESC
 		`
-
 	rows, err := repository.Db.Query(query, currentUserID, reciverId, reciverId, currentUserID)
 	if err != nil {
 		return nil, err
@@ -34,11 +34,7 @@ func GetMessages(currentUserID, reciverId string) ([]Message, error) {
 	var messages []Message
 	for rows.Next() {
 		var msg Message
-		if err := rows.Scan(&msg.Content, &msg.SenderId, &msg.ReceiverId, &msg.CreatedAt); err != nil {
-			return nil, err
-		}
-		err = repository.Db.QueryRow("SELECT first_name , last_name,image FROM users WHERE id = ?", msg.SenderId).Scan(&msg.First_name, &msg.Last_name,&msg.Photo)
-		if err != nil {
+		if err := rows.Scan(&msg.Content, &msg.SenderId, &msg.ReceiverId, &msg.CreatedAt, &msg.First_name, &msg.Last_name, &msg.Photo); err != nil {
 			return nil, err
 		}
 		messages = append(messages, msg)
@@ -75,7 +71,7 @@ func GetGroupMessages(currentUserID, groupId string) ([]Message, error) {
 		if err := rows.Scan(&msg.Content, &msg.SenderId, &msg.CreatedAt); err != nil {
 			return nil, err
 		}
-		err = repository.Db.QueryRow("SELECT first_name , last_name, image FROM users WHERE id = ?", msg.SenderId).Scan(&msg.First_name, &msg.Last_name,&msg.Photo)
+		err = repository.Db.QueryRow("SELECT first_name , last_name, image FROM users WHERE id = ?", msg.SenderId).Scan(&msg.First_name, &msg.Last_name, &msg.Photo)
 		if err != nil {
 			return nil, err
 		}
