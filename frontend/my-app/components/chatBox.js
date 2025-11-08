@@ -82,6 +82,7 @@ export default function ChatBox({ user }) {
         );
         if (!response.ok) throw new Error("Failed to fetch messages");
         const data = await response.json();
+console.log("rrrrrrrrrr",data.messages);
 
         if (data.messages) {
           const formattedMessages = data.messages

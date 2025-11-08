@@ -34,11 +34,11 @@ func GetMessages(currentUserID, reciverId string) ([]Message, error) {
 	var messages []Message
 	for rows.Next() {
 		var msg Message
-		err = repository.Db.QueryRow("SELECT first_name , last_name,image FROM users WHERE id = ?", currentUserID).Scan(&msg.First_name, &msg.Last_name,&msg.Photo)
-		if err != nil {
+		if err := rows.Scan(&msg.Content, &msg.SenderId, &msg.ReceiverId, &msg.CreatedAt); err != nil {
 			return nil, err
 		}
-		if err := rows.Scan(&msg.Content, &msg.SenderId, &msg.ReceiverId, &msg.CreatedAt); err != nil {
+		err = repository.Db.QueryRow("SELECT first_name , last_name,image FROM users WHERE id = ?", msg.SenderId).Scan(&msg.First_name, &msg.Last_name,&msg.Photo)
+		if err != nil {
 			return nil, err
 		}
 		messages = append(messages, msg)
