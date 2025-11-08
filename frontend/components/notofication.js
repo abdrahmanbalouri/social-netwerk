@@ -26,7 +26,7 @@ export default function Notification({ data, onClose }) {
                 <div className="notification-container">
                     <div className="notification-media">
                         <img
-                            src={data?.photo ? `/uploads/${data.photo}` : "/assets/default.png"}
+                            src={data?.image ? `/uploads/${data.image}` : "/assets/default.png"}
                             alt={`${data?.name || 'User'} profile picture`}
                             className="notification-user-avatar"
                         />
