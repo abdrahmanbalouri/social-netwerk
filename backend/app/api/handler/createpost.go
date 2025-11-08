@@ -7,7 +7,6 @@ import (
 
 	service "social-network/app/api/service"
 	"social-network/app/helper"
-	"social-network/app/repository/middleware"
 )
 
 func Createpost(w http.ResponseWriter, r *http.Request) {
@@ -16,7 +15,7 @@ func Createpost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	userID, err := middleware.AuthenticateUser(r)
+	userID, err := helper.AuthenticateUser(r)
 	if err != nil {
 		helper.RespondWithError(w, http.StatusUnauthorized, "Unauthorized")
 		return
