@@ -1,10 +1,10 @@
 "use client";
 import { createContext, useContext, useEffect, useRef, useState } from "react";
-
+import { useRouter } from "next/navigation";
 const WSContext = createContext(null);
 
 export function WSProvider({ children }) {
-  
+  const route = useRouter();
   const [connected, setConnected] = useState(false);
   const ws = useRef(null);
   const listeners = useRef({});
@@ -36,8 +36,7 @@ export function WSProvider({ children }) {
         setConnected(false);
       };
 
-      socket.onerror = (error) => {
-        console.error("⚠️ WebSocket error:", error);
+      socket.onerror = () => {
         socket.close();
       };
 
@@ -48,8 +47,6 @@ export function WSProvider({ children }) {
           if (listeners.current[data.type]) {
 
             listeners.current[data.type].forEach((cb) => cb(data));
-          } else {
-            console.warn("⚠️ No listeners for type:", data.type);
           }
         } catch (err) {
           console.error("❌ Error parsing WebSocket message:", err);
@@ -64,11 +61,19 @@ export function WSProvider({ children }) {
     };
   }, []);
 
-  const sendMessage = (msg) => {
-    if (ws.current && ws.current.readyState === WebSocket.OPEN) {
-      ws.current.send(JSON.stringify(msg));
-    } else {
-      console.warn("⚠️ WebSocket not connected");
+  const sendMessage = async (msg) => {
+    try {
+      const res = await fetch("http://localhost:8080/api/me",{
+        method: "GET",
+        credentials: "include",
+      })
+     if (res){
+       if (ws.current && ws.current.readyState === WebSocket.OPEN) {
+         ws.current.send(JSON.stringify(msg));
+       }
+     }     
+    }catch (err) {
+      console.error("❌ Error sending WebSocket message:", err);
     }
   };
 

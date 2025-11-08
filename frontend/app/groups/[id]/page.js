@@ -11,7 +11,6 @@ import LeftBar from "../../../components/LeftBar.js";
 import RightBarGroup from "../../../components/RightBarGroups.js";
 import { useDarkMode } from "../../../context/darkMod.js";
 import Comment from "../../../components/coment.js";
-import { middleware } from "../../../middleware/middelware.js";
 import EventCard from "../../../components/EventCard.js";
 import { useWS } from "../../../context/wsContext.js";
 import AddReactionIcon from "@mui/icons-material/AddReaction";
@@ -48,19 +47,6 @@ async function sendRequest(invitedUserID, grpID) {
 // Main Page Component
 export default function GroupPage() {
   const { darkMode } = useDarkMode();
-  const router = useRouter();
-  const params = useParams();
-  const grpID = params.id;
-  useEffect(() => {
-    const checkAuth = async () => {
-      const auth = await middleware();
-      if (!auth) {
-        router.push("/login");
-      }
-    }
-    checkAuth();
-  }, [grpID])
-
   return (
     <div className={darkMode ? "theme-dark" : "theme-light"}>
       <Navbar />
@@ -532,7 +518,6 @@ export async function CreatePost(groupId, formData) {
     return text;
   } catch (error) {
     console.error("CreatePost error:", error);
-    throw error;
   }
 }
 
