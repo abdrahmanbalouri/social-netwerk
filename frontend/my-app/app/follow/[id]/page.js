@@ -22,14 +22,12 @@ export default function FollowPage() {
 
   const [followers, setFollowers] = useState([]);
   const [following, setFollowing] = useState([]);
- // const [error, setError] = useState(null);
   const { darkMode } = useDarkMode();
   const params = useParams();
   const searchParams = useSearchParams();
   const router = useRouter();
   const userId = params.id;
   const tab = searchParams.get("tab") || "followers";
-  const sendMessage = useWS()
 
   useEffect(() => {
     const fetchData = async () => {
@@ -89,8 +87,7 @@ export default function FollowPage() {
           </div>
 
           <div className="tabContent" style={{ marginTop: 20 }}>
-                 {/*  <span style={{color: "red"}}>{error}</span>
- */}
+            
             {tab === "followers" ? (
               <div className="itemUsers"> {followers?.map((user) => (
                 <div key={user.id} className="userDiv">

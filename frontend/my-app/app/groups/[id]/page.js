@@ -81,6 +81,16 @@ export default function GroupPage() {
 
 export function Events() {
   const [ShowEventForm, SetShowEventForm] = useState(true)
+
+  const [toast, setToast] = useState(null);
+   const showToast = (message, type = "error", duration = 3000) => {
+    setToast({ message, type });
+    setTimeout(() => {
+      setToast(null);
+    }, duration);
+  };
+
+
   const params = useParams();
 
   const grpID = params.id;
@@ -98,14 +108,15 @@ export function Events() {
       });
 
       if (!response.ok) {
-        throw new Error('Failed to fetch events');
+       showToast("Failed to fetch events. Please try again later.");
+        return;
       }
 
       const data = await response.json() || [];
 
       setEventList(data);
     } catch (error) {
-      console.error('Error fetching events:', error);
+      showToast(error.message);
     }
   }
 
@@ -118,7 +129,7 @@ export function Events() {
   async function goingEvent(status, eventID) {
 
     if ((!status || !eventID) || (status !== "going" && status !== "notGoing")) {
-      console.error('Status and Event ID are required');
+       showToast("Invalid status or event ID");
       return;
     }
     try {
@@ -137,13 +148,19 @@ export function Events() {
 
       await fetchEvents();
     } catch (error) {
-      console.error('Error RSVPing to event:', error);
+       showToast(error.message);
     }
   }
 
 
   return (
     <>
+     {toast && (
+        <div className={`toast ${toast.type}`}>
+          <span>{toast.message}</span>
+          <button onClick={() => setToast(null)} className="toast-close">×</button>
+        </div>
+      )}
       {ShowEventForm ? (
         <div>
           <button onClick={showEvent} className="Showbutton">
