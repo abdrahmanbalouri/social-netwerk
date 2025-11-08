@@ -12,6 +12,8 @@ export default function GlobalNotification() {
     if (!connected) return;
 
     const handle = (data) => {
+      console.log("notiififififififi",data);
+      
       const payload = data.data || data;
 
       if (pathname !== `/chat/${payload.from}`) {

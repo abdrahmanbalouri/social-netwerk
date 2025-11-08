@@ -5,7 +5,6 @@ import { useDarkMode } from "../context/darkMod";
 import { useProfile } from "../context/profile";
 import { useWS } from "../context/wsContext.js";
 import { useState, useEffect } from "react";
-import { useChat } from "../context/chatContext.js";
 // transient toast notification moved to GlobalNotification
 import NotBar from "./notfcationBar.js"
 import "../styles/navbar.css";
@@ -25,7 +24,6 @@ export default function Navbar() {
   const [cont, addnotf] = useState(0);
   // notification transient data is handled globally by GlobalNotification
   const { addListener, removeListener, connected } = useWS();
-  const { activeChatID } = useChat();
   const id = useParams().id
   useEffect(() => {
     if (!connected) return; // wait for connection
@@ -38,7 +36,7 @@ export default function Navbar() {
 
     addListener("notification", handleNotification);
     return () => removeListener("notification", handleNotification);
-  }, [connected, addListener, removeListener, activeChatID]);
+  }, [connected, addListener, removeListener]);
 
 
   const notifications = async () => {
