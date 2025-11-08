@@ -9,11 +9,20 @@ import { useDarkMode } from "../../../context/darkMod.js";
 import "../../../styles/follow.css";
 import { useWS } from "../../../context/wsContext.js";
 
-
 export default function FollowPage() {
+  const [toast, setToast] = useState(null);
+   const showToast = (message, type = "error", duration = 3000) => {
+    setToast({ message, type });
+    setTimeout(() => {
+      setToast(null);
+    }, duration);
+  };
+
+
+
   const [followers, setFollowers] = useState([]);
   const [following, setFollowing] = useState([]);
-  const [error, setError] = useState(null);
+ // const [error, setError] = useState(null);
   const { darkMode } = useDarkMode();
   const params = useParams();
   const searchParams = useSearchParams();
@@ -35,17 +44,16 @@ export default function FollowPage() {
         });
 
 
-        if (res.status === 404) {
-          setError("User not found");
-          return;
-        }
+      
         if (res.ok) {
           const data = await res.json();
           tab === "followers" ? setFollowers(data) : setFollowing(data);
-          setError(null);
+      
+        }else {
+          throw new Error("Failed to fetch data");
         }
       } catch (error) {
-        console.error(error);
+       showToast("Failed to fetch data. Please try again later.");
       }
     };
     fetchData();
@@ -81,8 +89,8 @@ export default function FollowPage() {
           </div>
 
           <div className="tabContent" style={{ marginTop: 20 }}>
-                  <span style={{color: "red"}}>{error}</span>
-
+                 {/*  <span style={{color: "red"}}>{error}</span>
+ */}
             {tab === "followers" ? (
               <div className="itemUsers"> {followers?.map((user) => (
                 <div key={user.id} className="userDiv">
@@ -117,6 +125,13 @@ export default function FollowPage() {
         </div>
         <RightBar />
       </main>
+
+   {toast && (
+        <div className={`toast ${toast.type}`}>
+          <span>{toast.message}</span>
+          <button onClick={() => setToast(null)} className="toast-close">×</button>
+        </div>
+      )}
     </div>
   );
 }
