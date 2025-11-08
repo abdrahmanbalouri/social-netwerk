@@ -2,7 +2,6 @@
 
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { useWS } from '../context/wsContext';
 
 export default function ClientFetchInterceptor() {
     const router = useRouter();
@@ -14,7 +13,7 @@ export default function ClientFetchInterceptor() {
                 const response = await originalFetch(...args);
                 if (response.status === 401) {
                     router.push('/login'); // rediret 
-                    return null
+                    return response
                 }
                 return response;
             } catch (err) {
