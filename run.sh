@@ -1,9 +1,9 @@
 #!/bin/bash
 clear
 cd ./backend
-go run main.go &
+go run ./cmd &
 
-cd ../frontend/my-app
+cd ../frontend
 npm install
 npm run dev 
 

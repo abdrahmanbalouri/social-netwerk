@@ -14,7 +14,7 @@ WORKDIR /app
 
 COPY --from=builder /app/main .
 COPY pkg ./pkg
-RUN mkdir -p internal/repository
+RUN mkdir -p app/repository
 
 
 
