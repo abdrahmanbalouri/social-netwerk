@@ -2,10 +2,10 @@
 
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { useWS } from '../context/wsContext';
 
 export default function ClientFetchInterceptor() {
-    const router = useRouter(); 
-
+    const router = useRouter();
     useEffect(() => {
         const originalFetch = window.fetch.bind(window); // just copy
 
@@ -22,7 +22,7 @@ export default function ClientFetchInterceptor() {
                 throw err;
             }
         };
-    }, [router]);
+    }, []);
 
-    return null; 
+    return null;
 }

@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 	"time"
@@ -37,7 +38,6 @@ func Websocket(w http.ResponseWriter, r *http.Request) {
 	defer func() {
 		service.ClientsMutex.Lock()
 		conns, ok := service.Clients[currentUserID]
-
 		if ok {
 			for i, c := range conns {
 				if c == conn {
@@ -78,6 +78,7 @@ func Loop(conn *websocket.Conn, currentUserID string) {
 		switch msg.Type {
 		case "logout":
 			service.BrodcastOnlineStatus(currentUserID, false)
+			return
 		//  HANDLE CHAT MESSAGE
 		case "online_list":
 			// ✅ Send current online list to the new user
