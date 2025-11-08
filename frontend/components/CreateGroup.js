@@ -192,6 +192,7 @@ export function GroupCreationTrigger({ setGroup }) {
   const handleSubmit = async (groupData) => {
     try {
       const newGroup = await createGroup(groupData);
+      
       setGroup((prev) => {
         const exists = prev.some((g) => g.ID === newGroup.ID);
         return exists ? prev : [newGroup, ...prev];

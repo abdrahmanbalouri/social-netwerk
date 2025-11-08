@@ -14,6 +14,7 @@ export default function ClientFetchInterceptor() {
                 const response = await originalFetch(...args);
                 if (response.status === 401) {
                     router.push('/login'); // rediret 
+                    return null
                 }
                 return response;
             } catch (err) {
