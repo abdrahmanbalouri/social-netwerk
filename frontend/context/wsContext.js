@@ -1,10 +1,8 @@
 "use client";
 import { createContext, useContext, useEffect, useRef, useState } from "react";
-import { useRouter } from "next/navigation";
 const WSContext = createContext(null);
 
 export function WSProvider({ children }) {
-  const route = useRouter();
   const [connected, setConnected] = useState(false);
   const ws = useRef(null);
   const listeners = useRef({});

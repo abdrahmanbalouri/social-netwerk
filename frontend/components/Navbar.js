@@ -1,5 +1,5 @@
 "use client";
-import { useParams, useRouter } from "next/navigation";
+import { useParams, usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
 import { useDarkMode } from "../context/darkMod";
 import { useProfile } from "../context/profile";
@@ -24,14 +24,20 @@ export default function Navbar() {
   const [cont, addnotf] = useState(0);
   // notification transient data is handled globally by GlobalNotification
   const { addListener, removeListener, connected } = useWS();
-  const id = useParams().id
+  const pathname = usePathname();
+
   useEffect(() => {
     if (!connected) return; // wait for connection
 
     const handleNotification = (data) => {
       // update unread count and stored notification list for drop-down
-      addnotf((prev) => prev + 1);
-      setnot(data.data || data);
+      console.log("new notification received in navbar:", data);
+      if (pathname !== `/chat/${data.from}` && pathname !== `/groups/${data.groupID}`) {
+        console.log("===================================");
+        
+        addnotf((prev) => prev + 1);
+        setnot(data);
+      }
     };
 
     addListener("notification", handleNotification);
@@ -45,7 +51,8 @@ export default function Navbar() {
         method: "GET",
         credentials: "include",
       });
-
+      console.log("************************");
+      
       if (!res.ok) {
         throw new Error(`Failed to fetch notifications: ${res.status}`);
       }
@@ -65,7 +72,7 @@ export default function Navbar() {
       setSearchResults([]);
       return;
     }
-  // clearTimeout(delay)    
+    // clearTimeout(delay)    
     const delay = setTimeout(async () => {
       try {
         const res = await fetch(`http://localhost:8080/api/searchUser?query=${encodeURIComponent(searchTerm)}`, {
