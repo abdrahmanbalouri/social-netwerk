@@ -14,7 +14,7 @@ import (
 	"time"
 
 	"social-network/app/helper"
-	regestire "social-network/app/repository/registre"
+	register "social-network/app/repository/register"
 
 	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
@@ -81,7 +81,7 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Check if user exists (use registre package)
-	exists, err := regestire.UserExists(email, nickname)
+	exists, err := register.UserExists(email, nickname)
 	if err != nil {
 		log.Printf("UserExists DB error: %v", err)
 		helper.RespondWithError(w, http.StatusInternalServerError, "Database error")
@@ -164,7 +164,7 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// convert handler.User -> repository-local User to avoid import cycle
-	regUser := regestire.User{
+	regUser := register.User{
 		ID:        user.ID,
 		Nickname:  user.Nickname,
 		DateBirth: user.DateBirth,
@@ -179,7 +179,7 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Insert user in DB
-	if err := regestire.CreateUser(regUser); err != nil {
+	if err := register.CreateUser(regUser); err != nil {
 		log.Printf("CreateUser error: %v", err)
 		helper.RespondWithError(w, http.StatusInternalServerError, "Error creating user")
 		return
