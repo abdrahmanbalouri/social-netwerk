@@ -5,7 +5,6 @@ import SendIcon from "@mui/icons-material/Send";
 import Link from "next/link";
 import "../styles/chat.css";
 import { useWS } from "../context/wsContext.js";
-import { useChat } from "../context/chatContext.js";
 import { useParams } from "next/navigation";
 import { useProfile } from "../context/profile.js";
 
@@ -15,7 +14,6 @@ export default function ChatBox({ user }) {
   const [showEmojis, setShowEmojis] = useState(false);
   const inputRef = useRef(null);
   const chatEndRef = useRef(null);
-  const { setActiveChatID } = useChat();
   const [onlineUsers, setonlineUsers] = useState([])
   const { sendMessage, addListener, removeListener } = useWS();
   const id = useParams().id;
@@ -42,11 +40,7 @@ export default function ChatBox({ user }) {
     inputRef.current?.focus();
   }, 0);
 
-  useEffect(() => {
-    setActiveChatID(user.id);
-    return () => setActiveChatID(null);
-  }, [user.id]);
-
+  
   // listen for online/offline status updates
   useEffect(() => {
     const handleOlineUser = (data) => {

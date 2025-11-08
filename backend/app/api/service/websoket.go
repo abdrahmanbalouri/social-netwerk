@@ -52,7 +52,7 @@ func BrodcastOnlineListe() {
 func BrodcastGroupMembersNotification(groupID string, senderID string, message map[string]any) {
 	ClientsMutex.Lock()
 	defer ClientsMutex.Unlock()
-
+	
 	groupMembers, err := model.GetGroupMembers(groupID)
 	if err != nil {
 		log.Println("DB error getting group members:", err)
