@@ -7,7 +7,6 @@ import Navbar from "../../components/Navbar";
 import LeftBar from "../../components/LeftBar";
 import RightBar from "../../components/RightBar";
 import { useWS } from "../../context/wsContext";
-import { useRouter } from "next/navigation";
 
 export default function Gallery() {
   const [images, setImages] = useState([]);
@@ -15,8 +14,6 @@ export default function Gallery() {
   const slideRef = useRef(null);
   const { Profile } = useProfile();
   const { darkMode } = useDarkMode();
-  const router = useRouter();
-  const sendMessage = useWS()
 
   useEffect(() => {
     if (!Profile?.id) return;

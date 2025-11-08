@@ -545,8 +545,13 @@ export function GroupChat({ groupId }) {
   const chatEndRef = useRef(null);
   const { sendMessage, addListener, removeListener } = useWS();
   const { Profile } = useProfile();
-  console.log("13",Profile);
-
+  const [toast, setToast] = useState(null)
+  const showToast = (message, type = "error", duration = 3000) => {
+    setToast({ message, type });
+    setTimeout(() => {
+      setToast(null);
+    }, duration);
+  };
 
   useEffect(() => {
     fetch("http://localhost:8080/api/me", {
@@ -599,7 +604,7 @@ export function GroupChat({ groupId }) {
   useEffect(() => {
     const handleIncomingMessage = (data) => {
       console.log(data);
-      
+
       setMessages((prev) => [
         ...prev,
         {
@@ -678,6 +683,10 @@ export function GroupChat({ groupId }) {
 
   function handleSendGroupChatMessage() {
     if (input.trim() === "") return;
+    if (input.length > 1000) {
+      showToast("message is too long")
+      return
+    }
     const payload = {
       groupID: groupId,
       messageContent: input,
@@ -703,6 +712,12 @@ export function GroupChat({ groupId }) {
 
   return (
     <div className="group-chat-container">
+      {toast && (
+        <div className={`toast ${toast.type}`}>
+          <span>{toast.message}</span>
+          <button onClick={() => setToast(null)} className="toast-close">×</button>
+        </div>
+      )}
       {/* Chat box */}
       <div className="chat-box">
         {messages.length === 0 ? (
@@ -710,12 +725,19 @@ export function GroupChat({ groupId }) {
         ) : (
           messages.map((msg, index) => (
             <div key={index} className={`message ${msg.sender}`}>
-              <img src={msg?.image ? `/uploads/${msg?.image}` : "/assets/default.png"} alt="profile picture" className="profilePic" />
-              <div className="rrrr">{msg.name}</div>
-              <div className="msg-content">{msg.text}</div>
+              <div className="message-header">
+                <img src={msg?.image ? `/uploads/${msg?.image}` : "/assets/default.png"} alt="profile picture" className="profilePic" />
+                <span className="message-name">{msg.name}</span>
+              </div>
+              <div className="message-bubble">
+                <div className="msg-content">{msg.text}</div>
+              </div>
               <div className="info-time">
                 <span className="time">
-                  {new Date(msg.time).toLocaleTimeString("en-US")}
+                  {new Date(msg.time).toLocaleTimeString("en-US", {
+                    hour: 'numeric',
+                    minute: '2-digit'
+                  })}
                 </span>
               </div>
             </div>

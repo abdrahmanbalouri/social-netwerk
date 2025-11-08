@@ -117,6 +117,8 @@ func Loop(conn *websocket.Conn, currentUserID string) {
 				"to":      msg.ReceiverId,
 				"content": msg.MessageContent,
 				"time":    time.Now().Format(time.RFC3339),
+				"name":    msg.First_name + " " + msg.Last_name,
+				"image":   msg.Photo,
 			})
 
 			// ✅ send back to sender also
@@ -126,6 +128,8 @@ func Loop(conn *websocket.Conn, currentUserID string) {
 				"to":      msg.ReceiverId,
 				"content": msg.MessageContent,
 				"time":    time.Now().Format(time.RFC3339),
+				"name":    msg.First_name + " " + msg.Last_name,
+				"image":   msg.Photo,
 			})
 
 			// send notification to receiver
@@ -171,6 +175,7 @@ func Loop(conn *websocket.Conn, currentUserID string) {
 				"content":  msg.MessageContent,
 				"time":     time.Now().Format(time.RFC3339),
 				"name":     msg.First_name + " " + msg.Last_name,
+				"image":    msg.Photo,
 			})
 
 			// ===============================

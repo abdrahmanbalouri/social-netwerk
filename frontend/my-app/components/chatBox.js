@@ -7,6 +7,7 @@ import "../styles/chat.css";
 import { useWS } from "../context/wsContext.js";
 import { useChat } from "../context/chatContext.js";
 import { useParams } from "next/navigation";
+import { useProfile } from "../context/profile.js";
 
 export default function ChatBox({ user }) {
   const [messages, setMessages] = useState([]);
@@ -18,6 +19,14 @@ export default function ChatBox({ user }) {
   const [onlineUsers, setonlineUsers] = useState([])
   const { sendMessage, addListener, removeListener } = useWS();
   const id = useParams().id;
+  const { Profile } = useProfile();
+  const [toast, setToast] = useState(null)
+  const showToast = (message, type = "error", duration = 3000) => {
+    setToast({ message, type });
+    setTimeout(() => {
+      setToast(null);
+    }, duration);
+  };
   if (id == "0" || !id) {
     return (
       <div className="no-chat-selected">
@@ -73,12 +82,15 @@ export default function ChatBox({ user }) {
         );
         if (!response.ok) throw new Error("Failed to fetch messages");
         const data = await response.json();
+
         if (data.messages) {
           const formattedMessages = data.messages
             .map((msg) => ({
               text: msg.content,
               sender: msg.senderId === user.id ? "them" : "me",
               time: new Date(msg.createdAt).toLocaleString(),
+              name: msg.first_name + " " + msg.last_name,
+              image: msg.photo
             }))
             .reverse();
 
@@ -101,6 +113,8 @@ export default function ChatBox({ user }) {
             text: data.content,
             sender: data.from === user.id ? "them" : "me",
             time: data.time,
+            name: data.name,
+            image: data.image
           },
         ]);
       }
@@ -120,16 +134,22 @@ export default function ChatBox({ user }) {
   const emojiArray = ["😀", "😃", "😄", "😁", "😆", "😅", "🤣", "😂", "🚀", "💡", "😊", "😇", "🙂", "🙃", "😉", "😍", "🥰", "😘", "😗", "😋", "😛", "😜", "🤪", "😝", "🤑", "🤗", "🤭", "🤔", "🤨", "😐", "😑", "😶", "😏", "😒", "🙄", "😬", "😔", "😪", "🤤", "😴", "😷", "🤒", "🤕", "🤢", "🤮", "🥴", "😵", "🤯", "😎", "🤓"];
   const handleSendMessage = () => {
     if (input.trim() === "") return;
+    if (input.length > 1000) {
+      showToast("message is too long")
+      return
+    }
     const payload = {
       receiverId: user.id,
       messageContent: input,
       type: "message",
+      name: Profile.first_name,
+      image: Profile.image
     };
     sendMessage(payload);
     setInput("");
     setShowEmojis(false);
   };
-  
+
   const addEmoji = (emoji) => {
     const cursorPos = inputRef.current.selectionStart;
     const newText = input.slice(0, cursorPos) + input.slice(cursorPos) + emoji;
@@ -144,6 +164,12 @@ export default function ChatBox({ user }) {
   return (
     <div className="chat-container">
       <div className="chat-header">
+      {toast && (
+        <div className={`toast ${toast.type}`}>
+          <span>{toast.message}</span>
+          <button onClick={() => setToast(null)} className="toast-close">×</button>
+        </div>
+      )}
         <Link href={`/profile/${user.id}`}>
           <img
             src={
@@ -154,7 +180,7 @@ export default function ChatBox({ user }) {
         </Link>
         <div className="onlinee">
           <Link href={`/profile/${user.id}`}>
-            <span className="username">{user.first_name +" "+ user.last_name}</span>
+            <span className="username">{user.first_name + " " + user.last_name}</span>
           </Link>
           <span className={onlineUsers.includes(user.id) ? "on" : "off"}>
             {onlineUsers.includes(user.id) ? "online" : "offline"}
@@ -169,10 +195,19 @@ export default function ChatBox({ user }) {
         ) : (
           messages.map((msg, index) => (
             <div key={index} className={`message ${msg.sender}`}>
-              <div className="msg-content">{msg.text}</div>
+              <div className="message-header">
+                <img src={msg?.image ? `/uploads/${msg?.image}` : "/assets/default.png"} alt="profile picture" className="profilePic" />
+                <span className="message-name">{msg.name}</span>
+              </div>
+              <div className="message-bubble">
+                <div className="msg-content">{msg.text}</div>
+              </div>
               <div className="info-time">
                 <span className="time">
-                  {new Date(msg.time).toLocaleTimeString("en-US")}
+                  {new Date(msg.time).toLocaleTimeString("en-US", {
+                    hour: 'numeric',
+                    minute: '2-digit'
+                  })}
                 </span>
               </div>
             </div>

@@ -709,11 +709,11 @@ a {
 
 .toast {
   position: fixed;
-  top: 20px;
+  top: 70px;
   left: 50%;
   transform: translateX(-50%);
   background-color: #333;
-  color: white;
+  color: var(--textColor);
   padding: 12px 20px;
   border-radius: 8px;
   font-size: 14px;
@@ -721,12 +721,12 @@ a {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 10px;
-  z-index: 10000;
+  z-index: 9999999;
   animation: toastSlide 0.3s ease-out;
   max-width: 90%;
   min-width: 280px;
-  justify-content: center;
 }
 
 .toast.error {
