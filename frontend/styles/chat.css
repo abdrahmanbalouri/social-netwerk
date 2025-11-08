@@ -24,6 +24,7 @@
   border: 1px solid transparent;
 }
 
+
 .onlinee {
   display: flex;
   flex-direction: column;
@@ -419,11 +420,16 @@
 .message-header {
   display: flex;
   align-items: center;
-  align-self: end;
   gap: 8px;
   margin-bottom: 4px;
 }
 
+.message.me .message-header {
+  align-self: end;
+}
+.message.them .message-header {
+  align-self: start;
+}
 
 
 .chat-header img,
