@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
+	"os"
 
 	_ "github.com/mattn/go-sqlite3"
 	migrate "github.com/rubenv/sql-migrate"
@@ -11,9 +12,15 @@ import (
 
 var Db *sql.DB
 
+const directory = "pkg/migrations/database"
 const dbPath = "pkg/migrations/database/social.db"
 
+
 func OpenDb() (*sql.DB, error) {
+	if err := os.MkdirAll(directory, 0o755); err != nil {
+		return nil, err
+	}
+
 	db, err := sql.Open("sqlite3", dbPath+"?_foreign_keys=1")
 	if err != nil {
 		return db, err
