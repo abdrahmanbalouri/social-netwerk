@@ -27,5 +27,5 @@ export default function GlobalNotification() {
 
   if (!toast) return null;
 
-  return <Notification data={toast} />;
+  return <Notification data={toast} onClose={() => setToast(null)}/>;
 }
