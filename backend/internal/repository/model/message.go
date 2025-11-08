@@ -34,7 +34,7 @@ func GetMessages(currentUserID, reciverId string) ([]Message, error) {
 	var messages []Message
 	for rows.Next() {
 		var msg Message
-		err = repository.Db.QueryRow("SELECT first_name , last_name FROM users WHERE id = ?", currentUserID).Scan(&msg.First_name, &msg.Last_name)
+		err = repository.Db.QueryRow("SELECT first_name , last_name,image FROM users WHERE id = ?", currentUserID).Scan(&msg.First_name, &msg.Last_name,&msg.Photo)
 		if err != nil {
 			return nil, err
 		}
