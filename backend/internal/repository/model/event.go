@@ -3,6 +3,7 @@ package model
 import (
 	"database/sql"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"time"
 
@@ -58,12 +59,12 @@ func CheckUserInGroup(db *sql.DB, userID, groupID string) (bool, error) {
 
 func GetEvents(db *sql.DB, userID string, w http.ResponseWriter) ([]EVENT, error) {
 	query := `
-SELECT e.id, e.group_id, e.title, e.description, e.time, e.created_at
-FROM events AS e
-JOIN event_actions AS a ON e.id = a.event_id
-WHERE a.action = 'going'
-  AND a.user_id = ?
-`
+		SELECT e.id, e.group_id, e.title, e.description, e.time, e.created_at
+		FROM events AS e
+		JOIN event_actions AS a ON e.id = a.event_id
+		WHERE a.action = 'going'
+  		AND a.user_id = ?
+	`
 
 	rows, err := repository.Db.Query(query, userID)
 	if err != nil {
@@ -93,7 +94,7 @@ WHERE a.action = 'going'
 			return nil, err
 		}
 		t1, _ := time.Parse(time.RFC3339, event.Time)
-		t2 := time.Now().UTC()
+		t2 := time.Now().UTC().Add(+1 * time.Hour)
 
 		if t1.After(t2) {
 			events = append(events, event)
