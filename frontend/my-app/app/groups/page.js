@@ -192,7 +192,6 @@ export async function createGroup(formData) {
       // .then(createdGroup => { return createdGroup })
       .catch((error) => {
         console.error("Failed to create new group:", error);
-        throw error;
       })
   );
 }
