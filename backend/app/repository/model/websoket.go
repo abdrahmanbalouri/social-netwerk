@@ -130,6 +130,12 @@ func SaveFollowNotification(currentUserID string, msg Message) error {
 	return err
 }
 
+func SaveGroupMessageNotification(currentUserID string, msg Message) error {
+	q := `INSERT INTO notifications ( sender_id, receiver_id, type, message, created_at) VALUES (?, ?, ?, ?, ?) `
+	_, err := repository.Db.Exec(q, currentUserID, msg.ReceiverId, msg.Type, msg.MessageContent, time.Now().Unix())
+	return err
+}
+
 func SaveGroupInvitationNotification(currentUserID string, msg Message) error {
 	q := `INSERT INTO notifications ( sender_id, receiver_id, type, message, created_at) VALUES (?, ?, ?, ?, ?) `
 	_, err := repository.Db.Exec(q, currentUserID, msg.ReceiverId, msg.Type, msg.MessageContent, time.Now().Unix())

@@ -12,11 +12,11 @@ export default function GlobalNotification() {
     if (!connected) return;
 
     const handle = (data) => {
-      console.log("notiififififififi",data);
-      
+      console.log("notiififififififi", data);
+
       const payload = data.data || data;
 
-      if (pathname !== `/chat/${payload.from}`) {
+      if (pathname !== `/chat/${data.from}` && pathname !== `/groups/${data.groupID}`) {
         setToast(payload);
       }
 
@@ -29,5 +29,5 @@ export default function GlobalNotification() {
 
   if (!toast) return null;
 
-  return <Notification data={toast} onClose={() => setToast(null)}/>;
+  return <Notification data={toast} onClose={() => setToast(null)} />;
 }

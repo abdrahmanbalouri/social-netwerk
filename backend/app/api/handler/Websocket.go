@@ -169,6 +169,11 @@ func Loop(conn *websocket.Conn, currentUserID string) {
 				continue
 			}
 
+			err = model.SaveGroupMessageNotification(currentUserID, msg)
+			if err != nil {
+				log.Println("DB error saving group message notification:", err)
+			}
+
 			service.SendToGroupMembers(msg.GroupID, currentUserID, map[string]any{
 				"type":    msg.Type,
 				"from":    currentUserID,
