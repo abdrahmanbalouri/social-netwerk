@@ -40,8 +40,17 @@ export function WSProvider({ children }) {
         socket.close();
       };
 
-      socket.onmessage = (event) => {
+      socket.onmessage = async (event) => {
         try {
+          const res = await fetch("http://localhost:8080/api/me", {
+            method: "GET",
+            credentials: "include",
+          })
+          if (!res.ok) {
+            ws.current.close();
+            return;
+          }
+
           const data = JSON.parse(event.data);
           // 🔥 Trigger any custom listeners
           if (listeners.current[data.type]) {
@@ -63,16 +72,20 @@ export function WSProvider({ children }) {
 
   const sendMessage = async (msg) => {
     try {
-      const res = await fetch("http://localhost:8080/api/me",{
+      const res = await fetch("http://localhost:8080/api/me", {
         method: "GET",
         credentials: "include",
       })
-     if (res){
-       if (ws.current && ws.current.readyState === WebSocket.OPEN) {
-         ws.current.send(JSON.stringify(msg));
-       }
-     }     
-    }catch (err) {
+      if (!res.ok) {
+        ws.current.close();
+        return;
+      }
+      
+      if (ws.current && ws.current.readyState === WebSocket.OPEN) {
+        ws.current.send(JSON.stringify(msg));
+      }
+
+    } catch (err) {
       console.error("❌ Error sending WebSocket message:", err);
     }
   };

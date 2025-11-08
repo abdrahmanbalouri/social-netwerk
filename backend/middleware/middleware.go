@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	"net/http"
+	"slices"
 	"time"
 )
 
@@ -14,17 +15,14 @@ func SessionMiddleware(db *sql.DB, next http.Handler) http.Handler {
 			"/api/register",
 			"/api/logout",
 		}
-		
-		for _, path := range allowedPaths {
-			if r.URL.Path == path {
-				fmt.Println(r.URL.Path)
-				next.ServeHTTP(w, r)
-				return
-			}
+
+		if slices.Contains(allowedPaths, r.URL.Path) {
+			fmt.Println(r.URL.Path)
+			next.ServeHTTP(w, r)
+			return
 		}
 
 		fmt.Println(r.URL.Path)
-
 
 		cookie, err := r.Cookie("session")
 		if err != nil || cookie.Value == "" {
