@@ -108,7 +108,7 @@ $ docker run -v {{ migration dir }}:/migrations --network host migrate/migrate
 * Uses [Go modules](https://golang.org/cmd/go/#hdr-Modules__module_versions__and_more) to manage dependencies.
 * To help prevent database corruptions, it supports graceful stops via `GracefulStop chan bool`.
 * Bring your own logger.
-* Uses `io.Reader` streams internally for low memory overhead.
+* Uses `io.Reader` streams apply for low memory overhead.
 * Thread-safe and no goroutine leaks.
 
 __[Go Documentation](https://pkg.go.dev/github.com/golang-migrate/migrate/v4)__
