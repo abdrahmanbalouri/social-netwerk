@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"fmt"
 	"log"
 	"net/http"
 	"time"
@@ -170,13 +169,13 @@ func Loop(conn *websocket.Conn, currentUserID string) {
 			}
 
 			service.SendToGroupMembers(msg.GroupID, currentUserID, map[string]any{
-				"type":     msg.Type,
-				"senderId": currentUserID,
-				"groupID":  msg.GroupID,
-				"content":  msg.MessageContent,
-				"time":     time.Now().Format(time.RFC3339),
-				"name":     msg.First_name + " " + msg.Last_name,
-				"image":    msg.Photo,
+				"type":    msg.Type,
+				"from":    currentUserID,
+				"groupID": msg.GroupID,
+				"content": msg.MessageContent,
+				"time":    time.Now().Format(time.RFC3339),
+				"name":    msg.First_name + " " + msg.Last_name,
+				"image":   msg.Photo,
 			})
 
 			// ===============================
@@ -224,10 +223,9 @@ func Loop(conn *websocket.Conn, currentUserID string) {
 				"from":       currentUserID,
 				"first_name": msg.First_name,
 				"last_name":  msg.Last_name,
-
-				"photo":   msg.Photo,
-				"content": msg.MessageContent,
-				"time":    time.Now().Format(time.RFC3339),
+				"photo":      msg.Photo,
+				"content":    msg.MessageContent,
+				"time":       time.Now().Format(time.RFC3339),
 			})
 		case "invite_to_group":
 

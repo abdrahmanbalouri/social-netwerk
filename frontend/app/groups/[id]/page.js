@@ -594,7 +594,7 @@ export function GroupChat({ groupId }) {
         ...prev,
         {
           text: data.content,
-          sender: data.senderId !== id ? "them" : "me",
+          sender: data.from !== id ? "them" : "me",
           time: data.time,
           name: data.name,
           image: data.image

@@ -119,7 +119,7 @@ export function AllGroups() {
                 JoinGroup(grp.ID, setJoining)
                 sendMessage({
                   type: "joinRequest",
-                  senderId: Profile.id,
+                  from: Profile.id,
                   receiverId: grp.ID,
                   messageContent: "",
                 });

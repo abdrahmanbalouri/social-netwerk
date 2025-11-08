@@ -7,7 +7,7 @@ import { useWS } from "../context/wsContext.js";
 import { useState, useEffect } from "react";
 import { useChat } from "../context/chatContext.js";
 // transient toast notification moved to GlobalNotification
-import NOtBar from "./notfcationBar.js"
+import NotBar from "./notfcationBar.js"
 import "../styles/navbar.css";
 
 export default function Navbar() {
@@ -136,7 +136,7 @@ export default function Navbar() {
           )}
         </div>
       </div>
-      {showNotbar && <NOtBar notData={notData} />}
+      {showNotbar && <NotBar notData={notData} />}
 
       <div className="right">
         <i
