@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import "../styles/groupstyle.css";
 import { createGroup } from "../app/groups/page";
 import { GroupCard } from "./groupCard";
-
 import { Plus } from "lucide-react";
 export function CreateGroupForm({ users, onSubmit, onCancel }) {
 
@@ -11,6 +10,7 @@ export function CreateGroupForm({ users, onSubmit, onCancel }) {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedUsers, setSelectedUsers] = useState([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
 
   const handleUserSelect = (user) => {
@@ -33,9 +33,8 @@ export function CreateGroupForm({ users, onSubmit, onCancel }) {
       invitedUsers: selectedUsers.map((u) => u.id),
     };
 
-
-    onSubmit(groupData);
-    onSubmit(selectedUsers);
+    onSubmit(groupData, isSubmitting, setIsSubmitting);
+    // onSubmit(selectedUsers);
 
     // Reset form after submission
     setGroupTitle("");
@@ -99,7 +98,7 @@ export function CreateGroupForm({ users, onSubmit, onCancel }) {
                       <span className="user-avatar-small" aria-hidden="true">
                         {user.first_name.charAt(0).toUpperCase()}
                       </span>
-                      <span>{user.name}</span>
+                      <span>{user.first_name}</span>
                       <button
                         type="button"
                         onClick={() => handleUserRemove(user.id)}
@@ -179,6 +178,7 @@ export function GroupCreationTrigger({ setGroup }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [showNoGroups, setShowNoGroups] = useState(true);
   const [userList, setUserList] = useState([]);
+  
 
   const handlePostClick = () => {
     setShowNoGroups(false);
@@ -189,10 +189,11 @@ export function GroupCreationTrigger({ setGroup }) {
     setShowNoGroups(true);
   };
 
-  const handleSubmit = async (groupData) => {
+  const handleSubmit = async (groupData,isSubmitting ,setIsSubmitting) => {
     try {
+      if (isSubmitting) return;
+      setIsSubmitting(true);
       const newGroup = await createGroup(groupData);
-      
       setGroup((prev) => {
         const exists = prev.some((g) => g.ID === newGroup.ID);
         return exists ? prev : [newGroup, ...prev];
@@ -201,6 +202,7 @@ export function GroupCreationTrigger({ setGroup }) {
       console.error("Error creating group:", error);
     } finally {
       setIsModalOpen(false);
+      setIsSubmitting(false);
     }
   };
   useEffect(() => {

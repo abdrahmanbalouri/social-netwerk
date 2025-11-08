@@ -177,6 +177,8 @@ export function MyGroups() {
 }
 
 export async function createGroup(formData) {
+  console.log("sending request...");
+  console.log("------------------",JSON.stringify(formData));
   return (
     fetch("http://localhost:8080/api/groups/add", {
       method: "POST",
@@ -185,13 +187,14 @@ export async function createGroup(formData) {
       body: JSON.stringify(formData),
     })
       .then(async (res) => {
-        if (!res.ok) throw new Error("Failed to create group");
+        if (!res.ok) throw new Error("Failed to create group :");
         const groupIS = await res.json();
         return groupIS;
       })
       // .then(createdGroup => { return createdGroup })
       .catch((error) => {
         console.error("Failed to create new group:", error);
+        throw error;
       })
   );
 }

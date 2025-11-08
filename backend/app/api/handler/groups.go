@@ -20,10 +20,13 @@ func CreateGroupHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var newGroup utils.GroupRequest
+	// fmt.Println("json.NewDecoder(r.Body) :", json.NewDecoder(r.Body))
 	if err := json.NewDecoder(r.Body).Decode(&newGroup); err != nil {
+		fmt.Println("errrrrrooooor is :", err)
 		helper.RespondWithError(w, http.StatusBadRequest, "Invalid request format")
 		return
 	}
+	fmt.Println("newww grouuup is :", newGroup)
 
 	if len(strings.TrimSpace(newGroup.Title)) == 0 || len(strings.TrimSpace(newGroup.Description)) == 0 {
 		helper.RespondWithError(w, http.StatusBadRequest, "Title and description are required")
@@ -42,6 +45,7 @@ func CreateGroupHandler(w http.ResponseWriter, r *http.Request) {
 		helper.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
+	fmt.Println("LAst line of this handleeeer :", group)
 
 	helper.RespondWithJSON(w, http.StatusCreated, group)
 }

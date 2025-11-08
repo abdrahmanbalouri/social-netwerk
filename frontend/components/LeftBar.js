@@ -53,18 +53,18 @@ export default function LeftBar({ showSidebar }) {
           />
           <span>{Profile?.first_name ? `${Profile.first_name} ${Profile.last_name}` : 'userName'}</span>
         </div>
-        <Link href={`/follow/${Profile?.id}?tab=following`}  >
+        {/* <Link href={`/follow/${Profile?.id}?tab=following`}  >
           <div className="item">
             <img src="/icon/1.png" alt="" />
             <span>following</span>
           </div>
-        </Link>
+        </Link> */}
         <Link href={`/follow/${Profile?.id}?tab=followers`} >
           <div className="item">
 
             <img src="/icon/1.png" alt="" />
 
-            <span>followers</span>
+            <span>followers & following</span>
           </div>
         </Link>
         <Link href='/groups'>
