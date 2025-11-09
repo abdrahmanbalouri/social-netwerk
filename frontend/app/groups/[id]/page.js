@@ -59,12 +59,7 @@ export default function GroupPage() {
   );
 }
 
-
-
-
 // events 
-
-
 export function Events() {
   const [ShowEventForm, SetShowEventForm] = useState(true)
   const params = useParams();
@@ -102,7 +97,6 @@ export function Events() {
 
 
   async function goingEvent(status, eventID) {
-
     if ((!status || !eventID) || (status !== "going" && status !== "notGoing")) {
       console.error('Status and Event ID are required');
       return;
