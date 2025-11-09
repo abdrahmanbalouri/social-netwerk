@@ -2,6 +2,7 @@
 import { DarkModeProvider } from "../context/darkMod";
 import { ProfileProvider } from "../context/profile";
 import { WSProvider } from "../context/wsContext";
+import { ToastProvider } from "../context/toastContext";
 import GlobalNotification from "../context/GlobalNotification";
 
 export default function Providers({ children }) {
@@ -9,8 +10,10 @@ export default function Providers({ children }) {
     <DarkModeProvider>
       <WSProvider>
         <ProfileProvider>
+          <ToastProvider>
             {children}
-            <GlobalNotification />
+          </ToastProvider>
+          <GlobalNotification />
         </ProfileProvider>
       </WSProvider>
     </DarkModeProvider>
