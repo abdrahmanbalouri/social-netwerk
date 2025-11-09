@@ -11,12 +11,13 @@ import (
 
 // Notification structure to send to frontend
 type Notification struct {
-	SenderID  string `json:"sender_id"`
-	Name      string `json:"name"`
-	Photo     string `json:"photo"`
-	Type      string `json:"type"`
-	Message   string `json:"message"`
-	CreatedAt int    `json:"created_at"`
+	SenderID   string `json:"sender_id"`
+	First_name string `json:"first_name"`
+	Last_name  string `json:"last_name"`
+	Image      string `json:"image"`
+	Type       string `json:"type"`
+	Message    string `json:"message"`
+	CreatedAt  int    `json:"created_at"`
 }
 
 func Notifications(w http.ResponseWriter, r *http.Request) {
@@ -27,11 +28,24 @@ func Notifications(w http.ResponseWriter, r *http.Request) {
 	}
 
 	rows, err := repository.Db.Query(`
-	SELECT sender_id, type, message, created_at
-	FROM notifications
-	WHERE receiver_id = ?
-	ORDER BY created_at DESC
-	`, id)
+        SELECT n.sender_id,
+               u.first_name,
+               u.last_name,
+               u.image,
+               n.type,
+               n.message,
+               n.created_at
+        FROM notifications n
+        INNER JOIN users u ON u.id = n.sender_id
+        WHERE n.receiver_id = ?
+           OR EXISTS (
+                SELECT 1
+                FROM group_members gm
+                WHERE gm.group_id = n.receiver_id
+                  AND gm.user_id = ? and n.sender_id != gm.user_id
+           )
+        ORDER BY n.created_at DESC
+    `, id, id)
 	if err != nil {
 		log.Println("Error fetching notifications:", err)
 		http.Error(w, "Database error", http.StatusInternalServerError)
@@ -43,16 +57,8 @@ func Notifications(w http.ResponseWriter, r *http.Request) {
 
 	for rows.Next() {
 		var notif Notification
-		if err := rows.Scan(&notif.SenderID, &notif.Type, &notif.Message, &notif.CreatedAt); err != nil {
+		if err := rows.Scan(&notif.SenderID, &notif.First_name, &notif.Last_name, &notif.Image, &notif.Type, &notif.Message, &notif.CreatedAt); err != nil {
 			log.Println("Error scanning notification:", err)
-			continue
-		}
-
-		err = repository.Db.QueryRow(`
-		SELECT nickname, image FROM users WHERE id = ?
-		`, notif.SenderID).Scan(&notif.Name, &notif.Photo)
-		if err != nil {
-			log.Println("Error fetching sender info:", err)
 			continue
 		}
 

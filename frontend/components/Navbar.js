@@ -33,7 +33,6 @@ export default function Navbar() {
       // update unread count and stored notification list for drop-down
       console.log("new notification received in navbar:", data);
       if (pathname !== `/chat/${data.from}` && pathname !== `/groups/${data.groupID}`) {
-        console.log("===================================");
         
         addnotf((prev) => prev + 1);
         setnot(data);
@@ -51,13 +50,13 @@ export default function Navbar() {
         method: "GET",
         credentials: "include",
       });
-      console.log("************************");
       
       if (!res.ok) {
         throw new Error(`Failed to fetch notifications: ${res.status}`);
       }
-
+      
       const data = await res.json();
+      console.log("************************",data);
       setnot(data);
       addnotf(0);
       chengBool(!showNotbar);

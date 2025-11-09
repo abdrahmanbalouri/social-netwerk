@@ -5,10 +5,7 @@ import { useRouter } from "next/navigation.js";
 
 
 export default function NotBar({ notData }) {
-    console.log("++++++++++++++");
-    console.log(notData);
-    
-    console.log("++++++++++++++");
+
     
     const [filter, setFilter] = useState('all');
     const [notifications, setNotifications] = useState(notData || []);
