@@ -20,7 +20,6 @@ func CreateGroupHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var newGroup utils.GroupRequest
-	// fmt.Println("json.NewDecoder(r.Body) :", json.NewDecoder(r.Body))
 	if err := json.NewDecoder(r.Body).Decode(&newGroup); err != nil {
 		fmt.Println("errrrrrooooor is :", err)
 		helper.RespondWithError(w, http.StatusBadRequest, "Invalid request format")

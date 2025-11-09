@@ -15,7 +15,6 @@ import { useWS } from "../../context/wsContext.js";
 import { useProfile } from "../../context/profile.js";
 import { send } from "process";
 
-// import RightBarGroup from '../../components/RightBarGroups.js';
 
 export default function () {
   const { darkMode } = useDarkMode();
