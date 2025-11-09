@@ -83,7 +83,7 @@ export default function Navbar() {
       } catch (err) {
         console.error(err);
       }
-    }, 300);
+    }, 3000);
 
     return () => clearTimeout(delay);
   }, [searchTerm]);

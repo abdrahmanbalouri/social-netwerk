@@ -197,7 +197,7 @@
 }
 
 .notification-text {
-    color: var(--text);
+    color: var(--textColor);
     font-size: 14px;
     line-height: 1.5;
     margin-bottom: 6px;
@@ -206,7 +206,7 @@
 
 .notification-text strong {
     font-weight: 800;
-    background: linear-gradient(135deg, var(--text), var(--accent));
+    background: linear-gradient(135deg, var(--textColor), var(--accent));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;

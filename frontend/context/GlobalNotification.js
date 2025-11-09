@@ -20,7 +20,6 @@ export default function GlobalNotification() {
         setToast(payload);
       }
 
-      setTimeout(() => setToast(null), 4500);
     };
 
     addListener("notification", handle);
