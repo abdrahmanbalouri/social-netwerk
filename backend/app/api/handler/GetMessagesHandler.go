@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"database/sql"
+	"fmt"
 	"net/http"
 
 	"social-network/app/helper"
@@ -29,10 +30,13 @@ func GetMessagesHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	messages, err := model.GetMessages(currentUserID, reciverId)
+	fmt.Println("rrrrrrrrrrrrrrrrrrrrrr", messages)
 	if err == sql.ErrNoRows {
+		fmt.Println(err)
 		helper.RespondWithError(w, http.StatusNotFound, "No messages found")
 		return
 	} else if err != nil {
+		fmt.Println(err)
 		helper.RespondWithError(w, http.StatusInternalServerError, "Error fetching messages: "+err.Error())
 		return
 	}

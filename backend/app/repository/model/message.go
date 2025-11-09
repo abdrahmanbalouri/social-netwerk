@@ -16,11 +16,12 @@ type Message struct {
 	Last_name      string `json:"last_name"`
 	GroupID        string `json:"groupID"`
 	Photo          string `json:"photo"`
+	PictureSend    string `json:"PictureSend"`
 }
 
 func GetMessages(currentUserID, reciverId string) ([]Message, error) {
 	query := `
-		SELECT m.content, m.sender_id, m.receiver_id, m.sent_at , u.first_name,u.last_name,u.image FROM messages m
+		SELECT m.content, m.sender_id, m.receiver_id, m.sent_at , u.first_name,u.last_name,u.image,COALESCE(m.image, '') FROM messages m
 		LEFT JOIN users u ON u.id = m.sender_id
 		WHERE (m.sender_id = ? AND m.receiver_id = ?) OR (m.sender_id = ? AND m.receiver_id = ?)
 		ORDER BY m.sent_at DESC
@@ -34,7 +35,7 @@ func GetMessages(currentUserID, reciverId string) ([]Message, error) {
 	var messages []Message
 	for rows.Next() {
 		var msg Message
-		if err := rows.Scan(&msg.Content, &msg.SenderId, &msg.ReceiverId, &msg.CreatedAt, &msg.First_name, &msg.Last_name, &msg.Photo); err != nil {
+		if err := rows.Scan(&msg.Content, &msg.SenderId, &msg.ReceiverId, &msg.CreatedAt, &msg.First_name, &msg.Last_name, &msg.Photo, &msg.PictureSend); err != nil {
 			return nil, err
 		}
 		messages = append(messages, msg)

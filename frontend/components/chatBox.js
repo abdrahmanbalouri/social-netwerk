@@ -10,6 +10,7 @@ import { useProfile } from "../context/profile.js";
 
 export default function ChatBox({ user }) {
   const [messages, setMessages] = useState([]);
+  const [preview, setPreview] = useState(null);
   const [input, setInput] = useState("");
   const [showEmojis, setShowEmojis] = useState(false);
   const inputRef = useRef(null);
@@ -28,11 +29,7 @@ export default function ChatBox({ user }) {
   if (id == "0" || !id) {
     return (
       <div className="no-chat-selected">
-        <div className="no-chat-header">
-          <h2>Select a chat to start messaging</h2>
-          <br />
-          <h4>No chat selected</h4>
-        </div>
+        <h2>No chat selected</h2>
       </div>
     );
   }
@@ -40,7 +37,23 @@ export default function ChatBox({ user }) {
     inputRef.current?.focus();
   }, 0);
 
-  
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPreview(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+
+  const removeImage = () => {
+    setPreview(null);
+    document.getElementById("idfile").value = "";
+  };
+
   // listen for online/offline status updates
   useEffect(() => {
     const handleOlineUser = (data) => {
@@ -83,7 +96,8 @@ export default function ChatBox({ user }) {
               sender: msg.senderId === user.id ? "them" : "me",
               time: new Date(msg.createdAt).toLocaleString(),
               name: msg.first_name + " " + msg.last_name,
-              image: msg.photo
+              image: msg.photo,
+              PictureSend: msg.PictureSend
             }))
             .reverse();
 
@@ -98,7 +112,7 @@ export default function ChatBox({ user }) {
 
   useEffect(() => {
     const handleIncomingMessage = (data) => {
-
+        console.log(data, "44444444444444444444");
       if (data.from === user.id || data.to === user.id) {
         setMessages((prev) => [
           ...prev,
@@ -107,7 +121,8 @@ export default function ChatBox({ user }) {
             sender: data.from === user.id ? "them" : "me",
             time: data.time,
             name: data.name,
-            image: data.image
+            image: data.image,
+            PictureSend: data.PictureSend
           },
         ]);
       }
@@ -122,11 +137,11 @@ export default function ChatBox({ user }) {
     if (chatEndRef.current) {
       chatEndRef.current.scrollIntoView({ behavior: "smooth" });
     }
-  }, [messages]);
+  }, [messages,preview]);
 
   const emojiArray = ["😀", "😃", "😄", "😁", "😆", "😅", "🤣", "😂", "🚀", "💡", "😊", "😇", "🙂", "🙃", "😉", "😍", "🥰", "😘", "😗", "😋", "😛", "😜", "🤪", "😝", "🤑", "🤗", "🤭", "🤔", "🤨", "😐", "😑", "😶", "😏", "😒", "🙄", "😬", "😔", "😪", "🤤", "😴", "😷", "🤒", "🤕", "🤢", "🤮", "🥴", "😵", "🤯", "😎", "🤓"];
   const handleSendMessage = () => {
-    if (input.trim() === "") return;
+    if (input.trim() === "" && !preview) return;
     if (input.length > 1000) {
       showToast("message is too long")
       return
@@ -136,10 +151,12 @@ export default function ChatBox({ user }) {
       messageContent: input,
       type: "message",
       name: Profile.first_name,
-      image: Profile.image
+      image: Profile.image,
+      PictureSend: preview
     };
     sendMessage(payload);
     setInput("");
+    removeImage()
     setShowEmojis(false);
   };
 
@@ -157,12 +174,12 @@ export default function ChatBox({ user }) {
   return (
     <div className="chat-container">
       <div className="chat-header">
-      {toast && (
-        <div className={`toast ${toast.type}`}>
-          <span>{toast.message}</span>
-          <button onClick={() => setToast(null)} className="toast-close">×</button>
-        </div>
-      )}
+        {toast && (
+          <div className={`toast ${toast.type}`}>
+            <span>{toast.message}</span>
+            <button onClick={() => setToast(null)} className="toast-close">×</button>
+          </div>
+        )}
         <Link href={`/profile/${user.id}`}>
           <img
             src={
@@ -193,6 +210,13 @@ export default function ChatBox({ user }) {
                 <span className="message-name">{msg.name}</span>
               </div>
               <div className="message-bubble">
+                {msg.PictureSend && (
+                  <img
+                    src={`/uploads/${msg.PictureSend}`}
+                    alt="message image"
+                    className="message-img"
+                  />
+                )}
                 <div className="msg-content">{msg.text}</div>
               </div>
               <div className="info-time">
@@ -205,6 +229,14 @@ export default function ChatBox({ user }) {
               </div>
             </div>
           ))
+        )}
+        {preview && (
+          <div className="preview-container">
+            <img src={preview} alt="preview" className="preview-image" />
+            <button className="remove-btn" onClick={removeImage}>
+              ×
+            </button>
+          </div>
         )}
         <div ref={chatEndRef}></div>
       </div>
@@ -237,6 +269,18 @@ export default function ChatBox({ user }) {
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && handleSendMessage()}
         />
+        <input
+          hidden
+          type="file"
+          id="idfile"
+          accept="image/*"
+          onChange={handleFileChange}
+        />
+        <label htmlFor="idfile">
+          <div className="emoji-toggle">
+            <i className="fa-solid fa-image " ></i>
+          </div>
+        </label>
         <button onClick={handleSendMessage}>
           <SendIcon />
         </button>

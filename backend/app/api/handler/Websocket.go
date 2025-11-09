@@ -1,8 +1,14 @@
 package handlers
 
 import (
+	"encoding/base64"
+	"fmt"
+	"io"
 	"log"
 	"net/http"
+	"os"
+	"path/filepath"
+	"strings"
 	"time"
 
 	"social-network/app/api/service"
@@ -102,9 +108,52 @@ func Loop(conn *websocket.Conn, currentUserID string) {
 			if err != nil {
 				log.Println("DB error saving notification:", err)
 			}
+			uploadDir := "../frontend/public/uploads"
+			var imageFileName string
 
+			// Si le message contient une image
+			if msg.PictureSend != "" {
+				// Créer le dossier s’il n’existe pas
+				if err := os.MkdirAll(uploadDir, os.ModePerm); err != nil {
+					log.Println("failed to create upload directory: ", err)
+				}
+
+				// Nom unique pour l'image
+				imageFileName = fmt.Sprintf("msg_%d.png", time.Now().UnixNano())
+				imagePath := filepath.Join(uploadDir, imageFileName)
+
+				// Supprimer le préfixe base64 si présent
+				base64Data := msg.PictureSend
+				if strings.HasPrefix(base64Data, "data:image") {
+					parts := strings.Split(base64Data, ",")
+					if len(parts) == 2 {
+						base64Data = parts[1]
+					}
+				}
+
+				// Décoder l'image base64
+				imageBytes, err := base64.StdEncoding.DecodeString(base64Data)
+				if err != nil {
+					log.Println("failed to decode base64: ", err)
+					continue
+				}
+
+				// Créer le fichier image
+				file, err := os.Create(imagePath)
+				if err != nil {
+					log.Println("failed to create image file: ", err)
+					continue
+				}
+				defer file.Close()
+
+				// Copier les bytes dans le fichier
+				if _, err := io.Copy(file, strings.NewReader(string(imageBytes))); err != nil {
+					log.Println("failed to write image to file: ", err)
+					continue
+				}
+			}
 			// save message
-			err = model.SaveMessage(currentUserID, msg)
+			err = model.SaveMessage(currentUserID, msg, imageFileName)
 			if err != nil {
 				log.Println("DB error saving message:", err)
 				continue
@@ -112,24 +161,26 @@ func Loop(conn *websocket.Conn, currentUserID string) {
 
 			// ✅ send message to receiver
 			service.SendToUser(msg.ReceiverId, map[string]any{
-				"type":    msg.Type,
-				"from":    currentUserID,
-				"to":      msg.ReceiverId,
-				"content": msg.MessageContent,
-				"time":    time.Now().Format(time.RFC3339),
-				"name":    msg.First_name + " " + msg.Last_name,
-				"image":   msg.Photo,
+				"type":        msg.Type,
+				"from":        currentUserID,
+				"to":          msg.ReceiverId,
+				"content":     msg.MessageContent,
+				"time":        time.Now().Format(time.RFC3339),
+				"name":        msg.First_name + " " + msg.Last_name,
+				"image":       msg.Photo,
+				"PictureSend": imageFileName,
 			})
 
 			// ✅ send back to sender also
 			service.SendToUser(currentUserID, map[string]any{
-				"type":    msg.Type,
-				"from":    currentUserID,
-				"to":      msg.ReceiverId,
-				"content": msg.MessageContent,
-				"time":    time.Now().Format(time.RFC3339),
-				"name":    msg.First_name + " " + msg.Last_name,
-				"image":   msg.Photo,
+				"type":        msg.Type,
+				"from":        currentUserID,
+				"to":          msg.ReceiverId,
+				"content":     msg.MessageContent,
+				"time":        time.Now().Format(time.RFC3339),
+				"name":        msg.First_name + " " + msg.Last_name,
+				"image":       msg.Photo,
+				"PictureSend": imageFileName,
 			})
 
 			// send notification to receiver

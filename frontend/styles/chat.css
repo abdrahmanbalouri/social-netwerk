@@ -24,7 +24,10 @@
   border: 1px solid transparent;
 }
 
-
+.message-bubble img{
+  width: 100%;
+  height: fit-content;
+}
 .onlinee {
   display: flex;
   flex-direction: column;
@@ -354,8 +357,7 @@
   font-size: 15px;
 }
 
-.no-chat-selected,
-.loading {
+.no-chat-selected {
   font-size: 12px;
   position: absolute;
   top: 50%;
@@ -363,8 +365,7 @@
   transform: translate(-50%, -50%);
 }
 
-.no-chat-header h2 {
-  font-size: 36px;
+.no-chat-selected h2 {
   color: var(--textColor);
   font-weight: 700;
   margin: 0 0 16px 0;
@@ -372,15 +373,6 @@
   text-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
 }
 
-.no-chat-header h4 {
-  font-size: 18px;
-  color: var(--textColor);
-  font-weight: 400;
-  line-height: 1.6;
-  margin: 0;
-  padding: 0 20px;
-  text-align: center;
-}
 
 
 .no-msg {
@@ -452,6 +444,7 @@
   padding: 10px 16px;
   border-radius: 18px;
   width: 100%;
+  width: 100%;
   word-wrap: break-word;
   font-size: 15px;
   line-height: 1.4;
@@ -493,4 +486,38 @@
 .message.me+.message.them,
 .message.them+.message.me {
   margin-top: 12px;
+}
+
+.preview-container {
+  width: fit-content;
+  display: flex;
+  align-self: start;
+  position: relative;
+  display: inline-block;
+  margin-top: 10px;
+}
+
+.preview-image {
+  width: 120px;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 2px solid #ccc;
+}
+
+.remove-btn {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background: red;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 22px;
+  height: 22px;
+  font-size: 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }

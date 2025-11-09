@@ -2,6 +2,7 @@ package model
 
 import (
 	"database/sql"
+	"fmt"
 	"time"
 
 	"social-network/app/repository"
@@ -50,13 +51,17 @@ func SaveNotification(currentUserID string, msg Message) error {
 	return err
 }
 
-// ✅ Insert message direct sans check dyal follows
-func SaveMessage(currentUserID string, msg Message) error {
+func SaveMessage(currentUserID string, msg Message, imageFileName string) error {
+	// Sauvegarder le message dans la base de données
 	_, err := repository.Db.Exec(`
-				INSERT INTO messages (sender_id, receiver_id, content)
-				VALUES (?, ?, ?)
-			`, currentUserID, msg.ReceiverId, msg.MessageContent)
-	return err
+		INSERT INTO messages (sender_id, receiver_id, content, image)
+		VALUES (?, ?, ?, ?)
+	`, currentUserID, msg.ReceiverId, msg.MessageContent, imageFileName)
+	if err != nil {
+		return fmt.Errorf("failed to insert message: %v", err)
+	}
+
+	return nil
 }
 
 func IsUserGroupMember(currentUserID string, msg Message) (bool, error) {
