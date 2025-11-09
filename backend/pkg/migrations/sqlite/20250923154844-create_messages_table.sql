@@ -7,6 +7,7 @@ CREATE TABLE IF NOT EXISTS messages (
     sent_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     group_id TEXT,
     receiver_id TEXT,
+    image TEXT,
     FOREIGN KEY (sender_id) REFERENCES users(id),
     FOREIGN KEY (group_id) REFERENCES groups(id),
     FOREIGN KEY (receiver_id) REFERENCES users(id)
