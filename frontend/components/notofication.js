@@ -35,7 +35,7 @@ console.log('aaaaa',data);
 
                     <div className="notification-content">
                         <p className="notification-text">
-                            <span style={{colors:'red'}}>{data?.first_name+' '+data.last_name}</span> {data?.content}
+                            <span style={{colors:'red'}} className="sp1">{data?.first_name+' '+data.last_name}</span> {data?.content}
                         </p>
 
                         <span className="notification-timer">
