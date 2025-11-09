@@ -31,7 +31,6 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		loginData.Password,
 	)
 	if err1 != "" {
-		http.Error(w, err1, http.StatusUnauthorized)
 		return
 	}
 
