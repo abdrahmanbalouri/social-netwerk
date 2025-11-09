@@ -12,13 +12,37 @@ export default function GlobalNotification() {
     if (!connected) return;
 
     const handle = (data) => {
-      console.log("notiififififififi", data);
-
       const payload = data.data || data;
-
-      if (pathname !== `/chat/${data.from}` && pathname !== `/groups/${data.groupID}`) {
-        setToast(payload);
+      console.log(payload);
+      switch (payload.subType) {
+        case "follow":
+          setToast(payload);
+          break;
+        case "unfollow":
+          setToast(payload);
+          break;
+        case "message":
+          if (pathname !== `/chat/${payload.from}`) {
+            setToast(payload);
+          }
+          break;
+        case "group_message":
+          if (pathname !== `/groups/${payload.groupID}`) {
+            setToast(payload);
+          }
+          break;
+        case "invite_to_group":
+          setToast(payload);
+          break;
+        case "joinRequest":
+          setToast(payload);
+          break;
+        default:
+          return;
       }
+
+
+
 
       setTimeout(() => setToast(null), 4500);
     };
@@ -29,5 +53,5 @@ export default function GlobalNotification() {
 
   if (!toast) return null;
 
-  return <Notification data={toast} onClose={() => setToast(null)} />;
+  return <Notification data={toast} />;
 }
