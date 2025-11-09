@@ -32,11 +32,14 @@ func CreateGroupPostService(r *http.Request, userID string) (interface{}, error)
 		return nil, fmt.Errorf("unable to parse form: %v", err)
 	}
 
-	title := r.FormValue("title")
-	description := r.FormValue("description")
-	title = helper.Skip(strings.TrimSpace(title))
-	description = helper.Skip(strings.TrimSpace(description))
-	if len(title) > 20 || len(description) > 20 {
+	title := strings.TrimSpace(r.FormValue("title"))
+	description := r.FormValue(r.FormValue("description"))
+
+	if len(title) == 0 || len(description) == 0{
+		return nil, fmt.Errorf("title and description are required")
+	}
+	if len(title) > 20 || len(description) > 40 {
+		fmt.Println("heeere 2")
 		return nil, fmt.Errorf("title or description to bigg")
 	}
 

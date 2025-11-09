@@ -118,7 +118,7 @@ export function CreatePostForm({ onSubmit, onCancel ,err }) {
               <button
                 type="submit"
                 className="submit-button"
-                disabled={!PostTitle.trim()}
+                disabled={!PostTitle.trim() || !PostDescription.trim()}
               >
                 Create post
               </button>
