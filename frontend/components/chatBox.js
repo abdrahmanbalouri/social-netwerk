@@ -95,7 +95,9 @@ export default function ChatBox({ user }) {
   }, [addListener, removeListener])
 
 
-
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
 
   useEffect(() => {
     const fetchMessages = async () => {
