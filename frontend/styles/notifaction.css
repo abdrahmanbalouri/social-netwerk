@@ -136,11 +136,16 @@
 
 .notification-text strong {
     font-weight: 700;
+    color: #006eff;
     background: linear-gradient(135deg, #006eff, #395983);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
     transition: all 0.3s ease;
+}
+
+span {
+    color: #006eff;
 }
 
 .notification-timer {
