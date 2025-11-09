@@ -39,14 +39,26 @@ export default function ChatBox({ user }) {
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setPreview(reader.result);
-      };
-      reader.readAsDataURL(file);
+    if (!file) {
+      setPreview(null);
+      return;
     }
+
+    const allowedTypes = ["image/png", "image/jpeg", "image/jpg", "image/gif", "image/webp"];
+    if (!allowedTypes.includes(file.type)) {
+      alert("Only image files are allowed!");
+      e.target.value = "";
+      setPreview(null);
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setPreview(reader.result);
+    };
+    reader.readAsDataURL(file);
   };
+
 
 
   const removeImage = () => {
@@ -112,7 +124,6 @@ export default function ChatBox({ user }) {
 
   useEffect(() => {
     const handleIncomingMessage = (data) => {
-        console.log(data, "44444444444444444444");
       if (data.from === user.id || data.to === user.id) {
         setMessages((prev) => [
           ...prev,
@@ -137,7 +148,7 @@ export default function ChatBox({ user }) {
     if (chatEndRef.current) {
       chatEndRef.current.scrollIntoView({ behavior: "smooth" });
     }
-  }, [messages,preview]);
+  }, [messages, preview]);
 
   const emojiArray = ["😀", "😃", "😄", "😁", "😆", "😅", "🤣", "😂", "🚀", "💡", "😊", "😇", "🙂", "🙃", "😉", "😍", "🥰", "😘", "😗", "😋", "😛", "😜", "🤪", "😝", "🤑", "🤗", "🤭", "🤔", "🤨", "😐", "😑", "😶", "😏", "😒", "🙄", "😬", "😔", "😪", "🤤", "😴", "😷", "🤒", "🤕", "🤢", "🤮", "🥴", "😵", "🤯", "😎", "🤓"];
   const handleSendMessage = () => {

@@ -517,6 +517,7 @@ export async function CreatePost(groupId, formData) {
 
 export function GroupChat({ groupId }) {
   const [id, setId] = useState(null);
+  const [preview, setPreview] = useState(null);
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
   const [showEmojis, setShowEmojis] = useState(false);
@@ -550,6 +551,35 @@ export function GroupChat({ groupId }) {
     inputRef.current?.focus();
   }, 0);
 
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (!file) {
+      setPreview(null);
+      return;
+    }
+
+    const allowedTypes = ["image/png", "image/jpeg", "image/jpg", "image/gif", "image/webp"];
+    if (!allowedTypes.includes(file.type)) {
+      alert("Only image files are allowed!");
+      e.target.value = "";
+      setPreview(null);
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setPreview(reader.result);
+    };
+    reader.readAsDataURL(file);
+  };
+
+
+
+  const removeImage = () => {
+    setPreview(null);
+    document.getElementById("idfile").value = "";
+  };
+
   useEffect(() => {
     const fetchMessages = async () => {
       try {
@@ -567,7 +597,8 @@ export function GroupChat({ groupId }) {
               sender: msg.senderId !== id ? "them" : "me",
               time: new Date(msg.createdAt).toLocaleString(),
               name: msg.first_name + " " + msg.last_name,
-              image: msg.photo
+              image: msg.photo,
+              PictureSend: msg.PictureSend
             }))
             .reverse();
 
@@ -582,7 +613,7 @@ export function GroupChat({ groupId }) {
 
   useEffect(() => {
     const handleIncomingMessage = (data) => {
-      console.log(data);
+      console.log("-----------------------------------------+++++++++++++",data);
 
       setMessages((prev) => [
         ...prev,
@@ -591,7 +622,8 @@ export function GroupChat({ groupId }) {
           sender: data.from !== id ? "them" : "me",
           time: data.time,
           name: data.name,
-          image: data.image
+          image: data.image,
+            PictureSend: data.PictureSend
         },
       ]);
     };
@@ -607,61 +639,10 @@ export function GroupChat({ groupId }) {
     }
   }, [messages]);
 
-  const emojiArray = [
-    "😀",
-    "😃",
-    "😄",
-    "😁",
-    "😆",
-    "😅",
-    "🤣",
-    "😂",
-    "🚀",
-    "💡",
-    "😊",
-    "😇",
-    "🙂",
-    "🙃",
-    "😉",
-    "😍",
-    "🥰",
-    "😘",
-    "😗",
-    "😋",
-    "😛",
-    "😜",
-    "🤪",
-    "😝",
-    "🤑",
-    "🤗",
-    "🤭",
-    "🤔",
-    "🤨",
-    "😐",
-    "😑",
-    "😶",
-    "😏",
-    "😒",
-    "🙄",
-    "😬",
-    "😔",
-    "😪",
-    "🤤",
-    "😴",
-    "😷",
-    "🤒",
-    "🤕",
-    "🤢",
-    "🤮",
-    "🥴",
-    "😵",
-    "🤯",
-    "😎",
-    "🤓",
-  ];
+  const emojiArray = ["😀", "😃", "😄", "😁", "😆", "😅", "🤣", "😂", "🚀", "💡", "😊", "😇", "🙂", "🙃", "😉", "😍", "🥰", "😘", "😗", "😋", "😛", "😜", "🤪", "😝", "🤑", "🤗", "🤭", "🤔", "🤨", "😐", "😑", "😶", "😏", "😒", "🙄", "😬", "😔", "😪", "🤤", "😴", "😷", "🤒", "🤕", "🤢", "🤮", "🥴", "😵", "🤯", "😎", "🤓"];
 
-  function handleSendGroupChatMessage() {
-    if (input.trim() === "") return;
+  const handleSendGroupChatMessage = () => {
+    if (input.trim() === "" && !preview) return;
     if (input.length > 1000) {
       showToast("message is too long")
       return
@@ -671,12 +652,14 @@ export function GroupChat({ groupId }) {
       messageContent: input,
       type: "group_message",
       name: Profile.first_name,
-      image: Profile.image
+      image: Profile.image,
+      PictureSend: preview
     };
     sendMessage(payload);
     setInput("");
+    removeImage()
     setShowEmojis(false);
-  }
+  };
 
   const addEmoji = (emoji) => {
     const cursorPos = inputRef.current.selectionStart;
@@ -709,6 +692,13 @@ export function GroupChat({ groupId }) {
                 <span className="message-name">{msg.name}</span>
               </div>
               <div className="message-bubble">
+                {msg.PictureSend && (
+                  <img
+                    src={`/uploads/${msg.PictureSend}`}
+                    alt="message image"
+                    className="message-img"
+                  />
+                )}
                 <div className="msg-content">{msg.text}</div>
               </div>
               <div className="info-time">
@@ -721,6 +711,14 @@ export function GroupChat({ groupId }) {
               </div>
             </div>
           ))
+        )}
+        {preview && (
+          <div className="preview-container">
+            <img src={preview} alt="preview" className="preview-image" />
+            <button className="remove-btn" onClick={removeImage}>
+              ×
+            </button>
+          </div>
         )}
         <div ref={chatEndRef}></div>
       </div>
@@ -753,6 +751,18 @@ export function GroupChat({ groupId }) {
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && handleSendGroupChatMessage()}
         />
+        <input
+          hidden
+          type="file"
+          id="idfile"
+          accept="image/*"
+          onChange={handleFileChange}
+        />
+        <label htmlFor="idfile">
+          <div className="emoji-toggle">
+            <i className="fa-solid fa-image " ></i>
+          </div>
+        </label>
         <button onClick={handleSendGroupChatMessage}>
           <SendIcon />
         </button>

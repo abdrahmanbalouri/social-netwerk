@@ -1,14 +1,8 @@
 package handlers
 
 import (
-	"encoding/base64"
-	"fmt"
-	"io"
 	"log"
 	"net/http"
-	"os"
-	"path/filepath"
-	"strings"
 	"time"
 
 	"social-network/app/api/service"
@@ -108,48 +102,12 @@ func Loop(conn *websocket.Conn, currentUserID string) {
 			if err != nil {
 				log.Println("DB error saving notification:", err)
 			}
-			uploadDir := "../frontend/public/uploads"
 			var imageFileName string
-
 			// Si le message contient une image
 			if msg.PictureSend != "" {
-				// Créer le dossier s’il n’existe pas
-				if err := os.MkdirAll(uploadDir, os.ModePerm); err != nil {
-					log.Println("failed to create upload directory: ", err)
-				}
-
-				// Nom unique pour l'image
-				imageFileName = fmt.Sprintf("msg_%d.png", time.Now().UnixNano())
-				imagePath := filepath.Join(uploadDir, imageFileName)
-
-				// Supprimer le préfixe base64 si présent
-				base64Data := msg.PictureSend
-				if strings.HasPrefix(base64Data, "data:image") {
-					parts := strings.Split(base64Data, ",")
-					if len(parts) == 2 {
-						base64Data = parts[1]
-					}
-				}
-
-				// Décoder l'image base64
-				imageBytes, err := base64.StdEncoding.DecodeString(base64Data)
+				imageFileName, err = helper.Upload(msg.PictureSend)
 				if err != nil {
-					log.Println("failed to decode base64: ", err)
-					continue
-				}
-
-				// Créer le fichier image
-				file, err := os.Create(imagePath)
-				if err != nil {
-					log.Println("failed to create image file: ", err)
-					continue
-				}
-				defer file.Close()
-
-				// Copier les bytes dans le fichier
-				if _, err := io.Copy(file, strings.NewReader(string(imageBytes))); err != nil {
-					log.Println("failed to write image to file: ", err)
-					continue
+					log.Println("failed to upload image/file")
 				}
 			}
 			// save message
@@ -212,9 +170,16 @@ func Loop(conn *websocket.Conn, currentUserID string) {
 				log.Println("User is not a member of the group")
 				continue
 			}
-
+			var imageFileName string
+			// Si le message contient une image
+			if msg.PictureSend != "" {
+				imageFileName, err = helper.Upload(msg.PictureSend)
+				if err != nil {
+					log.Println("failed to upload image/file")
+				}
+			}
 			// save message to DB
-			err = model.SaveGroupMessage(currentUserID, msg)
+			err = model.SaveGroupMessage(currentUserID, msg, imageFileName)
 			if err != nil {
 				log.Println("DB error saving group message:", err)
 				continue
@@ -226,13 +191,14 @@ func Loop(conn *websocket.Conn, currentUserID string) {
 			}
 
 			service.SendToGroupMembers(msg.GroupID, currentUserID, map[string]any{
-				"type":    msg.Type,
-				"from":    currentUserID,
-				"groupID": msg.GroupID,
-				"content": msg.MessageContent,
-				"time":    time.Now().Format(time.RFC3339),
-				"name":    msg.First_name + " " + msg.Last_name,
-				"image":   msg.Photo,
+				"type":        msg.Type,
+				"from":        currentUserID,
+				"groupID":     msg.GroupID,
+				"content":     msg.MessageContent,
+				"time":        time.Now().Format(time.RFC3339),
+				"name":        msg.First_name + " " + msg.Last_name,
+				"image":       msg.Photo,
+				"PictureSend": imageFileName,
 			})
 
 			// ===============================

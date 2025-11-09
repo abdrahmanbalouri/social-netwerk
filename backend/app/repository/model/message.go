@@ -55,7 +55,7 @@ func GetGroupMessages(currentUserID, groupId string) ([]Message, error) {
 	}
 
 	query := `
-		SELECT m.content, m.sender_id, m.sent_at FROM messages m
+		SELECT m.content, m.sender_id, m.sent_at, COALESCE(m.image, '') FROM messages m
 		WHERE m.group_id = ?
 		ORDER BY m.sent_at DESC
 		`
@@ -69,7 +69,7 @@ func GetGroupMessages(currentUserID, groupId string) ([]Message, error) {
 	var messages []Message
 	for rows.Next() {
 		var msg Message
-		if err := rows.Scan(&msg.Content, &msg.SenderId, &msg.CreatedAt); err != nil {
+		if err := rows.Scan(&msg.Content, &msg.SenderId, &msg.CreatedAt,&msg.PictureSend); err != nil {
 			return nil, err
 		}
 		err = repository.Db.QueryRow("SELECT first_name , last_name, image FROM users WHERE id = ?", msg.SenderId).Scan(&msg.First_name, &msg.Last_name, &msg.Photo)

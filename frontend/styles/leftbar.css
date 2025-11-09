@@ -1,6 +1,5 @@
 .leftBar {
-  --leftbar-width: 280px;
-  margin: 0 20px;
+  --leftbar-width: 300px;
   position: sticky;
   left: 0;
   top: var(--leftbar-top, 70px);

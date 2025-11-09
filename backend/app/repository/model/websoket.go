@@ -74,11 +74,11 @@ func IsUserGroupMember(currentUserID string, msg Message) (bool, error) {
 	return true, nil
 }
 
-func SaveGroupMessage(currentUserID string, msg Message) error {
+func SaveGroupMessage(currentUserID string, msg Message, imageFileName string) error {
 	_, err := repository.Db.Exec(`
-				INSERT INTO messages (group_id, sender_id, content)
-				VALUES (?, ?, ?)
-			`, msg.GroupID, currentUserID, msg.MessageContent)
+				INSERT INTO messages (group_id, sender_id, content, image)
+				VALUES (?, ?, ?, ?)
+			`, msg.GroupID, currentUserID, msg.MessageContent, imageFileName)
 
 	return err
 }
