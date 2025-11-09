@@ -26,6 +26,11 @@ export default function ChatBox({ user }) {
       setToast(null);
     }, duration);
   };
+  const scrollToBottom = () => {
+    if (chatEndRef.current) {
+      chatEndRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  };
   if (id == "0" || !id) {
     return (
       <div className="no-chat-selected">
@@ -143,15 +148,12 @@ export default function ChatBox({ user }) {
     return () => removeListener("message", handleIncomingMessage);
   }, [addListener, removeListener]);
 
-  // 👇 Scroll to bottom whenever messages change
-  useEffect(() => {
-    if (chatEndRef.current) {
-      chatEndRef.current.scrollIntoView({ behavior: "smooth" });
-    }
-  }, [messages, preview]);
+
 
   const emojiArray = ["😀", "😃", "😄", "😁", "😆", "😅", "🤣", "😂", "🚀", "💡", "😊", "😇", "🙂", "🙃", "😉", "😍", "🥰", "😘", "😗", "😋", "😛", "😜", "🤪", "😝", "🤑", "🤗", "🤭", "🤔", "🤨", "😐", "😑", "😶", "😏", "😒", "🙄", "😬", "😔", "😪", "🤤", "😴", "😷", "🤒", "🤕", "🤢", "🤮", "🥴", "😵", "🤯", "😎", "🤓"];
   const handleSendMessage = () => {
+    console.log("ssdsdsdsd");
+
     if (input.trim() === "" && !preview) return;
     if (input.length > 1000) {
       showToast("message is too long")
@@ -169,6 +171,7 @@ export default function ChatBox({ user }) {
     setInput("");
     removeImage()
     setShowEmojis(false);
+    setTimeout(() => scrollToBottom(), 100);
   };
 
   const addEmoji = (emoji) => {

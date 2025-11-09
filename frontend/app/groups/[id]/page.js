@@ -532,7 +532,11 @@ export function GroupChat({ groupId }) {
       setToast(null);
     }, duration);
   };
-
+  const scrollToBottom = () => {
+    if (chatEndRef.current) {
+      chatEndRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  };
   useEffect(() => {
     fetch("http://localhost:8080/api/me", {
       credentials: "include",
@@ -613,7 +617,7 @@ export function GroupChat({ groupId }) {
 
   useEffect(() => {
     const handleIncomingMessage = (data) => {
-      console.log("-----------------------------------------+++++++++++++",data);
+      console.log("-----------------------------------------+++++++++++++", data);
 
       setMessages((prev) => [
         ...prev,
@@ -623,7 +627,7 @@ export function GroupChat({ groupId }) {
           time: data.time,
           name: data.name,
           image: data.image,
-            PictureSend: data.PictureSend
+          PictureSend: data.PictureSend
         },
       ]);
     };
@@ -659,6 +663,7 @@ export function GroupChat({ groupId }) {
     setInput("");
     removeImage()
     setShowEmojis(false);
+    setTimeout(() => scrollToBottom(), 100);
   };
 
   const addEmoji = (emoji) => {
