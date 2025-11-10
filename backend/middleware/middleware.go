@@ -17,7 +17,6 @@ func SessionMiddleware(db *sql.DB, next http.Handler) http.Handler {
 		}
 
 		if slices.Contains(allowedPaths, r.URL.Path) {
-			fmt.Println(r.URL.Path)
 			next.ServeHTTP(w, r)
 			return
 		}
