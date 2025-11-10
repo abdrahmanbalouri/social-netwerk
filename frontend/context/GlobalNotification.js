@@ -11,8 +11,11 @@ export default function GlobalNotification() {
   useEffect(() => {
     if (!connected) return;
 
+
     const handle = (data) => {
+      
       const payload = data.data || data;
+      console.log(payload);
       switch (payload.subType) {
         case "follow":
           setToast(payload);

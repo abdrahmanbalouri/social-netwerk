@@ -159,6 +159,8 @@ export function EventForm({ closeForm, fetchEvents, showEvent }) {
   const [description, setDescription] = useState("");
   const [dateTime, setDateTime] = useState("");
   const [error, setError] = useState("");
+  const { sendMessage } = useWS();
+
 
   async function createEvent(e) {
     e.preventDefault();
@@ -211,8 +213,13 @@ export function EventForm({ closeForm, fetchEvents, showEvent }) {
       closeForm();
 
       setErrors(null);
+      console.log(params.id);
 
-
+      sendMessage({
+        type: "new event",
+        receiverId: params.id,
+        messageContent: "",
+      });
 
 
     } catch (error) {
@@ -617,7 +624,6 @@ export function GroupChat({ groupId }) {
 
   useEffect(() => {
     const handleIncomingMessage = (data) => {
-      console.log("-----------------------------------------+++++++++++++", data);
 
       setMessages((prev) => [
         ...prev,
