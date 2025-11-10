@@ -36,10 +36,10 @@ export default function GlobalNotification() {
             setToast(payload);
           }
           break;
-        case "invite_to_group":
+        case "group_invite":
           setToast(payload);
           break;
-        case "joinRequest":
+        case "group_join_request":
           setToast(payload);
           break;
         default:

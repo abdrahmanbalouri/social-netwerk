@@ -117,10 +117,22 @@ func GetUserInfoByID(currentUserID string) (map[string]any, error) {
 	}
 	return user, nil
 }
+func IsFollowingRwauestReceiver(currentUserID string, msg Message) (bool, error) {
+	var exist int
+	err := repository.Db.QueryRow(`SELECT 1 FROM follow_requests WHERE user_id = ? AND follower_id = ?`, msg.ReceiverId, currentUserID).Scan(&exist)
+
+	if err == sql.ErrNoRows {
+		return false, nil
+	} else if err != nil {
+		return false, err
+	}
+	return true, nil
+}
 
 func IsFollowingReceiver(currentUserID string, msg Message) (bool, error) {
 	var exist int
 	err := repository.Db.QueryRow(`SELECT 1 FROM followers WHERE user_id = ? AND follower_id = ?`, msg.ReceiverId, currentUserID).Scan(&exist)
+	fmt.Println("eeee", msg.ReceiverId, currentUserID)
 	if err == sql.ErrNoRows {
 		return false, nil
 	} else if err != nil {
