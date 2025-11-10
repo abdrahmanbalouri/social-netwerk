@@ -1,6 +1,7 @@
 "use client";
 import { useState } from 'react';
 import { CreatePost } from '../app/groups/[id]/page.js';
+import { Toaster, toast } from "sonner"
 // import "../styles/groupstyle.css"
 import { RedirectType, useParams, useRouter } from "next/navigation";
 
@@ -15,7 +16,6 @@ export function CreatePostForm({ onSubmit, onCancel ,err }) {
     const file = e.target.files[0];
     if (file) {
       setSelectedImage(file);
-      // Create preview URL
       const reader = new FileReader();
       reader.onloadend = () => {
         setImagePreview(reader.result);
@@ -74,6 +74,7 @@ export function CreatePostForm({ onSubmit, onCancel ,err }) {
               <label htmlFor="groupDescription" className="form-label">Description</label>
               <textarea
                 id="postDescription"
+                type="text"
                 value={PostDescription}
                 onChange={(e) => setPostDescription(e.target.value)}
                 placeholder="What's your post about?"
@@ -90,6 +91,7 @@ export function CreatePostForm({ onSubmit, onCancel ,err }) {
                 type="file"
                 onChange={handleImageChange}
                 className="form-input"
+                accept="image/*,video/*"
               />
               {imagePreview && (
                 <div className="image-preview-container" style={{ marginTop: '10px' }}>
@@ -146,12 +148,14 @@ export function PostCreationTrigger({ setPost }) {
     setIsModalOpen(false);
   };
   const handleSubmit = async (formData) => {
+    // console.log("formData iiiissss :", formData);
     try {
       const newpost = await CreatePost(id, formData);
+      toast.success("group created successfully!");
       if (newpost.error){
         if (newpost.error =="Authentication required"){
           router.push('/login')
-        } 
+        }
         seterr(newpost.error)
         return
       }
@@ -164,14 +168,16 @@ export function PostCreationTrigger({ setPost }) {
         return exists ? prev : [newpost, ...prev];
       })
     } catch (err) {
-      console.error("Error creating post:", err);
+      toast.error("Too many requests");
+      // console.error("Error creating post:", err);
     }
   };
 
 
   const userList = []
   return (
-    <>
+    <div>
+      <Toaster position="bottom-right" richColors />
       <div className="create-card">
         <div className="create-card-inner">
           <div className="group-avatar">U</div>
@@ -193,6 +199,6 @@ export function PostCreationTrigger({ setPost }) {
           err = {err}
         />
       )}
-    </>
+    </div>
   )
 }

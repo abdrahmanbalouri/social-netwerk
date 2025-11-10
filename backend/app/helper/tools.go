@@ -41,8 +41,6 @@ func AuthenticateUser(r *http.Request) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	// ("Cookie is :", cookie)
-
 	var userID string
 
 	err = repository.Db.QueryRow(`
@@ -65,4 +63,13 @@ func GenerateUUID() uuid.UUID {
 		log.Fatalf("failed to generate UUID: %v", err)
 	}
 	return u2
+}
+
+func IsLoggedIn(r *http.Request) (bool, string) {
+	userID, err := AuthenticateUser(r)
+	if err != nil {
+		return false, ""
+	}
+
+	return true, userID
 }

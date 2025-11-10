@@ -33,13 +33,14 @@ func CreateGroupPostService(r *http.Request, userID string) (interface{}, error)
 	}
 
 	title := strings.TrimSpace(r.FormValue("title"))
-	description := r.FormValue(r.FormValue("description"))
+	description := strings.TrimSpace(r.FormValue("description"))
 
-	if len(title) == 0 || len(description) == 0{
+	if len(title) == 0{
+		fmt.Println("TITLE IS :", title)
+		fmt.Println("Description IS :", description)
 		return nil, fmt.Errorf("title and description are required")
 	}
 	if len(title) > 20 || len(description) > 40 {
-		fmt.Println("heeere 2")
 		return nil, fmt.Errorf("title or description to bigg")
 	}
 
@@ -80,12 +81,9 @@ func handleGroupPostMedia(r *http.Request, maxSize int64, title string, descrept
 		return "", nil // no file uploaded
 	}
 	defer file.Close()
-	if file == nil && len(title) == 0 && len(descreption) == 0 {
-		return "", fmt.Errorf("you need to do tile or descreption or image ")
-	}
 
 	ext := strings.ToLower(filepath.Ext(header.Filename))
-	allowed := map[string]bool{".jpg": true, ".jpeg": true, ".png": true, ".gif": true, ".mp4": true, ".mov": true, ".avi": true}
+	allowed := map[string]bool{".jpg": true, ".jpeg": true, ".png": true, ".gif": true, ".mp4": true, ".mov": true}
 	if !allowed[ext] {
 		return "", fmt.Errorf("unsupported media format")
 	}

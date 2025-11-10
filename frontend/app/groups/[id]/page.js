@@ -502,14 +502,23 @@ export async function CreatePost(groupId, formData) {
       credentials: "include",
       body: formData,
     });
-
-    const text = await res.json();
-
-    if (text.error) {
-      return text
+    let data;
+    try {
+      data = await res.json();
+    } catch {
+      data = null;
     }
 
-    return text;
+    if (!res.ok) {
+      const message =
+        data?.error ||
+        data?.message ||
+        (typeof data === "string" ? data : "") ||
+        "Failed to create group";
+      throw new Error(message);
+    }
+
+    return data;
   } catch (error) {
     console.error("CreatePost error:", error);
   }

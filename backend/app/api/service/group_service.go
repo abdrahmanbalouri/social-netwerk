@@ -124,8 +124,6 @@ func HandleGroupInvitation(groupID, userID string, newInvitation utils.GroupInvi
 }
 
 func ProcessGroupInvitationResponse(userID string, response utils.GroupResponse) error {
-	fmt.Println("USER ID IS :", userID)
-	fmt.Println("RESPONSE IS :", response)
 	// Determine the actual user ID if the response is not from an invited user
 	if response.InvitationType != "invitation" {
 		dbUserID, err := model.GetUserIDByInvitation(response.InvitationID)

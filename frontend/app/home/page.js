@@ -63,7 +63,6 @@ export default function Home() {
 
       let b = await fetchingposts();
       console.log(b);
-           
     }
 
     if (reachedBottom && !loading && posts.length >= 10) {
