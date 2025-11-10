@@ -37,8 +37,8 @@ type PostResponse struct {
 func CreatePost(userID, title, content, visibility, allowedUsers string, fileHeader io.ReadCloser, filename string, size int64) (string, error) {
 	const maxFileSize = 1 * 1024 * 1024 * 1024 // 1GB
 	// Validate title
-	if len(title) > 20 {
-		return "", errors.New("title must be between 2 and 20 characters")
+	if len(title) > 30 {
+     return "", errors.New("title must be less than 30 characters")
 	}
 
 	var allowed []string
