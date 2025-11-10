@@ -2,19 +2,15 @@ import { NextResponse } from 'next/server';
 
 export default async function middleware(request) {
   const pathname = request.nextUrl.pathname;
-  const API ="http://localhost:8080/";
-
-
+  const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
 
   try {
-    const response = await fetch(`${API}api/me`, {
+    const response = await fetch(`${API}/api/me`, {
       headers: {
         Cookie: request.headers.get('cookie') || ""
       }
     });
-    
-
-    const ok  = response.ok;
+    const ok = response.ok;
 
     if (!ok) {
       if (pathname === "/login" || pathname === "/register") {
@@ -28,6 +24,7 @@ export default async function middleware(request) {
 
     return NextResponse.next();
   } catch (err) {
+
     if (pathname === "/login" || pathname === "/register") {
       return NextResponse.next();
     }
