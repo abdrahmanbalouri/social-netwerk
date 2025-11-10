@@ -619,8 +619,11 @@ export default function Profile() {
                           followers <strong id="followers">{theprofile.followers}</strong>
                         </p>
                       </Link>
+                      {
 
-                      <i className="fa-solid fa-envelope" onClick={() => { router.push(`/chat/${theprofile.id}`) }}></i>
+                        Profile?.id !== theprofile?.id &&
+                        <i className="fa-solid fa-envelope" onClick={() => { router.push(`/chat/${theprofile.id}`) }}></i>
+                      }
                     </div>
                   )}
                   <hr />
