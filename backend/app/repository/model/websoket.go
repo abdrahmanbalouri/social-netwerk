@@ -147,6 +147,15 @@ func SaveGroupInvitationNotification(currentUserID string, msg Message) error {
 	return err
 }
 
+func Name(msg Message) (string, error) {
+	var Name string
+	err := repository.Db.QueryRow(`SELECT title FROM groups WHERE id = ?`, msg.ReceiverId).Scan(&Name)
+	if err != nil {
+		return "", err
+	}
+	return Name, nil
+}
+
 func SaveGroupJoinRequestNotification(currentUserID string, msg Message) (error, string) {
 	var adminID string
 	err := repository.Db.QueryRow(`SELECT admin_id FROM groups WHERE id = ?`, msg.ReceiverId).Scan(&adminID)

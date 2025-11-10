@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 	"time"
@@ -74,6 +75,7 @@ func Loop(conn *websocket.Conn, currentUserID string) {
 		msg.Last_name = user["last_name"].(string)
 		msg.Photo = user["photo"].(string)
 		privaci := user["privacy"].(string)
+		fmt.Println("1cdd2f", msg.Type)
 		switch msg.Type {
 		case "logout":
 			service.BrodcastOnlineStatus(currentUserID, false)
@@ -143,13 +145,14 @@ func Loop(conn *websocket.Conn, currentUserID string) {
 
 			// send notification to receiver
 			service.BrodcastNotification(msg.ReceiverId, map[string]any{
-				"type":    "notification",
-				"subType": "message",
-				"from":    currentUserID,
-				"content": "sent you a message",
-				"name":    msg.First_name + " " + msg.Last_name,
-				"time":    time.Now().Format(time.RFC3339),
-				"image":   msg.Photo,
+				"type":       "notification",
+				"subType":    "message",
+				"from":       currentUserID,
+				"content":    "sent you a message",
+				"first_name": msg.First_name,
+				"last_name":  msg.Last_name,
+				"time":       time.Now().Format(time.RFC3339),
+				"image":      msg.Photo,
 			})
 
 		// ===============================
@@ -196,7 +199,8 @@ func Loop(conn *websocket.Conn, currentUserID string) {
 				"groupID":     msg.GroupID,
 				"content":     msg.MessageContent,
 				"time":        time.Now().Format(time.RFC3339),
-				"name":        msg.First_name + " " + msg.Last_name,
+				"first_name":  msg.First_name,
+				"last_name":   msg.Last_name,
 				"image":       msg.Photo,
 				"PictureSend": imageFileName,
 			})
@@ -206,13 +210,14 @@ func Loop(conn *websocket.Conn, currentUserID string) {
 			// ===============================
 			msg.MessageContent = "sent a message to the group"
 			service.BrodcastGroupMembersNotification(msg.GroupID, currentUserID, map[string]any{
-				"type":    "notification",
-				"subType": "group_message",
-				"from":    currentUserID,
-				"groupID": msg.GroupID,
-				"content": msg.MessageContent,
-				"name":    msg.First_name + " " + msg.Last_name,
-				"time":    time.Now().Format(time.RFC3339),
+				"type":       "notification",
+				"subType":    "group_message",
+				"from":       currentUserID,
+				"groupID":    msg.GroupID,
+				"content":    msg.MessageContent,
+				"first_name": msg.First_name,
+				"last_name":  msg.Last_name,
+				"time":       time.Now().Format(time.RFC3339),
 			})
 
 			// ✅ Insert message direct sans check dyal follows
@@ -317,6 +322,34 @@ func Loop(conn *websocket.Conn, currentUserID string) {
 				"last_name":  msg.Last_name,
 				"photo":      msg.Photo,
 				"content":    msg.MessageContent,
+				"time":       time.Now().Format(time.RFC3339),
+			})
+		case "new event":
+			fmt.Println("1111111111111")
+			msg.MessageContent = "has a new event"
+			err := model.SaveGroupInvitationNotification(currentUserID, msg)
+			if err != nil {
+				log.Println("DB error saving group invitation notification:", err)
+				continue
+			}
+			err = model.SaveGroupMessageNotification(currentUserID, msg)
+			if err != nil {
+				log.Println("DB error saving group message notification:", err)
+			}
+			groupname, err := model.Name(msg)
+			if err != nil {
+				log.Println("DB error saving group invitation notification:", err)
+				continue
+			}
+			fmt.Println("11", msg.ReceiverId, "22", currentUserID)
+			service.BrodcastGroupMembersNotification(msg.ReceiverId, currentUserID, map[string]any{
+				"type":       "notification",
+				"subType":    "group_message",
+				"from":       currentUserID,
+				"groupID":    msg.GroupID,
+				"content":    msg.MessageContent,
+				"first_name": groupname,
+				"last_name":  "",
 				"time":       time.Now().Format(time.RFC3339),
 			})
 		default:

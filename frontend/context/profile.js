@@ -17,7 +17,7 @@ export function ProfileProvider({ children }) {
         const json = await res.json();
 
         setProfile(json);
-        
+
       }
     } catch (err) {
       console.error("loadProfile", err);
@@ -36,9 +36,5 @@ export function ProfileProvider({ children }) {
 }
 
 export function useProfile() {
-  const ctx = useContext(ProfileContext);
-  if (ctx === undefined) {
-    throw new Error("useProfile must be used within a ProfileProvider");
-  }
-  return ctx;
+  return useContext(ProfileContext);
 }

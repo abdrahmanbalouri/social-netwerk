@@ -3,7 +3,7 @@ import "../styles/notifaction.css";
 import { useDarkMode } from "../context/darkMod";
 
 export default function Notification({ data, onClose }) {
-console.log('aaaaa',data);
+    console.log('aaaaa', data);
 
     const { darkMode } = useDarkMode();
 
@@ -28,14 +28,14 @@ console.log('aaaaa',data);
                     <div className="notification-media">
                         <img
                             src={data?.image ? `/uploads/${data.image}` : "/assets/default.png"}
-                            alt={`${data?.first_name+' '+data.last_name || 'User'} profile picture`}
+                            alt={'User'}
                             className="notification-user-avatar"
                         />
                     </div>
 
                     <div className="notification-content">
                         <p className="notification-text">
-                            <span style={{colors:'red'}} className="sp1">{data?.first_name+' '+data.last_name}</span> {data?.content}
+                            <span style={{ colors: 'red' }} className="sp1">{data.first_name + " " + data.last_name}</span> {data?.content}
                         </p>
 
                         <span className="notification-timer">

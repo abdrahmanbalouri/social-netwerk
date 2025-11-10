@@ -50,13 +50,13 @@ export function WSProvider({ children }) {
           }
 
           const data = JSON.parse(event.data);
-          // 🔥 Trigger any custom listeners
+          // Trigger any custom listeners
           if (listeners.current[data.type]) {
 
             listeners.current[data.type].forEach((cb) => cb(data));
           }
         } catch (err) {
-          console.error("❌ Error parsing WebSocket message:", err);
+          console.error("Error parsing WebSocket message:", err);
         }
       };
     }
@@ -84,7 +84,7 @@ export function WSProvider({ children }) {
       }
 
     } catch (err) {
-      console.error("❌ Error sending WebSocket message:", err);
+      console.error("Error sending WebSocket message:", err);
     }
   };
 
