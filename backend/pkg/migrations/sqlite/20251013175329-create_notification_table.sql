@@ -5,7 +5,10 @@ CREATE TABLE IF NOT EXISTS notifications (
     receiver_id TEXT NOT NULL,
     type TEXT NOT NULL,             
     message TEXT DEFAULT "",
+<<<<<<< HEAD
     seen Boolean DEFAULT FALSE,
+=======
+>>>>>>> fix-groups-errors
     created_at INTEGER NOT NULL DEFAULT (strftime('%s', 'now'))
 );
 

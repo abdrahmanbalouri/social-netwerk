@@ -162,6 +162,7 @@ export function MyGroups() {
 
   return (
     <div className="group-container">
+      <Toaster position="bottom-right" richColors />
       <GroupCreationTrigger
         setGroup={setGroup}
       />
@@ -177,21 +178,32 @@ export function MyGroups() {
 }
 
 export async function createGroup(formData) {
-  return (
-    fetch("http://localhost:8080/api/groups/add", {
+  try {
+    const res = await fetch("http://localhost:8080/api/groups/add", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       credentials: "include",
       body: JSON.stringify(formData),
     })
-      .then(async (res) => {
-        if (!res.ok) throw new Error("Failed to create group :");
-        const groupIS = await res.json();
-        return groupIS;
-      })
-      .catch((error) => {
-        console.error("Failed to create new group:", error);
-        throw error;
-      })
-  );
+
+    let data;
+    try {
+      data = await res.json();
+    } catch {
+      data = null;
+    }
+
+    if (!res.ok) {
+      const message =
+        data?.error ||
+        data?.message ||
+        (typeof data === "string" ? data : "") ||
+        "Failed to create group";
+      throw new Error(message);
+    }
+
+    return data;
+  } catch (err) {
+    throw err;
+  }
 }

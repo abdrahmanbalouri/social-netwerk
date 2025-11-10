@@ -3,6 +3,7 @@ package api
 import (
 	"net/http"
 	handlers "social-network/app/api/handler"
+	middlewares "social-network/middleware"
 )
 
 func Routes() http.Handler {
@@ -31,25 +32,25 @@ func Routes() http.Handler {
 	mux.HandleFunc("/api/following/", handlers.FollowingHandler)              // dart
 	mux.HandleFunc("/api/followRequest", handlers.FollowRequest)              // dart
 	mux.HandleFunc("/api/followRequest/action", handlers.FollowRequestAction) // dart
-	mux.HandleFunc("/api/follow", handlers.FollowHandler)                     //  dart
+	mux.HandleFunc("/api/follow",  middlewares.RatelimitMiddleware(handlers.FollowHandler, "follow", 3))               //  dart
 	mux.HandleFunc("/api/users/followers", handlers.Getfollowers)             // dart
 	mux.HandleFunc("/api/communfriends", handlers.GetCommunFriends)
 
 	// ======= Posts & Comments =======
-	mux.HandleFunc("/api/createpost", handlers.Createpost)                        // dart
+	mux.HandleFunc("/api/createpost", middlewares.RatelimitMiddleware(handlers.Createpost, "posts", 3))             //////////           // dart
 	mux.HandleFunc("/api/Getpost/{id}", handlers.GetPostsHandler)                 // dart
 	mux.HandleFunc("/api/Getallpost/{id}", handlers.AllpostsHandler)              // dart
 	mux.HandleFunc("/api/getmypost/{id}/{offset}", handlers.Getmypost)            // dart
-	mux.HandleFunc("/api/createcomment", handlers.CreateCommentHandler)           // dart
+	mux.HandleFunc("/api/createcomment", middlewares.RatelimitMiddleware(handlers.CreateCommentHandler, "comments", 3))  //////        // dart
 	mux.HandleFunc("/api/Getcomments/{id}/{offset}", handlers.GetCommentsHandler) // dart
-	mux.HandleFunc("/api/like/{id}", handlers.LikeHandler)                        // dart
+	mux.HandleFunc("/api/like/{id}", middlewares.RatelimitMiddleware(handlers.LikeHandler, "likes", 3))         //////               // dart
 	mux.HandleFunc("/api/getlastcomment/{id}", handlers.Getlastcommnet)           // dart
 	mux.HandleFunc("/api/editor", handlers.Editor)                                // dart
 	mux.HandleFunc("/api/gallery", handlers.GalleryHandler)                       // dart
 
 	// ======= Stories & Media =======
 	mux.HandleFunc("/api/Getstories", handlers.GetStories)       // dart
-	mux.HandleFunc("/api/Createstories", handlers.CreateStories) // dart
+	mux.HandleFunc("/api/Createstories", middlewares.RatelimitMiddleware(handlers.CreateStories, "story", 3)) // dart ////////
 	mux.HandleFunc("/api/videos", handlers.GetVideoHandler)      // dart
 
 	// ======= Notifications =======
@@ -64,13 +65,13 @@ func Routes() http.Handler {
 	// ======= Groups =======
 	mux.HandleFunc("/myGroups", handlers.GetMyGroups)                         // dart
 	mux.HandleFunc("/groups", handlers.GetAllGroups)                          // dart
-	mux.HandleFunc("/api/groups/add", handlers.CreateGroupHandler)            // dart
+	mux.HandleFunc("/api/groups/add", middlewares.RatelimitMiddleware(handlers.CreateGroupHandler, "createGroup", 3))            // dart
 	mux.HandleFunc("/invitations/respond", handlers.GroupInvitationResponse)  // dart
-	mux.HandleFunc("/group/invitation/{id}", handlers.GroupInvitationRequest) // dart
-	mux.HandleFunc("/group/addPost/{id}", handlers.CreatePostGroupHandler)    // dart
+	mux.HandleFunc("/group/invitation/{id}", middlewares.RatelimitMiddleware(handlers.GroupInvitationRequest, "groupInvite", 3)) // dart
+	mux.HandleFunc("/group/addPost/{id}", middlewares.RatelimitMiddleware(handlers.CreatePostGroupHandler, "posts", 3))    // dart
 	mux.HandleFunc("/group/fetchPosts/{id}", handlers.GetAllPostsGroup)       // dart
 	// mux.HandleFunc("/group/fetchPost/{id}", handlers.GetPostGroup)
-	mux.HandleFunc("/group/like/{id}/{groupId}", handlers.LikesGroup)                       // dart
+	mux.HandleFunc("/group/like/{id}/{groupId}", middlewares.RatelimitMiddleware(handlers.LikesGroup, "likes", 2))                       // dart
 	mux.HandleFunc("/group/updatepost/{id}/{groupId}", handlers.GetGroupPostByID)           // dart
 	mux.HandleFunc("/group/Getcomments/{id}/{offset}/{groupId}", handlers.GetCommentsGroup) // dart
 	mux.HandleFunc("/group/getlastcomment/{id}/{groupId}", handlers.GetlastcommnetGroup)    // dart
@@ -80,8 +81,8 @@ func Routes() http.Handler {
 
 	// ======= Events =======
 	mux.HandleFunc("/api/getEvents/", handlers.GetEvents)      // dart
-	mux.HandleFunc("/api/createEvent/", handlers.CreateEvent)  // dart
-	mux.HandleFunc("/api/event/action/", handlers.EventAction) // dart
+	mux.HandleFunc("/api/createEvent/", middlewares.RatelimitMiddleware(handlers.CreateEvent, "events", 3)) ///////            // dart
+	mux.HandleFunc("/api/event/action/", middlewares.RatelimitMiddleware(handlers.EventAction, "eventAction", 3)) // dart ///////////////
 	mux.HandleFunc("/api/myevents", handlers.MyEavents)
 
 	return mux

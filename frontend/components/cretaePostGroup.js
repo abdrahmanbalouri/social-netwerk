@@ -1,10 +1,11 @@
 "use client";
 import { useState } from 'react';
 import { CreatePost } from '../app/groups/[id]/page.js';
+import { Toaster, toast } from "sonner"
 // import "../styles/groupstyle.css"
 import { RedirectType, useParams, useRouter } from "next/navigation";
 
-export function CreatePostForm({ onSubmit, onCancel, err }) {
+export function CreatePostForm({ onSubmit, onCancel ,err }) {
   const [PostTitle, setPostTitle] = useState('');
   const [PostDescription, setPostDescription] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
@@ -13,24 +14,14 @@ export function CreatePostForm({ onSubmit, onCancel, err }) {
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
-    if (!file) {
-      setImagePreview(null);
-      return;
+    if (file) {
+      setSelectedImage(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result);
+      };
+      reader.readAsDataURL(file);
     }
-    const allowedTypes = ["image/png", "image/jpeg", "image/jpg", "image/gif", "image/webp"];
-    if (!allowedTypes.includes(file.type)) {
-      alert("Only image files are allowed!");
-      e.target.value = "";
-      setImagePreview(null);
-      return;
-    }
-    setSelectedImage(file);
-    // Create preview URL
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      setImagePreview(reader.result);
-    };
-    reader.readAsDataURL(file);
   };
 
   const removeImage = () => {
@@ -83,6 +74,7 @@ export function CreatePostForm({ onSubmit, onCancel, err }) {
               <label htmlFor="groupDescription" className="form-label">Description</label>
               <textarea
                 id="postDescription"
+                type="text"
                 value={PostDescription}
                 onChange={(e) => setPostDescription(e.target.value)}
                 placeholder="What's your post about?"
@@ -99,6 +91,7 @@ export function CreatePostForm({ onSubmit, onCancel, err }) {
                 type="file"
                 onChange={handleImageChange}
                 className="form-input"
+                accept="image/*,video/*"
               />
               {imagePreview && (
                 <div className="image-preview-container" style={{ marginTop: '10px' }}>
@@ -127,7 +120,7 @@ export function CreatePostForm({ onSubmit, onCancel, err }) {
               <button
                 type="submit"
                 className="submit-button"
-                disabled={!PostTitle.trim()}
+                disabled={!PostTitle.trim() || !PostDescription.trim()}
               >
                 Create post
               </button>
@@ -143,8 +136,8 @@ export function CreatePostForm({ onSubmit, onCancel, err }) {
 
 export function PostCreationTrigger({ setPost }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [err, seterr] = useState("")
-  const router = useRouter()
+  const [err ,seterr] = useState("")
+  const router  = useRouter()
   // const [posts, setPost] = useState([])
   const { id } = useParams();
 
@@ -155,16 +148,18 @@ export function PostCreationTrigger({ setPost }) {
     setIsModalOpen(false);
   };
   const handleSubmit = async (formData) => {
+    // console.log("formData iiiissss :", formData);
     try {
       const newpost = await CreatePost(id, formData);
-      if (newpost.error) {
-        if (newpost.error == "Authentication required") {
+      toast.success("group created successfully!");
+      if (newpost.error){
+        if (newpost.error =="Authentication required"){
           router.push('/login')
         }
         seterr(newpost.error)
         return
       }
-
+      
       setIsModalOpen(false);
       // setShowForm(false)
       setPost(prev => {
@@ -173,14 +168,16 @@ export function PostCreationTrigger({ setPost }) {
         return exists ? prev : [newpost, ...prev];
       })
     } catch (err) {
-      console.error("Error creating post:", err);
+      toast.error("Too many requests");
+      // console.error("Error creating post:", err);
     }
   };
 
 
   const userList = []
   return (
-    <>
+    <div>
+      <Toaster position="bottom-right" richColors />
       <div className="create-card">
         <div className="create-card-inner">
           <div className="group-avatar">U</div>
@@ -190,8 +187,8 @@ export function PostCreationTrigger({ setPost }) {
             className="create-input"
             onClick={handlePostClick}
             readOnly
-          />
-
+            />
+            
         </div>
       </div>
       {isModalOpen && (
@@ -199,9 +196,9 @@ export function PostCreationTrigger({ setPost }) {
           users={userList}
           onSubmit={handleSubmit}
           onCancel={handleCancel}
-          err={err}
+          err = {err}
         />
       )}
-    </>
+    </div>
   )
 }

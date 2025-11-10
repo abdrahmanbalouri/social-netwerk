@@ -68,10 +68,10 @@ func GroupInvitationRequest(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	response, err := service.HandleGroupInvitation(groupID, userID, newInvitation)
+	response, err, errorStatus := service.HandleGroupInvitation(groupID, userID, newInvitation)
 	if err != nil {
 		fmt.Println("Error handling invitation:", err)
-		helper.RespondWithError(w, http.StatusInternalServerError, err.Error())
+		helper.RespondWithError(w, errorStatus, err.Error())
 		return
 	}
 

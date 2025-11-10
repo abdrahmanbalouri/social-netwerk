@@ -57,10 +57,10 @@ func CreateNewGroup(adminID string, newGroup utils.GroupRequest) (utils.Group, e
 	return createdGroup, nil
 }
 
-func HandleGroupInvitation(groupID, userID string, newInvitation utils.GroupInvitation) (map[string]any, error) {
+func HandleGroupInvitation(groupID, userID string, newInvitation utils.GroupInvitation) (map[string]any, error, int) {
 	tx, err := repository.Db.Begin()
 	if err != nil {
-		return nil, fmt.Errorf("Failed to start database transaction")
+		return nil, fmt.Errorf("Failed to start database transaction"), 500
 	}
 	defer tx.Rollback()
 
@@ -70,62 +70,67 @@ func HandleGroupInvitation(groupID, userID string, newInvitation utils.GroupInvi
 		// Check if similar invitation exists
 		exists, err := model.CheckExistingInvitation(tx, userID, groupID)
 		if err != nil {
-			return nil, fmt.Errorf("Database error: %v", err)
+			return nil, fmt.Errorf("Database error: %v", err), 500
 		}
 		if exists {
-			return nil, fmt.Errorf("There is another invitation with the same credentials")
+			return nil, fmt.Errorf("There is another invitation with the same credentials"), 400
 		}
 
 		// Check membership
 		isMember, err := model.CheckGroupMembership(tx, userID, groupID)
 		if err != nil {
-			return nil, fmt.Errorf("Failed to check group membership")
+			return nil, fmt.Errorf("Failed to check group membership"), 500
 		}
 		if isMember {
-			return nil, fmt.Errorf("You are already a member of this group")
+			return nil, fmt.Errorf("You are already a member of this group"), 400
 		}
 
 		if err := model.InsertJoinRequest(tx, invitationID.String(), groupID, userID); err != nil {
-			return nil, fmt.Errorf("Error sending the invitation: %v", err)
+			return nil, fmt.Errorf("Error sending the invitation: %v", err), 500
 		}
 
 	} else {
 		for _, invitedUser := range newInvitation.InvitedUsers {
-			exists, err := model.CheckUserMembershipOrInvitation(tx, invitedUser, groupID)
-			if err != nil {
-				return nil, fmt.Errorf("Error checking for existing membership or invitation")
-			}
-			if exists {
-				continue
-			}
-
 			userExists, err := model.CheckUserExists(tx, invitedUser)
 			if err != nil {
-				return nil, fmt.Errorf("Database error")
+				return nil, fmt.Errorf("Database error"), 500
 			}
 			if !userExists {
-				return nil, fmt.Errorf("The invited user isn't registered")
+				return nil, fmt.Errorf("The invited user isn't registered"), 400
+			}
+			// Check membership
+			isMember, err := model.CheckGroupMembership(tx, userID, groupID)
+			if err != nil {
+				return nil, fmt.Errorf("Failed to check group membership"), 500
+			}
+			if isMember {
+				return nil, fmt.Errorf("You are already a member of this group"), 400
+			}
+			exists, err := model.CheckExistingInvitation(tx, userID, groupID)
+			if err != nil {
+				return nil, fmt.Errorf("Database error: %v", err), 500
+			}
+			if exists {
+				return nil, fmt.Errorf("There is another invitation with the same credentials"), 400
 			}
 
 			if err := model.InsertInvitation(tx, invitationID.String(), groupID, invitedUser, userID); err != nil {
-				return nil, fmt.Errorf("Error sending the invitation: %v", err)
+				return nil, fmt.Errorf("Error sending the invitation: %v", err), 500
 			}
 		}
 	}
 
 	if err := tx.Commit(); err != nil {
-		return nil, fmt.Errorf("Failed to commit transaction")
+		return nil, fmt.Errorf("Failed to commit transaction"), 500
 	}
 
 	return map[string]any{
 		"invitation_id": invitationID,
 		"message":       "Invitation successfully processed",
-	}, nil
+	}, nil, 201
 }
 
 func ProcessGroupInvitationResponse(userID string, response utils.GroupResponse) error {
-	fmt.Println("USER ID IS :", userID)
-	fmt.Println("RESPONSE IS :", response)
 	// Determine the actual user ID if the response is not from an invited user
 	if response.InvitationType != "invitation" {
 		dbUserID, err := model.GetUserIDByInvitation(response.InvitationID)
