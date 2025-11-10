@@ -103,6 +103,7 @@ export function WSProvider({ children }) {
   );
 }
 
-export function useWS() {
+export function useWS
+() {
   return useContext(WSContext);
 }

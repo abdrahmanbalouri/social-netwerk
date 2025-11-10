@@ -86,6 +86,7 @@
 
 /* Container Styles */
 .pageContainer {
+  overflow: auto;
   position: sticky;
   top: 70px;
   background: var(--bg);

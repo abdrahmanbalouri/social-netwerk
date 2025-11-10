@@ -5,8 +5,10 @@ import Link from 'next/link';
 import ChatIcon from '@mui/icons-material/Chat';
 import "../styles/rightbar.css"
 import { useWS } from "../context/wsContext";
-
+import { useToast } from "../context/toastContext";
 export default function RightBar() {
+
+  const { showToast, toast } = useToast();
   const [friends, setFriends] = useState([])
   const [users, setusers] = useState([])
   const [onlineUsers, setonlineUsers] = useState([])
@@ -37,7 +39,7 @@ export default function RightBar() {
 
         setgroupeInvitation(data);
       } catch (err) {
-        console.error(err);
+        showToast("Failed to fetch group invitations", "error");
       }
     }
 
@@ -55,6 +57,9 @@ export default function RightBar() {
       if (res.ok) {
         const data = await res.json();
         setFollowRequest(data);
+      } else {
+        showToast("Failed to fetch group invitations", "error");
+        return;
       }
 
     } catch (err) {
@@ -110,6 +115,7 @@ export default function RightBar() {
 
       setFollowRequest((prev) => prev.filter((user) => user.id !== userId));
     } catch (err) {
+      showToast("Failed to process follow request", "error");
     }
   }
 
@@ -188,7 +194,17 @@ export default function RightBar() {
 
 
   return (
+
+
+
     <div className="rightBar">
+      {toast && (
+        <div className={`toast ${toast.type}`}>
+          <span>{toast.message}</span>
+          <button onClick={() => setToast(null)} className="toast-close">×</button>
+        </div>
+      )}
+
       <div className="item">
         <div className="sections">
           <h3

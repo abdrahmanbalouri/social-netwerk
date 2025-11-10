@@ -17,7 +17,6 @@ func GetFollowRequests(userID string) ([]map[string]interface{}, error) {
 		if err != nil {
 			return nil, errors.New("failed to clear follow requests for non-private account")
 		}
-		return nil, errors.New("follow requests are only available for private accounts")
 	}
 	return model.FetchFollowRequests(userID)
 }
