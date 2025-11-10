@@ -2,13 +2,15 @@
 import { useState, useEffect, useRef } from "react"
 import { useParams, useRouter } from 'next/navigation';
 import "../styles/comment.css"
+import ShowToast from "./ShowToast";
 
 
-export default function Comment({ comments, isOpen, onClose, postId, onCommentChange, lodinggg, ongetcomment, post, showToast,ID }) {
+export default function Comment({ comments, isOpen, onClose, postId, onCommentChange, lodinggg, ongetcomment, post, ID }) {
   const [commentContent, setCommentContent] = useState("")
   const [selectedFile, setSelectedFile] = useState(null)
   const [loading, setLoading] = useState(false)
   const [showEmojis, setShowEmojis] = useState(false)
+  const [error, seterror] = useState(null)
   const [activeCategory, setActiveCategory] = useState("smileys")
   const modalRef = useRef(null)
   const commentsContainerRef = useRef(null)
@@ -18,7 +20,7 @@ export default function Comment({ comments, isOpen, onClose, postId, onCommentCh
   const emojiRef = useRef(null)
   const textareaRef = useRef(null)
   const router = useRouter()
-  
+
 
 
 
@@ -155,8 +157,8 @@ export default function Comment({ comments, isOpen, onClose, postId, onCommentCh
 
   async function handlePostComment(e) {
     e.preventDefault()
-    if (!commentContent.trim() && !selectedFile){
-      showToast("Please enter a comment or select a file.")
+    if (!commentContent.trim() && !selectedFile) {
+      seterror("Please enter a comment or select a file.")
       return
     }
 
@@ -168,8 +170,8 @@ export default function Comment({ comments, isOpen, onClose, postId, onCommentCh
       if (selectedFile) {
         formData.append("media", selectedFile)
       }
-      formData.append("whatis",  window.location.href.split('/')[3])
-      
+      formData.append("whatis", window.location.href.split('/')[3])
+
       formData.append("groupId", ID)
 
       const response = await fetch(`http://localhost:8080/api/createcomment`, {
@@ -179,7 +181,7 @@ export default function Comment({ comments, isOpen, onClose, postId, onCommentCh
       })
 
 
-      const res = await response.json()      
+      const res = await response.json()
       if (res.error) {
         if (res.error == "Unauthorized") {
           router.push("/login");
@@ -188,7 +190,7 @@ export default function Comment({ comments, isOpen, onClose, postId, onCommentCh
         } else {
           setCommentContent("")
           setSelectedFile(null)
-          showToast(res.error)
+          seterror(res.error)
           return
         }
       }
@@ -216,6 +218,7 @@ export default function Comment({ comments, isOpen, onClose, postId, onCommentCh
 
   return (
     <div className={`cm-overlay ${isOpen ? "cm-active" : ""}`} onClick={onClose}>
+      <ShowToast key={Date.now()} message={error} />
       <div className="cm-modal" onClick={(e) => e.stopPropagation()} ref={modalRef}>
         <div className="cm-header">
           <button className="cm-close" aria-label="Close modal" onClick={onClose}>

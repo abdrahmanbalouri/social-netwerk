@@ -7,7 +7,7 @@ import "../styles/rightbar.css"
 import { useWS } from "../context/wsContext";
 import ShowToast from "./ShowToast";
 export default function RightBar() {
-const [error , setError] = useState(null);
+  const [error, setError] = useState(null);
   const [friends, setFriends] = useState([])
   const [users, setusers] = useState([])
   const [onlineUsers, setonlineUsers] = useState([])
@@ -59,7 +59,7 @@ const [error , setError] = useState(null);
         setFollowRequest(data);
         setError(null);
       } else {
-       setError("Failed to fetch follow requests");
+        setError("Failed to fetch follow requests");
         return;
       }
 
@@ -166,8 +166,8 @@ const [error , setError] = useState(null);
 
         setusers(data);
       } catch (err) {
-setError("Failed to fetch users");
-   }
+        setError("Failed to fetch users");
+      }
     }
 
     fetchusers();
@@ -200,7 +200,7 @@ setError("Failed to fetch users");
 
 
     <div className="rightBar">
-     <ShowToast  message={error} />
+      <ShowToast key={Date.now()} message={error} />
 
       <div className="item">
         <div className="sections">

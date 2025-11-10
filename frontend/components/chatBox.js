@@ -7,6 +7,7 @@ import "../styles/chat.css";
 import { useWS } from "../context/wsContext.js";
 import { useParams } from "next/navigation";
 import { useProfile } from "../context/profile.js";
+import ShowToast from "./ShowToast.js";
 
 export default function ChatBox({ user }) {
   const { sendMessage, addListener, removeListener } = useWS();
@@ -15,7 +16,7 @@ export default function ChatBox({ user }) {
   const [preview, setPreview] = useState(null);
   const [input, setInput] = useState("");
   const [showEmojis, setShowEmojis] = useState(false);
-  const [toast, setToast] = useState(null)
+  const [error, seterror] = useState(null)
   const [onlineUsers, setonlineUsers] = useState([])
   const [New, setNew] = useState(false)
   const inputRef = useRef(null);
@@ -24,12 +25,6 @@ export default function ChatBox({ user }) {
   const refscroll = useRef(0)
   const id = useParams().id;
 
-  const showToast = (message, type = "error", duration = 3000) => {
-    setToast({ message, type });
-    setTimeout(() => {
-      setToast(null);
-    }, duration);
-  };
   const scrollToBottom = () => {
     if (chatEndRef.current) {
       chatEndRef.current.scrollIntoView({ behavior: "smooth" });
@@ -77,7 +72,7 @@ export default function ChatBox({ user }) {
 
     const allowedTypes = ["image/png", "image/jpeg", "image/jpg", "image/gif", "image/webp"];
     if (!allowedTypes.includes(file.type)) {
-      showToast("Only image files are allowed!")
+      seterror("Only image files are allowed!")
       e.target.value = "";
       setPreview(null);
       return;
@@ -179,9 +174,16 @@ export default function ChatBox({ user }) {
 
   const emojiArray = ["😀", "😃", "😄", "😁", "😆", "😅", "🤣", "😂", "🚀", "💡", "😊", "😇", "🙂", "🙃", "😉", "😍", "🥰", "😘", "😗", "😋", "😛", "😜", "🤪", "😝", "🤑", "🤗", "🤭", "🤔", "🤨", "😐", "😑", "😶", "😏", "😒", "🙄", "😬", "😔", "😪", "🤤", "😴", "😷", "🤒", "🤕", "🤢", "🤮", "🥴", "😵", "🤯", "😎", "🤓"];
   const handleSendMessage = () => {
+    console.log(input, "77777777777");
+
     if (input.trim() === "" && !preview) return;
     if (input.length > 1000) {
-      showToast("message is too long")
+      seterror("message is too long")
+      setTimeout(() => {
+        () => {
+          seterror(null)
+        }
+      }, 3000);
       return
     }
     const payload = {
@@ -213,12 +215,7 @@ export default function ChatBox({ user }) {
   return (
     <div className="chat-container">
       <div className="chat-header">
-        {toast && (
-          <div className={`toast ${toast.type}`}>
-            <span>{toast.message}</span>
-            <button onClick={() => setToast(null)} className="toast-close">×</button>
-          </div>
-        )}
+        <ShowToast key={Date.now()} message={error} />
         <Link href={`/profile/${user.id}`}>
           <img
             src={

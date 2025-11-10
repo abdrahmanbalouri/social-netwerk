@@ -17,6 +17,7 @@ import AddReactionIcon from "@mui/icons-material/AddReaction";
 import SendIcon from "@mui/icons-material/Send";
 import "../../../styles/chat.css";
 import { useProfile } from "../../../context/profile.js";
+import ShowToast from "../../../components/ShowToast.js";
 
 
 // Global sendRequest (can be moved to a service file later)
@@ -154,7 +155,6 @@ export function Events() {
 export function EventForm({ closeForm, fetchEvents, showEvent }) {
   const params = useParams();
   const grpID = params.id;
-  const [errors, setErrors] = useState(null);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [dateTime, setDateTime] = useState("");
@@ -163,8 +163,7 @@ export function EventForm({ closeForm, fetchEvents, showEvent }) {
 
 
   async function createEvent(e) {
-    e.preventDefault();
-
+    e.preventDefault()
     const Data = {
       title: title,
       description: description,
@@ -172,23 +171,23 @@ export function EventForm({ closeForm, fetchEvents, showEvent }) {
     }
 
     if (!title || !description || !dateTime) {
-      setErrors("All fields are required");
+      setError("All fields are required");
       return;
     }
 
     if ((title.length < 5 || title.length > 50)) {
-      setErrors(" Title must be between 5 and 50 characters");
+      setError(" Title must be between 5 and 50 characters");
       return;
     }
 
     if (description.length < 10 || description.length > 300) {
-      setErrors("Description must be between 10 and 300 characters");
+      setError("Description must be between 10 and 300 characters");
       return;
     }
 
 
     if (new Date(dateTime) <= new Date()) {
-      setErrors("Event date and time must be in the future");
+      setError("Event date and time must be in the future");
       return;
     }
 
@@ -204,7 +203,7 @@ export function EventForm({ closeForm, fetchEvents, showEvent }) {
 
       if (!res.ok) {
         let err = await res.text();
-        setErrors(err);
+        setError(err);
         return;
       }
 
@@ -212,8 +211,6 @@ export function EventForm({ closeForm, fetchEvents, showEvent }) {
 
       closeForm();
 
-      setErrors(null);
-      console.log(params.id);
 
       sendMessage({
         type: "new event",
@@ -223,10 +220,8 @@ export function EventForm({ closeForm, fetchEvents, showEvent }) {
 
 
     } catch (error) {
-      setErrors(error.message);
+      setError(error.message);
     }
-
-
   }
 
 
@@ -250,11 +245,10 @@ export function EventForm({ closeForm, fetchEvents, showEvent }) {
           <label htmlFor="event-datetime">Day/Time</label>
           <input type="datetime-local" id="event-datetime" onChange={(e) => { setDateTime(e.target.value) }} />
         </div>
-        <span className="error" style={{ color: "red" }}> {errors}</span>
+        <ShowToast key={Date.now()} message={error} />
         <button type="submit" className="btn-create" onClick={createEvent}>Create Event</button>
         <button type="button" className="cancel-btn" onClick={showEvent}>Cancel</button>
       </form>
-      <p className="error-message" style={{ color: "red", alignItems: 'center' }}>{error}</p>
     </div>
 
 
@@ -272,14 +266,8 @@ export function AllPosts() {
   const params = useParams();
   const router = useRouter();
   const grpID = params.id;
-  const [toast, setToast] = useState(null);
+  const [error, seterror] = useState(null);
   const offsetcomment = useRef(0);
-  const showToast = (message, type = "error", duration = 3000) => {
-    setToast({ message, type });
-    setTimeout(() => {
-      setToast(null);
-    }, duration);
-  };
   function closeComments() {
     offsetcomment.current = 0
     setShowComments(false);
@@ -304,7 +292,7 @@ export function AllPosts() {
       .then(data => {
 
         if (data?.error) {
-          showToast(data.error)
+          seterror(data.error)
           setLoading(false);
           router.push("/login");
           return
@@ -331,7 +319,7 @@ export function AllPosts() {
 
       const data = await res.json();
       if (data?.error) {
-        showToast(data.error)
+        seterror(data.error)
         return
       }
 
@@ -460,12 +448,7 @@ export function AllPosts() {
   return (
     <div>
       <PostCreationTrigger setPost={setPost} groupId={grpID} />
-      {toast && (
-        <div className={`toast ${toast.type}`}>
-          <span>{toast.message}</span>
-          <button onClick={() => setToast(null)} className="toast-close">×</button>
-        </div>
-      )}
+      <ShowToast key={Date.now()} message={error} />
 
       {loading ? (
         <div>Loading posts...</div>
@@ -492,7 +475,6 @@ export function AllPosts() {
             lodinggg={loadingcomment}
             ongetcomment={GetComments}
             post={selectedPost}
-            showToast={showToast}
             ID={grpID}
           />
         </div>
@@ -528,17 +510,12 @@ export function GroupChat({ groupId }) {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
   const [showEmojis, setShowEmojis] = useState(false);
+  const [Error, setError] = useState(null)
   const inputRef = useRef(null);
   const chatEndRef = useRef(null);
   const { sendMessage, addListener, removeListener } = useWS();
   const { Profile } = useProfile();
-  const [toast, setToast] = useState(null)
-  const showToast = (message, type = "error", duration = 3000) => {
-    setToast({ message, type });
-    setTimeout(() => {
-      setToast(null);
-    }, duration);
-  };
+
   const scrollToBottom = () => {
     if (chatEndRef.current) {
       chatEndRef.current.scrollIntoView({ behavior: "smooth" });
@@ -551,11 +528,10 @@ export function GroupChat({ groupId }) {
     })
       .then((res) => res.json())
       .then((data) => {
-        console.log("dataaaaaaaaaaaaaaaaaa", data);
 
         setId(data.user_id)
       })
-      .catch((err) => console.error(err));
+      .catch((err) => setError(err));
   });
 
   setTimeout(() => {
@@ -571,7 +547,7 @@ export function GroupChat({ groupId }) {
 
     const allowedTypes = ["image/png", "image/jpeg", "image/jpg", "image/gif", "image/webp"];
     if (!allowedTypes.includes(file.type)) {
-      alert("Only image files are allowed!");
+      setError("Only image files are allowed!");
       e.target.value = "";
       setPreview(null);
       return;
@@ -616,7 +592,7 @@ export function GroupChat({ groupId }) {
           setMessages(formattedMessages);
         }
       } catch (error) {
-        console.error("Error fetching messages:", error);
+        setError(error);
       }
     };
     fetchMessages();
@@ -651,7 +627,7 @@ export function GroupChat({ groupId }) {
   const handleSendGroupChatMessage = () => {
     if (input.trim() === "" && !preview) return;
     if (input.length > 1000) {
-      showToast("message is too long")
+      setError("message is too long")
       return
     }
     const payload = {
@@ -682,12 +658,7 @@ export function GroupChat({ groupId }) {
 
   return (
     <div className="group-chat-container">
-      {toast && (
-        <div className={`toast ${toast.type}`}>
-          <span>{toast.message}</span>
-          <button onClick={() => setToast(null)} className="toast-close">×</button>
-        </div>
-      )}
+<ShowToast key={Date.now()} message={Error}/>
       {/* Chat box */}
       <div className="chat-box">
         {messages.length === 0 ? (
