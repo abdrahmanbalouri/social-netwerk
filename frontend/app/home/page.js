@@ -10,7 +10,7 @@ import Stories from '../../components/stories.js';
 import Comment from '../../components/coment.js';
 import Post from '../../components/Post.js';
 import CreatePost from "../../components/createPost.js";
-
+import { useProfile } from '../../context/profile.js';
 export default function Home() {
   // State management
   const [showSidebar, setShowSidebar] = useState(true);
@@ -35,7 +35,8 @@ export default function Home() {
   const modalRef = useRef(null);
   const modalRefhome = useRef(null)
   const boleanofset = useRef(false)
-//  const postRefs = useRef({});
+  const profile = useProfile()
+  //  const postRefs = useRef({});
   const router = useRouter();
   const { darkMode } = useDarkMode();
   const [toast, setToast] = useState(null);
@@ -54,6 +55,8 @@ export default function Home() {
     );
   }
   useEffect(() => {
+ console.log(profile.Profile?.privacy);
+ 
 
     const reachedBottom =
       window.innerHeight + window.scrollY >= document.body.scrollHeight - 20;
@@ -63,7 +66,7 @@ export default function Home() {
 
       let b = await fetchingposts();
       console.log(b);
-           
+
     }
 
     if (reachedBottom && !loading && posts.length >= 10) {
@@ -115,7 +118,7 @@ export default function Home() {
 
       setFollowers(data);
     } catch (err) {
-        showToast(err.message)
+      showToast(err.message)
     } finally {
       setLoadingFollowers(false);
     }
@@ -183,7 +186,7 @@ export default function Home() {
       } else {
         return false
       }
-      
+
 
 
       setPosts([...posts, ...data]);
@@ -245,7 +248,7 @@ export default function Home() {
 
       if (visibility === 'private') {
         formData.append("allowed_users", selectedUsers);
-        
+
       }
 
       const response = await fetch("http://localhost:8080/api/createpost", {
@@ -255,13 +258,13 @@ export default function Home() {
       });
 
       const res = await response.json();
-       
+
       if (res.error) {
-       if (res.error == "Unauthorized"){
-        router.push("/login");
-        //sendMessage({ type: "logout" })
-        return 
-        }else{
+        if (res.error == "Unauthorized") {
+          router.push("/login");
+          //sendMessage({ type: "logout" })
+          return
+        } else {
           showToast(res.error)
           return
         }
@@ -506,7 +509,7 @@ export default function Home() {
             aria-modal="true"
             aria-labelledby="create-post-title"
             className="modal-content"
-           onClick={(e) => e.stopPropagation()}
+            onClick={(e) => e.stopPropagation()}
           >
             <button
               className="modal-close"
@@ -548,7 +551,10 @@ export default function Home() {
                   value={visibility}
                   onChange={handleVisibilityChange}
                 >
-                  <option value="public">Public (All users)</option>
+                  {profile.Profile?.privacy === 'public' && (
+                    <option value="public">Public (All users)</option>
+                  )}
+
                   <option value="almost_private">Almost Private (Followers only)</option>
                   <option value="private">Private (Selected followers)</option>
                 </select>
