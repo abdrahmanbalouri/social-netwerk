@@ -17,6 +17,7 @@ type Notification struct {
 	Image      string `json:"image"`
 	Type       string `json:"type"`
 	Message    string `json:"message"`
+	Seen       bool   `json:"seen"`
 	CreatedAt  int    `json:"created_at"`
 }
 
@@ -26,6 +27,13 @@ func Notifications(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Unauthorized", http.StatusUnauthorized)
 		return
 	}
+	seen := r.URL.Query().Get("bool")
+	if seen == "true" {
+		_, err := repository.Db.Exec(`UPDATE notifications SET seen = TRUE WHERE seen = FALSE`)
+		if err != nil {
+		}
+
+	}
 
 	rows, err := repository.Db.Query(`
         SELECT n.sender_id,
@@ -34,7 +42,8 @@ func Notifications(w http.ResponseWriter, r *http.Request) {
                u.image,
                n.type,
                n.message,
-               n.created_at
+               n.created_at,
+			   n.seen
         FROM notifications n
         INNER JOIN users u ON u.id = n.sender_id
         WHERE n.receiver_id = ?
@@ -57,7 +66,7 @@ func Notifications(w http.ResponseWriter, r *http.Request) {
 
 	for rows.Next() {
 		var notif Notification
-		if err := rows.Scan(&notif.SenderID, &notif.First_name, &notif.Last_name, &notif.Image, &notif.Type, &notif.Message, &notif.CreatedAt); err != nil {
+		if err := rows.Scan(&notif.SenderID, &notif.First_name, &notif.Last_name, &notif.Image, &notif.Type, &notif.Message, &notif.CreatedAt,&notif.Seen); err != nil {
 			log.Println("Error scanning notification:", err)
 			continue
 		}

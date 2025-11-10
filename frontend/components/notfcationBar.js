@@ -44,6 +44,9 @@ export default function NotBar({ notData }) {
             case 'message':
                 router.push(`/chat/${noti.sender_id}`)
                 break;
+            case "group_message":
+                router.push(`/groups/${noti.groupID}`)
+                break
             case 'follow':
                 router.push(`/profile/${noti.sender_id}`)
                 break;

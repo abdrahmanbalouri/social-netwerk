@@ -5,6 +5,7 @@ CREATE TABLE IF NOT EXISTS notifications (
     receiver_id TEXT NOT NULL,
     type TEXT NOT NULL,             
     message TEXT DEFAULT "",
+    seen Boolean DEFAULT FALSE,
     created_at INTEGER NOT NULL DEFAULT (strftime('%s', 'now'))
 );
 

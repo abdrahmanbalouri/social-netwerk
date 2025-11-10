@@ -28,12 +28,10 @@ export default function Navbar() {
 
   useEffect(() => {
     if (!connected) return; // wait for connection
-
     const handleNotification = (data) => {
       // update unread count and stored notification list for drop-down
-      console.log("new notification received in navbar:", data);
       if (pathname !== `/chat/${data.from}` && pathname !== `/groups/${data.groupID}`) {
-        
+
         addnotf((prev) => prev + 1);
         setnot(data);
       }
@@ -43,19 +41,50 @@ export default function Navbar() {
     return () => removeListener("notification", handleNotification);
   }, [connected, addListener, removeListener]);
 
+  useEffect(() => {
+    async function fetchNotifications() {
+      try {
+        const res = await fetch("http://localhost:8080/notifcation?bool=false", {
+          method: "GET",
+          credentials: "include",
+        });
+
+        if (!res.ok) {
+          throw new Error(`Failed to fetch notifications: ${res.status}`);
+        }
+
+        const data = await res.json() || [];
+        console.log(data);
+        
+        let t = 0
+        data.map((not) => {
+          if (!not.seen) {
+            t++
+          }
+        })
+        addnotf(t);
+
+      } catch (error) {
+        console.error("Error fetching notifications:", error);
+      }
+    }
+
+    fetchNotifications();
+  }, []);
+
 
   const notifications = async () => {
     try {
-      const res = await fetch("http://localhost:8080/notifcation", {
+      const res = await fetch("http://localhost:8080/notifcation?bool=true", {
         method: "GET",
         credentials: "include",
       });
-      
+
       if (!res.ok) {
         throw new Error(`Failed to fetch notifications: ${res.status}`);
       }
-      
-      const data = await res.json();
+
+      const data = await res.json() || [];
       setnot(data);
       addnotf(0);
       chengBool(!showNotbar);
