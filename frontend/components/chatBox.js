@@ -7,15 +7,17 @@ import "../styles/chat.css";
 import { useWS } from "../context/wsContext.js";
 import { useParams } from "next/navigation";
 import { useProfile } from "../context/profile.js";
+import ShowToast from "./ShowToast.js";
 
 export default function ChatBox({ user }) {
+
   const { sendMessage, addListener, removeListener } = useWS();
   const { Profile } = useProfile();
   const [messages, setMessages] = useState([]);
   const [preview, setPreview] = useState(null);
   const [input, setInput] = useState("");
   const [showEmojis, setShowEmojis] = useState(false);
-  const [toast, setToast] = useState(null)
+  const [error, seterror] = useState(null)
   const [onlineUsers, setonlineUsers] = useState([])
   const [New, setNew] = useState(false)
   const inputRef = useRef(null);
@@ -23,12 +25,6 @@ export default function ChatBox({ user }) {
   const id = useParams().id;
   const refscroll = useRef(0)
 
-  const showToast = (message, type = "error", duration = 3000) => {
-    setToast({ message, type });
-    setTimeout(() => {
-      setToast(null);
-    }, duration);
-  };
   const scrollToBottom = () => {
     if (chatEndRef.current) {
       chatEndRef.current.scrollIntoView({ behavior: "smooth" });
@@ -65,12 +61,12 @@ export default function ChatBox({ user }) {
 
     const allowedTypes = ["image/png", "image/jpeg", "image/jpg", "image/gif", "image/webp"];
     if (!allowedTypes.includes(file.type)) {
-      showToast("Only image files are allowed!")
+      seterror("Only image files are allowed!")
       e.target.value = "";
       setPreview(null);
       return;
     }
-
+    // seterror(null)
     const reader = new FileReader();
     reader.readAsDataURL(file);
     reader.onloadend = () => {
@@ -156,14 +152,6 @@ export default function ChatBox({ user }) {
           },
         ]);
         setNew(true)
-        if (chatEndRef.current) {
-          const chatBox = chatEndRef.current.parentElement;
-          if (chatBox.scrollTop + chatBox.clientHeight < chatBox.scrollHeight - 50) {
-            setNew(true);
-          }else{
-            setNew(false)
-          }
-        }
       }
     };
 
@@ -177,7 +165,7 @@ export default function ChatBox({ user }) {
   const handleSendMessage = () => {
     if (input.trim() === "" && !preview) return;
     if (input.length > 1000) {
-      showToast("message is too long")
+      seterror("Message is too long! Maximum length is 1000 characters.")
       return
     }
     const payload = {
@@ -209,12 +197,7 @@ export default function ChatBox({ user }) {
   return (
     <div className="chat-container">
       <div className="chat-header">
-        {toast && (
-          <div className={`toast ${toast.type}`}>
-            <span>{toast.message}</span>
-            <button onClick={() => setToast(null)} className="toast-close">×</button>
-          </div>
-        )}
+        <ShowToast message={error} />
         <Link href={`/profile/${user.id}`}>
           <img
             src={
