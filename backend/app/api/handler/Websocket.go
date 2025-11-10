@@ -250,6 +250,37 @@ func Loop(conn *websocket.Conn, currentUserID string) {
 				"content":    msg.MessageContent,
 				"time":       time.Now().Format(time.RFC3339),
 			})
+		case "followRequest":
+			exict, err := model.IsFollowingReceiver(currentUserID, msg)
+			if err != nil {
+				log.Println("DB error checking follow status:", err)
+				continue
+			}
+
+			if !exict {
+				msg.SubType = "followRequest"
+				msg.MessageContent = "send you a followRequest"
+				err = model.SaveFollowNotification(currentUserID, msg)
+				if err != nil {
+					log.Println("DB error saving follow notification:", err)
+					continue
+				}
+			} else {
+				msg.SubType = "unfollow"
+				msg.MessageContent = "has unfollowed you"
+			}
+
+			// Notify all connected users (except current user)
+			service.BrodcastNotification(msg.ReceiverId, map[string]any{
+				"type":       "notification",
+				"subType":    msg.SubType,
+				"from":       currentUserID,
+				"first_name": msg.First_name,
+				"last_name":  msg.Last_name,
+				"photo":      msg.Photo,
+				"content":    msg.MessageContent,
+				"time":       time.Now().Format(time.RFC3339),
+			})
 		case "invite_to_group":
 
 			msg.MessageContent = "has invited you to join a group"

@@ -56,7 +56,6 @@ export default function Navbar() {
       }
       
       const data = await res.json();
-      console.log("************************",data);
       setnot(data);
       addnotf(0);
       chengBool(!showNotbar);

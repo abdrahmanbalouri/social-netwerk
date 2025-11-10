@@ -36,6 +36,8 @@ export default function NotBar({ notData }) {
         }
     };
     const notificationtype = (noti) => {
+        console.log(noti);
+
         switch (noti.type) {
             case 'like':
             case 'comment':
@@ -43,6 +45,9 @@ export default function NotBar({ notData }) {
                 router.push(`/chat/${noti.sender_id}`)
                 break;
             case 'follow':
+                router.push(`/profile/${noti.sender_id}`)
+                break;
+            case "followRequest":
                 router.push(`/profile/${noti.sender_id}`)
                 break;
             case 'invite_to_group':
