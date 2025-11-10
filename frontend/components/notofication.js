@@ -28,14 +28,14 @@ console.log('aaaaa',data);
                     <div className="notification-media">
                         <img
                             src={data?.image ? `/uploads/${data.image}` : "/assets/default.png"}
-                            alt={`${data?.first_name+' '+data.last_name || 'User'} profile picture`}
+                            alt={'User'}
                             className="notification-user-avatar"
                         />
                     </div>
 
                     <div className="notification-content">
                         <p className="notification-text">
-                            <span style={{colors:'red'}} className="sp1">{data?.first_name+' '+data.last_name}</span> {data?.content}
+                            <span style={{colors:'red'}} className="sp1">{data?.name}</span> {data?.content}
                         </p>
 
                         <span className="notification-timer">
