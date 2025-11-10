@@ -622,7 +622,9 @@ export default function Profile() {
                       {
 
                         Profile?.id !== theprofile?.id &&
-                        <i className="fa-solid fa-envelope" onClick={() => { router.push(`/chat/${theprofile.id}`) }}></i>
+                        <div className="right">
+                          <i className="fa-solid fa-envelope" onClick={() => { router.push(`/chat/${theprofile.id}`) }}></i>
+                        </div>
                       }
                     </div>
                   )}

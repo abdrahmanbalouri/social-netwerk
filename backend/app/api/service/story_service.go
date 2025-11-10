@@ -2,6 +2,7 @@ package service
 
 import (
 	"database/sql"
+	"errors"
 	"fmt"
 	"io"
 	"os"
@@ -69,8 +70,13 @@ func CreateStory(userID, content, bgColor string, imageFile io.ReadCloser, filen
 		defer imageFile.Close()
 
 		ext := filepath.Ext(filename)
-		if ext == "" {
-			ext = ".jpg"
+
+		allowedExts := map[string]bool{
+			".jpg": true, ".jpeg": true, ".png": true, ".gif": true,
+		}
+
+		if !allowedExts[ext] {
+			return "", errors.New("unsupported media format")
 		}
 		imagePath = "/uploads/stories/" + uuid.New().String() + ext
 		uploadDir := "../frontend/public/uploads/stories"

@@ -9,17 +9,20 @@ import { useParams } from "next/navigation";
 import { useProfile } from "../context/profile.js";
 
 export default function ChatBox({ user }) {
+  const { sendMessage, addListener, removeListener } = useWS();
+  const { Profile } = useProfile();
   const [messages, setMessages] = useState([]);
   const [preview, setPreview] = useState(null);
   const [input, setInput] = useState("");
   const [showEmojis, setShowEmojis] = useState(false);
+  const [toast, setToast] = useState(null)
+  const [onlineUsers, setonlineUsers] = useState([])
+  const [New, setNew] = useState(false)
   const inputRef = useRef(null);
   const chatEndRef = useRef(null);
-  const [onlineUsers, setonlineUsers] = useState([])
-  const { sendMessage, addListener, removeListener } = useWS();
   const id = useParams().id;
-  const { Profile } = useProfile();
-  const [toast, setToast] = useState(null)
+  const refscroll = useRef(0)
+
   const showToast = (message, type = "error", duration = 3000) => {
     setToast({ message, type });
     setTimeout(() => {
@@ -31,6 +34,12 @@ export default function ChatBox({ user }) {
       chatEndRef.current.scrollIntoView({ behavior: "smooth" });
     }
   };
+  const handleScrollDownClick = () => {
+    scrollToBottom();
+    setNew(false);
+  };
+
+
   if (id == "0" || !id) {
     return (
       <div className="no-chat-selected">
@@ -42,6 +51,11 @@ export default function ChatBox({ user }) {
     inputRef.current?.focus();
   }, 0);
 
+  useEffect(() => {
+    refscroll.current = setTimeout(() => handleScrollDownClick(), 100);
+    return (() => clearTimeout(refscroll.current))
+  }, []);
+
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (!file) {
@@ -51,17 +65,17 @@ export default function ChatBox({ user }) {
 
     const allowedTypes = ["image/png", "image/jpeg", "image/jpg", "image/gif", "image/webp"];
     if (!allowedTypes.includes(file.type)) {
-      alert("Only image files are allowed!");
+      showToast("Only image files are allowed!")
       e.target.value = "";
       setPreview(null);
       return;
     }
 
     const reader = new FileReader();
+    reader.readAsDataURL(file);
     reader.onloadend = () => {
       setPreview(reader.result);
     };
-    reader.readAsDataURL(file);
   };
 
 
@@ -95,9 +109,7 @@ export default function ChatBox({ user }) {
   }, [addListener, removeListener])
 
 
-  useEffect(() => {
-    scrollToBottom();
-  }, [messages]);
+
 
   useEffect(() => {
     const fetchMessages = async () => {
@@ -143,6 +155,15 @@ export default function ChatBox({ user }) {
             PictureSend: data.PictureSend
           },
         ]);
+        setNew(true)
+        if (chatEndRef.current) {
+          const chatBox = chatEndRef.current.parentElement;
+          if (chatBox.scrollTop + chatBox.clientHeight < chatBox.scrollHeight - 50) {
+            setNew(true);
+          }else{
+            setNew(false)
+          }
+        }
       }
     };
 
@@ -154,8 +175,6 @@ export default function ChatBox({ user }) {
 
   const emojiArray = ["😀", "😃", "😄", "😁", "😆", "😅", "🤣", "😂", "🚀", "💡", "😊", "😇", "🙂", "🙃", "😉", "😍", "🥰", "😘", "😗", "😋", "😛", "😜", "🤪", "😝", "🤑", "🤗", "🤭", "🤔", "🤨", "😐", "😑", "😶", "😏", "😒", "🙄", "😬", "😔", "😪", "🤤", "😴", "😷", "🤒", "🤕", "🤢", "🤮", "🥴", "😵", "🤯", "😎", "🤓"];
   const handleSendMessage = () => {
-    console.log("ssdsdsdsd");
-
     if (input.trim() === "" && !preview) return;
     if (input.length > 1000) {
       showToast("message is too long")
@@ -173,7 +192,7 @@ export default function ChatBox({ user }) {
     setInput("");
     removeImage()
     setShowEmojis(false);
-    setTimeout(() => scrollToBottom(), 100);
+    setTimeout(() => handleScrollDownClick(), 100);
   };
 
   const addEmoji = (emoji) => {
@@ -254,6 +273,12 @@ export default function ChatBox({ user }) {
             </button>
           </div>
         )}
+        {New && (
+          <div className="scroll-down-icon" onClick={handleScrollDownClick}>
+            <i className="fa-solid fa-arrow-down"></i>
+          </div>
+        )}
+
         <div ref={chatEndRef}></div>
       </div>
 
