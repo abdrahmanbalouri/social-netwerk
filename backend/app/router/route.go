@@ -71,7 +71,7 @@ func Routes() http.Handler {
 	mux.HandleFunc("/group/addPost/{id}", middlewares.RatelimitMiddleware(handlers.CreatePostGroupHandler, "posts", 3))    // dart
 	mux.HandleFunc("/group/fetchPosts/{id}", handlers.GetAllPostsGroup)       // dart
 	// mux.HandleFunc("/group/fetchPost/{id}", handlers.GetPostGroup)
-	mux.HandleFunc("/group/like/{id}/{groupId}", middlewares.RatelimitMiddleware(handlers.LikesGroup, "likes", 3))                       // dart
+	mux.HandleFunc("/group/like/{id}/{groupId}", middlewares.RatelimitMiddleware(handlers.LikesGroup, "likes", 2))                       // dart
 	mux.HandleFunc("/group/updatepost/{id}/{groupId}", handlers.GetGroupPostByID)           // dart
 	mux.HandleFunc("/group/Getcomments/{id}/{offset}/{groupId}", handlers.GetCommentsGroup) // dart
 	mux.HandleFunc("/group/getlastcomment/{id}/{groupId}", handlers.GetlastcommnetGroup)    // dart
