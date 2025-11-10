@@ -7,24 +7,29 @@ import "../styles/chat.css";
 import { useWS } from "../context/wsContext.js";
 import { useParams } from "next/navigation";
 import { useProfile } from "../context/profile.js";
-import ShowToast from "./ShowToast.js";
 
 export default function ChatBox({ user }) {
-
   const { sendMessage, addListener, removeListener } = useWS();
   const { Profile } = useProfile();
   const [messages, setMessages] = useState([]);
   const [preview, setPreview] = useState(null);
   const [input, setInput] = useState("");
   const [showEmojis, setShowEmojis] = useState(false);
-  const [error, seterror] = useState(null)
+  const [toast, setToast] = useState(null)
   const [onlineUsers, setonlineUsers] = useState([])
   const [New, setNew] = useState(false)
   const inputRef = useRef(null);
   const chatEndRef = useRef(null);
-  const id = useParams().id;
+  const chatBoxRef = useRef(null);
   const refscroll = useRef(0)
+  const id = useParams().id;
 
+  const showToast = (message, type = "error", duration = 3000) => {
+    setToast({ message, type });
+    setTimeout(() => {
+      setToast(null);
+    }, duration);
+  };
   const scrollToBottom = () => {
     if (chatEndRef.current) {
       chatEndRef.current.scrollIntoView({ behavior: "smooth" });
@@ -33,6 +38,17 @@ export default function ChatBox({ user }) {
   const handleScrollDownClick = () => {
     scrollToBottom();
     setNew(false);
+  };
+  const handleScroll = () => {
+    const chatBox = chatBoxRef.current;
+    if (!chatBox) return;
+    const atBottom = chatBox.scrollHeight - chatBox.scrollTop - chatBox.clientHeight < 50;
+
+    if (atBottom) {
+      setNew(false);
+    } else {
+      setNew(true);
+    }
   };
 
 
@@ -61,12 +77,12 @@ export default function ChatBox({ user }) {
 
     const allowedTypes = ["image/png", "image/jpeg", "image/jpg", "image/gif", "image/webp"];
     if (!allowedTypes.includes(file.type)) {
-      seterror("Only image files are allowed!")
+      showToast("Only image files are allowed!")
       e.target.value = "";
       setPreview(null);
       return;
     }
-    // seterror(null)
+
     const reader = new FileReader();
     reader.readAsDataURL(file);
     reader.onloadend = () => {
@@ -165,7 +181,7 @@ export default function ChatBox({ user }) {
   const handleSendMessage = () => {
     if (input.trim() === "" && !preview) return;
     if (input.length > 1000) {
-      seterror("Message is too long! Maximum length is 1000 characters.")
+      showToast("message is too long")
       return
     }
     const payload = {
@@ -197,7 +213,12 @@ export default function ChatBox({ user }) {
   return (
     <div className="chat-container">
       <div className="chat-header">
-        <ShowToast message={error} />
+        {toast && (
+          <div className={`toast ${toast.type}`}>
+            <span>{toast.message}</span>
+            <button onClick={() => setToast(null)} className="toast-close">×</button>
+          </div>
+        )}
         <Link href={`/profile/${user.id}`}>
           <img
             src={
@@ -217,7 +238,7 @@ export default function ChatBox({ user }) {
       </div>
 
       {/* Chat box */}
-      <div className="chat-box">
+      <div className="chat-box" ref={chatBoxRef} onScroll={handleScroll}>
         {messages.length === 0 ? (
           <p className="no-msg">No messages yet</p>
         ) : (
@@ -266,15 +287,17 @@ export default function ChatBox({ user }) {
       </div>
 
       {/* Emoji panel */}
-      {showEmojis && (
-        <div className="emoji-panel">
-          {emojiArray.map((emoji, i) => (
-            <span key={i} className="emoji" onClick={() => addEmoji(emoji)}>
-              {emoji}
-            </span>
-          ))}
-        </div>
-      )}
+      {
+        showEmojis && (
+          <div className="emoji-panel">
+            {emojiArray.map((emoji, i) => (
+              <span key={i} className="emoji" onClick={() => addEmoji(emoji)}>
+                {emoji}
+              </span>
+            ))}
+          </div>
+        )
+      }
 
       {/* Input area */}
       <div className="input-area">
@@ -309,6 +332,6 @@ export default function ChatBox({ user }) {
           <SendIcon />
         </button>
       </div>
-    </div>
+    </div >
   );
 }
