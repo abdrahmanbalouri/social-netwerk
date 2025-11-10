@@ -141,24 +141,24 @@ export default function Profile() {
     setShowPrivacy(!showPrivacy);
   }
 
- 
- 
-  
 
-  useEffect(() => {  
- 
-    
+
+
+
+  useEffect(() => {
+
+
     const reachedBottom =
       window.innerHeight + window.scrollY >= document.body.scrollHeight - 20;
 
 
     async function handlescrollhome() {
       await fetchingposts();
-    
+
     }
 
     if (reachedBottom && !loading && posts.length >= 10) {
-      
+
       handlescrollhome();
     }
   }, [scroollhome]);
@@ -240,19 +240,19 @@ export default function Profile() {
         method: "GET",
         credentials: "include",
       });
-           
+
       if (!res.ok) {
-        throw new Error(`Failed to fetch posts: ${res.status}`); 
+        throw new Error(`Failed to fetch posts: ${res.status}`);
       }
-    
+
 
       const data = await res.json();
-      
+
       if (!data) {
         return
-      } 
-      
-      
+      }
+
+
       offsetpsot.current += 10
 
       setPosts([...posts, ...data]);
@@ -314,13 +314,13 @@ export default function Profile() {
         body: formData,
       });
 
-       const res = await response.json();
+      const res = await response.json();
       if (res.error) {
-        if (res.error == "Unauthorized"){
-        router.push("/login");
-        //sendMessage({ type: "logout" })
-        return 
-        }else{
+        if (res.error == "Unauthorized") {
+          router.push("/login");
+          //sendMessage({ type: "logout" })
+          return
+        } else {
           showToast(res.error)
           return
         }
@@ -373,7 +373,7 @@ export default function Profile() {
     }
   }
 
-   async function GetComments(post) {
+  async function GetComments(post) {
     setLoadingcomment(true)
 
     try {
@@ -446,9 +446,9 @@ export default function Profile() {
 
 
         const potsreplace = await fetchPosts(selectedPost.id)
-        
+
         for (let i = 0; i < posts.length; i++) {
-          
+
           if (posts[i].id == selectedPost.id) {
             setPosts([
               ...posts.slice(0, i),
@@ -564,7 +564,7 @@ export default function Profile() {
 
         <div
           className="main-section"
-         
+
         >
           {/* ===== Profile Section ===== */}
           <div className="profile">
@@ -603,6 +603,7 @@ export default function Profile() {
                         followers
                         <strong id="followers"> {theprofile.followers}</strong>
                       </p>
+
                     </div>
 
                   ) : (
@@ -618,6 +619,8 @@ export default function Profile() {
                           followers <strong id="followers">{theprofile.followers}</strong>
                         </p>
                       </Link>
+
+                      <i className="fa-solid fa-envelope" onClick={() => { router.push(`/chat/${theprofile.id}`) }}></i>
                     </div>
                   )}
                   <hr />
