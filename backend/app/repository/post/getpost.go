@@ -6,7 +6,7 @@ import (
 	"net/http"
 
 	"social-network/app/helper"
-	"social-network/app/repository"
+	"social-network/pkg/db/sqlite"
 )
 
 func GetAllPosts(authUserID string, r *http.Request, ofseet int) ([]map[string]interface{}, error) {
@@ -21,7 +21,7 @@ func GetAllPosts(authUserID string, r *http.Request, ofseet int) ([]map[string]i
 		authUserID = userId
 	}
 	limit := 10
-	rows, err = repository.Db.Query(`
+	rows, err = sqlite.Db.Query(`
 	SELECT 
     p.id, 
     p.user_id, 

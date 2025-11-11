@@ -5,9 +5,9 @@ import (
 	"time"
 
 	"social-network/app/helper"
-	"social-network/app/repository"
 	"social-network/app/repository/model"
 	"social-network/app/utils"
+	"social-network/pkg/db/sqlite"
 )
 
 func GetUserGroups(userID string) ([]utils.Group, error) {
@@ -19,7 +19,7 @@ func GetAllAvailableGroups(userID string) ([]utils.Group, error) {
 }
 
 func CreateNewGroup(adminID string, newGroup utils.GroupRequest) (utils.Group, error) {
-	tx, err := repository.Db.Begin()
+	tx, err := sqlite.Db.Begin()
 	if err != nil {
 		return utils.Group{}, fmt.Errorf("Failed to start database transaction")
 	}
@@ -56,7 +56,7 @@ func CreateNewGroup(adminID string, newGroup utils.GroupRequest) (utils.Group, e
 }
 
 func HandleGroupInvitation(groupID, userID string, newInvitation utils.GroupInvitation) (map[string]any, error, int) {
-	tx, err := repository.Db.Begin()
+	tx, err := sqlite.Db.Begin()
 	if err != nil {
 		return nil, fmt.Errorf("Failed to start database transaction"), 500
 	}
@@ -144,7 +144,7 @@ func ProcessGroupInvitationResponse(userID string, response utils.GroupResponse)
 		return fmt.Errorf("failed to fetch group ID: %v", err)
 	}
 
-	tx, err := repository.Db.Begin()
+	tx, err := sqlite.Db.Begin()
 	if err != nil {
 		return fmt.Errorf("failed to start database transaction")
 	}

@@ -8,8 +8,8 @@ import (
 	"strings"
 
 	"social-network/app/helper"
-	"social-network/app/repository"
 	"social-network/app/repository/post"
+	"social-network/pkg/db/sqlite"
 )
 
 func GetPostByUserHandler(w http.ResponseWriter, r *http.Request) {
@@ -62,7 +62,7 @@ func GetAllPostsByuser(authUserID string, r *http.Request, ofseet int, userId st
 	limit := 10
 
 	if authUserID != "" {
-		rows, err = repository.Db.Query(`
+		rows, err = sqlite.Db.Query(`
 			SELECT 
 			  p.id, 
             p.user_id, 
@@ -88,7 +88,7 @@ func GetAllPostsByuser(authUserID string, r *http.Request, ofseet int, userId st
 			LIMIT ? OFFSET ?;
 		`, authUserID, authUserID, limit, ofseet)
 	} else {
-		rows, err = repository.Db.Query(`
+		rows, err = sqlite.Db.Query(`
 	SELECT 
     p.id, 
     p.user_id, 

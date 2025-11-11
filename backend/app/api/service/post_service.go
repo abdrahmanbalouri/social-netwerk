@@ -10,8 +10,8 @@ import (
 	"strings"
 
 	"social-network/app/helper"
-	"social-network/app/repository"
 	"social-network/app/repository/model"
+	"social-network/pkg/db/sqlite"
 )
 
 type PostResponse struct {
@@ -91,12 +91,12 @@ func CreatePost(userID, title, content, visibility, allowedUsers string, fileHea
 		AllowedUsers: allowed,
 	}
 
-	if err := model.InsertPost(repository.Db, post); err != nil {
+	if err := model.InsertPost(sqlite.Db, post); err != nil {
 		return "", err
 	}
 
 	if visibility == "private" {
-		if err := model.InsertAllowedUsers(repository.Db, postID, userID, allowed); err != nil {
+		if err := model.InsertAllowedUsers(sqlite.Db, postID, userID, allowed); err != nil {
 			return "", err
 		}
 	}

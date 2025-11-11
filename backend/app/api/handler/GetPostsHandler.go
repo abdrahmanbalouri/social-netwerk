@@ -7,7 +7,7 @@ import (
 
 	service "social-network/app/api/service"
 	"social-network/app/helper"
-	"social-network/app/repository"
+	"social-network/pkg/db/sqlite"
 )
 
 func GetPostsHandler(w http.ResponseWriter, r *http.Request) {
@@ -29,7 +29,7 @@ func GetPostsHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	postID := parts[3]
 
-	postResp, err := service.FetchPost(repository.Db, postID, authUserID)
+	postResp, err := service.FetchPost(sqlite.Db, postID, authUserID)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			helper.RespondWithError(w, http.StatusNotFound, "Post not found")

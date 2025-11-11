@@ -4,8 +4,8 @@ import (
 	"net/http"
 
 	"social-network/app/helper"
-	"social-network/app/repository"
 	"social-network/app/utils"
+	"social-network/pkg/db/sqlite"
 )
 
 func GetCommunFriends(w http.ResponseWriter, r *http.Request) {
@@ -20,7 +20,7 @@ func GetCommunFriends(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	rows, err := repository.Db.Query(`
+	rows, err := sqlite.Db.Query(`
 	SELECT DISTINCT u.id, u.first_name ,u.last_name, u.image
 	FROM users u
 	INNER JOIN followers f 

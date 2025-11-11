@@ -8,7 +8,7 @@ import (
 	"log"
 	"net/http"
 
-	"social-network/app/repository"
+	"social-network/pkg/db/sqlite"
 
 	"github.com/gofrs/uuid/v5"
 )
@@ -43,7 +43,7 @@ func AuthenticateUser(r *http.Request) (string, error) {
 	}
 	var userID string
 
-	err = repository.Db.QueryRow(`
+	err = sqlite.Db.QueryRow(`
     SELECT u.id
     FROM sessions s
     JOIN users u ON s.user_id = u.id

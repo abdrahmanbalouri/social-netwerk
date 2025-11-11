@@ -1,8 +1,6 @@
 package model
 
-import (
-	"social-network/app/repository"
-)
+import "social-network/pkg/db/sqlite"
 
 type Event struct {
 	ID          int    `json:"id"`
@@ -26,7 +24,7 @@ WHERE e.group_id = ?
 GROUP BY e.id 
 ORDER BY e.time DESC
 `
-	rows, err := repository.Db.Query(Fquery, GrpID)
+	rows, err := sqlite.Db.Query(Fquery, GrpID)
 	if err != nil {
 		return nil, err
 	}
@@ -39,7 +37,7 @@ ORDER BY e.time DESC
 		if err := rows.Scan(&events.ID, &events.Title, &events.Description, &events.Date, &events.Going, &events.NotGoing); err != nil {
 			return nil, err
 		}
-		err = repository.Db.QueryRow(`select  action from event_actions where user_id = ? and event_id = ? `, UserId, events.ID).Scan(&events.UserAction)
+		err = sqlite.Db.QueryRow(`select  action from event_actions where user_id = ? and event_id = ? `, UserId, events.ID).Scan(&events.UserAction)
 		if err != nil {
 			events.UserAction = ""
 		}

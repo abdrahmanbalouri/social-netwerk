@@ -10,8 +10,8 @@ import (
 	"strings"
 
 	"social-network/app/helper"
-	"social-network/app/repository"
 	"social-network/app/repository/model"
+	"social-network/pkg/db/sqlite"
 )
 
 func FormatStories(stories []model.Storyapi) []map[string]interface{} {
@@ -102,7 +102,7 @@ func CreateStory(userID, content, bgColor string, imageFile io.ReadCloser, filen
 		BgColor:  bgColor,
 	}
 
-	if err := model.InsertStory(repository.Db, story); err != nil {
+	if err := model.InsertStory(sqlite.Db, story); err != nil {
 		// Delete saved image if DB insert fails
 		if imagePath != "" {
 			os.Remove(filepath.Join("../frontend/public/uploads/stories", filepath.Base(imagePath)))

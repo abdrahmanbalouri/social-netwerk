@@ -4,7 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 
-	"social-network/app/repository"
+	"social-network/pkg/db/sqlite"
 )
 
 func Canshowdata(userID, postID string) (bool, error) {
@@ -13,7 +13,7 @@ func Canshowdata(userID, postID string) (bool, error) {
 		visibility  string
 		userPrivacy string
 	)
-	err := repository.Db.QueryRow(`
+	err := sqlite.Db.QueryRow(`
 		SELECT p.user_id, p.visibility, u.privacy
 		FROM posts p
 		JOIN users u ON p.user_id = u.id
@@ -36,7 +36,7 @@ func Canshowdata(userID, postID string) (bool, error) {
 
 	if visibility == "public" && userPrivacy == "private" {
 		var exists int
-		err := repository.Db.QueryRow(`
+		err := sqlite.Db.QueryRow(`
 			SELECT 1 FROM followers 
 			WHERE user_id = ? AND follower_id = ?
 		`, userID, postUserID).Scan(&exists)
@@ -47,7 +47,7 @@ func Canshowdata(userID, postID string) (bool, error) {
 
 	if visibility == "almost_private" {
 		var exists int
-		err := repository.Db.QueryRow(`
+		err := sqlite.Db.QueryRow(`
 			SELECT 1 FROM followers 
 			WHERE user_id = ? AND follower_id = ?
 		`, userID, postUserID).Scan(&exists)
@@ -58,7 +58,7 @@ func Canshowdata(userID, postID string) (bool, error) {
 
 	if visibility == "private" {
 		var exists int
-		err := repository.Db.QueryRow(`
+		err := sqlite.Db.QueryRow(`
 			SELECT 1 FROM allowed_followers
 			WHERE allowed_user_id = ? AND post_id = ? AND user_id = ?
 		`, userID, postID, postUserID).Scan(&exists)

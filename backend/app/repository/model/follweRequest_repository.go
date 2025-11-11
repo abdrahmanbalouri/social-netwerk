@@ -1,9 +1,9 @@
 package model
 
-import "social-network/app/repository"
+import "social-network/pkg/db/sqlite"
 
 func FetchFollowRequests(userID string) ([]map[string]interface{}, error) {
-	rows, err := repository.Db.Query(`
+	rows, err := sqlite.Db.Query(`
 		SELECT u.id, u.first_name, u.last_name, u.image
 		FROM users u
 		JOIN follow_requests f ON f.follower_id = u.id
@@ -33,7 +33,7 @@ func FetchFollowRequests(userID string) ([]map[string]interface{}, error) {
 }
 
 func ClearFollowRequests(userID string) error {
-	_, err := repository.Db.Exec(`
+	_, err := sqlite.Db.Exec(`
 		DELETE FROM follow_requests
 		WHERE user_id = ?;
 	`, userID)

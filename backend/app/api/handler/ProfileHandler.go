@@ -4,7 +4,7 @@ import (
 	"net/http"
 
 	"social-network/app/helper"
-	"social-network/app/repository"
+	"social-network/pkg/db/sqlite"
 )
 
 func ProfileHandler(w http.ResponseWriter, r *http.Request) {
@@ -43,7 +43,7 @@ LEFT JOIN followers f
 WHERE u.id = ?;
 `
 
-	row := repository.Db.QueryRow(q, currentUserID, targetUserID)
+	row := sqlite.Db.QueryRow(q, currentUserID, targetUserID)
 
 	var user struct {
 		ID          string
@@ -74,17 +74,17 @@ WHERE u.id = ?;
 	}
 
 	var followers, following int
-	if err = repository.Db.QueryRow(`SELECT COUNT(*) FROM followers WHERE user_id = ?`, targetUserID).Scan(&followers); err != nil {
+	if err = sqlite.Db.QueryRow(`SELECT COUNT(*) FROM followers WHERE user_id = ?`, targetUserID).Scan(&followers); err != nil {
 		http.Error(w, "Failed to count followers", http.StatusInternalServerError)
 		return
 	}
-	if err = repository.Db.QueryRow(`SELECT COUNT(*) FROM followers WHERE follower_id = ?`, targetUserID).Scan(&following); err != nil {
+	if err = sqlite.Db.QueryRow(`SELECT COUNT(*) FROM followers WHERE follower_id = ?`, targetUserID).Scan(&following); err != nil {
 		http.Error(w, "Failed to count following", http.StatusInternalServerError)
 		return
 	}
 
 	var isPending bool
-	if err = repository.Db.QueryRow(`
+	if err = sqlite.Db.QueryRow(`
 		SELECT EXISTS(
 			SELECT 1 FROM follow_requests 
 			WHERE user_id = ? AND follower_id = ?

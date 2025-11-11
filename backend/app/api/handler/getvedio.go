@@ -5,7 +5,7 @@ import (
 
 	service "social-network/app/api/service"
 	"social-network/app/helper"
-	"social-network/app/repository"
+	"social-network/pkg/db/sqlite"
 )
 
 func GetVideoHandler(w http.ResponseWriter, r *http.Request) {
@@ -15,7 +15,7 @@ func GetVideoHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	posts, err := service.FetchVideoPosts(userID, repository.Db)
+	posts, err := service.FetchVideoPosts(userID, sqlite.Db)
 	if err != nil {
 		helper.RespondWithError(w, http.StatusInternalServerError, "Failed to fetch videos")
 		return

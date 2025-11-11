@@ -1,6 +1,6 @@
 package regestire
 
-import "social-network/app/repository"
+import "social-network/pkg/db/sqlite"
 
 // add a repository-local User model to avoid importing the handler package
 type User struct {
@@ -20,7 +20,7 @@ type User struct {
 // Check if a user with the given email or nickname exists
 func UserExists(email, nickname string) (bool, error) {
 	var count int
-	err := repository.Db.QueryRow(
+	err := sqlite.Db.QueryRow(
 		`SELECT COUNT(*) FROM users WHERE (email = ? OR nickname = ?) AND nickname != ""`,
 		email, nickname,
 	).Scan(&count)
@@ -29,7 +29,7 @@ func UserExists(email, nickname string) (bool, error) {
 
 // Insert a new user into the database
 func CreateUser(user User) error {
-	_, err := repository.Db.Exec(`
+	_, err := sqlite.Db.Exec(`
 		INSERT INTO users 
 		(id, nickname, date_birth, first_name, last_name, email, password, image, about, privacy, created_at)
 		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,

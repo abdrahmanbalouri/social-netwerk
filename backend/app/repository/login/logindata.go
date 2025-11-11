@@ -4,14 +4,13 @@ import (
 	"database/sql"
 	"net/http"
 
-	"social-network/app/repository"
+	"social-network/pkg/db/sqlite"
 
 	"golang.org/x/crypto/bcrypt"
 )
 
 func Checklogindata(nickname string, db *sql.DB, w http.ResponseWriter, dbPassword *string, userID *string, Password string) string {
 	if nickname == "" || Password == "" {
-	
 		return "email or password incorrect"
 	}
 	err := db.QueryRow(
@@ -20,10 +19,8 @@ func Checklogindata(nickname string, db *sql.DB, w http.ResponseWriter, dbPasswo
 	).Scan(userID, dbPassword)
 
 	if err == sql.ErrNoRows || bcrypt.CompareHashAndPassword([]byte(*dbPassword), []byte(Password)) != nil {
-		
 		return "email or password incorrect"
 	} else if err != nil {
-
 		return "database error"
 	}
 
@@ -31,7 +28,7 @@ func Checklogindata(nickname string, db *sql.DB, w http.ResponseWriter, dbPasswo
 }
 
 func CreateSession(userID, token string) error {
-	_, err := repository.Db.Exec(`
+	_, err := sqlite.Db.Exec(`
 		INSERT INTO sessions (user_id, token, expires_at)
 		VALUES (?, ?, DATETIME('now', '+1 hour'))
 	`, userID, token)

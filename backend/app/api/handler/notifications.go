@@ -6,7 +6,7 @@ import (
 	"net/http"
 
 	"social-network/app/helper"
-	"social-network/app/repository"
+	"social-network/pkg/db/sqlite"
 )
 
 // Notification structure to send to frontend
@@ -29,13 +29,13 @@ func Notifications(w http.ResponseWriter, r *http.Request) {
 	}
 	seen := r.URL.Query().Get("bool")
 	if seen == "true" {
-		_, err := repository.Db.Exec(`UPDATE notifications SET seen = TRUE WHERE seen = FALSE`)
+		_, err := sqlite.Db.Exec(`UPDATE notifications SET seen = TRUE WHERE seen = FALSE`)
 		if err != nil {
 		}
 
 	}
 
-	rows, err := repository.Db.Query(`
+	rows, err := sqlite.Db.Query(`
         SELECT n.sender_id,
                u.first_name,
                u.last_name,
@@ -84,7 +84,7 @@ func ClearNotifications(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Unauthorized", http.StatusUnauthorized)
 		return
 	}
-	_, err := repository.Db.Exec(`
+	_, err := sqlite.Db.Exec(`
 		DELETE FROM notifications WHERE receiver_id = ?
 	`, id)
 	if err != nil {

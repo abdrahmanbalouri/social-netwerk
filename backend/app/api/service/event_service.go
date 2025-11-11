@@ -4,13 +4,13 @@ import (
 	"errors"
 	"time"
 
-	"social-network/app/repository"
 	"social-network/app/repository/model"
+	"social-network/pkg/db/sqlite"
 )
 
 func CreateGroupEvent(userID, groupID, title, description, dateTimeStr string) (int64, error) {
 	// Validate user in group
-	inGroup, err := model.CheckUserInGroup(repository.Db, userID, groupID)
+	inGroup, err := model.CheckUserInGroup(sqlite.Db, userID, groupID)
 	if err != nil {
 		return 0, err
 	}
@@ -37,7 +37,7 @@ func CreateGroupEvent(userID, groupID, title, description, dateTimeStr string) (
 	}
 
 	// Insert into DB
-	eventID, err := model.InsertEvent(repository.Db, event)
+	eventID, err := model.InsertEvent(sqlite.Db, event)
 	if err != nil {
 		return 0, err
 	}

@@ -5,7 +5,7 @@ import (
 
 	service "social-network/app/api/service"
 	"social-network/app/helper"
-	"social-network/app/repository"
+	"social-network/pkg/db/sqlite"
 )
 
 func GetUsersHandler(w http.ResponseWriter, r *http.Request) {
@@ -20,7 +20,7 @@ func GetUsersHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	users, err := service.GetUsers(repository.Db, currentUserID)
+	users, err := service.GetUsers(sqlite.Db, currentUserID)
 	if err != nil {
 		helper.RespondWithError(w, http.StatusInternalServerError, "Failed to fetch users")
 		return

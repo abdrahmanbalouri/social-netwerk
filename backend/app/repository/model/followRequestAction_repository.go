@@ -1,10 +1,10 @@
 package model
 
-import "social-network/app/repository"
+import "social-network/pkg/db/sqlite"
 
 func FollowRequestExists(userID, followerID string) bool {
 	var exists bool
-	err := repository.Db.QueryRow(`
+	err := sqlite.Db.QueryRow(`
 		SELECT EXISTS(
 			SELECT 1 FROM follow_requests 
 			WHERE user_id = ? AND follower_id = ?
@@ -14,7 +14,7 @@ func FollowRequestExists(userID, followerID string) bool {
 }
 
 func AddFollower(userID, followerID string) error {
-	_, err := repository.Db.Exec(`
+	_, err := sqlite.Db.Exec(`
 		INSERT INTO followers (user_id, follower_id) 
 		VALUES (?, ?)
 	`, userID, followerID)
@@ -22,7 +22,7 @@ func AddFollower(userID, followerID string) error {
 }
 
 func DeleteFollowRequest(userID, followerID string) error {
-	_, err := repository.Db.Exec(`
+	_, err := sqlite.Db.Exec(`
 		DELETE FROM follow_requests 
 		WHERE user_id = ? AND follower_id = ?
 	`, userID, followerID)

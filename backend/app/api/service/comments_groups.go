@@ -5,8 +5,8 @@ import (
 	"time"
 
 	"social-network/app/helper"
-	"social-network/app/repository"
 	"social-network/app/repository/model"
+	"social-network/pkg/db/sqlite"
 )
 
 func GetCommentsGroup(userID, groupID, postID string, offset int) ([]map[string]interface{}, error) {
@@ -14,7 +14,7 @@ func GetCommentsGroup(userID, groupID, postID string, offset int) ([]map[string]
 		return nil, errors.New("you are not a member of this group")
 	}
 
-	repoComments, err := model.FetchCommentsGroup(repository.Db, postID, offset)
+	repoComments, err := model.FetchCommentsGroup(sqlite.Db, postID, offset)
 	if err != nil {
 		return nil, err
 	}
@@ -39,7 +39,7 @@ func GetLastCommentGroup(commentId string, userID string, groupID string) (map[s
 		return nil, err
 	}
 
-	repoComment, err := model.GetCommentByIDlast(repository.Db, commentId)
+	repoComment, err := model.GetCommentByIDlast(sqlite.Db, commentId)
 	if err != nil {
 		return nil, err
 	}

@@ -1,15 +1,15 @@
 package model
 
-import "social-network/app/repository"
+import "social-network/pkg/db/sqlite"
 
 func UserExists(id string) bool {
 	var tmp string
-	err := repository.Db.QueryRow(`SELECT id FROM users WHERE id = ?`, id).Scan(&tmp)
+	err := sqlite.Db.QueryRow(`SELECT id FROM users WHERE id = ?`, id).Scan(&tmp)
 	return err == nil
 }
 
 func GetPrivacyAndFollowing(currentUserID, targetUserID string) (privacy string, isFollowing int, err error) {
-	err = repository.Db.QueryRow(`
+	err = sqlite.Db.QueryRow(`
 SELECT 
     u.privacy,
     CASE WHEN f.follower_id IS NOT NULL THEN 1 ELSE 0 END
@@ -24,7 +24,7 @@ WHERE u.id = ?;
 }
 
 func GetFollowersList(targetUserID string) ([]map[string]interface{}, error) {
-	rows, err := repository.Db.Query(`
+	rows, err := sqlite.Db.Query(`
 	SELECT u.id , u.first_name, u.last_name, u.image
 	FROM followers f
 	JOIN users u ON u.id = f.follower_id

@@ -5,9 +5,9 @@ import (
 	"net/http"
 
 	"social-network/app/helper"
-	"social-network/app/repository"
 	logindata "social-network/app/repository/login"
 	"social-network/app/utils"
+	"social-network/pkg/db/sqlite"
 )
 
 func LoginHandler(w http.ResponseWriter, r *http.Request) {
@@ -24,7 +24,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	var dbPassword, userID string
 	err1 := logindata.Checklogindata(
 		loginData.Nickname,
-		repository.Db,
+		sqlite.Db,
 		w,
 		&dbPassword,
 		&userID,

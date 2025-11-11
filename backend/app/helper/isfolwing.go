@@ -3,7 +3,7 @@ package helper
 import (
 	"net/http"
 
-	"social-network/app/repository"
+	"social-network/pkg/db/sqlite"
 )
 
 func IsFollowing(r *http.Request, targetUserID string) (bool, error) {
@@ -12,7 +12,7 @@ func IsFollowing(r *http.Request, targetUserID string) (bool, error) {
 		return false, err
 	}
 	var exists bool
-	err = repository.Db.QueryRow(`
+	err = sqlite.Db.QueryRow(`
 		SELECT EXISTS(
 			SELECT 1 
 			FROM followers 

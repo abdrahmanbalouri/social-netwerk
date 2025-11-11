@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"time"
 
-	"social-network/app/repository"
 	"social-network/app/utils"
+	"social-network/pkg/db/sqlite"
 )
 
 func FetchUserGroups(userID string) ([]utils.Group, error) {
@@ -26,7 +26,7 @@ func FetchUserGroups(userID string) ([]utils.Group, error) {
 		WHERE gm.user_id = ?
 	);`
 
-	rows, err := repository.Db.Query(query, userID)
+	rows, err := sqlite.Db.Query(query, userID)
 	if err != nil {
 		return nil, err
 	}
@@ -61,7 +61,7 @@ func FetchAllAvailableGroups(userID string) ([]utils.Group, error) {
 		WHERE gm.user_id = ?
 	);`
 
-	rows, err := repository.Db.Query(query, userID)
+	rows, err := sqlite.Db.Query(query, userID)
 	if err != nil {
 		return nil, err
 	}
@@ -105,7 +105,7 @@ func FetchCreatedGroup(groupID string) (utils.Group, error) {
 		FROM groups g 
 		ORDER BY g.created_at DESC
 		LIMIT 1`
-	err := repository.Db.QueryRow(query, groupID).Scan(&g.ID, &g.Title, &g.Description)
+	err := sqlite.Db.QueryRow(query, groupID).Scan(&g.ID, &g.Title, &g.Description)
 	return g, err
 }
 
@@ -163,7 +163,7 @@ func InsertInvitation(tx *sql.Tx, invitationID, groupID, invitedUser, invitedBy 
 
 func GetUserIDByInvitation(invitationID string) (string, error) {
 	var userID string
-	err := repository.Db.QueryRow(`SELECT user_id FROM group_invitations WHERE id = ?`, invitationID).Scan(&userID)
+	err := sqlite.Db.QueryRow(`SELECT user_id FROM group_invitations WHERE id = ?`, invitationID).Scan(&userID)
 	if err != nil {
 		return "", err
 	}
@@ -172,7 +172,7 @@ func GetUserIDByInvitation(invitationID string) (string, error) {
 
 func GetGroupIDByInvitation(invitationID, userID string) (string, error) {
 	var groupID string
-	err := repository.Db.QueryRow(`
+	err := sqlite.Db.QueryRow(`
         SELECT group_id FROM group_invitations 
         WHERE id = ? AND user_id = ?`, invitationID, userID).Scan(&groupID)
 
@@ -212,7 +212,7 @@ func FetchJoinRequests(userID string, groupID string) ([]utils.JoinRequest, erro
 	AND g.id = ?;
 	`
 
-	rows, err := repository.Db.Query(query, userID, groupID)
+	rows, err := sqlite.Db.Query(query, userID, groupID)
 	if err != nil {
 		return nil, fmt.Errorf("database query error: %v", err)
 	}
@@ -241,7 +241,7 @@ func FetchGroupInvitations(userID string) ([]utils.FetchGroupInvitation, error) 
 	WHERE i.user_id = ? AND i.request_type = 'invitation';
 	`
 
-	rows, err := repository.Db.Query(query, userID)
+	rows, err := sqlite.Db.Query(query, userID)
 	if err != nil {
 		return nil, fmt.Errorf("database query error: %v", err)
 	}
@@ -270,7 +270,7 @@ func FetchFriendsNotInGroup(userID, groupID string) ([]utils.Friend, error) {
 		)
 	`
 
-	rows, err := repository.Db.Query(query, userID, groupID)
+	rows, err := sqlite.Db.Query(query, userID, groupID)
 	if err != nil {
 		return nil, fmt.Errorf("database query failed: %v", err)
 	}

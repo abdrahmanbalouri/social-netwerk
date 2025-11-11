@@ -1,9 +1,9 @@
 package model
 
-import "social-network/app/repository"
+import "social-network/pkg/db/sqlite"
 
 func GetFollowingList(targetUserID string) ([]map[string]interface{}, error) {
-	rows, err := repository.Db.Query(`
+	rows, err := sqlite.Db.Query(`
 		SELECT u.id, u.first_name, u.last_name, u.image 
 		FROM followers f
 		JOIN users u ON u.id = f.user_id

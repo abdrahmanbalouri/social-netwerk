@@ -6,13 +6,13 @@ import (
 	"os"
 	"path/filepath"
 
-	"social-network/app/repository"
 	"social-network/app/repository/model"
+	"social-network/pkg/db/sqlite"
 )
 
 func UpdateUserProfile(userID, displayName, privacy string, coverFile io.ReadCloser, coverName string, avatarFile io.ReadCloser, avatarName string) (string, string, error) {
 	// Fetch current files
-	oldCover, oldAvatar, err := model.GetProfileFiles(repository.Db, userID)
+	oldCover, oldAvatar, err := model.GetProfileFiles(sqlite.Db, userID)
 	if err != nil {
 		return "", "", err
 	}
@@ -65,7 +65,7 @@ func UpdateUserProfile(userID, displayName, privacy string, coverFile io.ReadClo
 		Avatar:      avatarFilename,
 	}
 
-	if err := model.UpdateProfile(repository.Db, profile); err != nil {
+	if err := model.UpdateProfile(sqlite.Db, profile); err != nil {
 		return "", "", err
 	}
 

@@ -5,7 +5,7 @@ import (
 
 	service "social-network/app/api/service"
 	"social-network/app/helper"
-	"social-network/app/repository"
+	"social-network/pkg/db/sqlite"
 )
 
 func GetStories(w http.ResponseWriter, r *http.Request) {
@@ -15,7 +15,7 @@ func GetStories(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	stories, err := service.FetchStories(authUserID, repository.Db)
+	stories, err := service.FetchStories(authUserID, sqlite.Db)
 	if err != nil {
 		helper.RespondWithError(w, http.StatusInternalServerError, "Failed to fetch stories")
 		return

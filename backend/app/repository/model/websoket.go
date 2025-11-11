@@ -5,14 +5,14 @@ import (
 	"fmt"
 	"time"
 
-	"social-network/app/repository"
+	"social-network/pkg/db/sqlite"
 )
 
 // ✅ Jib l'ism w laqab dyal user b'id
 func GetUserByID(currentUserID string) (map[string]any, error) {
 	var first_name, last_name, photo, privacy string
 
-	err := repository.Db.QueryRow(`SELECT first_name , last_name, image, privacy FROM users WHERE id = ?`, currentUserID).Scan(&first_name, &last_name, &photo, &privacy)
+	err := sqlite.Db.QueryRow(`SELECT first_name , last_name, image, privacy FROM users WHERE id = ?`, currentUserID).Scan(&first_name, &last_name, &photo, &privacy)
 	if err == sql.ErrNoRows {
 		return nil, nil
 	} else if err != nil {
@@ -30,7 +30,7 @@ func GetUserByID(currentUserID string) (map[string]any, error) {
 // ✅ Vérifie ghir wach receiver kayn
 func CheckIfUsersFollowEachOther(currentUserID string, msg Message) (bool, error) {
 	var exist int
-	err := repository.Db.QueryRow(`
+	err := sqlite.Db.QueryRow(`
 				SELECT 1 FROM followers
 				WHERE (user_id = ? AND follower_id = ?) OR (user_id = ? AND follower_id = ?)
 			`, currentUserID, msg.ReceiverId, msg.ReceiverId, currentUserID).Scan(&exist)
@@ -46,14 +46,14 @@ func CheckIfUsersFollowEachOther(currentUserID string, msg Message) (bool, error
 // ✅ Insert notification direct sans check dyal follows
 func SaveNotification(currentUserID string, msg Message) error {
 	q := `INSERT INTO notifications ( sender_id, receiver_id, type, message, created_at) VALUES (?, ?, ?, ?, ?) `
-	_, err := repository.Db.Exec(q, currentUserID, msg.ReceiverId, msg.Type, "Send you a message", time.Now().Unix())
+	_, err := sqlite.Db.Exec(q, currentUserID, msg.ReceiverId, msg.Type, "Send you a message", time.Now().Unix())
 
 	return err
 }
 
 func SaveMessage(currentUserID string, msg Message, imageFileName string) error {
 	// Sauvegarder le message dans la base de données
-	_, err := repository.Db.Exec(`
+	_, err := sqlite.Db.Exec(`
 		INSERT INTO messages (sender_id, receiver_id, content, image)
 		VALUES (?, ?, ?, ?)
 	`, currentUserID, msg.ReceiverId, msg.MessageContent, imageFileName)
@@ -65,7 +65,7 @@ func SaveMessage(currentUserID string, msg Message, imageFileName string) error 
 }
 
 func IsUserGroupMember(currentUserID string, msg Message) (bool, error) {
-	err := repository.Db.QueryRow("SELECT 1 FROM group_members WHERE group_id = ? AND user_id = ?", msg.GroupID, currentUserID).Scan(new(any))
+	err := sqlite.Db.QueryRow("SELECT 1 FROM group_members WHERE group_id = ? AND user_id = ?", msg.GroupID, currentUserID).Scan(new(any))
 	if err == sql.ErrNoRows {
 		return false, nil
 	} else if err != nil {
@@ -75,7 +75,7 @@ func IsUserGroupMember(currentUserID string, msg Message) (bool, error) {
 }
 
 func SaveGroupMessage(currentUserID string, msg Message, imageFileName string) error {
-	_, err := repository.Db.Exec(`
+	_, err := sqlite.Db.Exec(`
 				INSERT INTO messages (group_id, sender_id, content, image)
 				VALUES (?, ?, ?, ?)
 			`, msg.GroupID, currentUserID, msg.MessageContent, imageFileName)
@@ -85,7 +85,7 @@ func SaveGroupMessage(currentUserID string, msg Message, imageFileName string) e
 
 func GetGroupMembers(groupID string) ([]string, error) {
 	var groupMembers []string
-	rows, err := repository.Db.Query("SELECT user_id FROM group_members WHERE group_id = ?", groupID)
+	rows, err := sqlite.Db.Query("SELECT user_id FROM group_members WHERE group_id = ?", groupID)
 	if err != nil {
 		return groupMembers, err
 	}
@@ -104,7 +104,7 @@ func GetGroupMembers(groupID string) ([]string, error) {
 func GetUserInfoByID(currentUserID string) (map[string]any, error) {
 	var first_name, last_name, photo string
 
-	err := repository.Db.QueryRow(`SELECT first_name , last_name, image FROM users WHERE id = ?`, currentUserID).Scan(&first_name, &last_name, &photo)
+	err := sqlite.Db.QueryRow(`SELECT first_name , last_name, image FROM users WHERE id = ?`, currentUserID).Scan(&first_name, &last_name, &photo)
 	if err == sql.ErrNoRows {
 		return nil, nil
 	} else if err != nil {
@@ -120,7 +120,7 @@ func GetUserInfoByID(currentUserID string) (map[string]any, error) {
 
 func IsFollowingRwauestReceiver(currentUserID string, msg Message) (bool, error) {
 	var exist int
-	err := repository.Db.QueryRow(`SELECT 1 FROM follow_requests WHERE user_id = ? AND follower_id = ?`, msg.ReceiverId, currentUserID).Scan(&exist)
+	err := sqlite.Db.QueryRow(`SELECT 1 FROM follow_requests WHERE user_id = ? AND follower_id = ?`, msg.ReceiverId, currentUserID).Scan(&exist)
 
 	if err == sql.ErrNoRows {
 		return false, nil
@@ -132,7 +132,7 @@ func IsFollowingRwauestReceiver(currentUserID string, msg Message) (bool, error)
 
 func IsFollowingReceiver(currentUserID string, msg Message) (bool, error) {
 	var exist int
-	err := repository.Db.QueryRow(`SELECT 1 FROM followers WHERE user_id = ? AND follower_id = ?`, msg.ReceiverId, currentUserID).Scan(&exist)
+	err := sqlite.Db.QueryRow(`SELECT 1 FROM followers WHERE user_id = ? AND follower_id = ?`, msg.ReceiverId, currentUserID).Scan(&exist)
 	if err == sql.ErrNoRows {
 		return false, nil
 	} else if err != nil {
@@ -143,7 +143,7 @@ func IsFollowingReceiver(currentUserID string, msg Message) (bool, error) {
 
 func SaveFollowNotification(currentUserID string, msg Message) error {
 	q := `INSERT INTO notifications ( sender_id, receiver_id, type, message, created_at) VALUES (?, ?, ?, ?, ?) `
-	_, err := repository.Db.Exec(q, currentUserID, msg.ReceiverId, msg.Type, msg.MessageContent, time.Now().Unix())
+	_, err := sqlite.Db.Exec(q, currentUserID, msg.ReceiverId, msg.Type, msg.MessageContent, time.Now().Unix())
 	return err
 }
 
@@ -151,20 +151,20 @@ func SaveGroupMessageNotification(currentUserID string, msg Message) error {
 	groupm, err := GetGroupMembers(msg.GroupID)
 	for _, v := range groupm {
 		q := `INSERT INTO notifications ( sender_id, receiver_id, type, message, created_at) VALUES (?, ?, ?, ?, ?) `
-		_, err = repository.Db.Exec(q, currentUserID, v, msg.Type, msg.MessageContent, time.Now().Unix())
+		_, err = sqlite.Db.Exec(q, currentUserID, v, msg.Type, msg.MessageContent, time.Now().Unix())
 	}
 	return err
 }
 
 func SaveGroupInvitationNotification(currentUserID string, msg Message) error {
-		q := `INSERT INTO notifications ( sender_id, receiver_id, type, message, created_at) VALUES (?, ?, ?, ?, ?) `
-	_, err := repository.Db.Exec(q, currentUserID, msg.ReceiverId, msg.Type, msg.MessageContent, time.Now().Unix())
+	q := `INSERT INTO notifications ( sender_id, receiver_id, type, message, created_at) VALUES (?, ?, ?, ?, ?) `
+	_, err := sqlite.Db.Exec(q, currentUserID, msg.ReceiverId, msg.Type, msg.MessageContent, time.Now().Unix())
 	return err
 }
 
 func Name(msg Message) (string, error) {
 	var Name string
-	err := repository.Db.QueryRow(`SELECT title FROM groups WHERE id = ?`, msg.ReceiverId).Scan(&Name)
+	err := sqlite.Db.QueryRow(`SELECT title FROM groups WHERE id = ?`, msg.ReceiverId).Scan(&Name)
 	if err != nil {
 		return "", err
 	}
@@ -173,10 +173,10 @@ func Name(msg Message) (string, error) {
 
 func SaveGroupJoinRequestNotification(currentUserID string, msg Message) (error, string) {
 	var adminID string
-	err := repository.Db.QueryRow(`SELECT admin_id FROM groups WHERE id = ?`, msg.ReceiverId).Scan(&adminID)
+	err := sqlite.Db.QueryRow(`SELECT admin_id FROM groups WHERE id = ?`, msg.ReceiverId).Scan(&adminID)
 	if err != nil {
 		return err, ""
 	}
-	_, err = repository.Db.Exec(`INSERT INTO notifications ( sender_id, receiver_id, type, message, created_at) VALUES (?, ?, ?, ?, ?) `, currentUserID, adminID, msg.Type, msg.MessageContent, time.Now().Unix())
+	_, err = sqlite.Db.Exec(`INSERT INTO notifications ( sender_id, receiver_id, type, message, created_at) VALUES (?, ?, ?, ?, ?) `, currentUserID, adminID, msg.Type, msg.MessageContent, time.Now().Unix())
 	return err, adminID
 }

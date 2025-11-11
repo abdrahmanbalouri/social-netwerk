@@ -1,8 +1,6 @@
 package model
 
-import (
-	"social-network/app/repository"
-)
+import "social-network/pkg/db/sqlite"
 
 type Message struct {
 	Type           string   `json:"type"`
@@ -27,7 +25,7 @@ func GetMessages(currentUserID, reciverId string) ([]Message, error) {
 		WHERE (m.sender_id = ? AND m.receiver_id = ?) OR (m.sender_id = ? AND m.receiver_id = ?)
 		ORDER BY m.sent_at DESC
 		`
-	rows, err := repository.Db.Query(query, currentUserID, reciverId, reciverId, currentUserID)
+	rows, err := sqlite.Db.Query(query, currentUserID, reciverId, reciverId, currentUserID)
 	if err != nil {
 		return nil, err
 	}
@@ -50,7 +48,7 @@ func GetMessages(currentUserID, reciverId string) ([]Message, error) {
 }
 
 func GetGroupMessages(currentUserID, groupId string) ([]Message, error) {
-	err := repository.Db.QueryRow("SELECT 1 FROM group_members WHERE group_id = ? AND user_id = ?", groupId, currentUserID).Scan(new(any))
+	err := sqlite.Db.QueryRow("SELECT 1 FROM group_members WHERE group_id = ? AND user_id = ?", groupId, currentUserID).Scan(new(any))
 	if err != nil {
 		return nil, err
 	}
@@ -61,7 +59,7 @@ func GetGroupMessages(currentUserID, groupId string) ([]Message, error) {
 		ORDER BY m.sent_at DESC
 		`
 
-	rows, err := repository.Db.Query(query, groupId)
+	rows, err := sqlite.Db.Query(query, groupId)
 	if err != nil {
 		return nil, err
 	}
@@ -73,7 +71,7 @@ func GetGroupMessages(currentUserID, groupId string) ([]Message, error) {
 		if err := rows.Scan(&msg.Content, &msg.SenderId, &msg.CreatedAt, &msg.PictureSend); err != nil {
 			return nil, err
 		}
-		err = repository.Db.QueryRow("SELECT first_name , last_name, image FROM users WHERE id = ?", msg.SenderId).Scan(&msg.First_name, &msg.Last_name, &msg.Photo)
+		err = sqlite.Db.QueryRow("SELECT first_name , last_name, image FROM users WHERE id = ?", msg.SenderId).Scan(&msg.First_name, &msg.Last_name, &msg.Photo)
 		if err != nil {
 			return nil, err
 		}

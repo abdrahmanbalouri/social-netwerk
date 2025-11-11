@@ -11,9 +11,9 @@ import (
 	"time"
 
 	"social-network/app/helper"
-	"social-network/app/repository"
 	"social-network/app/repository/model"
 	"social-network/app/utils"
+	"social-network/pkg/db/sqlite"
 )
 
 func CreateGroupPostService(r *http.Request, userID string) (interface{}, error) {
@@ -33,7 +33,7 @@ func CreateGroupPostService(r *http.Request, userID string) (interface{}, error)
 	title := strings.TrimSpace(r.FormValue("title"))
 	description := strings.TrimSpace(r.FormValue("description"))
 
-	if len(title) == 0{
+	if len(title) == 0 {
 		return nil, fmt.Errorf("title and description are required")
 	}
 	if len(title) > 20 || len(description) > 40 {
@@ -41,7 +41,7 @@ func CreateGroupPostService(r *http.Request, userID string) (interface{}, error)
 	}
 
 	// check membership
-	isMember, err := model.CheckUserInGroup(repository.Db, userID, groupID)
+	isMember, err := model.CheckUserInGroup(sqlite.Db, userID, groupID)
 	if err != nil {
 		return nil, fmt.Errorf("failed to check membership: %v", err)
 	}
@@ -113,7 +113,7 @@ func GetAllGroupPostsService(r *http.Request, userID string) ([]utils.GroupPost,
 	}
 	groupID := parts[3]
 
-	isMember, err := model.CheckUserInGroup(repository.Db, userID, groupID)
+	isMember, err := model.CheckUserInGroup(sqlite.Db, userID, groupID)
 	if err != nil {
 		return nil, fmt.Errorf("failed to check group membership")
 	}
@@ -134,7 +134,7 @@ func GetGroupPost(postID, userID, groupID string) (map[string]interface{}, error
 		return nil, errors.New("user not in group")
 	}
 
-	post, err := model.GetGroupPostByID(repository.Db, userID, postID)
+	post, err := model.GetGroupPostByID(sqlite.Db, userID, postID)
 	if err != nil {
 		return nil, err
 	}

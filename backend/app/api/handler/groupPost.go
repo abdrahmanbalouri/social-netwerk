@@ -7,7 +7,7 @@ import (
 
 	service "social-network/app/api/service"
 	"social-network/app/helper"
-	"social-network/app/repository"
+	"social-network/pkg/db/sqlite"
 )
 
 type PostData struct {
@@ -98,7 +98,7 @@ func GetPostGroup(w http.ResponseWriter, r *http.Request) {
 	// Check for user's membership
 	var isMember bool
 	query := `SELECT EXISTS (SELECT 1 FROM group_members WHERE user_id = ? AND group_id = ?)`
-	if err := repository.Db.QueryRow(query, userID, GrpId).Scan(&isMember); err != nil {
+	if err := sqlite.Db.QueryRow(query, userID, GrpId).Scan(&isMember); err != nil {
 		helper.RespondWithError(w, http.StatusInternalServerError, "Failed to check group membership")
 		return
 	}
@@ -133,7 +133,7 @@ func GetPostGroup(w http.ResponseWriter, r *http.Request) {
 	ORDER BY gp.created_at DESC
 	LIMIT 1;
 `
-	rows, err := repository.Db.Query(query, userID, GrpId)
+	rows, err := sqlite.Db.Query(query, userID, GrpId)
 	if err != nil {
 
 		helper.RespondWithError(w, http.StatusInternalServerError, "Failed to get posts")

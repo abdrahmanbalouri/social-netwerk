@@ -6,7 +6,7 @@ import (
 
 	service "social-network/app/api/service"
 	"social-network/app/helper"
-	"social-network/app/repository"
+	"social-network/pkg/db/sqlite"
 )
 
 func LikeHandler(w http.ResponseWriter, r *http.Request) {
@@ -30,7 +30,7 @@ func LikeHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	action, err := service.TogglePostLike(repository.Db, userID, postID)
+	action, err := service.TogglePostLike(sqlite.Db, userID, postID)
 	if err != nil {
 		helper.RespondWithError(w, http.StatusInternalServerError, "Failed to toggle like")
 		return

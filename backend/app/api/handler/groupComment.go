@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"social-network/app/helper"
-	"social-network/app/repository"
+	"social-network/pkg/db/sqlite"
 )
 
 type CommentRequest struct {
@@ -50,7 +50,7 @@ func GetCommentGroup(w http.ResponseWriter, r *http.Request) {
 	query := `SELECT p.group_id, EXISTS(SELECT 1 FROM group_members gm WHERE gm.user_id = ? AND gm.group_id = p.group_id) FROM group_posts p WHERE p.id = ?;`
 	var grpID string
 	var isMember bool
-	err = repository.Db.QueryRow(query, userID, PostID).Scan(&grpID, &isMember)
+	err = sqlite.Db.QueryRow(query, userID, PostID).Scan(&grpID, &isMember)
 	if err == sql.ErrNoRows {
 		return
 	} else if err != nil {
@@ -64,7 +64,7 @@ func GetCommentGroup(w http.ResponseWriter, r *http.Request) {
 
 	// Fetch all the posts of this group
 	query = `SELECT id, content, created_at FROM comments WHERE post_id = ?`
-	rows, err := repository.Db.Query(query, PostID)
+	rows, err := sqlite.Db.Query(query, PostID)
 	if err != nil {
 
 		helper.RespondWithError(w, http.StatusInternalServerError, "Failed to get comments")

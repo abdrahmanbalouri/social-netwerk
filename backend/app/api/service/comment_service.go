@@ -9,8 +9,8 @@ import (
 	"strings"
 
 	"social-network/app/helper"
-	"social-network/app/repository"
 	"social-network/app/repository/model"
+	"social-network/pkg/db/sqlite"
 )
 
 func CreateComment(userID, postID, content, whatis, groupID string, mediaFileHeader map[string]interface{}) (string, string, error) {
@@ -86,7 +86,7 @@ func CreateComment(userID, postID, content, whatis, groupID string, mediaFileHea
 	}
 
 	// Save to database
-	err := model.InsertComment(repository.Db, comment)
+	err := model.InsertComment(sqlite.Db, comment)
 	if err != nil {
 		return "", "", err
 	}
@@ -95,9 +95,9 @@ func CreateComment(userID, postID, content, whatis, groupID string, mediaFileHea
 }
 
 func FetchComments(postID string, offset int) ([]model.CommentAPI, error) {
-	return model.GetComments(repository.Db, postID, offset)
+	return model.GetComments(sqlite.Db, postID, offset)
 }
 
 func GetComment(commentID string) (model.CommentAPI, error) {
-	return model.GetCommentByID(repository.Db, commentID)
+	return model.GetCommentByID(sqlite.Db, commentID)
 }

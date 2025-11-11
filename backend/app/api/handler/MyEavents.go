@@ -5,7 +5,7 @@ import (
 	"net/http"
 
 	"social-network/app/helper"
-	"social-network/app/repository"
+	"social-network/pkg/db/sqlite"
 )
 
 type Event struct {
@@ -30,7 +30,7 @@ func MyEavents(w http.ResponseWriter, r *http.Request) {
 	WHERE a.action = 'going' AND a.user_id = ?
 	`
 
-	rows, err := repository.Db.Query(query, userID)
+	rows, err := sqlite.Db.Query(query, userID)
 	if err != nil {
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusInternalServerError)

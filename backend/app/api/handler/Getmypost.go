@@ -7,7 +7,7 @@ import (
 
 	service "social-network/app/api/service"
 	"social-network/app/helper"
-	"social-network/app/repository"
+	"social-network/pkg/db/sqlite"
 )
 
 func Getmypost(w http.ResponseWriter, r *http.Request) {
@@ -28,7 +28,7 @@ func Getmypost(w http.ResponseWriter, r *http.Request) {
 		authUserID = userID
 	}
 
-	posts, err := service.FetchPostsByUser(repository.Db, userID, authUserID, offset, 10)
+	posts, err := service.FetchPostsByUser(sqlite.Db, userID, authUserID, offset, 10)
 	if err != nil {
 		helper.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		return
