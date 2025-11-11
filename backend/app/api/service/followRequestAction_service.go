@@ -14,6 +14,10 @@ func HandleFollowRequestAction(currentUserID, requesterID, action string) error 
 		return errors.New("failed to get user privacy")
 	}
 
+	if currentUserID == requesterID {
+		return errors.New("you cant follow your self :)")
+	}
+
 	if privacy != "private" {
 		err := model.ClearFollowRequests(currentUserID)
 		if err != nil {
@@ -23,7 +27,7 @@ func HandleFollowRequestAction(currentUserID, requesterID, action string) error 
 	}
 
 	if !model.FollowRequestExists(currentUserID, requesterID) {
-		return errors.New("Follow request not found")
+		return errors.New("follow request not found")
 	}
 
 	// If user accepts → insert into followers

@@ -256,7 +256,7 @@ func Loop(conn *websocket.Conn, currentUserID string) {
 				log.Println("DB error checking follow status:", err)
 				continue
 			}
-			if !exict {
+			if exict {
 				msg.SubType = "followRequest"
 				msg.MessageContent = "send you a followRequest"
 				err = model.SaveFollowNotification(currentUserID, msg)

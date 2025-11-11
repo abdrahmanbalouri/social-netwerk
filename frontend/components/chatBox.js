@@ -22,6 +22,7 @@ export default function ChatBox({ user }) {
   const chatEndRef = useRef(null);
   const chatBoxRef = useRef(null);
   const refscroll = useRef(0)
+  const chatContainer = useRef(null)
   const id = useParams().id;
 
   const showToast = (message, type = "error", duration = 3000) => {
@@ -162,12 +163,12 @@ export default function ChatBox({ user }) {
             text: data.content,
             sender: data.from === user.id ? "them" : "me",
             time: data.time,
-            name: data.name,
+            name: data.first_name + " " + data.last_name,
             image: data.image,
             PictureSend: data.PictureSend
           },
         ]);
-        setNew(true)
+        handleScroll()
       }
     };
 
@@ -188,8 +189,6 @@ export default function ChatBox({ user }) {
       receiverId: user.id,
       messageContent: input,
       type: "message",
-      name: Profile.first_name,
-      image: Profile.image,
       PictureSend: preview
     };
     sendMessage(payload);

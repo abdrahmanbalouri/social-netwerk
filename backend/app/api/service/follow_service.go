@@ -12,6 +12,9 @@ func ToggleFollow(currentUserID, targetUserID string) (map[string]interface{}, e
 		return nil, errors.New("failed to load user privacy")
 	}
 
+	if currentUserID == targetUserID {
+		return nil, errors.New("you cant follow your self :)")
+	}
 	isFollowed, err := model.IsFollowing(targetUserID, currentUserID)
 	if err != nil {
 		return nil, errors.New("database error")

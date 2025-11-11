@@ -40,7 +40,6 @@ export default function Profile() {
   const offsetpsot = useRef(0)
   const offsetcomment = useRef(0)
   const modalRef = useRef(null);
-  const modalRefhome = useRef(null)
   const boleanofset = useRef(false)
   const postRefs = useRef({});
   const [showPrivacy, setShowPrivacy] = useState(false);
@@ -97,8 +96,8 @@ export default function Profile() {
           body: JSON.stringify({ userId: userId }),
         }
       );
+      let followw = await res.json();
       if (res.ok) {
-        let followw = await res.json();
 
         setProfile((prevProfile) => ({
           ...prevProfile,
@@ -108,9 +107,11 @@ export default function Profile() {
           isFollowing: followw.isFollowed,
           isPending: followw.isPending
         }));
+      } else {
+        showToast(followw.error)
       }
     } catch (error) {
-      console.error("Error following user:", error);
+      showToast(followw.error)
     }
   }
 
