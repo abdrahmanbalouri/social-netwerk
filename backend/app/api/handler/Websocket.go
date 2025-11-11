@@ -226,10 +226,10 @@ func Loop(conn *websocket.Conn, currentUserID string) {
 				continue
 			}
 
-			if exict {
+			if !exict {
 				msg.SubType = "unfollow"
 				msg.MessageContent = "has unfollowed you"
-			} else if !exict {
+			} else  {
 				msg.SubType = "follow"
 				msg.MessageContent = "has following you"
 				err = model.SaveFollowNotification(currentUserID, msg)
