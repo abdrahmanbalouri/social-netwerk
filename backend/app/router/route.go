@@ -19,8 +19,8 @@ func Routes() http.Handler {
 	mux.Handle("/uploads/", http.StripPrefix("/uploads/", http.FileServer(http.Dir("uploads")))) // hada mamahaloho mina i3rab
 
 	// ======= Auth & User =======
-	mux.HandleFunc("/api/register", handlers.RegisterHandler)
-	mux.HandleFunc("/api/login", handlers.LoginHandler)      
+	mux.HandleFunc("/api/register", middlewares.RateLimitLoginMiddleware(handlers.RegisterHandler))
+	mux.HandleFunc("/api/login",  middlewares.RateLimitLoginMiddleware(handlers.LoginHandler))     
 	mux.HandleFunc("/api/logout", handlers.LogoutHandler)    
 	mux.HandleFunc("/api/me", handlers.MeHandler)            
 	mux.HandleFunc("/api/profile", handlers.ProfileHandler)
