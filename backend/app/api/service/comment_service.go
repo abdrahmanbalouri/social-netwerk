@@ -11,8 +11,6 @@ import (
 	"social-network/app/helper"
 	"social-network/app/repository"
 	"social-network/app/repository/model"
-
-	"github.com/google/uuid"
 )
 
 func CreateComment(userID, postID, content, whatis, groupID string, mediaFileHeader map[string]interface{}) (string, string, error) {
@@ -63,7 +61,7 @@ func CreateComment(userID, postID, content, whatis, groupID string, mediaFileHea
 		uploadDir := "../frontend/public/uploads"
 		os.MkdirAll(uploadDir, os.ModePerm)
 
-		filename = fmt.Sprintf("%s%s", uuid.New().String(), ext)
+		filename = fmt.Sprintf("%s%s", helper.GenerateUUID().String(), ext)
 		mediaPath = fmt.Sprintf("uploads/%s", filename)
 		out, err := os.Create(filepath.Join("../frontend/public", mediaPath))
 		if err != nil {
@@ -76,7 +74,7 @@ func CreateComment(userID, postID, content, whatis, groupID string, mediaFileHea
 		}
 	}
 
-	commentID := uuid.New().String()
+	commentID := helper.GenerateUUID().String()
 	comment := model.Comment{
 		ID:        commentID,
 		PostID:    postID,

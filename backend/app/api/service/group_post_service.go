@@ -14,8 +14,6 @@ import (
 	"social-network/app/repository"
 	"social-network/app/repository/model"
 	"social-network/app/utils"
-
-	"github.com/google/uuid"
 )
 
 func CreateGroupPostService(r *http.Request, userID string) (interface{}, error) {
@@ -55,7 +53,7 @@ func CreateGroupPostService(r *http.Request, userID string) (interface{}, error)
 		return nil, err
 	}
 
-	postID := uuid.New().String()
+	postID := helper.GenerateUUID().String()
 	createdAt := time.Now().UTC()
 
 	err = model.InsertGroupPost(postID, userID, groupID, title, description, imagePath, createdAt)
@@ -95,7 +93,7 @@ func handleGroupPostMedia(r *http.Request, maxSize int64, title string, descrept
 		return "", fmt.Errorf("failed to create upload directory")
 	}
 
-	fileName := fmt.Sprintf("%s%s", uuid.New().String(), ext)
+	fileName := fmt.Sprintf("%s%s", helper.GenerateUUID().String(), ext)
 	imagePath := fmt.Sprintf("uploads/%s", fileName)
 	out, err := os.Create(filepath.Join("../frontend/public", imagePath))
 	if err != nil {

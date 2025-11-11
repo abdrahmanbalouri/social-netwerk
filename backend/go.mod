@@ -6,7 +6,6 @@ toolchain go1.24.7
 
 require (
 	github.com/gofrs/uuid/v5 v5.3.2
-	github.com/google/uuid v1.6.0
 	github.com/gorilla/websocket v1.5.3
 	github.com/mattn/go-sqlite3 v1.14.32
 	github.com/rubenv/sql-migrate v1.8.0

@@ -16,7 +16,6 @@ import (
 	"social-network/app/helper"
 	register "social-network/app/repository/register"
 
-	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -122,7 +121,7 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 		// sanitize filename and generate unique name
 		safeFilename := filepath.Base(handler.Filename)
 		ext := filepath.Ext(safeFilename)
-		newName := fmt.Sprintf("%s%s", uuid.New().String(), ext)
+		newName := fmt.Sprintf("%s%s", helper.GenerateUUID().String(), ext)
 		filePath := filepath.Join(uploadDir, newName)
 
 		dst, createErr := os.Create(filePath)
@@ -144,7 +143,7 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 
 	// Prepare user struct (handler-local)
 	user := User{
-		ID:        uuid.New().String(),
+		ID:        helper.GenerateUUID().String(),
 		Nickname:  html.EscapeString(nickname),
 		DateBirth: dob,
 		FirstName: html.EscapeString(firstName),

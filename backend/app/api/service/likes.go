@@ -6,8 +6,6 @@ import (
 
 	"social-network/app/helper"
 	"social-network/app/repository/model"
-
-	"github.com/google/uuid"
 )
 
 func TogglePostLike(db *sql.DB, userID, postID string) (string, error) {
@@ -31,7 +29,7 @@ func TogglePostLike(db *sql.DB, userID, postID string) (string, error) {
 
 	// Add like
 	newLike := model.Like{
-		ID:            uuid.New().String(),
+		ID:            helper.GenerateUUID().String(),
 		UserID:        userID,
 		LikedItemID:   postID,
 		LikedItemType: "post",

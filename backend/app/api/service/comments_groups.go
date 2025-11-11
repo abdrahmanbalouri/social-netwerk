@@ -14,15 +14,6 @@ func GetCommentsGroup(userID, groupID, postID string, offset int) ([]map[string]
 		return nil, errors.New("you are not a member of this group")
 	}
 
-	type Comment struct {
-		ID        string
-		Content   string
-		CreatedAt time.Time
-		FirstName string
-		LastName  string
-		MediaPath string
-	}
-
 	repoComments, err := model.FetchCommentsGroup(repository.Db, postID, offset)
 	if err != nil {
 		return nil, err

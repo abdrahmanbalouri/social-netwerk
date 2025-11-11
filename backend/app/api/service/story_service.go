@@ -8,13 +8,11 @@ import (
 	"path/filepath"
 	"strings"
 
+	"social-network/app/helper"
 	"social-network/app/repository"
 	"social-network/app/repository/model"
-
-	"github.com/google/uuid"
 )
 
-const maxFileSize = 1 * 1024 * 1024 * 1024 // 1 GB
 func FormatStories(stories []model.Storyapi) []map[string]interface{} {
 	var formatted []map[string]interface{}
 
@@ -72,7 +70,7 @@ func CreateStory(userID, content, bgColor string, imageFile io.ReadCloser, filen
 		if ext == "" {
 			ext = ".jpg"
 		}
-		imagePath = "/uploads/stories/" + uuid.New().String() + ext
+		imagePath = "/uploads/stories/" + helper.GenerateUUID().String() + ext
 		uploadDir := "../frontend/public/uploads/stories"
 		if err := os.MkdirAll(uploadDir, os.ModePerm); err != nil {
 			return "", fmt.Errorf("failed to create upload directory: %v", err)

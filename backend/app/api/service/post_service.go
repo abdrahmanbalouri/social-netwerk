@@ -12,8 +12,6 @@ import (
 	"social-network/app/helper"
 	"social-network/app/repository"
 	"social-network/app/repository/model"
-
-	"github.com/google/uuid"
 )
 
 type PostResponse struct {
@@ -38,7 +36,7 @@ func CreatePost(userID, title, content, visibility, allowedUsers string, fileHea
 	const maxFileSize = 1 * 1024 * 1024 * 1024 // 1GB
 	// Validate title
 	if len(title) > 30 {
-     return "", errors.New("title must be less than 30 characters")
+		return "", errors.New("title must be less than 30 characters")
 	}
 
 	var allowed []string
@@ -70,7 +68,7 @@ func CreatePost(userID, title, content, visibility, allowedUsers string, fileHea
 			return "", fmt.Errorf("failed to create upload directory: %v", err)
 		}
 
-		filename := fmt.Sprintf("%s%s", uuid.New().String(), ext)
+		filename := fmt.Sprintf("%s%s", helper.GenerateUUID().String(), ext)
 		imagePath = fmt.Sprintf("uploads/%s", filename)
 		out, err := os.Create(filepath.Join("../frontend/public", imagePath))
 		if err != nil {
@@ -82,7 +80,7 @@ func CreatePost(userID, title, content, visibility, allowedUsers string, fileHea
 		}
 	}
 
-	postID := uuid.New().String()
+	postID := helper.GenerateUUID().String()
 	post := model.Post{
 		ID:           postID,
 		UserID:       userID,
