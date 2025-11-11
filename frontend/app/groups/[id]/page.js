@@ -18,6 +18,7 @@ import SendIcon from "@mui/icons-material/Send";
 import "../../../styles/chat.css";
 import { useProfile } from "../../../context/profile.js";
 import ShowToast from "../../../components/ShowToast.js";
+import { Toaster, toast } from "sonner"
 
 
 // Global sendRequest (can be moved to a service file later)
@@ -550,13 +551,15 @@ export async function CreatePost(groupId, formData) {
         data?.error ||
         data?.message ||
         (typeof data === "string" ? data : "") ||
-        "Failed to create group";
+        "Failed to create post";
+        console.log("msg :", message);
       throw new Error(message);
     }
 
     return data;
   } catch (error) {
-    console.error("CreatePost error:", error);
+    throw new Error(error.message);
+    // console.error("CreatePost error:", error);
   }
 }
 
