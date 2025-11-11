@@ -21,6 +21,8 @@ export default function SignupPage() {
   const router = useRouter()
 
   const handleChange = e => {
+    console.log(Math.floor(new Date(e.target.value).getTime() / 1000));
+    
     setForm({
       ...form,
       [e.target.name]: e.target.name === "dob"
@@ -47,14 +49,11 @@ export default function SignupPage() {
     formData.append("aboutMe", form.aboutMe)
     formData.append("avatar", form.avatar)
     formData.append("privacy", form.privacy || "public")
-
     try {
       const response = await fetch("http://localhost:8080/api/register", {
         method: "POST",
         body: formData,
       })
-  
-
       const res = await response.json()
       if  (res.error){
 
