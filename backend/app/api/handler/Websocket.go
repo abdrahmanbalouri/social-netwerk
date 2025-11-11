@@ -188,11 +188,7 @@ func Loop(conn *websocket.Conn, currentUserID string) {
 				continue
 			}
 
-			err = model.SaveGroupMessageNotification(currentUserID, msg)
-			if err != nil {
-				log.Println("DB error saving group message notification:", err)
-			}
-
+			
 			service.SendToGroupMembers(msg.GroupID, currentUserID, map[string]any{
 				"type":        msg.Type,
 				"from":        currentUserID,
@@ -204,11 +200,15 @@ func Loop(conn *websocket.Conn, currentUserID string) {
 				"image":       msg.Photo,
 				"PictureSend": imageFileName,
 			})
-
+			
 			// ===============================
 			//  HANDLE FOLLOW NOTIFICATION
 			// ===============================
 			msg.MessageContent = "sent a message to the group"
+			err = model.SaveGroupMessageNotification(currentUserID, msg)
+			if err != nil {
+				log.Println("DB error saving group message notification:", err)
+			}
 			service.BrodcastGroupMembersNotification(msg.GroupID, currentUserID, map[string]any{
 				"type":       "notification",
 				"subType":    "group_message",

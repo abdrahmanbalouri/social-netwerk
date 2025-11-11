@@ -66,7 +66,7 @@ func Notifications(w http.ResponseWriter, r *http.Request) {
 
 	for rows.Next() {
 		var notif Notification
-		if err := rows.Scan(&notif.SenderID, &notif.First_name, &notif.Last_name, &notif.Image, &notif.Type, &notif.Message, &notif.CreatedAt,&notif.Seen); err != nil {
+		if err := rows.Scan(&notif.SenderID, &notif.First_name, &notif.Last_name, &notif.Image, &notif.Type, &notif.Message, &notif.CreatedAt, &notif.Seen); err != nil {
 			log.Println("Error scanning notification:", err)
 			continue
 		}

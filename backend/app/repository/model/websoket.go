@@ -117,6 +117,7 @@ func GetUserInfoByID(currentUserID string) (map[string]any, error) {
 	}
 	return user, nil
 }
+
 func IsFollowingRwauestReceiver(currentUserID string, msg Message) (bool, error) {
 	var exist int
 	err := repository.Db.QueryRow(`SELECT 1 FROM follow_requests WHERE user_id = ? AND follower_id = ?`, msg.ReceiverId, currentUserID).Scan(&exist)
@@ -132,7 +133,6 @@ func IsFollowingRwauestReceiver(currentUserID string, msg Message) (bool, error)
 func IsFollowingReceiver(currentUserID string, msg Message) (bool, error) {
 	var exist int
 	err := repository.Db.QueryRow(`SELECT 1 FROM followers WHERE user_id = ? AND follower_id = ?`, msg.ReceiverId, currentUserID).Scan(&exist)
-	fmt.Println("eeee", msg.ReceiverId, currentUserID)
 	if err == sql.ErrNoRows {
 		return false, nil
 	} else if err != nil {
@@ -148,13 +148,16 @@ func SaveFollowNotification(currentUserID string, msg Message) error {
 }
 
 func SaveGroupMessageNotification(currentUserID string, msg Message) error {
-	q := `INSERT INTO notifications ( sender_id, receiver_id, type, message, created_at) VALUES (?, ?, ?, ?, ?) `
-	_, err := repository.Db.Exec(q, currentUserID, msg.GroupID, msg.Type, msg.MessageContent, time.Now().Unix())
+	groupm, err := GetGroupMembers(msg.GroupID)
+	for _, v := range groupm {
+		q := `INSERT INTO notifications ( sender_id, receiver_id, type, message, created_at) VALUES (?, ?, ?, ?, ?) `
+		_, err = repository.Db.Exec(q, currentUserID, v, msg.Type, msg.MessageContent, time.Now().Unix())
+	}
 	return err
 }
 
 func SaveGroupInvitationNotification(currentUserID string, msg Message) error {
-	q := `INSERT INTO notifications ( sender_id, receiver_id, type, message, created_at) VALUES (?, ?, ?, ?, ?) `
+		q := `INSERT INTO notifications ( sender_id, receiver_id, type, message, created_at) VALUES (?, ?, ?, ?, ?) `
 	_, err := repository.Db.Exec(q, currentUserID, msg.ReceiverId, msg.Type, msg.MessageContent, time.Now().Unix())
 	return err
 }

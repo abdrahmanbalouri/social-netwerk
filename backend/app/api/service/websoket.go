@@ -50,7 +50,6 @@ func BrodcastOnlineListe() {
 }
 
 func BrodcastAllNotifications(IDs []string, message map[string]any) {
-	
 	for i := 0; i < len(IDs); i++ {
 		SendToUser(IDs[i], message)
 	}
