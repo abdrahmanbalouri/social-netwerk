@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"fmt"
 	"log"
 	"net/http"
 	"time"
@@ -187,7 +186,6 @@ func Loop(conn *websocket.Conn, currentUserID string) {
 				continue
 			}
 
-			
 			service.SendToGroupMembers(msg.GroupID, currentUserID, map[string]any{
 				"type":        msg.Type,
 				"from":        currentUserID,
@@ -199,7 +197,7 @@ func Loop(conn *websocket.Conn, currentUserID string) {
 				"image":       msg.Photo,
 				"PictureSend": imageFileName,
 			})
-			
+
 			// ===============================
 			//  HANDLE FOLLOW NOTIFICATION
 			// ===============================

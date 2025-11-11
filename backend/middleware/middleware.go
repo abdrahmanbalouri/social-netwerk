@@ -2,7 +2,6 @@ package middlewares
 
 import (
 	"database/sql"
-	"fmt"
 	"net/http"
 	"slices"
 	"time"

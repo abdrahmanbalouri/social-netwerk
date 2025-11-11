@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"encoding/json"
-	"fmt"
 	"io"
 	"net/http"
 
@@ -21,7 +20,6 @@ func Editor(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Unauthorized", http.StatusUnauthorized)
 		return
 	}
-
 
 	err = r.ParseMultipartForm(1024 * 1024) // 10MB // 10485760
 	if err != nil {
