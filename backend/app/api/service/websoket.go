@@ -49,10 +49,17 @@ func BrodcastOnlineListe() {
 	}
 }
 
+func BrodcastAllNotifications(IDs []string, message map[string]any) {
+	
+	for i := 0; i < len(IDs); i++ {
+		SendToUser(IDs[i], message)
+	}
+}
+
 func BrodcastGroupMembersNotification(groupID string, senderID string, message map[string]any) {
 	ClientsMutex.Lock()
 	defer ClientsMutex.Unlock()
-	
+
 	groupMembers, err := model.GetGroupMembers(groupID)
 	if err != nil {
 		log.Println("DB error getting group members:", err)

@@ -4,6 +4,7 @@ import { createGroup } from "../app/groups/page";
 import { GroupCard } from "./groupCard";
 import { Plus } from "lucide-react";
 import { Toaster, toast } from "sonner"
+import { useWS } from "../context/wsContext";
 export function CreateGroupForm({ users, onSubmit, onCancel }) {
 
   const [groupTitle, setGroupTitle] = useState("");
@@ -180,6 +181,8 @@ export function GroupCreationTrigger({ setGroup }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [showNoGroups, setShowNoGroups] = useState(true);
   const [userList, setUserList] = useState([]);
+  const { sendMessage } = useWS();
+
 
 
   const handlePostClick = () => {
@@ -195,7 +198,7 @@ export function GroupCreationTrigger({ setGroup }) {
     try {
       if (isSubmitting) return;
       setIsSubmitting(true);
-      const newGroup = await createGroup(groupData);
+      const newGroup = await createGroup(groupData, sendMessage);
       toast.success("group created successfully!");
       setGroup((prev) => {
         const exists = prev.some((g) => g.ID === newGroup.ID);

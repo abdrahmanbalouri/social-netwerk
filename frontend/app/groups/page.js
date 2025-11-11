@@ -13,7 +13,6 @@ import { Users, ChevronRight } from "lucide-react";
 import { Toaster, toast } from "sonner"
 import { useWS } from "../../context/wsContext.js";
 import { useProfile } from "../../context/profile.js";
-import { send } from "process";
 
 // import RightBarGroup from '../../components/RightBarGroups.js';
 
@@ -49,7 +48,7 @@ async function JoinGroup(grpID, setJoining) {
     });
 
     const temp = await res.json();
-    
+
     return temp;
   } catch (error) {
     console.error("error sending invitation to join the group :", error);
@@ -177,7 +176,8 @@ export function MyGroups() {
   )
 }
 
-export async function createGroup(formData) {
+export async function createGroup(formData, sendMessage) {
+
   try {
     const res = await fetch("http://localhost:8080/api/groups/add", {
       method: "POST",
@@ -185,6 +185,7 @@ export async function createGroup(formData) {
       credentials: "include",
       body: JSON.stringify(formData),
     })
+    console.log(formData);
 
     let data;
     try {
@@ -199,11 +200,21 @@ export async function createGroup(formData) {
         data?.message ||
         (typeof data === "string" ? data : "") ||
         "Failed to create group";
+
+      console.log(message);
       throw new Error(message);
     }
+    console.log(11111111);
 
+    sendMessage({
+      type: "invite_to_group",
+      receiversIds: formData.invitedUsers,
+      messageContent: "",
+    });
     return data;
   } catch (err) {
+    console.log(err);
+
     throw err;
   }
 }
