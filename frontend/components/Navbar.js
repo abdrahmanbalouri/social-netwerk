@@ -48,7 +48,8 @@ export default function Navbar() {
           method: "GET",
           credentials: "include",
         });
-
+ console.log(res);
+ 
         if (!res.ok) {
           throw new Error(`Failed to fetch notifications: ${res.status}`);
         }

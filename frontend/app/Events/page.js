@@ -46,11 +46,7 @@ export default function EventsPage() {
                                     <h1>{event.title}</h1>
                                     <p>{event.description}</p>
                                     <h3>{formatTime(event.time)}</h3>
-<<<<<<< HEAD
-                                    <h6>Created at: {formatTime(event.created_at)}</h6>
-=======
                                     <h6>Created at: {event.created_at}</h6>
->>>>>>> fix-groups-errors
                                 </div>
                             </Link>)
                         )
