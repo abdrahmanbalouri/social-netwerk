@@ -6,7 +6,7 @@ export default function ShowToast({ message }) {
   const [toast, setToast] = useState(null);
 
   useEffect(() => {
-    if (!message) return;
+   // if (!message) return;
 
     setToast({ message });
 

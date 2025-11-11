@@ -1,10 +1,11 @@
 package middlewares
 
 import (
-	"encoding/json"
 	"net/http"
 	"strings"
 	"time"
+
+	"social-network/app/helper"
 )
 
 type LoginRateLimit struct {
@@ -49,14 +50,7 @@ func RateLimitLoginMiddleware(next http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		userRateLimit, ok := UserInfosLogin(r)
 		if !ok {
-			errorr := ErrorStruct{
-				Type: "error",
-				Text: "Unauthorized",
-			}
-
-			w.Header().Set("Content-Type", "application/json")
-			w.WriteHeader(http.StatusUnauthorized)
-			json.NewEncoder(w).Encode(errorr)
+			helper.RespondWithError(w, http.StatusUnauthorized, "Unauthorized")
 			return
 		}
 
@@ -67,14 +61,7 @@ func RateLimitLoginMiddleware(next http.HandlerFunc) http.HandlerFunc {
 		}
 
 		if !CheckRateLimitLogin(ratelimit, 1*time.Minute) {
-			errorr := ErrorStruct{
-				Type: "error",
-				Text: "Too many requests",
-			}
-
-			w.Header().Set("Content-Type", "application/json")
-			w.WriteHeader(http.StatusTooManyRequests)
-			json.NewEncoder(w).Encode(errorr)
+			helper.RespondWithError(w, http.StatusTooManyRequests, "Too many requests. Please try again later.")
 			return
 		}
 		next.ServeHTTP(w, r)

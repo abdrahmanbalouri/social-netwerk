@@ -5,9 +5,20 @@ import Link from 'next/link';
 import ChatIcon from '@mui/icons-material/Chat';
 import "../styles/rightbar.css"
 import { useWS } from "../context/wsContext";
-import ShowToast from "./ShowToast";
+import { ShieldXIcon } from "lucide-react";
 export default function RightBar() {
-const [error , setError] = useState(null);
+
+
+ const [toast, setToast] = useState(null)
+
+   
+    const showToast = (message, type = "error", duration = 3000) => {
+    setToast({ message, type });
+    setTimeout(() => {
+      setToast(null);
+    }, duration);
+  };
+
   const [friends, setFriends] = useState([])
   const [users, setusers] = useState([])
   const [onlineUsers, setonlineUsers] = useState([])
@@ -37,9 +48,8 @@ const [error , setError] = useState(null);
         const data = await res.json();
 
         setgroupeInvitation(data);
-        setError(null);
       } catch (err) {
-        setError("Failed to fetch group invitations");
+        showToast("Failed to fetch group invitations");
       }
     }
 
@@ -57,14 +67,14 @@ const [error , setError] = useState(null);
       if (res.ok) {
         const data = await res.json();
         setFollowRequest(data);
-        setError(null);
+     
       } else {
-       setError("Failed to fetch follow requests");
+       
         return;
       }
 
     } catch (err) {
-      setError("Failed to fetch follow requests");
+     
     }
   }
 
@@ -112,11 +122,10 @@ const [error , setError] = useState(null);
         throw new Error("Action failed: " + errMsg);
       }
 
-      const data = await res.json();
 
       setFollowRequest((prev) => prev.filter((user) => user.id !== userId));
     } catch (err) {
-      setError("Failed to process follow request");
+      showToast("Failed to process follow request");
     }
   }
 
@@ -138,10 +147,9 @@ const [error , setError] = useState(null);
         const errMsg = await res.text();
         throw new Error("Action failed: " + errMsg);
       }
-      const data = await res.json();
       setgroupeInvitation((prev) => (prev || []).filter((req) => req.invitation_id !== invitaitonId));
     } catch (err) {
-      setError("Failed to process group invitation");
+      showToast("Failed to process group invitation");
     }
   }
 
@@ -166,7 +174,7 @@ const [error , setError] = useState(null);
 
         setusers(data);
       } catch (err) {
-setError("Failed to fetch users");
+showToast("Failed to fetch users");
    }
     }
 
@@ -200,8 +208,12 @@ setError("Failed to fetch users");
 
 
     <div className="rightBar">
-     <ShowToast  message={error} />
-
+     {toast && (
+          <div className={`toast ${toast.type}`}>
+            <span>{toast.message}</span>
+            <button onClick={() => setToast(null)} className="toast-close">×</button>
+          </div>
+        )}
       <div className="item">
         <div className="sections">
           <h3

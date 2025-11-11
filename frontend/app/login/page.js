@@ -20,12 +20,16 @@ export default function Login() {
         body: JSON.stringify(form),
       });
 
-        
-
-      if (!res.ok) return setErr(await res.text());
+      let data = await res.json();
+      console.log(data,"2222222222");
+      
+      if (data.error) {
+        setErr(data.error);
+        return;
+      }
       window.location.href = "/home";
-    }catch (error) {
-      setErr(error.message);
+    } catch (error) {
+      setErr("An unexpected error occurred. Please try again later.");
     }
   }
 

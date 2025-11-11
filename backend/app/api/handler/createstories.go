@@ -29,7 +29,7 @@ func CreateStories(w http.ResponseWriter, r *http.Request) {
 
 	content := r.FormValue("content")
 	bgColor := r.FormValue("bg_color")
-	content = helper.Skip(strings.TrimSpace(content))
+	content = (strings.TrimSpace(content))
 
 	var file io.ReadCloser
 	var filename string

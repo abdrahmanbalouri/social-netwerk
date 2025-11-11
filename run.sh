@@ -1,7 +1,7 @@
 #!/bin/bash
 clear
 cd ./backend
-go run ./cmd &
+go run ./server &
 
 cd ../frontend
 npm install

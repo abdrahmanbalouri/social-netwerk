@@ -17,6 +17,7 @@ import AddReactionIcon from "@mui/icons-material/AddReaction";
 import SendIcon from "@mui/icons-material/Send";
 import "../../../styles/chat.css";
 import { useProfile } from "../../../context/profile.js";
+import ShowToast from "../../../components/ShowToast.js";
 
 
 // Global sendRequest (can be moved to a service file later)
@@ -62,6 +63,16 @@ export default function GroupPage() {
 // events 
 export function Events() {
   const [ShowEventForm, SetShowEventForm] = useState(true)
+  const [toast, setToast] = useState(null)
+
+   
+    const showToast = (message, type = "error", duration = 3000) => {
+    setToast({ message, type });
+    setTimeout(() => {
+      setToast(null);
+    }, duration);
+  };
+
   const params = useParams();
 
   const grpID = params.id;
@@ -86,7 +97,8 @@ export function Events() {
 
       setEventList(data);
     } catch (error) {
-      console.error('Error fetching events:', error);
+      
+     showToast(error.message);
     }
   }
 
@@ -111,19 +123,24 @@ export function Events() {
         body: JSON.stringify({ status, eventID }),
       });
 
-      if (!response.ok) {
-        throw new Error('Failed to RSVP to event');
+      const data = await response.json();  
+
+      if (data.error) {
+        throw new Error(data.error);
       }
 
       await fetchEvents();
     } catch (error) {
-      console.error('Error RSVPing to event:', error);
+      
+      showToast(error.message);
     }
   }
 
 
   return (
     <>
+
+
       {ShowEventForm ? (
         <div>
           <button onClick={showEvent} className="Showbutton">
@@ -146,6 +163,12 @@ export function Events() {
           <EventCard key={ev.id} ev={ev} goingEvent={goingEvent} />
         ))
       )}
+       {toast && (
+          <div className={`toast ${toast.type}`}>
+            <span>{toast.message}</span>
+            <button onClick={() => setToast(null)} className="toast-close">×</button>
+          </div>
+        )}
     </>
   )
 }
@@ -158,7 +181,15 @@ export function EventForm({ closeForm, fetchEvents, showEvent }) {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [dateTime, setDateTime] = useState("");
-  const [error, setError] = useState("");
+ const [toast, setToast] = useState(null)
+
+   
+    const showToast = (message, type = "error", duration = 3000) => {
+    setToast({ message, type });
+    setTimeout(() => {
+      setToast(null);
+    }, duration);
+  };
 
   async function createEvent(e) {
     e.preventDefault();
@@ -170,23 +201,23 @@ export function EventForm({ closeForm, fetchEvents, showEvent }) {
     }
 
     if (!title || !description || !dateTime) {
-      setErrors("All fields are required");
+      showToast("All fields are required");
       return;
     }
 
     if ((title.length < 5 || title.length > 50)) {
-      setErrors(" Title must be between 5 and 50 characters");
+      showToast(" Title must be between 5 and 50 characters");
       return;
     }
 
     if (description.length < 10 || description.length > 300) {
-      setErrors("Description must be between 10 and 300 characters");
+      showToast("Description must be between 10 and 300 characters");
       return;
     }
 
 
     if (new Date(dateTime) <= new Date()) {
-      setErrors("Event date and time must be in the future");
+      showToast("Event date and time must be in the future");
       return;
     }
 
@@ -202,7 +233,7 @@ export function EventForm({ closeForm, fetchEvents, showEvent }) {
 
       if (!res.ok) {
         let err = await res.text();
-        setErrors(err);
+        showToast(err);
         return;
       }
 
@@ -216,7 +247,7 @@ export function EventForm({ closeForm, fetchEvents, showEvent }) {
 
 
     } catch (error) {
-      setErrors(error.message);
+      showToast(error.message);
     }
 
 
@@ -247,7 +278,12 @@ export function EventForm({ closeForm, fetchEvents, showEvent }) {
         <button type="submit" className="btn-create" onClick={createEvent}>Create Event</button>
         <button type="button" className="cancel-btn" onClick={showEvent}>Cancel</button>
       </form>
-      <p className="error-message" style={{ color: "red", alignItems: 'center' }}>{error}</p>
+     {toast && (
+          <div className={`toast ${toast.type}`}>
+            <span>{toast.message}</span>
+            <button onClick={() => setToast(null)} className="toast-close">×</button>
+          </div>
+        )}
     </div>
 
 

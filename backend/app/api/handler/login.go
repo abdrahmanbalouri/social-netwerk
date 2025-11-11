@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 
 	"social-network/app/helper"
@@ -12,7 +13,6 @@ import (
 
 func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	var loginData utils.LoginInformation
-
 	// Parse JSON body
 	err := json.NewDecoder(r.Body).Decode(&loginData)
 	if err != nil {
@@ -31,7 +31,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		loginData.Password,
 	)
 	if err1 != "" {
-		http.Error(w, err1, http.StatusUnauthorized)
+		helper.RespondWithError(w, http.StatusUnauthorized, err1)
 		return
 	}
 
@@ -41,7 +41,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	// Store session in database
 	err = logindata.CreateSession(userID, sessionID)
 	if err != nil {
-		http.Error(w, "Failed to create session", http.StatusInternalServerError)
+		helper.RespondWithError(w, http.StatusInternalServerError, "Failed to create session")
 		return
 	}
 
@@ -53,9 +53,8 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		HttpOnly: true,
 		MaxAge:   3600,
 	})
+	fmt.Println("555555555555555555555555555")
 
 	// Respond with success
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-	w.Write([]byte(`{"message":"Login successful"}`))
+	helper.RespondWithJSON(w, http.StatusOK, "Login successful")
 }

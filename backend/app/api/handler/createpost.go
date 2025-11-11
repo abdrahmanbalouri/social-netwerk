@@ -26,8 +26,8 @@ func Createpost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	title := helper.Skip(strings.TrimSpace(r.FormValue("title")))
-	content := helper.Skip(strings.TrimSpace(r.FormValue("content")))
+	title := (strings.TrimSpace(r.FormValue("title")))
+	content := (strings.TrimSpace(r.FormValue("content")))
 	visibility := strings.TrimSpace(r.FormValue("visibility"))
 	allowedUsers := strings.TrimSpace(r.FormValue("allowed_users"))
 

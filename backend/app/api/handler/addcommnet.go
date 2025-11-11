@@ -30,7 +30,7 @@ func CreateCommentHandler(w http.ResponseWriter, r *http.Request) {
 	content := r.FormValue("content")
 	whatis := r.FormValue("whatis")
 	groupID := r.FormValue("groupId")
-	content = helper.Skip(strings.TrimSpace(content))
+	content = (strings.TrimSpace(content))
 
 	// Extract media file if exists
 	var mediaFileHeader map[string]interface{}

@@ -35,8 +35,6 @@ export default function Home() {
   const modalRef = useRef(null);
   const modalRefhome = useRef(null)
   const boleanofset = useRef(false)
-  const profile = useProfile()
-  //  const postRefs = useRef({});
   const router = useRouter();
   const { darkMode } = useDarkMode();
   const [toast, setToast] = useState(null);
@@ -545,10 +543,7 @@ export default function Home() {
                   value={visibility}
                   onChange={handleVisibilityChange}
                 >
-                  {profile.Profile?.privacy === 'public' && (
-                    <option value="public">Public (All users)</option>
-                  )}
-
+                  <option value="public">Public </option>
                   <option value="almost_private">Almost Private (Followers only)</option>
                   <option value="private">Private (Selected followers)</option>
                 </select>

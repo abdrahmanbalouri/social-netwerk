@@ -42,7 +42,7 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Collect form data
-	nickname := r.FormValue("nickname")
+	nickname := (r.FormValue("nickname"))
 	firstName := r.FormValue("firstName")
 	lastName := r.FormValue("lastName")
 	email := r.FormValue("email")
@@ -56,6 +56,23 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 		helper.RespondWithError(w, http.StatusBadRequest, "Missing required fields")
 		return
 	}
+	if len (nickname) < 3 || len(nickname) > 20 {
+		helper.RespondWithError(w, http.StatusBadRequest, "Nickname must be between 3 and 30 characters")
+		return
+	}
+	if len(lastName) < 2 || len(lastName) > 20 {
+		helper.RespondWithError(w, http.StatusBadRequest, "Last name must be between 2 and 50 characters")
+		return
+	}
+	if len(firstName) < 2 || len(firstName) > 50 {
+		helper.RespondWithError(w, http.StatusBadRequest, "First name must be between 2 and 50 characters")
+		return
+	}
+	if len(password) < 6 {
+		helper.RespondWithError(w, http.StatusBadRequest, "Password must be at least 6 characters long")
+		return
+	}
+
 
 	// Validate email
 	re := regexp.MustCompile(`^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$`)

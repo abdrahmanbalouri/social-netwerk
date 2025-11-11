@@ -88,14 +88,6 @@ func RatelimitMiddleware(next http.HandlerFunc, rateLimitType string, maxAttempt
 
 		if !ok {
 			helper.RespondWithError(w, http.StatusUnauthorized, "Unauthorized")
-			// errorr := ErrorStruct{
-			// 	Type: "error",
-			// 	Text: "Unauthorized",
-			// }
-
-			// w.Header().Set("Content-Type", "application/json")
-			// w.WriteHeader(http.StatusUnauthorized)
-			// json.NewEncoder(w).Encode(errorr)
 			return
 		}
 
