@@ -40,7 +40,7 @@ You can also run the frontend and backend services locally for development.
     ```
 3.  Run the server:
     ```bash
-    go run ./cmd/main.go
+    go run ./cmd/
     ```
     The backend will be running on `http://localhost:8080`.
 
@@ -79,3 +79,7 @@ You can also run the frontend and backend services locally for development.
     ```bash
     docker-compose logs -f <service_name>  # e.g., backend or frontend
     ```
+# Authors :
+```bash
+@azraji, @abalouri, @abaid, @mennas, @ranniz, @ychatoua 
+```
