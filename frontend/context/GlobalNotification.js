@@ -15,7 +15,6 @@ export default function GlobalNotification() {
     const handle = (data) => {
       
       const payload = data.data || data;
-      console.log(payload);
       switch (payload.subType) {
         case "follow":
           setToast(payload);

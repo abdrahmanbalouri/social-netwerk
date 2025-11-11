@@ -117,8 +117,6 @@ export default function RightBarGroup({ onClick }) {
         fetchJoinRequest(grpID);
     }, [grpID]);
 
-    console.log("Join requests are ", joinRequest);
-
     return (
         <div className="rightBar">
             <Toaster position="bottom-right" richColors />

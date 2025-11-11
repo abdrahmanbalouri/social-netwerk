@@ -548,8 +548,6 @@ export function GroupChat({ groupId }) {
     })
       .then((res) => res.json())
       .then((data) => {
-        console.log("dataaaaaaaaaaaaaaaaaa", data);
-
         setId(data.user_id)
       })
       .catch((err) => console.error(err));
@@ -591,8 +589,6 @@ export function GroupChat({ groupId }) {
 
   useEffect(() => {
     const handleIncomingMessage = (data) => {
-      console.log(data);
-
       setMessages((prev) => [
         ...prev,
         {

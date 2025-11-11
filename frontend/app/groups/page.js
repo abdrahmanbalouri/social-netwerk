@@ -185,7 +185,6 @@ export async function createGroup(formData, sendMessage) {
       credentials: "include",
       body: JSON.stringify(formData),
     })
-    console.log(formData);
 
     let data;
     try {
@@ -201,10 +200,8 @@ export async function createGroup(formData, sendMessage) {
         (typeof data === "string" ? data : "") ||
         "Failed to create group";
 
-      console.log(message);
       throw new Error(message);
     }
-    console.log(11111111);
 
     sendMessage({
       type: "invite_to_group",

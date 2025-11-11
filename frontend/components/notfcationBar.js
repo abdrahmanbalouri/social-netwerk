@@ -36,8 +36,6 @@ export default function NotBar({ notData }) {
         }
     };
     const notificationtype = (noti) => {
-        console.log(noti);
-
         switch (noti.type) {
             case 'like':
             case 'comment':

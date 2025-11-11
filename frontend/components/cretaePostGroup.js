@@ -148,7 +148,6 @@ export function PostCreationTrigger({ setPost }) {
     setIsModalOpen(false);
   };
   const handleSubmit = async (formData) => {
-    // console.log("formData iiiissss :", formData);
     try {
       const newpost = await CreatePost(id, formData);
       toast.success("group created successfully!");
@@ -161,7 +160,6 @@ export function PostCreationTrigger({ setPost }) {
       }
       
       setIsModalOpen(false);
-      // setShowForm(false)
       setPost(prev => {
         const exists = prev.some(p => p.id === newpost.id);
         const temp = [newpost, ...prev]
@@ -169,7 +167,6 @@ export function PostCreationTrigger({ setPost }) {
       })
     } catch (err) {
       toast.error("Too many requests");
-      // console.error("Error creating post:", err);
     }
   };
 

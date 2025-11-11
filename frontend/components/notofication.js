@@ -3,8 +3,6 @@ import "../styles/notifaction.css";
 import { useDarkMode } from "../context/darkMod";
 
 export default function Notification({ data, onClose }) {
-    console.log('aaaaa', data);
-
     const { darkMode } = useDarkMode();
 
 
