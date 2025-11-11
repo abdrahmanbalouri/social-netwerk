@@ -21,8 +21,6 @@ func SessionMiddleware(db *sql.DB, next http.Handler) http.Handler {
 			return
 		}
 
-		fmt.Println(r.URL.Path)
-
 		cookie, err := r.Cookie("session")
 		if err != nil || cookie.Value == "" {
 			http.Error(w, "unauthorized: no session cookie", http.StatusUnauthorized)

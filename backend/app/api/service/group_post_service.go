@@ -36,8 +36,6 @@ func CreateGroupPostService(r *http.Request, userID string) (interface{}, error)
 	description := strings.TrimSpace(r.FormValue("description"))
 
 	if len(title) == 0{
-		fmt.Println("TITLE IS :", title)
-		fmt.Println("Description IS :", description)
 		return nil, fmt.Errorf("title and description are required")
 	}
 	if len(title) > 20 || len(description) > 40 {

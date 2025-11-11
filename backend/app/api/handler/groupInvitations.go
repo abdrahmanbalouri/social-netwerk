@@ -56,21 +56,18 @@ func GroupInvitationRequest(w http.ResponseWriter, r *http.Request) {
 
 	var newInvitation utils.GroupInvitation
 	if err := json.NewDecoder(r.Body).Decode(&newInvitation); err != nil {
-		fmt.Println("Invalid request format:", err)
 		helper.RespondWithError(w, http.StatusBadRequest, "Invalid request format")
 		return
 	}
 
 	userID, err := helper.AuthenticateUser(r)
 	if err != nil {
-		fmt.Println("User id error:", err)
 		helper.RespondWithError(w, http.StatusUnauthorized, "Unauthorized")
 		return
 	}
 
 	response, err, errorStatus := service.HandleGroupInvitation(groupID, userID, newInvitation)
 	if err != nil {
-		fmt.Println("Error handling invitation:", err)
 		helper.RespondWithError(w, errorStatus, err.Error())
 		return
 	}
@@ -97,16 +94,11 @@ func FetchJoinRequests(w http.ResponseWriter, r *http.Request) {
 	}
 	groupID := parts[3]
 
-	fmt.Println("User id is :", userID)
-	fmt.Println("Group id is :", groupID)
-
 	joinRequests, err := model.FetchJoinRequests(userID, groupID)
 	if err != nil {
 		http.Error(w, "Error fetching join requests: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
-
-	fmt.Println("\n\nJOIN REQUESTS ARE :", joinRequests)
 
 	helper.RespondWithJSON(w, http.StatusOK, joinRequests)
 }

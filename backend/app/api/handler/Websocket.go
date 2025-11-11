@@ -75,7 +75,6 @@ func Loop(conn *websocket.Conn, currentUserID string) {
 		msg.Last_name = user["last_name"].(string)
 		msg.Photo = user["photo"].(string)
 		privaci := user["privacy"].(string)
-		fmt.Println("1cdd2f", msg.Type)
 		switch msg.Type {
 		case "logout":
 			service.BrodcastOnlineStatus(currentUserID, false)
@@ -261,7 +260,6 @@ func Loop(conn *websocket.Conn, currentUserID string) {
 				log.Println("DB error checking follow status:", err)
 				continue
 			}
-			fmt.Println("ex", exict)
 			if !exict {
 				msg.SubType = "followRequest"
 				msg.MessageContent = "send you a followRequest"
@@ -293,9 +291,7 @@ func Loop(conn *websocket.Conn, currentUserID string) {
 				log.Println("DB error saving group invitation notification:", err)
 				continue
 			}
-			fmt.Println("mm", len(msg.ReceiversIds))
 			if len(msg.ReceiversIds) > 0 {
-				fmt.Println("doneeee")
 				service.BrodcastAllNotifications(msg.ReceiversIds, map[string]any{
 					"type":       "notification",
 					"subType":    "group_invite",
@@ -306,7 +302,6 @@ func Loop(conn *websocket.Conn, currentUserID string) {
 					"content":    msg.MessageContent,
 					"time":       time.Now().Format(time.RFC3339),
 				})
-				fmt.Println("doneeee")
 				continue
 			}
 			// Notify the invited user
@@ -341,7 +336,6 @@ func Loop(conn *websocket.Conn, currentUserID string) {
 				"time":       time.Now().Format(time.RFC3339),
 			})
 		case "new event":
-			fmt.Println("1111111111111")
 			msg.MessageContent = "has a new event"
 			err := model.SaveGroupInvitationNotification(currentUserID, msg)
 			if err != nil {

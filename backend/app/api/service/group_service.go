@@ -39,7 +39,6 @@ func CreateNewGroup(adminID string, newGroup utils.GroupRequest) (utils.Group, e
 		rowID := helper.GenerateUUID()
 		createdAt := time.Now().UTC()
 		if err := model.InsertGroupInvitation(tx, rowID.String(), groupID.String(), userID, adminID, createdAt); err != nil {
-			fmt.Println("Failed to insert invited user into group_invitation table :", err)
 			return utils.Group{}, fmt.Errorf("Failed to insert invited user into group_invitation table")
 		}
 	}
@@ -50,7 +49,6 @@ func CreateNewGroup(adminID string, newGroup utils.GroupRequest) (utils.Group, e
 
 	createdGroup, err := model.FetchCreatedGroup(groupID.String())
 	if err != nil {
-		fmt.Println("Failed to fetch created group:", err)
 		return utils.Group{}, fmt.Errorf("Group created but failed to fetch it")
 	}
 

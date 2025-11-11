@@ -22,7 +22,6 @@ func Editor(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fmt.Println(10<<20, "------------------+++++++++++")
 
 	err = r.ParseMultipartForm(1024 * 1024) // 10MB // 10485760
 	if err != nil {
