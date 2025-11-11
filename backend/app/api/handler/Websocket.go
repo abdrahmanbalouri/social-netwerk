@@ -73,7 +73,7 @@ func Loop(conn *websocket.Conn, currentUserID string) {
 		msg.First_name = user["first_name"].(string)
 		msg.Last_name = user["last_name"].(string)
 		msg.Photo = user["photo"].(string)
-		privaci := user["privacy"].(string)
+		//privaci := user["privacy"].(string)
 		switch msg.Type {
 		case "logout":
 			service.BrodcastOnlineStatus(currentUserID, false)
@@ -229,7 +229,7 @@ func Loop(conn *websocket.Conn, currentUserID string) {
 			if exict {
 				msg.SubType = "unfollow"
 				msg.MessageContent = "has unfollowed you"
-			} else if !exict && privaci == "public" {
+			} else if !exict {
 				msg.SubType = "follow"
 				msg.MessageContent = "has following you"
 				err = model.SaveFollowNotification(currentUserID, msg)
@@ -237,8 +237,6 @@ func Loop(conn *websocket.Conn, currentUserID string) {
 					log.Println("DB error saving follow notification:", err)
 					continue
 				}
-			} else {
-				continue
 			}
 
 			// Notify all connected users (except current user)
