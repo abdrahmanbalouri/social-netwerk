@@ -33,7 +33,7 @@ export default function Post({ post, onGetComments, ondolike }) {
               <img src={`/${post.image_path}`} alt="Post content" className="post-media-image" />
             ) : post.image_path.match(/\.(mp4|webm|ogg|mov)$/i) ? (
               <div className="post-media-wrapper">
-                <video controls className="post-media-video">
+                <video  controls className="post-media-video">
                   <source src={`/${post.image_path}`} type={`video/${post.image_path.split('.').pop()}`} />
                   Your browser does not support the video tag.
                 </video>

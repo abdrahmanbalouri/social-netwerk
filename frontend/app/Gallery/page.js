@@ -24,11 +24,8 @@ export default function Gallery() {
       .then((res) => res.json())
       .then((data) => {
 
-        if (data) {
-          console.log(data);
-          
+        if (data) {          
           let images = data.filter(img => img.ImagePath);
-          console.log("img",images);
           
           setImages(images);
           return

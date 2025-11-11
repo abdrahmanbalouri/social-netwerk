@@ -48,14 +48,11 @@ export default function Navbar() {
           method: "GET",
           credentials: "include",
         });
-
         if (!res.ok) {
           throw new Error(`Failed to fetch notifications: ${res.status}`);
         }
 
-        const data = await res.json() || [];
-        console.log(data);
-        
+        const data = await res.json() || [];        
         let t = 0
         data.map((not) => {
           if (!not.seen) {

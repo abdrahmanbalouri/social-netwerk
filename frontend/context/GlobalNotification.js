@@ -15,7 +15,6 @@ export default function GlobalNotification() {
     const handle = (data) => {
       
       const payload = data.data || data;
-      console.log(payload);
       switch (payload.subType) {
         case "follow":
           setToast(payload);
@@ -36,10 +35,10 @@ export default function GlobalNotification() {
             setToast(payload);
           }
           break;
-        case "invite_to_group":
+        case "group_invite":
           setToast(payload);
           break;
-        case "joinRequest":
+        case "group_join_request":
           setToast(payload);
           break;
         default:

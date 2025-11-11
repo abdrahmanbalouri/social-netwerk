@@ -3,6 +3,8 @@ import "../styles/groupstyle.css";
 import { createGroup } from "../app/groups/page";
 import { GroupCard } from "./groupCard";
 import { Plus } from "lucide-react";
+import { Toaster, toast } from "sonner"
+import { useWS } from "../context/wsContext";
 export function CreateGroupForm({ users, onSubmit, onCancel }) {
 
   const [groupTitle, setGroupTitle] = useState("");
@@ -46,6 +48,7 @@ export function CreateGroupForm({ users, onSubmit, onCancel }) {
 
   return (
     <div className="group-modal-overlay">
+      {/* <Toaster position="top-center" /> */}
       <div className="group-modal-content">
         <div className="group-modal-header">
           <h1 className="group-modal-title">Create a New Group</h1>
@@ -124,7 +127,7 @@ export function CreateGroupForm({ users, onSubmit, onCancel }) {
                   className="form-input search-input"
                   autoComplete="off"
                 />
-                
+
 
                 {/* User Suggestions */}
                 {showSuggestions && users?.length > 0 && (
@@ -178,7 +181,9 @@ export function GroupCreationTrigger({ setGroup }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [showNoGroups, setShowNoGroups] = useState(true);
   const [userList, setUserList] = useState([]);
-  
+  const { sendMessage } = useWS();
+
+
 
   const handlePostClick = () => {
     setShowNoGroups(false);
@@ -189,17 +194,19 @@ export function GroupCreationTrigger({ setGroup }) {
     setShowNoGroups(true);
   };
 
-  const handleSubmit = async (groupData,isSubmitting ,setIsSubmitting) => {
+  const handleSubmit = async (groupData, isSubmitting, setIsSubmitting) => {
     try {
       if (isSubmitting) return;
       setIsSubmitting(true);
-      const newGroup = await createGroup(groupData);
+      const newGroup = await createGroup(groupData, sendMessage);
+      toast.success("group created successfully!");
       setGroup((prev) => {
         const exists = prev.some((g) => g.ID === newGroup.ID);
         return exists ? prev : [newGroup, ...prev];
       });
     } catch (error) {
-      console.error("Error creating group:", error);
+      // console.error("Error creating group:", error);
+      toast.error(error.message);
     } finally {
       setIsModalOpen(false);
       setIsSubmitting(false);

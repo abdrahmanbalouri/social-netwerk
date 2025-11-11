@@ -493,14 +493,14 @@
   width: fit-content;
   display: flex;
   align-self: start;
-  position: relative;
-  display: inline-block;
-  margin-top: 10px;
+  position: absolute;
+  bottom: 75px;
+  left: 2px;
 }
 
 .preview-image {
-  width: 120px;
-  height: 120px;
+  width: 150px;
+  height: 150px;
   object-fit: cover;
   border-radius: 8px;
   border: 2px solid #ccc;
@@ -521,4 +521,22 @@
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.scroll-down-icon {
+  position: absolute;
+  bottom: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #00bcd4;
+  color: white;
+  width: 35px;
+  height: 35px;
+  border-radius: 100%;
+  cursor: pointer;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+  z-index: 10;
 }

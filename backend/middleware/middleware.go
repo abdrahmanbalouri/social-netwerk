@@ -2,7 +2,6 @@ package middlewares
 
 import (
 	"database/sql"
-	"fmt"
 	"net/http"
 	"slices"
 	"time"
@@ -20,8 +19,6 @@ func SessionMiddleware(db *sql.DB, next http.Handler) http.Handler {
 			next.ServeHTTP(w, r)
 			return
 		}
-
-		fmt.Println(r.URL.Path)
 
 		cookie, err := r.Cookie("session")
 		if err != nil || cookie.Value == "" {

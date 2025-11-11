@@ -5,10 +5,9 @@ import Link from 'next/link';
 import ChatIcon from '@mui/icons-material/Chat';
 import "../styles/rightbar.css"
 import { useWS } from "../context/wsContext";
-import { useToast } from "../context/toastContext";
+import ShowToast from "./ShowToast";
 export default function RightBar() {
-
-  const { showToast, toast } = useToast();
+const [error , setError] = useState(null);
   const [friends, setFriends] = useState([])
   const [users, setusers] = useState([])
   const [onlineUsers, setonlineUsers] = useState([])
@@ -38,8 +37,9 @@ export default function RightBar() {
         const data = await res.json();
 
         setgroupeInvitation(data);
+        setError(null);
       } catch (err) {
-        showToast("Failed to fetch group invitations", "error");
+        setError("Failed to fetch group invitations");
       }
     }
 
@@ -57,13 +57,14 @@ export default function RightBar() {
       if (res.ok) {
         const data = await res.json();
         setFollowRequest(data);
+        setError(null);
       } else {
-        showToast("Failed to fetch group invitations", "error");
+       setError("Failed to fetch follow requests");
         return;
       }
 
     } catch (err) {
-      console.error(err);
+      setError("Failed to fetch follow requests");
     }
   }
 
@@ -115,7 +116,7 @@ export default function RightBar() {
 
       setFollowRequest((prev) => prev.filter((user) => user.id !== userId));
     } catch (err) {
-      showToast("Failed to process follow request", "error");
+      setError("Failed to process follow request");
     }
   }
 
@@ -140,6 +141,7 @@ export default function RightBar() {
       const data = await res.json();
       setgroupeInvitation((prev) => (prev || []).filter((req) => req.invitation_id !== invitaitonId));
     } catch (err) {
+      setError("Failed to process group invitation");
     }
   }
 
@@ -164,8 +166,8 @@ export default function RightBar() {
 
         setusers(data);
       } catch (err) {
-        console.error(err);
-      }
+setError("Failed to fetch users");
+   }
     }
 
     fetchusers();
@@ -198,12 +200,7 @@ export default function RightBar() {
 
 
     <div className="rightBar">
-      {toast && (
-        <div className={`toast ${toast.type}`}>
-          <span>{toast.message}</span>
-          <button onClick={() => setToast(null)} className="toast-close">×</button>
-        </div>
-      )}
+     <ShowToast  message={error} />
 
       <div className="item">
         <div className="sections">

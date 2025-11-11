@@ -13,12 +13,25 @@ export default function ProfileCardEditor({
     const [avatarPreview, setAvatarPreview] = useState("");
     const [privacy, setPrivacy] = useState(initialPrivacy);
     const [displayName, setDisplayName] = useState(initialAbout);
+    const [toast, setToast] = useState(null)
     const coverInputRef = useRef(null);
     const avatarInputRef = useRef(null);
     const [saving, setSaving] = useState(false);
-
+    const showToast = (message, type = "error", duration = 3000) => {
+        setToast({ message, type });
+        setTimeout(() => {
+            setToast(null);
+        }, duration);
+    };
     function handleFileToPreview(file, setPreview) {
         if (!file) return;
+        const allowedTypes = ["image/png", "image/jpeg", "image/jpg", "image/gif", "image/webp"];
+        if (!allowedTypes.includes(file.type)) {
+            showToast("Only image files are allowed!")
+            e.target.value = "";
+            setPreview(null);
+            return;
+        }
         const reader = new FileReader();
         reader.onload = (e) => setPreview(e.target.result);
         reader.readAsDataURL(file);
@@ -83,6 +96,12 @@ export default function ProfileCardEditor({
 
     return (
         <div className="profile-card">
+            {toast && (
+                <div className={`toast ${toast.type}`}>
+                    <span>{toast.message}</span>
+                    <button onClick={() => setToast(null)} className="toast-close">×</button>
+                </div>
+            )}
             {/* Cover area */}
             <div className="cover">
                 <img

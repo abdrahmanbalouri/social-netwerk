@@ -55,18 +55,12 @@ export default function Home() {
     );
   }
   useEffect(() => {
- console.log(profile.Profile?.privacy);
- 
-
     const reachedBottom =
       window.innerHeight + window.scrollY >= document.body.scrollHeight - 20;
 
 
     async function handlescrollhome() {
-
       let b = await fetchingposts();
-      console.log(b);
-
     }
 
     if (reachedBottom && !loading && posts.length >= 10) {
