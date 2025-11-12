@@ -13,10 +13,11 @@ import (
 )
 
 func GetPostByUserHandler(w http.ResponseWriter, r *http.Request) {
-	if r.Method != "GET" {
-		helper.RespondWithError(w, http.StatusMethodNotAllowed, "Method Not Allowed")
+if r.Method !=  http.MethodGet {
+		helper.RespondWithError(w, http.StatusMethodNotAllowed, " method not allowed ")
 		return
-	}
+}
+
 	user, err1 := helper.AuthenticateUser(r)
 	if err1 != nil {
 		helper.RespondWithError(w, http.StatusUnauthorized, "Unauthorized")

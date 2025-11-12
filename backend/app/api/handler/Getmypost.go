@@ -11,6 +11,14 @@ import (
 )
 
 func Getmypost(w http.ResponseWriter, r *http.Request) {
+
+	if r.Method !=  http.MethodGet {
+		helper.RespondWithError(w, http.StatusMethodNotAllowed, " method not allowed ")
+		return
+}
+
+
+
 	parts := strings.Split(r.URL.Path, "/")
 	if len(parts) < 5 {
 		helper.RespondWithError(w, http.StatusBadRequest, "Invalid request")

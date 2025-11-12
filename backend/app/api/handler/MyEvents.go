@@ -17,7 +17,10 @@ type Event struct {
 	CreatedAt   string `json:"created_at"`
 }
 
-func MyEavents(w http.ResponseWriter, r *http.Request) {
+func MyEvents(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
+	}
 	userID, ok := helper.AuthenticateUser(r)
 	if ok != nil {
 		http.Error(w, "Unauthorized", http.StatusUnauthorized)

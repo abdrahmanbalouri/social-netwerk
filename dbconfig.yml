@@ -1,7 +1,7 @@
 development:
   dialect: sqlite3
-  datasource: ./backend/app/repository/forum.db 
-  dir: ./backend/pkg/migrations/sqlite 
+  datasource: ./backend/pkg/db/sqlite/social.db 
+  dir: ./backend/pkg/db/sqlite
   table: gorp_migrations
 
 # command to create

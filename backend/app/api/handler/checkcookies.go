@@ -8,6 +8,11 @@ import (
 )
 
 func MeHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		helper.RespondWithError(w, http.StatusMethodNotAllowed, "methode not allowed")
+		return
+	}
+
 	c, err := r.Cookie("session")
 	if err != nil {
 		helper.RespondWithError(w, http.StatusUnauthorized, "unauthorized")

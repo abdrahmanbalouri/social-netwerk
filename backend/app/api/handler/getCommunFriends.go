@@ -10,10 +10,11 @@ import (
 
 func GetCommunFriends(w http.ResponseWriter, r *http.Request) {
 	//
-	if r.Method != "GET" {
-		helper.RespondWithError(w, http.StatusMethodNotAllowed, "Method Not Allowed")
+if r.Method !=  http.MethodGet {
+		helper.RespondWithError(w, http.StatusMethodNotAllowed, " method not allowed ")
 		return
-	}
+}
+
 	userID, err := helper.AuthenticateUser(r)
 	if err != nil {
 		helper.RespondWithError(w, http.StatusUnauthorized, "Unauthorized")

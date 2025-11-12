@@ -83,7 +83,7 @@ func Routes() http.Handler {
 	mux.HandleFunc("/api/getEvents/", handlers.GetEvents)     
 	mux.HandleFunc("/api/createEvent/", middlewares.RatelimitMiddleware(handlers.CreateEvent, "events", 30))
 	mux.HandleFunc("/api/event/action/", middlewares.RatelimitMiddleware(handlers.EventAction, "eventAction", 40))
-	mux.HandleFunc("/api/myevents", handlers.MyEavents)
+	mux.HandleFunc("/api/myevents", handlers.MyEvents)
 
 	return mux
 }

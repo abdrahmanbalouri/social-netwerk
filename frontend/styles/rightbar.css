@@ -2,10 +2,10 @@
   position: sticky;
   top: 70px;
   right: 0;
-  width: 350px;
+  width: 300px;
+  margin-left: 10px;
   height: calc(100vh - 90px);
   overflow-y: auto;
-  padding: 20px;
   z-index: 100;
   display: flex;
   flex-direction: column;
@@ -208,7 +208,8 @@
   transition: all 0.2s ease;
 }
 
-.rightBar .userIcon ,.rightBar .userLink i {
+.rightBar .userIcon,
+.rightBar .userLink i {
   width: 35px;
   height: 32px;
   color: #667eea;
@@ -286,10 +287,6 @@
 
 
 @media (max-width: 1200px) {
-  .rightBar {
-    width: 300px;
-    padding: 16px;
-  }
 
   .rightBar .item {
     padding: 16px;
@@ -308,7 +305,7 @@
   }
 }
 
-@media (max-width: 992px) {
+@media (max-width: 700px) {
   .rightBar {
     display: none;
   }

@@ -9,6 +9,12 @@ import (
 )
 
 func GetStories(w http.ResponseWriter, r *http.Request) {
+
+	if r.Method !=  http.MethodGet {
+		helper.RespondWithError(w, http.StatusMethodNotAllowed, " method not allowed ")
+		return
+}
+
 	authUserID, err := helper.AuthenticateUser(r)
 	if err != nil {
 		helper.RespondWithError(w, http.StatusUnauthorized, "Unauthorized")
