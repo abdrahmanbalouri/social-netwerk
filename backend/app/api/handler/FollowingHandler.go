@@ -24,11 +24,11 @@ func FollowingHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	following, err := service.GetFollowing(userID, targetID)
-	if err != nil {
-		helper.RespondWithError(w, http.StatusBadRequest, err.Error())
-		return
-	}
+	following, statusCode, err := service.GetFollowing(userID, targetID)
+if err != nil {
+	helper.RespondWithError(w, statusCode, err.Error())
+	return
+}
 
 	helper.RespondWithJSON(w, http.StatusOK, following)
 }

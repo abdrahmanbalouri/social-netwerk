@@ -70,7 +70,6 @@ func Routes() http.Handler {
 	mux.HandleFunc("/group/invitation/{id}", middlewares.RatelimitMiddleware(handlers.GroupInvitationRequest, "groupInvite", 3))
 	mux.HandleFunc("/group/addPost/{id}", middlewares.RatelimitMiddleware(handlers.CreatePostGroupHandler, "posts", 3))   
 	mux.HandleFunc("/group/fetchPosts/{id}", handlers.GetAllPostsGroup)      
-	// mux.HandleFunc("/group/fetchPost/{id}", handlers.GetPostGroup)
 	mux.HandleFunc("/group/like/{id}/{groupId}", middlewares.RatelimitMiddleware(handlers.LikesGroup, "likes", 40))                      
 	mux.HandleFunc("/group/updatepost/{id}/{groupId}", handlers.GetGroupPostByID)          
 	mux.HandleFunc("/group/Getcomments/{id}/{offset}/{groupId}", handlers.GetCommentsGroup)

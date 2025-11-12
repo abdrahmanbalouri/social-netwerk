@@ -53,7 +53,7 @@ export default function UserBar() {
     }, []);
 
     return (
-        <div className="userBar">
+        <div className="userBar" id="rightBar">
             <div className="usrs">
                 <span>Online Friends</span>
                 {!users || users.length === 0 ? (
