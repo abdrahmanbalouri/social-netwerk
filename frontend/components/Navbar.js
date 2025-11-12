@@ -114,6 +114,7 @@ export default function Navbar() {
   const disply = (e) => {
     const sideBar = document.getElementById("leftBar");
     const rightBar = document.getElementById("rightBar");
+    console.log(e.target.id);
 
     if (e.target.id === "leftBtn") {
       sideBar.style.display = sideBar.style.display === "block" ? "none" : "block";
@@ -177,7 +178,10 @@ export default function Navbar() {
           className={`fa-solid ${darkMode ? "fa-sun" : "fa-moon"}`}
           onClick={toggle}
         ></i>
-        <i className="fa-solid fa-user-friends" id="rightBtn" onClick={(e) => disply(e)}></i>
+        <div className="friend-requests" id="rightBtn" onClick={(e) => disply(e)}>
+          <i className="fa-solid fa-user-friends" id="rightBtn"></i>
+        </div>
+
         <div className="notification2" onClick={notifications}>
           <i className="fa-solid fa-bell"></i>
           {cont > 0 && <span className="notif-count">{cont}</span>}

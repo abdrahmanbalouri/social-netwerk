@@ -1,8 +1,8 @@
 
 /* Create Event Card */
 .create-event-card {
-  max-width: 40%;
-  width: 25%;
+  max-width: 500px;
+  width: 80%;
   background: var(--bg);
   border-radius: 12px;
   padding: 24px;

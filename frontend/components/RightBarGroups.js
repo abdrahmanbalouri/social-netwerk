@@ -120,7 +120,7 @@ export default function RightBarGroup({ onClick }) {
     return (
         <div className="rightBar" id="rightBar">
             <Toaster position="bottom-right" richColors />
-            <div className="item">
+            <div className="item" id="first">
                 <span>Join Requests </span>
                 {!joinRequest || joinRequest.length === 0 ? (
                     <h1>no Invitation for now</h1>
