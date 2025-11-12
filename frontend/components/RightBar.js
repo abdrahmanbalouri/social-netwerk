@@ -207,7 +207,7 @@ showToast("Failed to fetch users");
 
 
 
-    <div className="rightBar">
+    <div className="rightBar" id="rightBar">
      {toast && (
           <div className={`toast ${toast.type}`}>
             <span>{toast.message}</span>

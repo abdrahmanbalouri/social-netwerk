@@ -118,7 +118,7 @@ export default function RightBarGroup({ onClick }) {
     }, [grpID]);
 
     return (
-        <div className="rightBar">
+        <div className="rightBar" id="rightBar">
             <Toaster position="bottom-right" richColors />
             <div className="item">
                 <span>Join Requests </span>

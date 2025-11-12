@@ -14,6 +14,17 @@
 
 
 
+@media (max-width: 768px) {
+  .rightBar {
+    position: fixed;
+  }
+  .rightBar .item {
+    margin-bottom: 20px;
+  }
+}
+
+
+
 .rightBar .item {
   max-height: 300px;
   overflow: auto;

@@ -1,5 +1,5 @@
 "use client";
-import { useParams, usePathname, useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
 import { useDarkMode } from "../context/darkMod";
 import { useProfile } from "../context/profile";
@@ -52,7 +52,7 @@ export default function Navbar() {
           throw new Error(`Failed to fetch notifications: ${res.status}`);
         }
 
-        const data = await res.json() || [];        
+        const data = await res.json() || [];
         let t = 0
         data.map((not) => {
           if (!not.seen) {
@@ -60,7 +60,6 @@ export default function Navbar() {
           }
         })
         addnotf(t);
-
       } catch (error) {
         console.error("Error fetching notifications:", error);
       }
@@ -112,26 +111,32 @@ export default function Navbar() {
 
     return () => clearTimeout(delay);
   }, [searchTerm]);
-  const disply = () => {
+  const disply = (e) => {
     const sideBar = document.getElementById("leftBar");
-    if (sideBar.style.display === "block") {
-      sideBar.style.display = "none";
-    } else {
-      sideBar.style.display = "block";
+    const rightBar = document.getElementById("rightBar");
+
+    if (e.target.id === "leftBtn") {
+      sideBar.style.display = sideBar.style.display === "block" ? "none" : "block";
+    } else if (e.target.id === "rightBtn") {
+      rightBar.style.display = rightBar.style.display === "block" ? "none" : "block";
     }
-    window.addEventListener('resize', (e) => {
+    window.addEventListener('resize', () => {
       if (window.innerWidth > 768) {
         sideBar.style.display = 'block';
+        rightBar.style.display = 'block';
+
       } else {
         sideBar.style.display = 'none';
+        rightBar.style.display = 'none';
       }
     })
 
   };
+
   return (
     <div className="navbar">
       <div className="left">
-        <i className="fa-solid fa-bars" id="menu" onClick={disply}></i>
+        <i className="fa-solid fa-bars" id="leftBtn" onClick={(e) => disply(e)}></i>
         <Link href="/home">
           <span>Social-Network</span>
         </Link>
@@ -172,7 +177,7 @@ export default function Navbar() {
           className={`fa-solid ${darkMode ? "fa-sun" : "fa-moon"}`}
           onClick={toggle}
         ></i>
-
+        <i className="fa-solid fa-user-friends" id="rightBtn" onClick={(e) => disply(e)}></i>
         <div className="notification2" onClick={notifications}>
           <i className="fa-solid fa-bell"></i>
           {cont > 0 && <span className="notif-count">{cont}</span>}

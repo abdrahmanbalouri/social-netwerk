@@ -22,7 +22,6 @@ export default function ChatBox({ user }) {
   const chatEndRef = useRef(null);
   const chatBoxRef = useRef(null);
   const refscroll = useRef(0)
-  const chatContainer = useRef(null)
   const id = useParams().id;
 
   const showToast = (message, type = "error", duration = 3000) => {
@@ -156,6 +155,7 @@ export default function ChatBox({ user }) {
 
   useEffect(() => {
     const handleIncomingMessage = (data) => {
+      console.log("New message received in chatBox:", data);
       if (data.from === user.id || data.to === user.id) {
         setMessages((prev) => [
           ...prev,
@@ -163,7 +163,7 @@ export default function ChatBox({ user }) {
             text: data.content,
             sender: data.from === user.id ? "them" : "me",
             time: data.time,
-            name: data.first_name + " " + data.last_name,
+            name: data.name,
             image: data.image,
             PictureSend: data.PictureSend
           },
