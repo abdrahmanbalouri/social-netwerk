@@ -20,6 +20,9 @@ import "../../../styles/chat.css";
 
 // Global sendRequest (can be moved to a service file later)
 async function sendRequest(invitedUserID, grpID) {
+  console.log("input 1:", invitedUserID);
+  console.log("input 2:", grpID);
+  
   try {
     const res = await fetch(`http://localhost:8080/group/invitation/${grpID}`, {
       method: 'POST',
@@ -33,11 +36,24 @@ async function sendRequest(invitedUserID, grpID) {
       }),
     });
 
-    const temp = await res.json();
-    return temp;
+    const data = await res.json();
+    if (!res.ok){
+      
+      const message =
+        data?.error ||
+        data?.message ||
+        (typeof data === "string" ? data : "") ||
+        "Failed to send request";
+      throw new Error(message);
+    }
+    console.log("erorororoorr is :L", data);
+    
+    return data;
   } catch (error) {
-    console.error("error sending invitation to the user :", error);
-    return { error: error.message };
+    // console.error("error sending invitation to the user :", error);
+    // return { error: error.message };
+    
+    throw new Error(error.message);
   }
 }
 

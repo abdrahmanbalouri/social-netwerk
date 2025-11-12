@@ -1,6 +1,6 @@
 "use client";
 import Navbar from "../../components/Navbar.js";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import "../../styles/groupstyle.css";
 import { useRouter } from "next/navigation";
 import { GroupCard } from "../../components/groupCard.js";
@@ -33,28 +33,31 @@ export default function () {
 }
 
 async function JoinGroup(grpID, setJoining) {
-
   try {
     const res = await fetch(`http://localhost:8080/group/invitation/${grpID}`, {
       method: 'POST',
       credentials: 'include',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         InvitationType: "join",
         invitedUsers: [],
       }),
     });
 
-    const temp = await res.json();
+    const data = await res.json().catch(() => null);
 
-    return temp;
+    if (!res.ok) {
+      const message =
+        data?.error ||
+        data?.message ||
+        (typeof data === "string" ? data : "") ||
+        "Failed to send request";
+      return { error: message };
+    }
+
+    return { data };
   } catch (error) {
-    console.error("error sending invitation to join the group :", error);
     return { error: error.message };
-  } finally {
-    setJoining(false);
   }
 }
 
@@ -64,6 +67,14 @@ export function AllGroups() {
   const [joining, setJoining] = useState(false)
   const { sendMessage } = useWS();
   const { Profile } = useProfile();
+
+
+  const isMounted = useRef(true);
+  useEffect(() => {
+    return () => {
+      isMounted.current = false;
+    };
+  }, []);
 
 
   useEffect(() => {
@@ -113,15 +124,21 @@ export function AllGroups() {
                 <span className="members-text-full">{grp.MemberCount} members</span>
                 <span className="members-text-short">{grp.MemberCount} members</span>
               </div>
-              <button className="view-button" onClick={() => {
-                toast.success("Join request sent!");
-                JoinGroup(grp.ID, setJoining)
-                sendMessage({
-                  type: "joinRequest",
-                  from: Profile.id,
-                  receiverId: grp.ID,
-                  messageContent: "",
-                });
+              <button className="view-button" onClick={async () => {
+                setJoining(true);
+                const { data, error } = await JoinGroup(grp.ID);
+                if (error) {
+                  toast.error(error);
+                } else {
+                  toast.success("Join request sent!");
+                  sendMessage({
+                    type: "joinRequest",
+                    from: Profile.id,
+                    receiverId: grp.ID,
+                    messageContent: "",
+                  });
+                }
+                setJoining(false);
               }}>
                 <span>Join</span>
                 <ChevronRight />

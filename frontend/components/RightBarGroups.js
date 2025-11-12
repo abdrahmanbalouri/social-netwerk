@@ -67,8 +67,6 @@ export default function RightBarGroup({ onClick }) {
         return () => removeListener("logout", handleLogout)
     }, [addListener, removeListener])
 
-
-
     const params = useParams();
     useEffect(() => {
         setGrpID(params.id);
@@ -115,8 +113,10 @@ export default function RightBarGroup({ onClick }) {
             }
         }
         fetchJoinRequest(grpID);
+
     }, [grpID]);
 
+    
     return (
         <div className="rightBar" id="rightBar">
             <Toaster position="bottom-right" richColors />
@@ -167,10 +167,15 @@ export default function RightBarGroup({ onClick }) {
                                             <span>{user.first_name + " " + user.last_name}</span>
                                         </Link>
                                     </div>
-                                    <div onClick={() => {
-                                        toast.success("invitaiton sent ")
-                                        onClick(user.id, grpID)
-                                        sendMessage({ type: "invite_to_group", ReceiverId: user.id, groupID: grpID })
+                                    <div onClick={async () => {
+                                        
+                                        try{
+                                            await onClick(user.id, grpID)
+                                            toast.success("invitaiton sent ")
+                                            sendMessage({ type: "invite_to_group", ReceiverId: user.id, groupID: grpID })
+                                        } catch (err){
+                                            toast.error(err.message);
+                                        }  
                                     }}>
                                         <PersonAddAltIcon className="userIcon" />
                                     </div>
