@@ -114,8 +114,6 @@ export default function Navbar() {
   const disply = (e) => {
     const sideBar = document.getElementById("leftBar");
     const rightBar = document.getElementById("rightBar");
-    console.log(e.target.id);
-
     if (e.target.id === "leftBtn") {
       sideBar.style.display = sideBar.style.display === "block" ? "none" : "block";
     } else if (e.target.id === "rightBtn") {

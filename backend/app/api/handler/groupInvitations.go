@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"strings"
 
@@ -59,7 +58,6 @@ func GroupInvitationRequest(w http.ResponseWriter, r *http.Request) {
 		helper.RespondWithError(w, http.StatusBadRequest, "Invalid request format")
 		return
 	}
-	fmt.Println("newInvitation :", newInvitation.InvitationType)
 
 	userID, err := helper.AuthenticateUser(r)
 	if err != nil {

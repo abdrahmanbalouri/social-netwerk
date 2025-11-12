@@ -40,11 +40,8 @@ export function WSProvider({ children }) {
 
       socket.onmessage = async (event) => {
         try {
-          
+
           const data = JSON.parse(event.data);
-          // Trigger any custom listeners
-          console.log(data);
-          
           if (listeners.current[data.type]) {
 
             listeners.current[data.type].forEach((cb) => cb(data));

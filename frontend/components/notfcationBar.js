@@ -105,7 +105,7 @@ export default function NotBar({ notData }) {
                                 </div>
                                 <div className="notification-content">
                                     <div className="notification-text">
-                                        <strong>{noti.name}</strong> {noti.message}
+                                        <strong>{noti.first_name+" "+noti.last_name}</strong> {noti.message}
                                     </div>
                                     <div className="notification-time">{formatTime(noti.created_at)}</div>
                                 </div>

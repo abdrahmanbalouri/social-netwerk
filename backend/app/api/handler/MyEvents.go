@@ -9,7 +9,7 @@ import (
 	"social-network/pkg/db/sqlite"
 )
 
-func MyEavents(w http.ResponseWriter, r *http.Request) {
+func MyEvents(w http.ResponseWriter, r *http.Request) {
 	userID, ok := helper.AuthenticateUser(r)
 	if ok != nil {
 		http.Error(w, "Unauthorized", http.StatusUnauthorized)

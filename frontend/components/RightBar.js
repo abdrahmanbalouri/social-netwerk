@@ -9,10 +9,10 @@ import { ShieldXIcon } from "lucide-react";
 export default function RightBar() {
 
 
- const [toast, setToast] = useState(null)
+  const [toast, setToast] = useState(null)
 
-   
-    const showToast = (message, type = "error", duration = 3000) => {
+
+  const showToast = (message, type = "error", duration = 3000) => {
     setToast({ message, type });
     setTimeout(() => {
       setToast(null);
@@ -46,8 +46,7 @@ export default function RightBar() {
           throw new Error("Failed to fetch posts");
         }
         const data = await res.json();
-        console.log("dataaa:", data);
-        
+
 
         setgroupeInvitation(data);
       } catch (err) {
@@ -56,8 +55,6 @@ export default function RightBar() {
     }
 
     fetchGroupeInvitation();
-    console.log("requeeeests are :", groupeInvitation);
-
   }, []);
 
 
@@ -71,14 +68,14 @@ export default function RightBar() {
       if (res.ok) {
         const data = await res.json();
         setFollowRequest(data);
-     
+
       } else {
-       
+
         return;
       }
 
     } catch (err) {
-     
+
     }
   }
 
@@ -178,8 +175,8 @@ export default function RightBar() {
 
         setusers(data);
       } catch (err) {
-showToast("Failed to fetch users");
-   }
+        showToast("Failed to fetch users");
+      }
     }
 
     fetchusers();
@@ -212,12 +209,12 @@ showToast("Failed to fetch users");
 
 
     <div className="rightBar" id="rightBar">
-     {toast && (
-          <div className={`toast ${toast.type}`}>
-            <span>{toast.message}</span>
-            <button onClick={() => setToast(null)} className="toast-close">×</button>
-          </div>
-        )}
+      {toast && (
+        <div className={`toast ${toast.type}`}>
+          <span>{toast.message}</span>
+          <button onClick={() => setToast(null)} className="toast-close">×</button>
+        </div>
+      )}
       <div className="item">
         <div className="sections">
           <h3

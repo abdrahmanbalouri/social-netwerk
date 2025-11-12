@@ -20,9 +20,6 @@ import "../../../styles/chat.css";
 
 // Global sendRequest (can be moved to a service file later)
 async function sendRequest(invitedUserID, grpID) {
-  console.log("input 1:", invitedUserID);
-  console.log("input 2:", grpID);
-  
   try {
     const res = await fetch(`http://localhost:8080/group/invitation/${grpID}`, {
       method: 'POST',
@@ -46,7 +43,6 @@ async function sendRequest(invitedUserID, grpID) {
         "Failed to send request";
       throw new Error(message);
     }
-    console.log("erorororoorr is :L", data);
     
     return data;
   } catch (error) {

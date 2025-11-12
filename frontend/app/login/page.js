@@ -21,7 +21,6 @@ export default function Login() {
       });
 
       let data = await res.json();
-      console.log(data,"2222222222");
       
       if (data.error) {
         setErr(data.error);

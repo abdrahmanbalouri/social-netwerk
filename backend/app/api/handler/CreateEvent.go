@@ -41,11 +41,11 @@ func CreateEvent(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Call service to create event
-	eventID, err := service.CreateGroupEvent(userID, groupID, payload.Title, payload.Description, payload.DateTime)
-	if err != nil {
-		helper.RespondWithError(w, http.StatusBadRequest, err.Error())
-		return
-	}
+	eventID, statusCode, err := service.CreateGroupEvent(userID, groupID, payload.Title, payload.Description, payload.DateTime)
+    if err != nil {
+        helper.RespondWithError(w, statusCode, err.Error())
+        return
+    }
 
 	// Respond with created event info
 	helper.RespondWithJSON(w, http.StatusOK, map[string]interface{}{

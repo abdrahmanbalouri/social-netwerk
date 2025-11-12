@@ -89,45 +89,36 @@ func HandleGroupInvitation(groupID, userID string, newInvitation utils.GroupInvi
 
 	} else {
 		for _, invitedUser := range newInvitation.InvitedUsers {
-			fmt.Println("invitedUser :", invitedUser)
 			userExists, err := model.CheckUserExists(tx, invitedUser)
 			if err != nil {
-				fmt.Println("1111")
 				return nil, fmt.Errorf("Database error"), 500
 			}
 			if !userExists {
-				fmt.Println("2222")
 				return nil, fmt.Errorf("The invited user isn't registered"), 400
 			}
 			// Check membership
 			isMember, err := model.CheckGroupMembership(tx, invitedUser, groupID)
 			if err != nil {
-				fmt.Println("333")
 				return nil, fmt.Errorf("failed to check group membership"), 500
 			}
 			if isMember {
-				fmt.Println("444444")
 				return nil, fmt.Errorf("You are already a member of this group"), 400
 			}
 			exists, err := model.CheckExistingInvitation(tx, invitedUser, groupID)
 			if err != nil {
-				fmt.Println("55555")
 				return nil, fmt.Errorf("Database error: %v", err), 500
 			}
 			if exists {
-				fmt.Println("66666")
 				return nil, fmt.Errorf("There is another invitation with the same credentials"), 400
 			}
 
 			if err := model.InsertInvitation(tx, invitationID.String(), groupID, invitedUser, userID); err != nil {
-				fmt.Println("77777")
 				return nil, fmt.Errorf("Error sending the invitation: %v", err), 500
 			}
 		}
 	}
 
 	if err := tx.Commit(); err != nil {
-		fmt.Println("88888")
 		return nil, fmt.Errorf("Failed to commit transaction"), 500
 	}
 

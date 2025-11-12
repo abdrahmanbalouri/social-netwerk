@@ -2,7 +2,6 @@ package main
 
 import (
 	"database/sql"
-	"fmt"
 	"log"
 	"net/http"
 
@@ -30,7 +29,6 @@ func enableCORS(next http.Handler) http.Handler {
 }
 
 func main() {
-	fmt.Println("4545")
 	db, err := sqlite.OpenDb()
 	if err != nil {
 		log.Fatal("Error: ", err)

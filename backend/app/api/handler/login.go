@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 
 	"social-network/app/helper"
@@ -56,7 +55,6 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		HttpOnly: true,
 		MaxAge:   3600,
 	})
-	fmt.Println("555555555555555555555555555")
 
 	// Respond with success
 	helper.RespondWithJSON(w, http.StatusOK, "Login successful")

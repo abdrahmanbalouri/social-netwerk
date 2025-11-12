@@ -256,7 +256,6 @@ func FetchGroupInvitations(userID string) ([]utils.FetchGroupInvitation, error) 
 		}
 		invitations = append(invitations, inv)
 	}
-	fmt.Println("invitations in model :", invitations)
 
 	return invitations, nil
 }

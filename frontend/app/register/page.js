@@ -20,9 +20,7 @@ export default function SignupPage() {
   const [error, seterror] = useState('')
   const router = useRouter()
 
-  const handleChange = e => {
-    console.log(Math.floor(new Date(e.target.value).getTime() / 1000));
-    
+  const handleChange = e => {    
     setForm({
       ...form,
       [e.target.name]: e.target.name === "dob"
