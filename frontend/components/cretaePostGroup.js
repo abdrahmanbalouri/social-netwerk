@@ -150,7 +150,7 @@ export function PostCreationTrigger({ setPost }) {
   const handleSubmit = async (formData) => {
     try {
       const newpost = await CreatePost(id, formData);
-      toast.success("group created successfully!");
+      toast.success("post created successfully!");
       if (newpost.error){
         if (newpost.error =="Authentication required"){
           router.push('/login')
@@ -166,7 +166,7 @@ export function PostCreationTrigger({ setPost }) {
         return exists ? prev : [newpost, ...prev];
       })
     } catch (err) {
-      toast.error("Too many requests");
+      toast.error(err.message);
     }
   };
 
