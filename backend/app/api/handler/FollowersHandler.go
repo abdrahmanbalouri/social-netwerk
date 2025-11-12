@@ -24,12 +24,10 @@ func FollowersHandler(w http.ResponseWriter, r *http.Request) {
 		helper.RespondWithError(w, http.StatusBadRequest, "missing target user ID")
 		return
 	}
-
-	followers, err := service.GetFollowers(userID, targetID)
+	followers, statusCode, err := service.GetFollowers(userID, targetID)
 	if err != nil {
-		helper.RespondWithError(w, http.StatusBadRequest, err.Error())
+		helper.RespondWithError(w, statusCode, err.Error())
 		return
 	}
-
 	helper.RespondWithJSON(w, http.StatusOK, followers)
 }

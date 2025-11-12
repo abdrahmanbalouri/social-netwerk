@@ -2,18 +2,16 @@
 
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-
 export default function ClientFetchInterceptor() {
     const router = useRouter();
     useEffect(() => {
         const originalFetch = window.fetch.bind(window); // just copy
 
         window.fetch = async (...args) => {
+
             try {
                 const response = await originalFetch(...args);
                 if (response.status === 401) {
-                    console.log(response);
-                    
                     router.push('/login'); // rediret 
                     return response
                 }

@@ -16,7 +16,7 @@ func Routes() http.Handler {
 	})
 
 	// ======= Static Files =======
-	mux.Handle("/uploads/", http.StripPrefix("/uploads/", http.FileServer(http.Dir("uploads")))) // hada mamahaloho mina i3rab
+//	mux.Handle("/uploads/", http.StripPrefix("/uploads/", http.FileServer(http.Dir("uploads")))) // hada mamahaloho mina i3rab
 
 	// ======= Auth & User =======
 	mux.HandleFunc("/api/register", middlewares.RateLimitLoginMiddleware(handlers.RegisterHandler))
@@ -67,10 +67,9 @@ func Routes() http.Handler {
 	mux.HandleFunc("/groups", handlers.GetAllGroups)                         
 	mux.HandleFunc("/api/groups/add", middlewares.RatelimitMiddleware(handlers.CreateGroupHandler, "createGroup", 50))           
 	mux.HandleFunc("/invitations/respond", handlers.GroupInvitationResponse) 
-	mux.HandleFunc("/group/invitation/{id}", middlewares.RatelimitMiddleware(handlers.GroupInvitationRequest, "groupInvite", 100))
-	mux.HandleFunc("/group/addPost/{id}", middlewares.RatelimitMiddleware(handlers.CreatePostGroupHandler, "posts", 30))   
+	mux.HandleFunc("/group/invitation/{id}", middlewares.RatelimitMiddleware(handlers.GroupInvitationRequest, "groupInvite", 3))
+	mux.HandleFunc("/group/addPost/{id}", middlewares.RatelimitMiddleware(handlers.CreatePostGroupHandler, "posts", 3))   
 	mux.HandleFunc("/group/fetchPosts/{id}", handlers.GetAllPostsGroup)      
-	// mux.HandleFunc("/group/fetchPost/{id}", handlers.GetPostGroup)
 	mux.HandleFunc("/group/like/{id}/{groupId}", middlewares.RatelimitMiddleware(handlers.LikesGroup, "likes", 40))                      
 	mux.HandleFunc("/group/updatepost/{id}/{groupId}", handlers.GetGroupPostByID)          
 	mux.HandleFunc("/group/Getcomments/{id}/{offset}/{groupId}", handlers.GetCommentsGroup)

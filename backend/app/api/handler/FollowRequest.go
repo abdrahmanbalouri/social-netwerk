@@ -18,11 +18,11 @@ func FollowRequest(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	result, err := service.GetFollowRequests(userID)
-	if err != nil {
-		helper.RespondWithError(w, http.StatusBadRequest, err.Error())
-		return
-	}
+	result, statusCode, err := service.GetFollowRequests(userID)
+if err != nil {
+	helper.RespondWithError(w, statusCode, err.Error())
+	return
+}
 
 	helper.RespondWithJSON(w, http.StatusOK, result)
 }

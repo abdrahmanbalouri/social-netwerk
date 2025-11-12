@@ -1,7 +1,22 @@
 package service
 
-import "social-network/app/repository/model"
+import (
+	"database/sql"
+	"errors"
+	"net/http"
 
-func GetEventsService(GrpID string, UserId string) ([]model.Event, error) {
-	return model.GetGroupEvents(GrpID, UserId)
+	"social-network/app/repository/model"
+)
+
+func GetEventsService(GrpID string, UserId string) ([]model.Event, int, error) {
+	// Get group events
+	events, err := model.GetGroupEvents(GrpID, UserId)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, http.StatusNotFound, errors.New("group not found or no events available")
+		}
+		return nil, http.StatusInternalServerError, errors.New("failed to retrieve group events")
+	}
+
+	return events, http.StatusOK, nil
 }

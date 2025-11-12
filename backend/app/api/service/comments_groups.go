@@ -13,7 +13,6 @@ func GetCommentsGroup(userID, groupID, postID string, offset int) ([]map[string]
 	if err := helper.CheckUserInGroup(userID, groupID); err != nil {
 		return nil, errors.New("you are not a member of this group")
 	}
-
 	repoComments, err := model.FetchCommentsGroup(sqlite.Db, postID, offset)
 	if err != nil {
 		return nil, err
@@ -38,7 +37,8 @@ func GetLastCommentGroup(commentId string, userID string, groupID string) (map[s
 	if err := helper.CheckUserInGroup(userID, groupID); err != nil {
 		return nil, err
 	}
-
+		
+	
 	repoComment, err := model.GetCommentByIDlast(sqlite.Db, commentId)
 	if err != nil {
 		return nil, err
