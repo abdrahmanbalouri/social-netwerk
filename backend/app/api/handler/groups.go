@@ -29,7 +29,7 @@ func CreateGroupHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if len(strings.TrimSpace(newGroup.Title)) > 20 || len(strings.TrimSpace(newGroup.Description)) > 40 {
-		helper.RespondWithError(w, http.StatusBadRequest, "Title and description are required")
+		helper.RespondWithError(w, http.StatusBadRequest, "The title or description is too long")
 		return
 	}
 
