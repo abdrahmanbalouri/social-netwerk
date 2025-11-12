@@ -1,12 +1,13 @@
 'use client';
-import { useState, useEffect, useRef } from 'react';
-import Link from 'next/link';
+import { useState, useEffect } from 'react';
 import "../../styles/watch.css";
+import { useRouter } from 'next/navigation';
 
 export default function Reels() {
     const [videos, setVideos] = useState([]);
     const [currentIndex, setCurrentIndex] = useState(0);
     const [loading, setLoading] = useState(true);
+    const router = useRouter()
 
     // const handleGoHome = () => {
     //     window.location.href = "/home";
@@ -32,38 +33,25 @@ export default function Reels() {
         fetchVideos();
     }, []);
 
- 
+
     if (loading) return <div className="loading">Loading...</div>;
     if (!videos || videos.length === 0) return (
         <div className="no-videos">
             No reels
-            <Link
-                href="/home"
-                className="home-link"
-                style={{
-                    marginTop: '20px',
-                    display: 'inline-block',
-                    padding: '10px 20px',
-                    color: '#fff',
-                    backgroundColor: '#5271ff',
-                    borderRadius: '5px',
-                    textDecoration: 'none',
-                }}
-            >
-                Back to Home
-            </Link>
+            <button className='home-btn' onClick={() => router.back()}>back</button>
+
         </div>
     );
 
     const current = videos[currentIndex];
 
-    const goNext = () =>  setCurrentIndex(i => i + 1);
+    const goNext = () => setCurrentIndex(i => i + 1);
     const goPrev = () => setCurrentIndex(i => i - 1);
 
     return (
         <div
             className="reels-container"
-          
+
         >
             {/* Video */}
             <div className="video-wrapper">
@@ -103,7 +91,8 @@ export default function Reels() {
             </div>
 
             {/* Back to Home */}
-            <Link href='/home' className='home-btn' > Go Home</Link>
+            <button className='home-btn' onClick={() => router.back()}>back</button>
+            {/* <Link href='/home' className='home-btn' > Go Home</Link> */}
 
         </div>
     );
