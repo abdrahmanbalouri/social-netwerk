@@ -183,7 +183,6 @@ export default function Comment({ comments, isOpen, onClose, postId, onCommentCh
       if (res.error) {
         if (res.error == "Unauthorized") {
           router.push("/login");
-          //sendMessage({ type: "logout" })
           return
         } else {
           setCommentContent("")

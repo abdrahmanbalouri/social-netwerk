@@ -130,7 +130,6 @@ export default function Home() {
       if (response.error) {
         if (response.error == "Unauthorized") {
           router.push("/login");
-          //sendMessage({ type: "logout" })
           return
         } else {
           showToast(response.error)
@@ -254,7 +253,6 @@ export default function Home() {
       if (res.error) {
         if (res.error == "Unauthorized") {
           router.push("/login");
-          //sendMessage({ type: "logout" })
           return
         } else {
           showToast(res.error)
@@ -265,7 +263,6 @@ export default function Home() {
       if (res.error) {
         if (res.error == "Unauthorized") {
           router.push("/login");
-          //sendMessage({ type: "logout" })
           return
         } else {
           showToast(res.error)

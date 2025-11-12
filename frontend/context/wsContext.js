@@ -40,17 +40,11 @@ export function WSProvider({ children }) {
 
       socket.onmessage = async (event) => {
         try {
-          const res = await fetch("http://localhost:8080/api/me", {
-            method: "GET",
-            credentials: "include",
-          })
-          if (!res.ok) {
-            ws.current.close();
-            return;
-          }
-
+          
           const data = JSON.parse(event.data);
           // Trigger any custom listeners
+          console.log(data);
+          
           if (listeners.current[data.type]) {
 
             listeners.current[data.type].forEach((cb) => cb(data));
@@ -67,18 +61,16 @@ export function WSProvider({ children }) {
       ws.current?.close();
     };
   }, []);
+  const disconnect = () => {
+    if (ws.current) {
+      ws.current.close();
+      ws.current = null;
+      setConnected(false);
+    }
+  };
 
   const sendMessage = async (msg) => {
     try {
-      const res = await fetch("http://localhost:8080/api/me", {
-        method: "GET",
-        credentials: "include",
-      })
-      if (!res.ok) {
-        ws.current.close();
-        return;
-      }
-      
       if (ws.current && ws.current.readyState === WebSocket.OPEN) {
         ws.current.send(JSON.stringify(msg));
       }
@@ -96,6 +88,7 @@ export function WSProvider({ children }) {
         sendMessage,
         addListener,
         removeListener,
+        disconnect,
       }}
     >
       {children}

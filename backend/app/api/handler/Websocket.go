@@ -14,15 +14,14 @@ import (
 
 // WebSocketHandler handles WebSocket connections and manages user sessions
 func Websocket(w http.ResponseWriter, r *http.Request) {
-	conn, err := service.Upgrader.Upgrade(w, r, nil)
-	if err != nil {
-		log.Println("WebSocket upgrade error:", err)
-		return
-	}
-
 	currentUserID, err := helper.AuthenticateUser(r)
 	if err != nil {
 		log.Println("Authentication error:", err)
+		return
+	}
+	conn, err := service.Upgrader.Upgrade(w, r, nil)
+	if err != nil {
+		log.Println("WebSocket upgrade error:", err)
 		return
 	}
 
@@ -73,7 +72,7 @@ func Loop(conn *websocket.Conn, currentUserID string) {
 		msg.First_name = user["first_name"].(string)
 		msg.Last_name = user["last_name"].(string)
 		msg.Photo = user["photo"].(string)
-		//privaci := user["privacy"].(string)
+		// privaci := user["privacy"].(string)
 		switch msg.Type {
 		case "logout":
 			service.BrodcastOnlineStatus(currentUserID, false)
@@ -201,7 +200,7 @@ func Loop(conn *websocket.Conn, currentUserID string) {
 			// ===============================
 			//  HANDLE FOLLOW NOTIFICATION
 			// ===============================
-			msg.MessageContent = "sent a message to the group"
+			msg.MessageContent = "there is a new message in the group"
 			err = model.SaveGroupMessageNotification(currentUserID, msg)
 			if err != nil {
 				log.Println("DB error saving group message notification:", err)
@@ -229,7 +228,7 @@ func Loop(conn *websocket.Conn, currentUserID string) {
 			if !exict {
 				msg.SubType = "unfollow"
 				msg.MessageContent = "has unfollowed you"
-			} else  {
+			} else {
 				msg.SubType = "follow"
 				msg.MessageContent = "has following you"
 				err = model.SaveFollowNotification(currentUserID, msg)

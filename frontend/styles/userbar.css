@@ -257,7 +257,7 @@
     }
 }
 
-@media (max-width: 992px) {
+@media (max-width: 700px) {
     .userBar {
         display: none;
     }

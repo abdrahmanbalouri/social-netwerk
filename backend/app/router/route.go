@@ -16,7 +16,7 @@ func Routes() http.Handler {
 	})
 
 	// ======= Static Files =======
-	mux.Handle("/uploads/", http.StripPrefix("/uploads/", http.FileServer(http.Dir("uploads")))) // hada mamahaloho mina i3rab
+//	mux.Handle("/uploads/", http.StripPrefix("/uploads/", http.FileServer(http.Dir("uploads")))) // hada mamahaloho mina i3rab
 
 	// ======= Auth & User =======
 	mux.HandleFunc("/api/register", middlewares.RateLimitLoginMiddleware(handlers.RegisterHandler))

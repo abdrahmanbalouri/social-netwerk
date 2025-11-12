@@ -203,7 +203,6 @@ export default function Profile() {
       if (response.error) {
         if (response.error == "Unauthorized") {
           router.push("/login");
-          //sendMessage({ type: "logout" })
           return
         } else {
           showToast(response.error)
@@ -319,7 +318,6 @@ export default function Profile() {
       if (res.error) {
         if (res.error == "Unauthorized") {
           router.push("/login");
-          //sendMessage({ type: "logout" })
           return
         } else {
           showToast(res.error)
