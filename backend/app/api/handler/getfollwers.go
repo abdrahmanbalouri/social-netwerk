@@ -8,6 +8,11 @@ import (
 )
 
 func Getfollowers(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		helper.RespondWithError(w, http.StatusMethodNotAllowed, " method not allowed ")
+		return
+	}
+
 	// Assume token is sent in Authorization header
 	UserId, err := helper.AuthenticateUser(r)
 	if err != nil {

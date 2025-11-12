@@ -207,9 +207,6 @@
 }
 
 @media (max-width: 768px) {
-    .create-post-wrapper {
-        padding: 12px;
-    }
 
     .create-post-container {
         padding: 16px;

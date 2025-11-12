@@ -24,23 +24,6 @@ export default function LeftBar({ showSidebar }) {
     window.location.href = "/login";
   }
 
-  const logoutStyle = {
-    width: '90%',
-    height: '40px',
-    display: 'flex',
-    alignItems: 'center',
-    gap: '8px',
-    background: 'var(--color-danger, #e53e3e)',
-    color: 'white',
-    border: 'none',
-    padding: '0px 12px',
-    borderRadius: '8px',
-    cursor: 'pointer',
-    fontWeight: 600,
-    marginTop: '12px',
-    bottom: '3%',
-    position: 'absolute'
-  };
 
   return (
     <div className="leftBar" id="leftBar" style={{ display: showSidebar ? 'block' : 'none' }}>
@@ -106,7 +89,7 @@ export default function LeftBar({ showSidebar }) {
       <hr />
 
       <div>
-        <button onClick={handleLogout} style={logoutStyle} aria-label="Logout">
+        <button onClick={handleLogout} aria-label="Logout">
           <i className="fa-solid fa-right-from-bracket" />
           <span>Logout</span>
         </button>

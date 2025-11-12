@@ -12,6 +12,9 @@ import (
 )
 
 func LoginHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
+	}
 	var loginData utils.LoginInformation
 	// Parse JSON body
 	err := json.NewDecoder(r.Body).Decode(&loginData)

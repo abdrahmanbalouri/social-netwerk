@@ -5,9 +5,15 @@ import (
 	"time"
 
 	service "social-network/app/api/service"
+	"social-network/app/helper"
 )
 
 func LogoutHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		helper.RespondWithError(w, http.StatusMethodNotAllowed, " method not allowed ")
+		return
+	}
+
 	c, err := r.Cookie("session")
 	if err != nil {
 		w.WriteHeader(http.StatusUnauthorized)

@@ -8,6 +8,12 @@ import (
 )
 
 func GalleryHandler(w http.ResponseWriter, r *http.Request) {
+
+if r.Method != http.MethodGet {
+		helper.RespondWithError(w, http.StatusMethodNotAllowed, "methode not allowed")
+		return
+}
+
 	userID := r.URL.Query().Get("id")
 	if userID == "" {
 		helper.RespondWithError(w, http.StatusBadRequest, "Missing user ID")

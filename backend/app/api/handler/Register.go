@@ -34,6 +34,9 @@ type User struct {
 }
 
 func RegisterHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
+	}
 	// Parse form and files
 	err := r.ParseMultipartForm(10 << 20)
 	if err != nil {
@@ -56,7 +59,7 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 		helper.RespondWithError(w, http.StatusBadRequest, "Missing required fields")
 		return
 	}
-	if len (nickname) < 3 || len(nickname) > 20 {
+	if len(nickname) < 3 || len(nickname) > 20 {
 		helper.RespondWithError(w, http.StatusBadRequest, "Nickname must be between 3 and 30 characters")
 		return
 	}
@@ -72,7 +75,6 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 		helper.RespondWithError(w, http.StatusBadRequest, "Password must be at least 6 characters long")
 		return
 	}
-
 
 	// Validate email
 	re := regexp.MustCompile(`^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$`)

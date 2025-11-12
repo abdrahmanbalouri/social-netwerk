@@ -8,10 +8,11 @@ import (
 )
 
 func ProfileHandler(w http.ResponseWriter, r *http.Request) {
-	if r.Method != "GET" {
-		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
+if r.Method !=  http.MethodGet {
+		helper.RespondWithError(w, http.StatusMethodNotAllowed, " method not allowed ")
 		return
-	}
+}
+
 
 	targetUserID := r.URL.Query().Get("userId")
 	currentUserID, err := helper.AuthenticateUser(r)

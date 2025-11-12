@@ -3,6 +3,7 @@
   position: sticky;
   left: 0;
   top: var(--leftbar-top, 70px);
+  margin-right: 10px;
   width: var(--leftbar-width);
   height: calc(100vh - (var(--leftbar-top, 70px) + 20px));
   overflow-y: auto;
@@ -153,54 +154,53 @@ button[aria-label="Logout"] i {
 }
 
 @media (max-width: 1000px) {
+  button[aria-label="Logout"] {
+    width: 50%;
+  }
+    .leftBar {
+      --leftbar-width: 72px;
+      width: var(--leftbar-width);
+      margin: 0 10px;
+    }
 
-  /* collapse to icon-only left bar */
-  .leftBar {
-    --leftbar-width: 72px;
-    width: var(--leftbar-width);
-    margin: 0 10px;
+    .leftBar .menu .item {
+      justify-content: center;
+      padding: 10px 8px;
+    }
+
+    .leftBar .menu .item span,
+    .leftBar .menu .user span,
+    button[aria-label="Logout"] span {
+      display: none;
+    }
+
+    .leftBar .menu>span {
+      text-align: center;
+      font-size: 11px;
+      padding: 8px 4px;
+    }
   }
 
-  .leftBar .menu .item {
-    justify-content: center;
-    padding: 10px 8px;
+  @media (min-width: 768px) {
+    #leftBar {
+      display: block;
+    }
+
   }
 
-  /* only hide labels inside menu items and user name - keep structural spans (like section headers) visible */
-  .leftBar .menu .item span,
-  .leftBar .menu .user span,
-  button[aria-label="Logout"] span {
-    display: none;
+  /* small screens: hide by default (app can provide alternative nav) */
+  @media (max-width: 768px) {
+    .leftBar {
+      display: none;
+      position: fixed;
+    }
+
   }
 
-  /* make section heading compact and centered */
-  .leftBar .menu>span {
-    text-align: center;
-    font-size: 11px;
-    padding: 8px 4px;
+  /* (duplicate removed) */
+
+  @media (max-height: 870px) {
+    .leftBar .menu {
+      gap: 20px;
+    }
   }
-}
-
-@media (min-width: 768px) {
-  #leftBar {
-    display: block;
-  }
-
-}
-
-/* small screens: hide by default (app can provide alternative nav) */
-@media (max-width: 768px) {
-  .leftBar {
-    display: none;
-    position: fixed;
-  }
-
-}
-
-/* (duplicate removed) */
-
-@media (max-height: 870px) {
-  .leftBar .menu {
-    gap: 20px;
-  }
-}

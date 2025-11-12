@@ -22,6 +22,11 @@ type Notification struct {
 }
 
 func Notifications(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		helper.RespondWithError(w, http.StatusMethodNotAllowed, " method not allowed ")
+		return
+	}
+
 	id, ok := helper.AuthenticateUser(r)
 	if ok != nil {
 		http.Error(w, "Unauthorized", http.StatusUnauthorized)
