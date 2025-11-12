@@ -548,13 +548,13 @@ export async function CreatePost(groupId, formData) {
         data?.error ||
         data?.message ||
         (typeof data === "string" ? data : "") ||
-        "Failed to create group";
+        "Failed to create post";
       throw new Error(message);
     }
 
     return data;
   } catch (error) {
-    console.error("CreatePost error:", error);
+    throw new Error(error.message);
   }
 }
 
