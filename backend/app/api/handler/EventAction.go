@@ -38,9 +38,9 @@ func EventAction(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = service.HandleEventAction(userID, groupID, req.EventID, req.Action)
+	statusCode, err := service.HandleEventAction(userID, groupID, req.EventID, req.Action)
 	if err != nil {
-		helper.RespondWithError(w, http.StatusBadRequest, err.Error())
+		helper.RespondWithError(w, statusCode, err.Error())
 		return
 	}
 

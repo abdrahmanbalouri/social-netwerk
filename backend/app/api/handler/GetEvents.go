@@ -27,10 +27,10 @@ func GetEvents(w http.ResponseWriter, r *http.Request) {
 	}
 	GrpID := parts[3]
 
-	Events, err := service.GetEventsService(GrpID, UserId)
-	if err != nil {
-		helper.RespondWithError(w, http.StatusInternalServerError, "app Server Error")
-		return
-	}
+	Events, statusCode, err := service.GetEventsService(GrpID, UserId)
+if err != nil {
+	helper.RespondWithError(w, statusCode, err.Error())
+	return
+}
 	helper.RespondWithJSON(w, http.StatusOK, Events)
 }

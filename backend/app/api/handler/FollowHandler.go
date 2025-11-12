@@ -26,9 +26,10 @@ func FollowHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	response, err := service.ToggleFollow(userID, targetID)
+	response, statusCode, err := service.ToggleFollow(userID, targetID)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		helper.RespondWithError(w, statusCode, err.Error())
+
 		return
 	}
 
