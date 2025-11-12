@@ -29,10 +29,9 @@ func FollowRequestAction(w http.ResponseWriter, r *http.Request) {
 		helper.RespondWithError(w, http.StatusBadRequest, "invalid request payload")
 		return
 	}
-
-	err = service.HandleFollowRequestAction(userID, req.ID, req.Action)
+	statusCode, err := service.HandleFollowRequestAction(userID, req.ID, req.Action)
 	if err != nil {
-		helper.RespondWithError(w, http.StatusBadRequest, err.Error())
+		helper.RespondWithError(w, statusCode, err.Error())
 		return
 	}
 

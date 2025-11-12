@@ -121,6 +121,7 @@ func CheckExistingInvitation(tx *sql.Tx, userID, groupID string) (bool, error) {
 }
 
 func CheckGroupMembership(tx *sql.Tx, userID, groupID string) (bool, error) {
+	fmt.Println("USeeer is howa L", userID)
 	var isMember bool
 	query := `SELECT EXISTS (SELECT 1 FROM group_members WHERE user_id = ? AND group_id = ?)`
 	err := tx.QueryRow(query, userID, groupID).Scan(&isMember)
@@ -233,12 +234,12 @@ func FetchJoinRequests(userID string, groupID string) ([]utils.JoinRequest, erro
 func FetchGroupInvitations(userID string) ([]utils.FetchGroupInvitation, error) {
 	query := `
 	SELECT 
-		g.id AS group_id,
-		g.title,
-		i.id AS invitation_id
+    g.id AS group_id,
+    g.title,
+    i.id AS invitation_id
 	FROM groups g
 	JOIN group_invitations i ON i.group_id = g.id
-	WHERE i.user_id = ? AND i.request_type = 'invitation';
+	WHERE i.user_id = ? AND i.request_type = 'invitation'
 	`
 
 	rows, err := sqlite.Db.Query(query, userID)
@@ -255,6 +256,7 @@ func FetchGroupInvitations(userID string) ([]utils.FetchGroupInvitation, error) 
 		}
 		invitations = append(invitations, inv)
 	}
+	fmt.Println("invitations in model :", invitations)
 
 	return invitations, nil
 }

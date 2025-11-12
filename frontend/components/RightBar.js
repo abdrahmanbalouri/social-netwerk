@@ -46,6 +46,8 @@ export default function RightBar() {
           throw new Error("Failed to fetch posts");
         }
         const data = await res.json();
+        console.log("dataaa:", data);
+        
 
         setgroupeInvitation(data);
       } catch (err) {
@@ -54,6 +56,8 @@ export default function RightBar() {
     }
 
     fetchGroupeInvitation();
+    console.log("requeeeests are :", groupeInvitation);
+
   }, []);
 
 
