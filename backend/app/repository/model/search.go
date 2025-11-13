@@ -15,9 +15,11 @@ func SearchUsersInDB(db *sql.DB, search string) ([]map[string]any, error) {
 	rows, err := db.Query(`
         SELECT id, nickname, first_name, last_name, image 
         FROM users 
-        WHERE lower(nickname) LIKE ? OR lower(first_name) LIKE ? OR lower(last_name) LIKE ?
+        WHERE lower(nickname) LIKE ? OR lower(first_name) LIKE ? 
+		OR lower(last_name) LIKE ? 
+		OR lower(CONCAT(first_name,' ',last_name)) LIKE ?
         LIMIT 10
-    `, search, search, search)
+    `, search, search, search, search)
 	if err != nil {
 		return nil, err
 	}
