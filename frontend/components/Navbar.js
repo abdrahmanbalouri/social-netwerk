@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useDarkMode } from "../context/darkMod";
 import { useProfile } from "../context/profile";
 import { useWS } from "../context/wsContext.js";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 // transient toast notification moved to GlobalNotification
 import NotBar from "./notfcationBar.js"
 import "../styles/navbar.css";
@@ -154,7 +154,9 @@ export default function Navbar() {
               {searchResults.map((user) => (
                 <div
                   key={user.id}
-                  onClick={() => router.push(`/profile/${user.id}`)}
+                  onClick={() => {router.push(`/profile/${user.id}`)
+                 setSearchTerm("")
+                }}
                 >
                   <img
                     src={`${user?.image ? `/uploads/${user.image}` : "/assets/default.png"}`}
