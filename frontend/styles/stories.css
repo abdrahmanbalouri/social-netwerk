@@ -354,23 +354,7 @@ input[type="color"]::-webkit-color-swatch {
   transition: width 1s linear;
 }
 
-.story-segment-bar.completed .story-segment-fill {
-  width: 100% !important;
-}
 
-.story-segment-bar.active .story-segment-fill {
-  animation: countdown 6s linear forwards;
-}
-
-@keyframes countdown {
-  from {
-    width: 100%;
-  }
-
-  to {
-    width: 0%;
-  }
-}
 
 /* User Info Overlay - Instagram Style */
 .story-user-info {
