@@ -633,6 +633,14 @@ export default function Profile() {
                       <h3>About :</h3>
                       <span>{theprofile.about}</span>
                     </div>
+                    <div className="item">
+                      <h3>email :</h3>
+                      <span>{theprofile.email}</span>
+                    </div>
+                    <div className="item">
+                      <h3>date Of Birth :</h3>
+                      <span>{(new Date(theprofile.dateOfBirth).toDateString())}</span>
+                    </div>
                   </div>
 
                   {Profile && Profile.id !== theprofile.id && (

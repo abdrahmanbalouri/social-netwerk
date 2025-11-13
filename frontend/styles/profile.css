@@ -165,11 +165,11 @@ hr {
 
 .profile .profileContainer .uInfo .center .info .item {
   display: flex;
-  flex-direction: column;
   background: transparent;
   border-radius: 0;
   border: none;
   width: fit-content;
+  gap: 5px;
 }
 
 .profile .profileContainer .uInfo .center .info .item h3 {

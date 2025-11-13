@@ -13,6 +13,7 @@ SELECT
     u.first_name, u.last_name, 
     u.email, 
     u.about, 
+	u.date_birth,
     u.privacy, 
     u.image, 
     u.cover,
@@ -34,6 +35,7 @@ WHERE u.id = ?;
 		last_name   string
 		Email       string
 		About       string
+		dateOfBirth int
 		Privacy     string
 		Image       string
 		Cover       string
@@ -46,6 +48,7 @@ WHERE u.id = ?;
 		&user.last_name,
 		&user.Email,
 		&user.About,
+		&user.dateOfBirth,
 		&user.Privacy,
 		&user.Image,
 		&user.Cover,
@@ -83,6 +86,7 @@ WHERE u.id = ?;
 		"email":       user.Email,
 		"about":       user.About,
 		"privacy":     user.Privacy,
+		"dateOfBirth": user.dateOfBirth,
 		"image":       user.Image,
 		"cover":       user.Cover,
 		"isFollowing": user.IsFollowing,

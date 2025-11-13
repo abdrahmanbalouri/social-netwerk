@@ -45,7 +45,7 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Collect form data
-	nickname := (r.FormValue("nickname"))
+	nickname := strings.TrimSpace(r.FormValue("nickname"))
 	firstName := r.FormValue("firstName")
 	lastName := r.FormValue("lastName")
 	email := r.FormValue("email")
@@ -59,7 +59,7 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 		helper.RespondWithError(w, http.StatusBadRequest, "Missing required fields")
 		return
 	}
-	if len(nickname) < 3 || len(nickname) > 20 {
+	if strings.TrimSpace(nickname) != "" && (len(strings.TrimSpace(nickname)) < 3 || len(strings.TrimSpace(nickname)) > 20) {
 		helper.RespondWithError(w, http.StatusBadRequest, "Nickname must be between 3 and 30 characters")
 		return
 	}
@@ -140,6 +140,13 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 		// sanitize filename and generate unique name
 		safeFilename := filepath.Base(handler.Filename)
 		ext := filepath.Ext(safeFilename)
+		allowedExts := map[string]bool{
+			".jpg": true, ".jpeg": true, ".png": true, ".gif": true,
+		}		
+		if !allowedExts[ext] {
+			helper.RespondWithError(w, http.StatusBadRequest, "unsupported media format")
+			return
+		}
 		newName := fmt.Sprintf("%s%s", helper.GenerateUUID().String(), ext)
 		filePath := filepath.Join(uploadDir, newName)
 
