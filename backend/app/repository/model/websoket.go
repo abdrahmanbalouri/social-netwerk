@@ -164,7 +164,7 @@ func SaveGroupInvitationNotification(currentUserID string, msg Message) error {
 
 func Name(msg Message) (string, error) {
 	var Name string
-	err := sqlite.Db.QueryRow(`SELECT title FROM groups WHERE id = ?`, msg.ReceiverId).Scan(&Name)
+	err := sqlite.Db.QueryRow(`SELECT title FROM groups WHERE id = ?`, msg.GroupID).Scan(&Name)
 	if err != nil {
 		return "", err
 	}

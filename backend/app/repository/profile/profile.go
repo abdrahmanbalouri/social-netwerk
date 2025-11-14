@@ -10,6 +10,7 @@ func GetProfileData(targetUserID, currentUserID string, w http.ResponseWriter) (
 	q := `
 SELECT 
     u.id, 
+	u.nickname,
     u.first_name, u.last_name, 
     u.email, 
     u.about, 
@@ -31,6 +32,7 @@ WHERE u.id = ?;
 
 	var user struct {
 		ID          string
+		nickname    string
 		first_name  string
 		last_name   string
 		Email       string
@@ -44,6 +46,7 @@ WHERE u.id = ?;
 
 	err := row.Scan(
 		&user.ID,
+		&user.nickname,
 		&user.first_name,
 		&user.last_name,
 		&user.Email,
@@ -81,6 +84,7 @@ WHERE u.id = ?;
 
 	profileData := map[string]interface{}{
 		"id":          user.ID,
+		"nickname":    user.nickname,
 		"first_name":  user.first_name,
 		"last_name":   user.last_name,
 		"email":       user.Email,

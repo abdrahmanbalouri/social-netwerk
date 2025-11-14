@@ -34,8 +34,8 @@ async function sendRequest(invitedUserID, grpID) {
     });
 
     const data = await res.json();
-    if (!res.ok){
-      
+    if (!res.ok) {
+
       const message =
         data?.error ||
         data?.message ||
@@ -43,12 +43,12 @@ async function sendRequest(invitedUserID, grpID) {
         "Failed to send request";
       throw new Error(message);
     }
-    
+
     return data;
   } catch (error) {
     // console.error("error sending invitation to the user :", error);
     // return { error: error.message };
-    
+
     throw new Error(error.message);
   }
 }
@@ -192,6 +192,7 @@ export function EventForm({ closeForm, fetchEvents, showEvent }) {
   const [description, setDescription] = useState("");
   const [dateTime, setDateTime] = useState("");
   const [toast, setToast] = useState(null)
+  const { sendMessage, addListener, removeListener } = useWS();
 
 
   const showToast = (message, type = "error", duration = 3000) => {
@@ -252,11 +253,19 @@ export function EventForm({ closeForm, fetchEvents, showEvent }) {
       closeForm();
 
       setErrors(null);
+      console.log("send");
 
+      sendMessage({
+        type: "newEvent", 
+        groupID: params.id,
+        messageContent: "ther is a new mevent",
+      });
 
 
 
     } catch (error) {
+      console.log(error);
+
       showToast(error.message);
     }
 

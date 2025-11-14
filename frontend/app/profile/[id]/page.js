@@ -591,7 +591,7 @@ export default function Profile() {
             <div className="profileContainer">
               <div className="uInfo">
                 <div className="center">
-                  <div className="comb"><h1 className="nickname">{theprofile.first_name + " " + theprofile.last_name}</h1><h1 className="privacy">{theprofile.privacy}</h1></div>
+                  <div className="comb"><h1 className="nickname">{theprofile.first_name + " " + theprofile.last_name}</h1><span>{theprofile?.nickname}</span><h1 className="privacy">{theprofile.privacy}</h1></div>
                   {Profile && Profile.id !== theprofile.id && !theprofile.isFollowing && theprofile.privacy === "private" ? (
                     <div className="left">
                       <p className='disabled'>
