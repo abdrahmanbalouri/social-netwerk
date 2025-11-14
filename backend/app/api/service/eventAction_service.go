@@ -24,17 +24,19 @@ func HandleEventAction(userID string, groupID string, eventID int, action string
 		return http.StatusInternalServerError, errors.New("database error while fetching event")
 	}
 
-	// Parse event time
 	eventTime, err := time.Parse(time.RFC3339, eventTimeStr)
 	if err != nil {
 		return http.StatusInternalServerError, errors.New("invalid event time format")
 	}
 
+	// Convert both to UTC for accurate comparison
+	eventTimeUTC := eventTime.UTC()
+	nowUTC := time.Now().UTC().Add(time.Hour)
+
 	// Check if event already passed
-	if eventTime.Before(time.Now().UTC()) {
+	if eventTimeUTC.Before(nowUTC) {
 		return http.StatusBadRequest, errors.New("event already passed")
 	}
-
 	// Get current user action for this event
 	status, err := model.GetUserEventAction(eventIDCheck, userID)
 

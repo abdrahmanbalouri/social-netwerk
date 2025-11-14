@@ -2,12 +2,17 @@
 import { useState, useEffect } from 'react';
 import "../../styles/watch.css";
 import { useRouter } from 'next/navigation';
+import { useDarkMode } from '../../context/darkMod';
+import Navbar from '../../components/Navbar';
 
 export default function Reels() {
     const [videos, setVideos] = useState([]);
     const [currentIndex, setCurrentIndex] = useState(0);
     const [loading, setLoading] = useState(true);
     const router = useRouter()
+
+    const { darkMode } = useDarkMode();
+
 
     // const handleGoHome = () => {
     //     window.location.href = "/home";
@@ -36,10 +41,13 @@ export default function Reels() {
 
     if (loading) return <div className="loading">Loading...</div>;
     if (!videos || videos.length === 0) return (
-        <div className="no-videos">
-            No reels
-            <button className='home-btn' onClick={() => router.back()}>back</button>
+        <div className={darkMode ? "theme-dark" : "theme-light"}>
+            <Navbar />
+            <div className="no-videos">
+                No reels
+                <button className='home-btn' onClick={() => router.back()}>back</button>
 
+            </div>
         </div>
     );
 
@@ -49,51 +57,56 @@ export default function Reels() {
     const goPrev = () => setCurrentIndex(i => i - 1);
 
     return (
-        <div
-            className="reels-container"
+        <div className={darkMode ? "theme-dark" : "theme-light"}>
+            <Navbar />
 
-        >
-            {/* Video */}
-            <div className="video-wrapper">
-                <video
-                    key={current.id}
-                    src={current.image_path}
-                    muted
-                    loop
-                    playsInline
-                    autoPlay
-                    className="reel-video"
-                />
+            <div
+                className="reels-container"
+
+            >
+                {/* Video */}
+                <div className="video-wrapper">
+                    <video
+                        key={current.id}
+                        src={current.image_path}
+                        muted
+                        loop
+                        playsInline
+                        autoPlay
+                        className="reel-video"
+                    />
+                </div>
+
+                <div className="like-count">
+                    <span className="icon">❤️</span>
+                    <span className="count">{current.like || 0}</span>
+                </div>
+
+                {/* Next / Prev Buttons */}
+                <div className="controls">
+                    {currentIndex > 0 && (
+                        <button onClick={goPrev} className="nav-btn">Previous</button>
+                    )}
+                    <span className="counter">{currentIndex + 1} / {videos.length}</span>
+                    {currentIndex < videos.length - 1 && (
+                        <button onClick={goNext} className="nav-btn">Next</button>
+                    )}
+                </div>
+
+                {/* Progress Bar */}
+                <div className="progress-bar">
+                    <div
+                        className="progress-fill"
+                        style={{ width: `${((currentIndex + 1) / videos.length) * 100}%` }}
+                    />
+                </div>
+
+                {/* Back to Home */}
+                <button className='home-btn' onClick={() => router.back()}>back</button>
+                {/* <Link href='/home' className='home-btn' > Go Home</Link> */}
+
             </div>
-
-            <div className="like-count">
-                <span className="icon">❤️</span>
-                <span className="count">{current.like || 0}</span>
-            </div>
-
-            {/* Next / Prev Buttons */}
-            <div className="controls">
-                {currentIndex > 0 && (
-                    <button onClick={goPrev} className="nav-btn">Previous</button>
-                )}
-                <span className="counter">{currentIndex + 1} / {videos.length}</span>
-                {currentIndex < videos.length - 1 && (
-                    <button onClick={goNext} className="nav-btn">Next</button>
-                )}
-            </div>
-
-            {/* Progress Bar */}
-            <div className="progress-bar">
-                <div
-                    className="progress-fill"
-                    style={{ width: `${((currentIndex + 1) / videos.length) * 100}%` }}
-                />
-            </div>
-
-            {/* Back to Home */}
-            <button className='home-btn' onClick={() => router.back()}>back</button>
-            {/* <Link href='/home' className='home-btn' > Go Home</Link> */}
-
         </div>
+
     );
 }

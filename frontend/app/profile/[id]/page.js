@@ -591,7 +591,7 @@ export default function Profile() {
             <div className="profileContainer">
               <div className="uInfo">
                 <div className="center">
-                  <div className="comb"><h1 className="nickname">{theprofile.first_name + " " + theprofile.last_name}</h1><span>{theprofile?.nickname}</span><h1 className="privacy">{theprofile.privacy}</h1></div>
+                  <div className="comb"><h1 className="nickname">{theprofile.first_name + " " + theprofile.last_name}</h1><h1 className="privacy">{theprofile.privacy}</h1></div>
                   {Profile && Profile.id !== theprofile.id && !theprofile.isFollowing && theprofile.privacy === "private" ? (
                     <div className="left">
                       <p className='disabled'>
@@ -628,20 +628,29 @@ export default function Profile() {
                     </div>
                   )}
                   <hr />
-                  <div className="info">
-                    <div className="item">
-                      <h3>About :</h3>
-                      <span>{theprofile.about}</span>
+                  {Profile && (Profile.id == theprofile.id || theprofile.privacy === "public" || (theprofile.isFollowing))  && (
+
+ 
+                    <div className="info">
+                      <div className="item">
+                        <h3>Nickname :</h3>
+                        <span>{theprofile?.nickname || "No Nickname"}</span>
+                      </div>
+                      <div className="item">
+                        <h3>About :</h3>
+                        <span>{theprofile.about}</span>
+                      </div>
+                      <div className="item">
+                        <h3>email :</h3>
+                        <span>{theprofile.email}</span>
+                      </div>
+                      <div className="item">
+                        <h3>date Of Birth :</h3>
+                        <span>{(new Date(theprofile.dateOfBirth).toDateString())}</span>
+                      </div>
                     </div>
-                    <div className="item">
-                      <h3>email :</h3>
-                      <span>{theprofile.email}</span>
-                    </div>
-                    <div className="item">
-                      <h3>date Of Birth :</h3>
-                      <span>{(new Date(theprofile.dateOfBirth).toDateString())}</span>
-                    </div>
-                  </div>
+                  )}
+
 
                   {Profile && Profile.id !== theprofile.id && (
                     <button
