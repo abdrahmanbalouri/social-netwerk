@@ -4,7 +4,7 @@ import { useParams, useRouter } from 'next/navigation';
 import "../styles/comment.css"
 
 
-export default function Comment({ comments, isOpen, onClose, postId, onCommentChange, lodinggg, ongetcomment, post, showToast,ID }) {
+export default function Comment({ comments, isOpen, onClose, postId, onCommentChange, lodinggg, ongetcomment, post, showToast, ID }) {
   const [commentContent, setCommentContent] = useState("")
   const [selectedFile, setSelectedFile] = useState(null)
   const [loading, setLoading] = useState(false)
@@ -18,7 +18,7 @@ export default function Comment({ comments, isOpen, onClose, postId, onCommentCh
   const emojiRef = useRef(null)
   const textareaRef = useRef(null)
   const router = useRouter()
-  
+
 
 
 
@@ -146,7 +146,15 @@ export default function Comment({ comments, isOpen, onClose, postId, onCommentCh
   }
 
   const addEmoji = (emoji) => {
-    setCommentContent(prev => prev + emoji)
+    console.log(emoji.length);
+    
+    const cursorPos = textareaRef.current.selectionStart;
+    const newText = commentContent.slice(0, cursorPos) + emoji + commentContent.slice(cursorPos);
+    setCommentContent(newText);
+    setTimeout(() => {
+      textareaRef.current.focus();
+      textareaRef.current.setSelectionRange(cursorPos +2 , cursorPos  +2);
+    }, 0);
   }
 
   const handleTextChange = (e) => {
@@ -155,7 +163,7 @@ export default function Comment({ comments, isOpen, onClose, postId, onCommentCh
 
   async function handlePostComment(e) {
     e.preventDefault()
-    if (!commentContent.trim() && !selectedFile){
+    if (!commentContent.trim() && !selectedFile) {
       showToast("Please enter a comment or select a file.")
       return
     }
@@ -168,8 +176,8 @@ export default function Comment({ comments, isOpen, onClose, postId, onCommentCh
       if (selectedFile) {
         formData.append("media", selectedFile)
       }
-      formData.append("whatis",  window.location.href.split('/')[3])
-      
+      formData.append("whatis", window.location.href.split('/')[3])
+
       formData.append("groupId", ID)
 
       const response = await fetch(`http://localhost:8080/api/createcomment`, {
@@ -179,7 +187,7 @@ export default function Comment({ comments, isOpen, onClose, postId, onCommentCh
       })
 
 
-      const res = await response.json()      
+      const res = await response.json()
       if (res.error) {
         if (res.error == "Unauthorized") {
           router.push("/login");
@@ -289,6 +297,9 @@ export default function Comment({ comments, isOpen, onClose, postId, onCommentCh
                   rows={1}
                   required={!selectedFile}
                   disabled={loading}
+                  autoFocus={true}
+                  onBlur={() => textareaRef.current?.focus()}
+
                 />
 
                 {/* Bouton emoji */}

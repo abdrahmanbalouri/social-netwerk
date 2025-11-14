@@ -200,7 +200,7 @@ export default function ChatBox({ user }) {
 
   const addEmoji = (emoji) => {
     const cursorPos = inputRef.current.selectionStart;
-    const newText = input.slice(0, cursorPos) + emoji + input.slice(cursorPos) ;
+    const newText = input.slice(0, cursorPos) + emoji + input.slice(cursorPos);
     setInput(newText);
     setTimeout(() => {
       inputRef.current.focus();
