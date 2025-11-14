@@ -65,7 +65,6 @@ export function CreatePostForm({ onSubmit, onCancel ,err }) {
                 onChange={(e) => setPostTitle(e.target.value)}
                 placeholder="Enter post title"
                 className="form-input"
-                required
               />
             </div>
 
@@ -120,7 +119,7 @@ export function CreatePostForm({ onSubmit, onCancel ,err }) {
               <button
                 type="submit"
                 className="submit-button"
-                disabled={!PostTitle.trim() || !PostDescription.trim()}
+                disabled={!PostTitle.trim() &&  !PostDescription.trim()&& !selectedImage}
               >
                 Create post
               </button>

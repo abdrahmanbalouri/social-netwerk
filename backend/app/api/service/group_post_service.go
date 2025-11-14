@@ -33,9 +33,6 @@ func CreateGroupPostService(r *http.Request, userID string) (interface{}, error)
 	title := strings.TrimSpace(r.FormValue("title"))
 	description := strings.TrimSpace(r.FormValue("description"))
 
-	if len(title) == 0 {
-		return nil, fmt.Errorf("title and description are required")
-	}
 	if len(title) > 20 || len(description) > 40 {
 		return nil, fmt.Errorf("title or description to bigg")
 	}
@@ -77,6 +74,10 @@ func handleGroupPostMedia(r *http.Request, maxSize int64, title string, descrept
 		return "", nil // no file uploaded
 	}
 	defer file.Close()
+if title == "" && descreption == "" && file == nil {
+    return "", fmt.Errorf("please provide at least one field")
+}
+
 
 	ext := strings.ToLower(filepath.Ext(header.Filename))
 	allowed := map[string]bool{".jpg": true, ".jpeg": true, ".png": true, ".gif": true, ".mp4": true, ".mov": true}

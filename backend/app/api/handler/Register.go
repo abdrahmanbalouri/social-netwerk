@@ -46,8 +46,8 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 
 	// Collect form data
 	nickname := strings.TrimSpace(r.FormValue("nickname"))
-	firstName := r.FormValue("firstName")
-	lastName := r.FormValue("lastName")
+	firstName := strings.TrimSpace(r.FormValue("firstName"))
+	lastName := strings.TrimSpace(r.FormValue("lastName"))
 	email := r.FormValue("email")
 	password := r.FormValue("password")
 	about := r.FormValue("aboutMe")
@@ -142,7 +142,7 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 		ext := filepath.Ext(safeFilename)
 		allowedExts := map[string]bool{
 			".jpg": true, ".jpeg": true, ".png": true, ".gif": true,
-		}		
+		}
 		if !allowedExts[ext] {
 			helper.RespondWithError(w, http.StatusBadRequest, "unsupported media format")
 			return
