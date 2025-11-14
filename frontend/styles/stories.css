@@ -353,9 +353,17 @@ input[type="color"]::-webkit-color-swatch {
   width: 0%;
   transition: width 1s linear;
 }
-
-
-
+.story-segment-bar.active .story-segment-fill {
+  animation: countdown 6s linear forwards;
+}
+@keyframes countdown {
+  from {
+    width: 0%;
+  }
+  to {
+    width: 100%;
+  }
+}
 /* User Info Overlay - Instagram Style */
 .story-user-info {
   position: absolute;
