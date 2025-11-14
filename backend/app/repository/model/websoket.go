@@ -29,11 +29,10 @@ func GetUserByID(currentUserID string) (map[string]any, error) {
 
 // ✅ Vérifie ghir wach receiver kayn
 func CheckIfUsersFollowEachOther(currentUserID string, msg Message) (bool, error) {
-	var exist int
 	err := sqlite.Db.QueryRow(`
 				SELECT 1 FROM followers
 				WHERE (user_id = ? AND follower_id = ?) OR (user_id = ? AND follower_id = ?)
-			`, currentUserID, msg.ReceiverId, msg.ReceiverId, currentUserID).Scan(&exist)
+			`, msg.ReceiverId, currentUserID, currentUserID, msg.ReceiverId).Scan(new(int))
 
 	if err == sql.ErrNoRows {
 		return false, nil
@@ -43,10 +42,36 @@ func CheckIfUsersFollowEachOther(currentUserID string, msg Message) (bool, error
 	return true, nil
 }
 
+func CanSendMessageToReceiver(currentUserID string, msg Message) (bool, error) {
+	err := sqlite.Db.QueryRow(`
+				SELECT 1 FROM followers
+				WHERE (user_id = ? AND follower_id = ?)
+			`, currentUserID, msg.ReceiverId).Scan(new(int))
+	if err == sql.ErrNoRows {
+		var privacy string
+		err := sqlite.Db.QueryRow(`
+				SELECT privacy FROM users
+				WHERE id = ?
+			`, msg.ReceiverId).Scan(&privacy)
+		if err != nil {
+			return false, err
+		}
+
+		if privacy == "public" {
+			return true, nil
+		} else {
+			return false, nil
+		}
+	} else if err != nil {
+		return false, err
+	}
+	return true, nil
+}
+
 // ✅ Insert notification direct sans check dyal follows
 func SaveNotification(currentUserID string, msg Message) error {
 	q := `INSERT INTO notifications ( sender_id, receiver_id, type, message, created_at) VALUES (?, ?, ?, ?, ?) `
-	_, err := sqlite.Db.Exec(q, currentUserID, msg.ReceiverId, msg.Type, "Send you a message", time.Now().Unix())
+	_, err := sqlite.Db.Exec(q, currentUserID, msg.ReceiverId, msg.Type, "Send you a message", time.Now())
 
 	return err
 }

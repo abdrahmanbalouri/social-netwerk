@@ -74,7 +74,7 @@ func Loop(conn *websocket.Conn, currentUserID string) {
 		msg.Last_name = user["last_name"].(string)
 		msg.Photo = user["photo"].(string)
 		// privaci := user["privacy"].(string)
-		fmt.Println("mm",msg.Type)
+		fmt.Println("mm", msg.Type)
 		switch msg.Type {
 		case "logout":
 			service.BrodcastOnlineStatus(currentUserID, false)
@@ -117,20 +117,37 @@ func Loop(conn *websocket.Conn, currentUserID string) {
 				log.Println("DB error saving message:", err)
 				continue
 			}
-
+			exist, err := model.CanSendMessageToReceiver(currentUserID, msg)
 			// ✅ send message to receiver
-			service.SendToUser(msg.ReceiverId, map[string]any{
-				"type":        msg.Type,
-				"from":        currentUserID,
-				"to":          msg.ReceiverId,
-				"content":     msg.MessageContent,
-				"time":        time.Now().Format(time.RFC3339),
-				"name":        msg.First_name + " " + msg.Last_name,
-				"image":       msg.Photo,
-				"PictureSend": imageFileName,
-			})
+			if err != nil {
+				log.Println("DB error checking message sending permission:", err)
+			}
+			if exist {
+				service.SendToUser(msg.ReceiverId, map[string]any{
+					"type":        msg.Type,
+					"from":        currentUserID,
+					"to":          msg.ReceiverId,
+					"content":     msg.MessageContent,
+					"time":        time.Now().Format(time.RFC3339),
+					"name":        msg.First_name + " " + msg.Last_name,
+					"image":       msg.Photo,
+					"PictureSend": imageFileName,
+				})
+				
+				// send notification to receiver
+				service.BrodcastNotification(msg.ReceiverId, map[string]any{
+					"type":       "notification",
+					"subType":    "message",
+					"from":       currentUserID,
+					"content":    "sent you a message",
+					"first_name": msg.First_name,
+					"last_name":  msg.Last_name,
+					"time":       time.Now().Format(time.RFC3339),
+					"image":      msg.Photo,
+				})
+			}
 
-			// ✅ send back to sender also
+			// send back to sender also
 			service.SendToUser(currentUserID, map[string]any{
 				"type":        msg.Type,
 				"from":        currentUserID,
@@ -140,18 +157,6 @@ func Loop(conn *websocket.Conn, currentUserID string) {
 				"name":        msg.First_name + " " + msg.Last_name,
 				"image":       msg.Photo,
 				"PictureSend": imageFileName,
-			})
-
-			// send notification to receiver
-			service.BrodcastNotification(msg.ReceiverId, map[string]any{
-				"type":       "notification",
-				"subType":    "message",
-				"from":       currentUserID,
-				"content":    "sent you a message",
-				"first_name": msg.First_name,
-				"last_name":  msg.Last_name,
-				"time":       time.Now().Format(time.RFC3339),
-				"image":      msg.Photo,
 			})
 
 		// ===============================
@@ -334,7 +339,7 @@ func Loop(conn *websocket.Conn, currentUserID string) {
 			})
 		case "newEvent":
 			msg.MessageContent = "has a new event"
-			
+
 			err = model.SaveGroupMessageNotification(currentUserID, msg)
 			if err != nil {
 				log.Println("DB error saving group message notification:", err)

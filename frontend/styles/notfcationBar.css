@@ -204,12 +204,9 @@
     word-wrap: break-word;
 }
 
-.notification-text strong {
+.notification-text span {
     font-weight: 800;
-    background: linear-gradient(135deg, var(--text), var(--accent));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    color: #3b82f6;
 }
 
 .notification-time {

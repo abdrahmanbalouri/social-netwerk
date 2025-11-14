@@ -62,6 +62,8 @@ export default function NotBar({ notData }) {
         }
     }
     const filteredNotifications = getFilteredNotifications();
+    console.log(filteredNotifications);
+    
 
     return (
         <div className="dropdown-menu show">
@@ -105,7 +107,7 @@ export default function NotBar({ notData }) {
                                 </div>
                                 <div className="notification-content">
                                     <div className="notification-text">
-                                        <strong>{noti.first_name+" "+noti.last_name}</strong> {noti.message}
+                                        <span>{noti?.first_name+" "+noti?.last_name}</span> {noti.message}
                                     </div>
                                     <div className="notification-time">{formatTime(noti.created_at)}</div>
                                 </div>

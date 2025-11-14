@@ -15,7 +15,7 @@ type Notification struct {
 	Type       string `json:"type"`
 	Message    string `json:"message"`
 	Seen       bool   `json:"seen"`
-	CreatedAt  int    `json:"created_at"`
+	CreatedAt  string `json:"created_at"`
 }
 
 func GetNotifications(id, seen string, w http.ResponseWriter) ([]Notification, error) {
