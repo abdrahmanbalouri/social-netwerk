@@ -5,7 +5,6 @@ import Link from 'next/link';
 import ChatIcon from '@mui/icons-material/Chat';
 import "../styles/rightbar.css"
 import { useWS } from "../context/wsContext";
-import { ShieldXIcon } from "lucide-react";
 export default function RightBar() {
 
 

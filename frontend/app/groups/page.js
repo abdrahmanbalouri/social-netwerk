@@ -14,7 +14,6 @@ import { Toaster, toast } from "sonner"
 import { useWS } from "../../context/wsContext.js";
 import { useProfile } from "../../context/profile.js";
 
-// import RightBarGroup from '../../components/RightBarGroups.js';
 
 export default function () {
   const { darkMode } = useDarkMode();

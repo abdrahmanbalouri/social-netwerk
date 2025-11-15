@@ -16,9 +16,11 @@
   margin-bottom: 30px;
   border: 1px solid var(--border);
 }
-.center i{
- font-size: 30px;
+
+.center i {
+  font-size: 30px;
 }
+
 .feed {
   width: 100%;
 }

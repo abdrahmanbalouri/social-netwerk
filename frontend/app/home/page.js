@@ -10,7 +10,6 @@ import Stories from '../../components/stories.js';
 import Comment from '../../components/coment.js';
 import Post from '../../components/Post.js';
 import CreatePost from "../../components/createPost.js";
-import { useProfile } from '../../context/profile.js';
 export default function Home() {
   // State management
   const [showSidebar, setShowSidebar] = useState(true);

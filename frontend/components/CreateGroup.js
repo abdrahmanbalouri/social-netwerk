@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import "../styles/groupstyle.css";
 import { createGroup } from "../app/groups/page";
-import { GroupCard } from "./groupCard";
 import { Plus } from "lucide-react";
 import { Toaster, toast } from "sonner"
 import { useWS } from "../context/wsContext";
@@ -195,6 +194,8 @@ export function GroupCreationTrigger({ setGroup }) {
   };
 
   const handleSubmit = async (groupData, isSubmitting, setIsSubmitting) => {
+    console.log(groupData);
+    
     try {
       if (isSubmitting) return;
       setIsSubmitting(true);

@@ -1,6 +1,6 @@
 "use client"
 import { useState, useEffect, useRef } from "react"
-import { useParams, useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import "../styles/comment.css"
 
 
@@ -147,13 +147,13 @@ export default function Comment({ comments, isOpen, onClose, postId, onCommentCh
 
   const addEmoji = (emoji) => {
     console.log(emoji.length);
-    
+
     const cursorPos = textareaRef.current.selectionStart;
     const newText = commentContent.slice(0, cursorPos) + emoji + commentContent.slice(cursorPos);
     setCommentContent(newText);
     setTimeout(() => {
       textareaRef.current.focus();
-      textareaRef.current.setSelectionRange(cursorPos +2 , cursorPos  +2);
+      textareaRef.current.setSelectionRange(cursorPos + 2, cursorPos + 2);
     }, 0);
   }
 

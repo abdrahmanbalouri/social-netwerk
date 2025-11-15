@@ -2,10 +2,9 @@
 import { useState } from 'react';
 import { CreatePost } from '../app/groups/[id]/page.js';
 import { Toaster, toast } from "sonner"
-// import "../styles/groupstyle.css"
-import { RedirectType, useParams, useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 
-export function CreatePostForm({ onSubmit, onCancel ,err }) {
+export function CreatePostForm({ onSubmit, onCancel, err }) {
   const [PostTitle, setPostTitle] = useState('');
   const [PostDescription, setPostDescription] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
@@ -119,7 +118,7 @@ export function CreatePostForm({ onSubmit, onCancel ,err }) {
               <button
                 type="submit"
                 className="submit-button"
-                disabled={!PostTitle.trim() &&  !PostDescription.trim()&& !selectedImage}
+                disabled={!PostTitle.trim() && !PostDescription.trim() && !selectedImage}
               >
                 Create post
               </button>
@@ -135,8 +134,8 @@ export function CreatePostForm({ onSubmit, onCancel ,err }) {
 
 export function PostCreationTrigger({ setPost }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [err ,seterr] = useState("")
-  const router  = useRouter()
+  const [err, seterr] = useState("")
+  const router = useRouter()
   // const [posts, setPost] = useState([])
   const { id } = useParams();
 
@@ -150,14 +149,14 @@ export function PostCreationTrigger({ setPost }) {
     try {
       const newpost = await CreatePost(id, formData);
       toast.success("post created successfully!");
-      if (newpost.error){
-        if (newpost.error =="Authentication required"){
+      if (newpost.error) {
+        if (newpost.error == "Authentication required") {
           router.push('/login')
         }
         seterr(newpost.error)
         return
       }
-      
+
       setIsModalOpen(false);
       setPost(prev => {
         const exists = prev.some(p => p.id === newpost.id);
@@ -183,8 +182,8 @@ export function PostCreationTrigger({ setPost }) {
             className="create-input"
             onClick={handlePostClick}
             readOnly
-            />
-            
+          />
+
         </div>
       </div>
       {isModalOpen && (
@@ -192,7 +191,7 @@ export function PostCreationTrigger({ setPost }) {
           users={userList}
           onSubmit={handleSubmit}
           onCancel={handleCancel}
-          err = {err}
+          err={err}
         />
       )}
     </div>

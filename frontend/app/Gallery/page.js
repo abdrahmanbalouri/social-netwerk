@@ -1,12 +1,11 @@
 "use client";
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import "../../styles/gallery.css";
 import { useProfile } from "../../context/profile";
 import { useDarkMode } from "../../context/darkMod";
 import Navbar from "../../components/Navbar";
 import LeftBar from "../../components/LeftBar";
 import RightBar from "../../components/RightBar";
-import { useWS } from "../../context/wsContext";
 
 export default function Gallery() {
   const [images, setImages] = useState([]);
@@ -24,13 +23,13 @@ export default function Gallery() {
       .then((res) => res.json())
       .then((data) => {
 
-        if (data) {          
+        if (data) {
           let images = data.filter(img => img.ImagePath);
-          
+
           setImages(images);
           return
         }
-        if (!data ||  data.length > 0) {
+        if (!data || data.length > 0) {
           //setImgIndex(`url(/${data[0].imagePath})`);
         }
       })

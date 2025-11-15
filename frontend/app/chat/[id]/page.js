@@ -7,14 +7,12 @@ import LeftBar from "../../../components/LeftBar";
 import UserBar from "../../../components/UserBar.js";
 import { useDarkMode } from "../../../context/darkMod.js";
 import ChatBox from "../../../components/chatBox.js";
-import { useWS } from "../../../context/wsContext.js";
 
 export default function ChatPage() {
     const router = useRouter();
     const { darkMode } = useDarkMode();
     let { id } = useParams();
     const [user, setUser] = useState(null);
-    const { sendMessage } = useWS();
     useEffect(() => {
         async function fetchusers() {
             try {

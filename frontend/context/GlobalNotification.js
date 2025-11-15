@@ -13,7 +13,7 @@ export default function GlobalNotification() {
 
 
     const handle = (data) => {
-      
+
       const payload = data.data || data;
       switch (payload.subType) {
         case "follow":
@@ -57,5 +57,5 @@ export default function GlobalNotification() {
 
   if (!toast) return null;
 
-  return <Notification data={toast} />;
+  return <Notification data={toast} onClose={() => setToast(null)} />;
 }

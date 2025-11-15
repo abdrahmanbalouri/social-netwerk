@@ -1,7 +1,7 @@
 "use client"
 import { useState } from "react";
-import { useRouter } from "next/navigation"; // ← hna
-import './login.css';
+import { useRouter } from "next/navigation";
+import '../../styles/login.css';
 
 
 export default function Login() {
@@ -21,7 +21,7 @@ export default function Login() {
       });
 
       let data = await res.json();
-      
+
       if (data.error) {
         setErr(data.error);
         return;

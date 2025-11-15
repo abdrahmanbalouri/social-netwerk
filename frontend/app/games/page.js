@@ -1,16 +1,15 @@
 "use client";
-import React, { useEffect } from "react";
+import { useState } from "react";
 import Navbar from "../../components/Navbar.js";
 import LeftBar from "../../components/LeftBar.js";
 import RightBar from "../../components/RightBar.js";
 import { useDarkMode } from "../../context/darkMod.js";
 import Link from "next/link.js";
 import "../../styles/games.css";
-import { useRouter } from "next/navigation";
 
 export default function Game() {
   const { darkMode } = useDarkMode();
-  const [showSidebar, setShowSidebar] = React.useState(true);
+  const [showSidebar, setShowSidebar] = useState(true);
   return (
     <div className={darkMode ? "theme-dark" : "theme-light"}>
       <Navbar

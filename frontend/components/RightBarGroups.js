@@ -10,33 +10,7 @@ import { useParams } from "next/navigation";
 import { Toaster, toast } from "sonner"
 
 
-async function handleGroupRequest(invitationId, action, joinRequest, setJoinRequest) {
-    try {
-        const res = await fetch("http://localhost:8080/invitations/respond", {
-            method: "POST",
-            credentials: "include",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-                invitation_type: "join",
-                invitation_id: invitationId,
-                response: action,
-            }),
-        });
 
-        if (!res.ok) {
-            const errMsg = await res.text();
-            throw new Error("Action failed: " + errMsg);
-        }
-        const data = await res.json();
-
-        setJoinRequest((prev) => (prev || []).filter((req) => {
-            req.InvitationID !== invitationId
-        }));
-    } catch (err) {
-    }
-}
 export default function RightBarGroup({ onClick }) {
     const [friends, setFriends] = useState([])
     const [grpID, setGrpID] = useState('')
@@ -45,6 +19,37 @@ export default function RightBarGroup({ onClick }) {
     // const [followRequest, setFollowRequest] = useState([])
     const [joinRequest, setJoinRequest] = useState([])
     const { sendMessage, addListener, removeListener } = useWS();
+
+    async function handleGroupRequest(invitationId, action) {
+
+        try {
+            const res = await fetch("http://localhost:8080/invitations/respond", {
+                method: "POST",
+                credentials: "include",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    invitation_type: "join",
+                    invitation_id: invitationId,
+                    response: action,
+                }),
+            });
+
+            if (!res.ok) {
+                const errMsg = await res.text();
+                throw new Error("Action failed: " + errMsg);
+            }
+            const data = await res.json();
+            console.log(data);
+
+            setJoinRequest((prev) => (prev || []).filter((req) => {codeker
+                return req.invitation_id !== invitationId
+            }));
+        } catch (err) {
+        }
+    }
+
     useEffect(() => {
         const handleOlineUser = (data) => {
             setonlineUsers(data.users)
@@ -116,7 +121,7 @@ export default function RightBarGroup({ onClick }) {
 
     }, [grpID]);
 
-    
+
     return (
         <div className="rightBar" id="rightBar">
             <Toaster position="bottom-right" richColors />
@@ -133,7 +138,7 @@ export default function RightBarGroup({ onClick }) {
                                     <span>{req.first_name} {req.last_name}</span>
                                 </div>
                                 <div className="buttons">
-                                    <button onClick={() => { handleGroupRequest(req.invitation_id, "accept", joinRequest, setJoinRequest) }} >accept</button>
+                                    <button onClick={() => { handleGroupRequest(req.invitation_id, "accept") }} >accept</button>
                                     <button onClick={() => { handleGroupRequest(req.invitation_id, "reject") }} >reject</button>
                                 </div>
                             </div>
@@ -168,14 +173,14 @@ export default function RightBarGroup({ onClick }) {
                                         </Link>
                                     </div>
                                     <div onClick={async () => {
-                                        
-                                        try{
+
+                                        try {
                                             await onClick(user.id, grpID)
                                             toast.success("invitaiton sent ")
                                             sendMessage({ type: "invite_to_group", ReceiverId: user.id, groupID: grpID })
-                                        } catch (err){
+                                        } catch (err) {
                                             toast.error(err.message);
-                                        }  
+                                        }
                                     }}>
                                         <PersonAddAltIcon className="userIcon" />
                                     </div>

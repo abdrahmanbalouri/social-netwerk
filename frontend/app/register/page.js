@@ -20,7 +20,7 @@ export default function SignupPage() {
   const [error, seterror] = useState('')
   const router = useRouter()
 
-  const handleChange = e => {    
+  const handleChange = e => {
     setForm({
       ...form,
       [e.target.name]: e.target.name === "dob"
@@ -53,11 +53,11 @@ export default function SignupPage() {
         body: formData,
       })
       const res = await response.json()
-      if  (res.error){
+      if (res.error) {
 
         seterror(res.error)
-        return 
-      } 
+        return
+      }
 
       router.push('/login')
 
@@ -86,29 +86,28 @@ export default function SignupPage() {
         <input type="text" name="nickname" placeholder="Nickname (optional)" onChange={handleChange} />
         <input type="file" name="avatar" accept="image/*" onChange={handleFileChange} />
         <textarea name="aboutMe" placeholder="About me (optional)" onChange={handleChange}></textarea>
+        <div className="radio-group">
+          <label className="radio-label">
+            <input
+              type="radio"
+              name="privacy"
+              value="private"
+              onChange={handleChange}
+              required
+            />
+            Private
+          </label>
 
-        <label>
-          <input
-            type="radio"
-            name="privacy"
-            value="private"
-            onChange={handleChange}
-            required
-          />
-          Private
-        </label>
-
-        <label>
-          <input
-            type="radio"
-            name="privacy"
-            value="public"
-            onChange={handleChange}
-          />
-          Public
-        </label>
-
-
+          <label className="radio-label">
+            <input
+              type="radio"
+              name="privacy"
+              value="public"
+              onChange={handleChange}
+            />
+            Public
+          </label>
+        </div>
         <button type="submit" className="button">Sign Up</button>
       </form>
 

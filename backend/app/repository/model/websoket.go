@@ -168,7 +168,7 @@ func IsFollowingReceiver(currentUserID string, msg Message) (bool, error) {
 
 func SaveFollowNotification(currentUserID string, msg Message) error {
 	q := `INSERT INTO notifications ( sender_id, receiver_id, type, message, created_at) VALUES (?, ?, ?, ?, ?) `
-	_, err := sqlite.Db.Exec(q, currentUserID, msg.ReceiverId, msg.Type, msg.MessageContent, time.Now().Unix())
+	_, err := sqlite.Db.Exec(q, currentUserID, msg.ReceiverId, msg.Type, msg.MessageContent, time.Now())
 	return err
 }
 
@@ -176,15 +176,20 @@ func SaveGroupMessageNotification(currentUserID string, msg Message) error {
 	groupm, err := GetGroupMembers(msg.GroupID)
 	for _, v := range groupm {
 		q := `INSERT INTO notifications ( sender_id, receiver_id, type, message, created_at) VALUES (?, ?, ?, ?, ?) `
-		_, err = sqlite.Db.Exec(q, currentUserID, v, msg.Type, msg.MessageContent, time.Now().Unix())
+		_, err = sqlite.Db.Exec(q, currentUserID, v, msg.Type, msg.MessageContent, time.Now())
 	}
 	return err
 }
 
 func SaveGroupInvitationNotification(currentUserID string, msg Message) error {
-	q := `INSERT INTO notifications ( sender_id, receiver_id, type, message, created_at) VALUES (?, ?, ?, ?, ?) `
-	_, err := sqlite.Db.Exec(q, currentUserID, msg.ReceiverId, msg.Type, msg.MessageContent, time.Now().Unix())
-	return err
+	for _, v := range msg.ReceiversIds {
+		q := `INSERT INTO notifications ( sender_id, receiver_id, type, message, created_at) VALUES (?, ?, ?, ?, ?) `
+		_, err := sqlite.Db.Exec(q, currentUserID, v, msg.Type, msg.MessageContent, time.Now())
+		if err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 func Name(msg Message) (string, error) {
@@ -202,6 +207,6 @@ func SaveGroupJoinRequestNotification(currentUserID string, msg Message) (error,
 	if err != nil {
 		return err, ""
 	}
-	_, err = sqlite.Db.Exec(`INSERT INTO notifications ( sender_id, receiver_id, type, message, created_at) VALUES (?, ?, ?, ?, ?) `, currentUserID, adminID, msg.Type, msg.MessageContent, time.Now().Unix())
+	_, err = sqlite.Db.Exec(`INSERT INTO notifications ( sender_id, receiver_id, type, message, created_at) VALUES (?, ?, ?, ?, ?) `, currentUserID, adminID, msg.Type, msg.MessageContent, time.Now())
 	return err, adminID
 }
