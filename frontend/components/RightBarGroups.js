@@ -43,7 +43,7 @@ export default function RightBarGroup({ onClick }) {
             const data = await res.json();
             console.log(data);
 
-            setJoinRequest((prev) => (prev || []).filter((req) => {codeker
+            setJoinRequest((prev) => (prev || []).filter((req) => {
                 return req.invitation_id !== invitationId
             }));
         } catch (err) {
